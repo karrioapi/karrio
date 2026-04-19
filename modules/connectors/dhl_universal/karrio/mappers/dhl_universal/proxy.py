@@ -1,13 +1,15 @@
 import urllib.parse
-from typing import List
+
+from karrio.api.proxy import Proxy as BaseProxy
 from karrio.core.utils import (
     DP,
-    request as http,
-    Serializable,
     Deserializable,
+    Serializable,
     exec_async,
 )
-from karrio.api.proxy import Proxy as BaseProxy
+from karrio.core.utils import (
+    request as http,
+)
 from karrio.mappers.dhl_universal.settings import Settings
 
 
@@ -29,5 +31,5 @@ class Proxy(BaseProxy):
                 },
             )
 
-        responses: List[dict] = exec_async(_get_tracking, request.serialize())
+        responses: list[dict] = exec_async(_get_tracking, request.serialize())
         return Deserializable(responses, lambda res: [DP.to_dict(r) for r in res])

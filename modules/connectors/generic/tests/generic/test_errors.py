@@ -1,8 +1,8 @@
 import unittest
-from karrio.core.units import Packages, Weight
-from karrio.core.models import Parcel, RateRequest, ShipmentRequest
+
 from karrio.core.errors import FieldError, FieldErrorCode, format_item_field
-from karrio.core.utils import DP
+from karrio.core.models import Parcel
+from karrio.core.units import Packages, Weight
 
 
 class TestFieldErrorFormat(unittest.TestCase):
@@ -158,10 +158,12 @@ class TestFieldErrorProperties(unittest.TestCase):
         self.assertEqual(str(error), "Invalid request payload")
 
     def test_indexed_field_in_details(self):
-        error = FieldError({
-            "items[0].weight": FieldErrorCode.required,
-            "items[1].description": FieldErrorCode.invalid,
-        })
+        error = FieldError(
+            {
+                "items[0].weight": FieldErrorCode.required,
+                "items[1].description": FieldErrorCode.invalid,
+            }
+        )
         self.assertDictEqual(
             error.details,
             {

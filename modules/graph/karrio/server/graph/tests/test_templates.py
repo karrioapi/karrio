@@ -1,6 +1,7 @@
 from unittest.mock import ANY
-from karrio.server.graph.tests.base import GraphTestCase
+
 import karrio.server.manager.models as manager
+from karrio.server.graph.tests.base import GraphTestCase
 
 
 class TestAddress(GraphTestCase):

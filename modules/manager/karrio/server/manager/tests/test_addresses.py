@@ -1,9 +1,10 @@
 import json
 from unittest.mock import ANY
+
 from django.urls import reverse
-from rest_framework import status
 from karrio.server.core.tests import APITestCase
 from karrio.server.manager.models import Address
+from rest_framework import status
 
 
 class TestAddresses(APITestCase):
@@ -64,9 +65,7 @@ class TestAddressDetails(APITestCase):
         )
 
     def test_retrieve_address(self):
-        url = reverse(
-            "karrio.server.manager:address-details", kwargs=dict(pk=self.address.pk)
-        )
+        url = reverse("karrio.server.manager:address-details", kwargs=dict(pk=self.address.pk))
 
         response = self.client.get(url)
         response_data = json.loads(response.content)
@@ -76,9 +75,7 @@ class TestAddressDetails(APITestCase):
         self.assertEqual(response_data["object_type"], "address")
 
     def test_update_address(self):
-        url = reverse(
-            "karrio.server.manager:address-details", kwargs=dict(pk=self.address.pk)
-        )
+        url = reverse("karrio.server.manager:address-details", kwargs=dict(pk=self.address.pk))
         data = ADDRESS_UPDATE_DATA
 
         response = self.client.patch(url, data)
@@ -89,9 +86,7 @@ class TestAddressDetails(APITestCase):
 
     def test_delete_address(self):
         address_pk = self.address.pk
-        url = reverse(
-            "karrio.server.manager:address-details", kwargs=dict(pk=address_pk)
-        )
+        url = reverse("karrio.server.manager:address-details", kwargs=dict(pk=address_pk))
 
         response = self.client.delete(url)
         response_data = json.loads(response.content)

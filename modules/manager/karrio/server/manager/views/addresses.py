@@ -1,23 +1,20 @@
-from django.urls import path
-from rest_framework import status
-from rest_framework.request import Request
-from rest_framework.response import Response
-from rest_framework.pagination import LimitOffsetPagination
-
-from karrio.server.core.logging import logger
-from karrio.server.core.views.api import GenericAPIView, APIView
-from karrio.server.manager.serializers import (
-    PaginatedResult,
-    ErrorResponse,
-    AddressData,
-    Address,
-    AddressSerializer,
-    can_mutate_address,
-)
-from karrio.server.manager.router import router
 import karrio.server.manager.models as models
 import karrio.server.openapi as openapi
-
+from django.urls import path
+from karrio.server.core.views.api import APIView, GenericAPIView
+from karrio.server.manager.router import router
+from karrio.server.manager.serializers import (
+    Address,
+    AddressData,
+    AddressSerializer,
+    ErrorResponse,
+    PaginatedResult,
+    can_mutate_address,
+)
+from rest_framework import status
+from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.request import Request
+from rest_framework.response import Response
 
 ENDPOINT_ID = "$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 Addresses = PaginatedResult("AddressList", Address)
@@ -25,9 +22,7 @@ Addresses = PaginatedResult("AddressList", Address)
 
 class AddressList(GenericAPIView):
     queryset = models.Address.objects
-    pagination_class = type(
-        "CustomPagination", (LimitOffsetPagination,), dict(default_limit=20)
-    )
+    pagination_class = type("CustomPagination", (LimitOffsetPagination,), dict(default_limit=20))
     serializer_class = Addresses
 
     @openapi.extend_schema(
@@ -56,11 +51,7 @@ class AddressList(GenericAPIView):
         from django.db.models import Q
 
         queryset = models.Address.access_by(request).filter(
-            **{
-                f"{prop}__isnull": True
-                for prop in models.Address.HIDDEN_PROPS
-                if prop != "org"
-            }
+            **{f"{prop}__isnull": True for prop in models.Address.HIDDEN_PROPS if prop != "org"}
         )
 
         # Apply query parameter filters
@@ -107,14 +98,11 @@ class AddressList(GenericAPIView):
         """
         Create a new address.
         """
-        address = (
-            AddressSerializer.map(data=request.data, context=request).save().instance
-        )
+        address = AddressSerializer.map(data=request.data, context=request).save().instance
         return Response(Address(address).data, status=status.HTTP_201_CREATED)
 
 
 class AddressDetail(APIView):
-
     @openapi.extend_schema(
         tags=["Addresses"],
         operation_id=f"{ENDPOINT_ID}retrieve",
@@ -183,6 +171,4 @@ class AddressDetail(APIView):
 
 
 router.urls.append(path("addresses", AddressList.as_view(), name="address-list"))
-router.urls.append(
-    path("addresses/<str:pk>", AddressDetail.as_view(), name="address-details")
-)
+router.urls.append(path("addresses/<str:pk>", AddressDetail.as_view(), name="address-details"))

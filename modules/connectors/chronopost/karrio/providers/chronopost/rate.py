@@ -1,31 +1,24 @@
-import karrio.schemas.chronopost.quickcostservice as chronopost
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.chronopost.error as provider_error
 import karrio.providers.chronopost.units as provider_units
 import karrio.providers.chronopost.utils as provider_utils
+import karrio.schemas.chronopost.quickcostservice as chronopost
 
 
 def parse_rate_response(
     _response: lib.Deserializable[lib.Element],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+) -> tuple[list[models.RateDetails], list[models.Message]]:
     response = _response.deserialize()
-    product_nodes: typing.List[chronopost.product] = lib.find_element(
-        "productList", response, chronopost.product
-    )
-    products: typing.List[models.RateDetails] = [
-        _extract_service_details(product_node, settings)
-        for product_node in product_nodes
-        if product_node.amount > 0.0
+    product_nodes: list[chronopost.product] = lib.find_element("productList", response, chronopost.product)
+    products: list[models.RateDetails] = [
+        _extract_service_details(product_node, settings) for product_node in product_nodes if product_node.amount > 0.0
     ]
     return products, provider_error.parse_error_response(response, settings)
 
 
-def _extract_service_details(
-    detail: chronopost.product, settings: provider_utils.Settings
-) -> models.RateDetails:
+def _extract_service_details(detail: chronopost.product, settings: provider_utils.Settings) -> models.RateDetails:
     service = provider_units.ShippingService.map(detail.productCode)
     charges = [("TVA", lib.to_decimal(detail.amountTVA))]
 
@@ -48,9 +41,7 @@ def _extract_service_details(
     )
 
 
-def rate_request(
-    payload: models.RateRequest, settings: provider_utils.Settings
-) -> lib.Serializable:
+def rate_request(payload: models.RateRequest, settings: provider_utils.Settings) -> lib.Serializable:
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     package = lib.to_packages(payload.parcels).single

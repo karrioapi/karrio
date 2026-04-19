@@ -1,6 +1,7 @@
-import attr
 import enum
 import typing
+
+import attr
 
 BaseStrEnum = getattr(enum, "StrEnum", enum.Flag)
 
@@ -19,16 +20,10 @@ class MetaEnum(enum.EnumMeta):
             return EnumWrapper(key, cls[key])
         elif key in typing.cast(typing.Any, cls)._value2member_map_:
             return EnumWrapper(key, cls(key))
-        elif key in [
-            str(v.value) for v in typing.cast(typing.Any, cls).__members__.values()
-        ]:
+        elif key in [str(v.value) for v in typing.cast(typing.Any, cls).__members__.values()]:
             return EnumWrapper(
                 key,
-                next(
-                    v
-                    for v in typing.cast(typing.Any, cls).__members__.values()
-                    if v.value == key
-                ),
+                next(v for v in typing.cast(typing.Any, cls).__members__.values() if v.value == key),
             )
 
         return EnumWrapper(key)
@@ -56,14 +51,12 @@ class MetaEnum(enum.EnumMeta):
                 (
                     member
                     for member in typing.cast(typing.Any, cls).__members__.values()
-                    if (
-                        key in member.value
-                        if isinstance(member.value, (list, tuple))
-                        else key == member.value
-                    )
+                    if (key in member.value if isinstance(member.value, (list, tuple)) else key == member.value)
                 ),
                 None,
-            ) if key is not None else None,
+            )
+            if key is not None
+            else None,
         )
 
     def as_dict(self):
@@ -85,7 +78,7 @@ class StrEnum(BaseStrEnum, metaclass=MetaEnum):  # type: ignore
 @attr.s(auto_attribs=True)
 class EnumWrapper:
     key: typing.Any
-    enum: typing.Optional[Enum] = None
+    enum: Enum | None = None
 
     @property
     def name(self):
@@ -105,7 +98,7 @@ class EnumWrapper:
 
     @property
     def object(self):
-        self.enum
+        return self.enum
 
 
 @attr.s(auto_attribs=True)
@@ -120,12 +113,13 @@ class OptionEnum:
         help: Help text describing the option
         meta: Optional metadata dict (e.g., dict(category="COD"))
     """
+
     code: str
-    type: typing.Union[typing.Callable, MetaEnum] = str
+    type: typing.Callable | MetaEnum = str
     state: typing.Any = None
     default: typing.Any = None
-    help: typing.Optional[str] = None
-    meta: typing.Optional[dict] = None
+    help: str | None = None
+    meta: dict | None = None
 
     def __getitem__(self, type: typing.Callable = None) -> "OptionEnum":
         return OptionEnum("", type or self.type, self.state, self.default, self.help, self.meta)
@@ -184,8 +178,9 @@ class Spec:
         value: The current value
         default: The default value to use when none is provided
     """
+
     key: str
-    type: typing.Type
+    type: type
     compute: typing.Callable
     value: typing.Any = None
     default: typing.Any = None
@@ -197,7 +192,7 @@ class Spec:
     """Spec initialization modes"""
 
     @staticmethod
-    def asFlag(key: str, default: typing.Optional[bool] = None) -> "Spec":
+    def asFlag(key: str, default: bool | None = None) -> "Spec":
         """A Spec defined as "Flag" means that when it is specified in the payload,
         a boolean flag will be returned as value.
 
@@ -209,7 +204,7 @@ class Spec:
             A Spec instance configured as a flag
         """
 
-        def compute(value: typing.Optional[bool]) -> bool:
+        def compute(value: bool | None) -> bool:
             # Use default if value is None
             if value is None and default is not None:
                 value = default
@@ -218,7 +213,7 @@ class Spec:
         return Spec(key, bool, compute, default=default)
 
     @staticmethod
-    def asKey(key: str, default: typing.Optional[bool] = None) -> "Spec":
+    def asKey(key: str, default: bool | None = None) -> "Spec":
         """A Spec defined as "Key" means that when it is specified in a payload and not flagged as False,
         the spec code will be returned as value.
 
@@ -230,7 +225,7 @@ class Spec:
             A Spec instance configured to return its key
         """
 
-        def compute(value: typing.Optional[bool]) -> str:
+        def compute(value: bool | None) -> str:
             # Use default if value is None
             if value is None and default is not None:
                 value = default
@@ -239,7 +234,7 @@ class Spec:
         return Spec(key, bool, compute, default=default)
 
     @staticmethod
-    def asValue(key: str, type: typing.Type = str, default: typing.Any = None) -> "Spec":
+    def asValue(key: str, type: type = str, default: typing.Any = None) -> "Spec":
         """A Spec defined as "typing.Type" means that when it is specified in a payload,
         the value passed by the user will be returned.
 
@@ -252,7 +247,7 @@ class Spec:
             A Spec instance configured to return the typed value
         """
 
-        def compute(value: typing.Optional[type]) -> type:  # type: ignore
+        def compute(value: type | None) -> type:  # type: ignore
             # Use default if value is None
             if value is None and default is not None:
                 value = default
@@ -261,7 +256,7 @@ class Spec:
         return Spec(key, type, compute, default=default)
 
     @staticmethod
-    def asKeyVal(key: str, type: typing.Type = str, default: typing.Any = None) -> "Spec":
+    def asKeyVal(key: str, type: type = str, default: typing.Any = None) -> "Spec":
         """A Spec defined as "Value" means that when it is specified in a payload,
         the a new spec defined as type is returned.
 
@@ -274,7 +269,7 @@ class Spec:
             A Spec instance configured to return a new Spec with the typed value
         """
 
-        def compute_inner_spec(value: typing.Optional[type]) -> Spec:  # type: ignore
+        def compute_inner_spec(value: type | None) -> Spec:  # type: ignore
             # Use default if value is None
             if value is None and default is not None:
                 value = default

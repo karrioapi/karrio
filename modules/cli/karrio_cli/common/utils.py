@@ -1,13 +1,14 @@
-import json
-import enum
-import pydoc
-import typer
-import requests
 import importlib
+import json
+import pydoc
+
 import karrio_cli.commands.login as login
-from rich.syntax import Syntax
+import requests
+import typer
 from rich.console import Console
-from .queries import GET_LOGS, GET_LOG, GET_EVENTS, GET_EVENT
+from rich.syntax import Syntax
+
+from .queries import GET_EVENT, GET_EVENTS, GET_LOG, GET_LOGS
 
 DEFAULT_FEATURES = [
     "tracking",
@@ -55,6 +56,7 @@ query get_event($id: String!) {
 }
 """
 
+
 def parse_json_or_xml_string(value: str):
     """Parse a string that might be JSON or XML."""
     if not value or not isinstance(value, str):
@@ -80,7 +82,9 @@ def parse_records(records):
                 **record["record"],
                 "data": parse_json_or_xml_string(record["record"].get("data")),
                 "response": parse_json_or_xml_string(record["record"].get("response")),
-            } if record.get("record") else record["record"]
+            }
+            if record.get("record")
+            else record["record"],
         }
         for record in records
     ]
@@ -181,9 +185,7 @@ def make_get_request(
     )
 
 
-def make_post_request(
-    endpoint: str, payload: dict, pretty_print: bool = False, line_numbers: bool = False
-):
+def make_post_request(endpoint: str, payload: dict, pretty_print: bool = False, line_numbers: bool = False):
     return make_request(
         "POST",
         endpoint,
@@ -193,9 +195,7 @@ def make_post_request(
     )
 
 
-def make_patch_request(
-    endpoint: str, payload: dict, pretty_print: bool = False, line_numbers: bool = False
-):
+def make_patch_request(endpoint: str, payload: dict, pretty_print: bool = False, line_numbers: bool = False):
     return make_request(
         "PATCH",
         endpoint,
@@ -205,12 +205,8 @@ def make_patch_request(
     )
 
 
-def make_delete_request(
-    endpoint: str, pretty_print: bool = False, line_numbers: bool = False
-):
-    return make_request(
-        "DELETE", endpoint, pretty_print=pretty_print, line_numbers=line_numbers
-    )
+def make_delete_request(endpoint: str, pretty_print: bool = False, line_numbers: bool = False):
+    return make_request("DELETE", endpoint, pretty_print=pretty_print, line_numbers=line_numbers)
 
 
 def parse_event_response(data):
@@ -251,10 +247,7 @@ def make_graphql_request(
     if not query:
         raise ValueError(f"Unknown query: {query_name}")
 
-    payload = {
-        "query": query,
-        "variables": variables or {}
-    }
+    payload = {"query": query, "variables": variables or {}}
 
     try:
         response = requests.post(url, json=payload, headers=headers)
@@ -289,9 +282,9 @@ def gen(entity):
 
 def format_dimension(code, dim):
     return (
-        f"| `{ code }` "
-        f'| { f" x ".join([str(d) for d in dim.values() if isinstance(d, float)]) } '
-        f'| { f" x ".join([k for k in dim.keys() if isinstance(dim[k], float)]) }'
+        f"| `{code}` "
+        f"| {' x '.join([str(d) for d in dim.values() if isinstance(d, float)])} "
+        f"| {' x '.join([k for k in dim.keys() if isinstance(dim[k], float)])}"
     )
 
 
@@ -317,10 +310,7 @@ def instantiate_tree(cls, indent=0, alias=""):
             else:
                 tree += " " * indent * 4 + f"{name}=[],\n"
         elif hasattr(typ, "__annotations__"):
-            tree += (
-                " " * indent * 4
-                + f"{name}={instantiate_tree(typ, indent, alias=alias)},\n"
-            )
+            tree += " " * indent * 4 + f"{name}={instantiate_tree(typ, indent, alias=alias)},\n"
         else:
             tree += " " * indent * 4 + f"{name}=None,\n"
 
@@ -359,9 +349,7 @@ def parse_nested_properties(properties: list[str]) -> dict:
 
     for prop in properties:
         if "=" not in prop:
-            raise ValueError(
-                f"Invalid property format: {prop}. Use 'key=value' or 'nested[key]=value'."
-            )
+            raise ValueError(f"Invalid property format: {prop}. Use 'key=value' or 'nested[key]=value'.")
         path, value = prop.split("=", 1)
         set_nested(result, path, value)
 

@@ -1,11 +1,11 @@
 import unittest
-from unittest.mock import patch, ANY
-from .fixture import gateway
-import logging as logger
+from unittest.mock import patch
 
+import karrio.core.models as models
 import karrio.lib as lib
 import karrio.sdk as karrio
-import karrio.core.models as models
+
+from .fixture import gateway
 
 
 class TestUSPSRating(unittest.TestCase):
@@ -32,20 +32,14 @@ class TestUSPSRating(unittest.TestCase):
     def test_parse_rate_response(self):
         with patch("karrio.mappers.usps.proxy.lib.request") as mock:
             mock.return_value = RateResponse
-            parsed_response = (
-                karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertListEqual(lib.to_dict(parsed_response), ParsedRateResponse)
 
     def test_parse_machinable_rate_response(self):
         with patch("karrio.mappers.usps.proxy.lib.request") as mock:
             mock.return_value = RateResponse
-            parsed_response = (
-                karrio.Rating.fetch(self.MachinableRateRequest).from_(gateway).parse()
-            )
-            self.assertListEqual(
-                lib.to_dict(parsed_response), MachinableParsedRateResponse
-            )
+            parsed_response = karrio.Rating.fetch(self.MachinableRateRequest).from_(gateway).parse()
+            self.assertListEqual(lib.to_dict(parsed_response), MachinableParsedRateResponse)
 
 
 if __name__ == "__main__":

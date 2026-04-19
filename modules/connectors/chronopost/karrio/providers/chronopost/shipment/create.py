@@ -1,31 +1,27 @@
-import karrio.schemas.chronopost.shippingservice as chronopost
-import typing
 import base64
 import datetime
-import karrio.lib as lib
+
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.chronopost.error as provider_error
-import karrio.providers.chronopost.utils as provider_utils
 import karrio.providers.chronopost.units as provider_units
+import karrio.providers.chronopost.utils as provider_utils
+import karrio.schemas.chronopost.shippingservice as chronopost
 
 
 def parse_shipment_response(
     _response: lib.Deserializable[lib.Element],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+) -> tuple[models.ShipmentDetails, list[models.Message]]:
     response = _response.deserialize()
     errors = provider_error.parse_error_response(response, settings)
     shipment_node = lib.find_element("resultMultiParcelValue", response, first=True)
-    shipment = (
-        _extract_details(shipment_node, settings) if shipment_node is not None else None
-    )
+    shipment = _extract_details(shipment_node, settings) if shipment_node is not None else None
 
     return shipment, errors
 
 
-def _extract_details(
-    response: lib.Element, settings: provider_utils.Settings
-) -> models.ShipmentDetails:
+def _extract_details(response: lib.Element, settings: provider_utils.Settings) -> models.ShipmentDetails:
     shipment = lib.to_object(chronopost.resultMultiParcelValue, response)
     label = base64.b64encode(shipment.pdfEtiquette).decode("utf-8")
 
@@ -41,9 +37,7 @@ def _extract_details(
     )
 
 
-def shipment_request(
-    payload: models.ShipmentRequest, settings: provider_utils.Settings
-) -> lib.Serializable:
+def shipment_request(payload: models.ShipmentRequest, settings: provider_utils.Settings) -> lib.Serializable:
     package = lib.to_packages(
         payload.parcels,
         required=["weight"],
@@ -126,16 +120,10 @@ def shipment_request(
                 skybillValue=(
                     chronopost.skybillValue(
                         bulkNumber=1,
-                        codCurrency=(
-                            options.currency.state
-                            if options.cash_on_delivery.state is not None
-                            else None
-                        ),
+                        codCurrency=(options.currency.state if options.cash_on_delivery.state is not None else None),
                         codValue=options.cash_on_delivery.state,
                         customsCurrency=(
-                            (customs.duty.currency or options.currency)
-                            if payload.customs is not None
-                            else None
+                            (customs.duty.currency or options.currency) if payload.customs is not None else None
                         ),
                         customsValue=(
                             (customs.duty.declared_value or options.declared_value)
@@ -143,20 +131,12 @@ def shipment_request(
                             else None
                         ),
                         evtCode="DC",
-                        insuredCurrency=(
-                            options.currency.state
-                            if options.insurance.state is not None
-                            else None
-                        ),
+                        insuredCurrency=(options.currency.state if options.insurance.state is not None else None),
                         insuredValue=options.insurance.state,
                         latitude=None,
                         longitude=None,
                         masterSkybillNumber=None,
-                        objectType=(
-                            provider_units.CustomsContentType.map(
-                                customs.content_type or "MAR"
-                            ).value
-                        ),
+                        objectType=(provider_units.CustomsContentType.map(customs.content_type or "MAR").value),
                         portCurrency=None,
                         portValue=None,
                         productCode=product_code.zfill(2),

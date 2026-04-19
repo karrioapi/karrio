@@ -1,11 +1,11 @@
 """Karrio DPD client proxy."""
 
-import karrio.lib as lib
 import karrio.api.proxy as proxy
 import karrio.core.errors as errors
-import karrio.schemas.dpd.LoginServiceV21 as dpd
-import karrio.providers.dpd.error as provider_error
+import karrio.lib as lib
 import karrio.mappers.dpd.settings as provider_settings
+import karrio.providers.dpd.error as provider_error
+import karrio.schemas.dpd.LoginServiceV21 as dpd
 import karrio.universal.mappers.rating_proxy as rating_proxy
 
 

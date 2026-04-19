@@ -1,8 +1,9 @@
 import unittest
 from unittest.mock import patch
 
-import karrio.sdk as karrio
+import karrio.core.errors as errors
 import karrio.lib as lib
+import karrio.sdk as karrio
 
 
 class TestUPSAuthentication(unittest.TestCase):
@@ -44,7 +45,7 @@ class TestUPSAuthentication(unittest.TestCase):
         with patch("karrio.mappers.ups.proxy.lib.request") as mock:
             mock.return_value = ErrorResponse
 
-            with self.assertRaises(Exception):
+            with self.assertRaises(errors.ParsedMessagesError):
                 self.fresh_gateway.proxy.authenticate()
 
     def test_non_json_auth_error(self):

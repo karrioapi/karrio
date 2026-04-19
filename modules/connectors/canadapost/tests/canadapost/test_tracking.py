@@ -1,8 +1,10 @@
 import unittest
 from unittest.mock import patch
+
+from karrio.core.models import TrackingRequest
 from karrio.core.utils import DP
 from karrio.sdk import Tracking
-from karrio.core.models import TrackingRequest
+
 from .fixture import gateway
 
 
@@ -26,9 +28,7 @@ class TestCanadaPostTracking(unittest.TestCase):
     def test_tracking_auth_error_parsing(self):
         with patch("karrio.mappers.canadapost.proxy.lib.request") as mock:
             mock.return_value = AuthError
-            parsed_response = (
-                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
+            parsed_response = Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             self.assertListEqual(
                 DP.to_dict(parsed_response),
                 ParsedAuthError,
@@ -37,9 +37,7 @@ class TestCanadaPostTracking(unittest.TestCase):
     def test_parse_tracking_response(self):
         with patch("karrio.mappers.canadapost.proxy.lib.request") as mock:
             mock.return_value = TrackingResponseXml
-            parsed_response = (
-                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
+            parsed_response = Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
 
             self.assertListEqual(
                 DP.to_dict(parsed_response),
@@ -49,9 +47,7 @@ class TestCanadaPostTracking(unittest.TestCase):
     def test_tracking_unknown_response_parsing(self):
         with patch("karrio.mappers.canadapost.proxy.lib.request") as mock:
             mock.return_value = UnknownTrackingNumberResponse
-            parsed_response = (
-                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
+            parsed_response = Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             self.assertListEqual(
                 DP.to_dict(parsed_response),
                 ParsedUnknownTrackingNumberResponse,
@@ -172,9 +168,7 @@ AuthError = """<wrapper>
 </wrapper>
 """
 
-TrackingRequestURL = (
-    f"""{gateway.settings.server_url}/vis/track/pin/7023210039414604/detail"""
-)
+TrackingRequestURL = f"""{gateway.settings.server_url}/vis/track/pin/7023210039414604/detail"""
 
 TrackingResponseXml = """<wrapper>
     <tracking-detail>

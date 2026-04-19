@@ -1,8 +1,7 @@
 """Karrio Asendia error parser."""
 
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.asendia.utils as provider_utils
 import karrio.schemas.asendia.error_response as asendia
 
@@ -11,7 +10,7 @@ def parse_error_response(
     response: dict,
     settings: provider_utils.Settings,
     **kwargs,
-) -> typing.List[models.Message]:
+) -> list[models.Message]:
     """Parse Asendia error response into karrio Message objects.
 
     Asendia has two error formats:
@@ -34,10 +33,14 @@ def parse_error_response(
         "errorMessages": [{"field": "...", "message": "..."}]
     }
     """
-    errors: typing.List[models.Message] = []
+    errors: list[models.Message] = []
 
     # Check if response contains error indicators
     if response is None:
+        return errors
+
+    # Bare list responses (e.g. tracking success) carry no errors
+    if isinstance(response, list):
         return errors
 
     # Get status code from response - must be a numeric value (HTTP status code)

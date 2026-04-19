@@ -1,7 +1,8 @@
+# ruff: noqa: F403
 from django.conf import settings
+from drf_spectacular.extensions import OpenApiAuthenticationExtension
 from drf_spectacular.types import *
 from drf_spectacular.utils import *
-from drf_spectacular.extensions import OpenApiAuthenticationExtension
 
 
 class JWTAuthentication(OpenApiAuthenticationExtension):

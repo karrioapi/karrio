@@ -1,8 +1,10 @@
 import unittest
+
 import karrio.sdk as karrio
-from karrio.core.utils import DP
 from karrio.core.models import RateRequest
+from karrio.core.utils import DP
 from karrio.providers.hermes import units
+
 from .fixture import gateway
 
 
@@ -37,14 +39,10 @@ class TestHermesServiceFiltering(unittest.TestCase):
 
     def test_domestic_service_marked_correctly(self):
         """Test that domestic service has domicile=True."""
-        domestic_service = next(
-            (s for s in self.services if s.service_code == "hermes_standard"), None
-        )
+        domestic_service = next((s for s in self.services if s.service_code == "hermes_standard"), None)
 
         self.assertIsNotNone(domestic_service)
-        self.assertTrue(
-            domestic_service.domicile, "Domestic service should have domicile=True"
-        )
+        self.assertTrue(domestic_service.domicile, "Domestic service should have domicile=True")
 
     def test_international_service_marked_correctly(self):
         """Test that international service has international=True and domicile=False."""
@@ -131,9 +129,7 @@ class TestHermesServiceFiltering(unittest.TestCase):
             }
         )
 
-        parsed_response = (
-            karrio.Rating.fetch(international_request).from_(gateway).parse()
-        )
+        parsed_response = karrio.Rating.fetch(international_request).from_(gateway).parse()
         rates = parsed_response[0]
 
         # All returned services should be international
@@ -147,9 +143,7 @@ class TestHermesServiceFiltering(unittest.TestCase):
 
     def test_weight_limits_respected(self):
         """Test that weight limits are properly set."""
-        domestic_service = next(
-            (s for s in self.services if s.service_code == "hermes_standard"), None
-        )
+        domestic_service = next((s for s in self.services if s.service_code == "hermes_standard"), None)
 
         self.assertIsNotNone(domestic_service)
         self.assertEqual(domestic_service.min_weight, 0.01)

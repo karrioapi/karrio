@@ -1,14 +1,15 @@
 import json
-from unittest.mock import patch, ANY
+from unittest.mock import ANY, patch
+
 from django.urls import reverse
-from rest_framework import status
 from karrio.core.models import ManifestDetails as ManifestDetailsModel
 from karrio.server.manager.tests.test_shipments import (
-    TestShipmentFixture,
-    RETURNED_RATES_VALUE,
     CREATED_SHIPMENT_RESPONSE,
+    RETURNED_RATES_VALUE,
     SINGLE_CALL_LABEL_DATA,
+    TestShipmentFixture,
 )
+from rest_framework import status
 
 
 class TestManifestDocumentDownload(TestShipmentFixture):

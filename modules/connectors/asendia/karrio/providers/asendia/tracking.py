@@ -1,15 +1,14 @@
 """Karrio Asendia tracking API implementation."""
 
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.asendia.error as error
-import karrio.providers.asendia.utils as provider_utils
 import karrio.providers.asendia.units as provider_units
+import karrio.providers.asendia.utils as provider_utils
 import karrio.schemas.asendia.tracking_response as asendia_res
 
 
-def _match_status(code: str) -> typing.Optional[str]:
+def _match_status(code: str) -> str | None:
     """Match code against TrackingStatus enum values."""
     if not code:
         return None
@@ -19,7 +18,7 @@ def _match_status(code: str) -> typing.Optional[str]:
     return None
 
 
-def _match_reason(code: str) -> typing.Optional[str]:
+def _match_reason(code: str) -> str | None:
     """Match code against TrackingIncidentReason enum values."""
     if not code:
         return None
@@ -30,13 +29,13 @@ def _match_reason(code: str) -> typing.Optional[str]:
 
 
 def parse_tracking_response(
-    _response: lib.Deserializable[typing.List[typing.Tuple[str, dict]]],
+    _response: lib.Deserializable[list[tuple[str, dict]]],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+) -> tuple[list[models.TrackingDetails], list[models.Message]]:
     """Parse tracking response from Asendia API."""
     responses = _response.deserialize()
 
-    messages: typing.List[models.Message] = sum(
+    messages: list[models.Message] = sum(
         [
             error.parse_error_response(response, settings, tracking_number=tracking_number)
             for tracking_number, response in responses
@@ -45,26 +44,26 @@ def parse_tracking_response(
     )
 
     tracking_details = [
-        _extract_details(details, settings, tracking_number)
-        for tracking_number, details in responses
-        if details.get("trackingNumber") or details.get("trackingEvents")
+        _extract_details(response, settings, tracking_number)
+        for tracking_number, response in responses
+        if isinstance(response, list) and len(response) > 0
     ]
 
     return tracking_details, messages
 
 
 def _extract_details(
-    data: dict,
+    events_list: list,
     settings: provider_utils.Settings,
     tracking_number: str = None,
 ) -> models.TrackingDetails:
-    """Extract tracking details from Asendia response."""
-    tracking = lib.to_object(asendia_res.TrackingResponseType, data)
-    number = tracking.trackingNumber or tracking_number
+    """Extract tracking details from Asendia bare-array response."""
+    # API returns a bare list of TrackingEvent objects; tracking_number comes from the proxy tuple
+    raw_events = [lib.to_object(asendia_res.TrackingEventType, e) for e in events_list]
 
     # Sort events (most recent first)
     sorted_events = sorted(
-        tracking.trackingEvents or [],
+        raw_events,
         key=lambda e: e.time or "",
         reverse=True,
     )
@@ -103,7 +102,7 @@ def _extract_details(
     return models.TrackingDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        tracking_number=number,
+        tracking_number=tracking_number,
         events=events,
         delivered=status == "delivered",
         status=status,

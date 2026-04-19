@@ -1,13 +1,13 @@
-import typing
 import datetime
-import strawberry
-from strawberry.types import Info
+import typing
 
-import karrio.server.graph.utils as utils
+import karrio.server.data.filters as filters
+import karrio.server.data.models as models
 import karrio.server.graph.schemas.base.types as base
 import karrio.server.graph.schemas.data.inputs as inputs
-import karrio.server.data.models as models
-import karrio.server.data.filters as filters
+import karrio.server.graph.utils as utils
+import strawberry
+from strawberry.types import Info
 
 
 @strawberry.type
@@ -17,11 +17,11 @@ class DataTemplateType:
     name: str
     slug: str
     fields_mapping: utils.JSON
-    description: typing.Optional[str]
+    description: str | None
     resource_type: inputs.ResourceTypeEnum
-    created_at: typing.Optional[datetime.datetime]
-    updated_at: typing.Optional[datetime.datetime]
-    created_by: typing.Optional[base.UserType]
+    created_at: datetime.datetime | None
+    updated_at: datetime.datetime | None
+    created_by: base.UserType | None
 
     @staticmethod
     @utils.authentication_required
@@ -32,19 +32,17 @@ class DataTemplateType:
     @utils.authentication_required
     def resolve_list(
         info: Info,
-        filter: typing.Optional[inputs.DataTemplateFilter] = strawberry.UNSET,
+        filter: inputs.DataTemplateFilter | None = strawberry.UNSET,
     ) -> utils.Connection["DataTemplateType"]:
         _filter = filter if filter is not strawberry.UNSET else inputs.DataTemplateFilter()
-        queryset = filters.DataTemplateFilter(
-            _filter.to_dict(), models.DataTemplate.access_by(info.context.request)
-        ).qs
+        queryset = filters.DataTemplateFilter(_filter.to_dict(), models.DataTemplate.access_by(info.context.request)).qs
         return utils.paginated_connection(queryset, **_filter.pagination())
 
 
 @strawberry.type
 class BatchObjectType:
     id: int
-    status: typing.Optional[inputs.ResourceTypeEnum]
+    status: inputs.ResourceTypeEnum | None
 
 
 @strawberry.type
@@ -52,7 +50,7 @@ class BatchOperationType:
     object_type: str
     id: int
     resource_type: inputs.ResourceTypeEnum
-    resources: typing.List[BatchObjectType]
+    resources: list[BatchObjectType]
     status: inputs.BatchOperationStatusEnum
     test_mode: bool
     created_at: datetime.datetime
@@ -68,7 +66,7 @@ class BatchOperationType:
     @utils.authentication_required
     def resolve_list(
         info: Info,
-        filter: typing.Optional[inputs.BatchOperationFilter] = strawberry.UNSET,
+        filter: inputs.BatchOperationFilter | None = strawberry.UNSET,
     ) -> utils.Connection["BatchOperationType"]:
         _filter = filter if filter is not strawberry.UNSET else inputs.BatchOperationFilter()
         queryset = filters.BatchOperationFilter(

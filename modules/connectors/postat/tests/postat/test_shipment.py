@@ -2,10 +2,12 @@
 
 import unittest
 from unittest.mock import patch
-from .fixture import gateway
-import karrio.sdk as karrio
-import karrio.lib as lib
+
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 
 class TestPostATShipment(unittest.TestCase):
@@ -26,19 +28,12 @@ class TestPostATShipment(unittest.TestCase):
         with patch("karrio.mappers.postat.proxy.lib.request") as mock:
             mock.return_value = ShipmentResponse
             karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
-            self.assertEqual(
-                mock.call_args[1]["url"],
-                gateway.settings.server_url
-            )
+            self.assertEqual(mock.call_args[1]["url"], gateway.settings.server_url)
 
     def test_parse_shipment_response(self):
         with patch("karrio.mappers.postat.proxy.lib.request") as mock:
             mock.return_value = ShipmentResponse
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest)
-                .from_(gateway)
-                .parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_create_shipment_cancel_request(self):
@@ -52,19 +47,12 @@ class TestPostATShipment(unittest.TestCase):
         with patch("karrio.mappers.postat.proxy.lib.request") as mock:
             mock.return_value = ShipmentCancelResponse
             karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
-            self.assertEqual(
-                mock.call_args[1]["url"],
-                gateway.settings.server_url
-            )
+            self.assertEqual(mock.call_args[1]["url"], gateway.settings.server_url)
 
     def test_parse_shipment_cancel_response(self):
         with patch("karrio.mappers.postat.proxy.lib.request") as mock:
             mock.return_value = ShipmentCancelResponse
-            parsed_response = (
-                karrio.Shipment.cancel(self.ShipmentCancelRequest)
-                .from_(gateway)
-                .parse()
-            )
+            parsed_response = karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()
             self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentCancelResponse)
 
 
@@ -89,16 +77,16 @@ ShipmentPayload = {
         "person_name": "Test Recipient",
         "email": "test@example.com",
     },
-    "parcels": [{
-        "weight": 17.0,
-        "weight_unit": "KG",
-    }],
+    "parcels": [
+        {
+            "weight": 17.0,
+            "weight_unit": "KG",
+        }
+    ],
     "service": "postat_standard_domestic",
 }
 
-ShipmentCancelPayload = {
-    "shipment_identifier": "1000000500113230110301"
-}
+ShipmentCancelPayload = {"shipment_identifier": "1000000500113230110301"}
 
 ShipmentResponse = """<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
    <s:Body>

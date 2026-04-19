@@ -1,7 +1,6 @@
 """Karrio Custom Errors(Exception) definition modules"""
 
 import enum
-import typing
 
 
 class FieldErrorCode(enum.Enum):
@@ -47,12 +46,9 @@ class FieldError(ShippingSDKDetailedError):
 
     code = "SHIPPING_SDK_FIELD_ERROR"
 
-    def __init__(self, fields: typing.Dict[str, typing.Union[FieldErrorCode, str, dict]]):
+    def __init__(self, fields: dict[str, FieldErrorCode | str | dict]):
         super().__init__("Invalid request payload")
-        self.details = {
-            name: code.value if isinstance(code, FieldErrorCode) else code
-            for name, code in fields.items()
-        }
+        self.details = {name: code.value if isinstance(code, FieldErrorCode) else code for name, code in fields.items()}
 
 
 class ParsedMessagesError(ShippingSDKDetailedError):
@@ -60,9 +56,9 @@ class ParsedMessagesError(ShippingSDKDetailedError):
 
     code = "SHIPPING_SDK_FIELD_ERROR"
 
-    def __init__(self, messages=[]):
+    def __init__(self, messages=None):
         super().__init__("Invalid request payload")
-        self.messages = messages
+        self.messages = messages or []
 
 
 class ValidationError(ShippingSDKError):
@@ -104,4 +100,4 @@ class MultiParcelNotSupportedError(ShippingSDKError):
     code = "SHIPPING_SDK_MULTI_PARCEL_NOT_SUPPORTED_ERROR"
 
     def __init__(self):
-        super().__init__(f"Multi-parcel shipment not supported")
+        super().__init__("Multi-parcel shipment not supported")

@@ -1,19 +1,18 @@
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 from karrio.providers.fedex.utils import Settings
 
 
 def parse_error_response(
-    response: typing.Union[typing.List[dict], dict],
+    response: list[dict] | dict,
     settings: Settings,
     **details,
-) -> typing.List[models.Message]:
+) -> list[models.Message]:
     responses = response if isinstance(response, list) else [response]
-    errors: typing.List[dict] = sum(
+    errors: list[dict] = sum(
         [
             [
-                *(result["errors"] if "errors" in result else []),
+                *result.get("errors", []),
                 *(
                     result["output"]["alerts"]
                     if "output" in result
@@ -28,16 +27,14 @@ def parse_error_response(
                     and not isinstance(result["output"], str)
                     and "message" in result.get("output", {})
                     and isinstance(result["output"]["message"], str)
-                    and not result["output"].get("alertType") != "NOTE"
+                    and result["output"].get("alertType") == "NOTE"
                     else []
                 ),
                 *(
                     [
                         {
                             **result["error"],
-                            "tracking_number": result.get("trackingNumberInfo", {}).get(
-                                "trackingNumber"
-                            ),
+                            "tracking_number": result.get("trackingNumberInfo", {}).get("trackingNumber"),
                         }
                     ]
                     if "error" in result
@@ -67,7 +64,7 @@ def parse_error_response(
     ]
 
 
-def _get_level(alert_type: typing.Optional[str]) -> typing.Optional[str]:
+def _get_level(alert_type: str | None) -> str | None:
     """Map FedEx alertType to standardized level.
 
     For actual errors (no alertType), defaults to "error".
@@ -76,10 +73,8 @@ def _get_level(alert_type: typing.Optional[str]) -> typing.Optional[str]:
     if alert_type is None:
         return "error"  # Default to error for actual errors without alertType
     alert_type_lower = alert_type.lower()
-    if alert_type_lower == "note":
-        return "info"
-    elif alert_type_lower == "warning":
-        return "warning"
-    elif alert_type_lower == "error":
-        return "error"
-    return alert_type_lower
+    return {
+        "note": "info",
+        "warning": "warning",
+        "error": "error",
+    }.get(alert_type_lower, alert_type_lower)

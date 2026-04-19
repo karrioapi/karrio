@@ -1,12 +1,10 @@
 """Karrio MyDHL pickup API implementation."""
 
-import datetime
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.mydhl.error as error
-import karrio.providers.mydhl.utils as provider_utils
 import karrio.providers.mydhl.units as provider_units
+import karrio.providers.mydhl.utils as provider_utils
 import karrio.schemas.mydhl.pickup_create_request as pickup_req
 import karrio.schemas.mydhl.pickup_create_response as pickup_res
 
@@ -14,7 +12,7 @@ import karrio.schemas.mydhl.pickup_create_response as pickup_res
 def parse_pickup_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.PickupDetails, typing.List[models.Message]]:
+) -> tuple[models.PickupDetails, list[models.Message]]:
     """
     Parse pickup response from MyDHL API
 
@@ -31,8 +29,7 @@ def parse_pickup_response(
             lib.to_object(pickup_res.PickupCreateResponseType, response),
             settings,
         )
-        if response.get("status") is None
-        and response.get("dispatchConfirmationNumbers") is not None
+        if response.get("status") is None and response.get("dispatchConfirmationNumbers") is not None
         else None
     )
 
@@ -52,10 +49,7 @@ def _extract_details(
     Returns a PickupDetails object with the pickup information
     """
     # Extract first confirmation number using functional pattern
-    confirmation_number = next(
-        (num for num in (pickup.dispatchConfirmationNumbers or []) if num),
-        ""
-    )
+    confirmation_number = next((num for num in (pickup.dispatchConfirmationNumbers or []) if num), "")
 
     return models.PickupDetails(
         carrier_id=settings.carrier_id,
@@ -85,18 +79,18 @@ def pickup_request(
     # MyDHL only supports one-time pickups via API
     pickup_type = getattr(payload, "pickup_type", "one_time") or "one_time"
     if pickup_type not in ("one_time", None):
-        raise lib.exceptions.FieldError({
-            "pickup_type": f"MyDHL only supports 'one_time' pickups via API. Received: '{pickup_type}'. "
-            "For daily/recurring pickups, please contact DHL to set up a regular pickup schedule."
-        })
+        raise lib.exceptions.FieldError(
+            {
+                "pickup_type": f"MyDHL only supports 'one_time' pickups via API. Received: '{pickup_type}'. "
+                "For daily/recurring pickups, please contact DHL to set up a regular pickup schedule."
+            }
+        )
 
     # Extract pickup details
     address = lib.to_address(payload.address)
     packages = lib.to_packages(payload.parcels)
     options = lib.to_shipping_options(payload.options)
-    service = provider_units.ShippingService.map(
-        payload.options.get("service") or "P"
-    ).value_or_key
+    service = provider_units.ShippingService.map(payload.options.get("service") or "P").value_or_key
 
     # Build planned pickup date time in DHL format
     pickup_datetime = lib.fdatetime(
@@ -165,13 +159,13 @@ def pickup_request(
                             length=package.length.value,
                             width=package.width.value,
                             height=package.height.value,
-                        ) 
-                        if package.length.value and package.width.value and package.height.value 
+                        )
+                        if package.length.value and package.width.value and package.height.value
                         else None,
                     )
                     for package in packages
-                ] 
-                if packages 
+                ]
+                if packages
                 else [pickup_req.PackageType(weight=1.0)],
             )
         ],

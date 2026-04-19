@@ -1,5 +1,5 @@
 """Karrio SmartKargo provider imports."""
-from karrio.providers.smartkargo.utils import Settings
+
 from karrio.providers.smartkargo.rate import (
     parse_rate_response,
     rate_request,
@@ -14,3 +14,4 @@ from karrio.providers.smartkargo.tracking import (
     parse_tracking_response,
     tracking_request,
 )
+from karrio.providers.smartkargo.utils import Settings

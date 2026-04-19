@@ -1,24 +1,24 @@
-from typing import Tuple, List
 from functools import partial
-from karrio.schemas.purolator.pickup_service_1_2_1 import (
-    VoidPickUpRequest,
-    RequestContext,
-)
+
+import karrio.lib as lib
 from karrio.core.models import (
-    PickupCancelRequest,
     ConfirmationDetails,
     Message,
+    PickupCancelRequest,
 )
-from karrio.core.utils import Serializable, create_envelope, Element
+from karrio.core.utils import Element, Serializable, create_envelope
 from karrio.providers.purolator.error import parse_error_response
 from karrio.providers.purolator.utils import Settings, standard_request_serializer
-import karrio.lib as lib
+from karrio.schemas.purolator.pickup_service_1_2_1 import (
+    RequestContext,
+    VoidPickUpRequest,
+)
 
 
 def parse_pickup_cancel_response(
     _response: lib.Deserializable[Element],
     settings: Settings,
-) -> Tuple[ConfirmationDetails, List[Message]]:
+) -> tuple[ConfirmationDetails, list[Message]]:
     response = _response.deserialize()
     errors = parse_error_response(response, settings)
     cancellation = (
@@ -35,9 +35,7 @@ def parse_pickup_cancel_response(
     return cancellation, errors
 
 
-def pickup_cancel_request(
-    payload: PickupCancelRequest, settings: Settings
-) -> Serializable:
+def pickup_cancel_request(payload: PickupCancelRequest, settings: Settings) -> Serializable:
     request = create_envelope(
         header_content=RequestContext(
             Version="1.2",
@@ -46,9 +44,7 @@ def pickup_cancel_request(
             RequestReference="",
             UserToken=settings.user_token,
         ),
-        body_content=VoidPickUpRequest(
-            PickUpConfirmationNumber=payload.confirmation_number
-        ),
+        body_content=VoidPickUpRequest(PickUpConfirmationNumber=payload.confirmation_number),
     )
 
     return Serializable(request, partial(standard_request_serializer, version="v1"))

@@ -1,10 +1,10 @@
 import logging
-from typing import Any
-from pysoap.envelope import Envelope
-from karrio.core.utils import XP, request as http, Pipeline, Job
+
 from karrio.api.proxy import Proxy as BaseProxy
+from karrio.core.utils import XP, Job, Pipeline
+from karrio.core.utils import request as http
+from karrio.core.utils.serializable import Deserializable, Serializable
 from karrio.mappers.purolator.settings import Settings
-from karrio.core.utils.serializable import Serializable, Deserializable
 
 logger = logging.getLogger(__name__)
 

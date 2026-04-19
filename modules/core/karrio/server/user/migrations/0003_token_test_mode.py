@@ -6,15 +6,16 @@ import karrio.server.core.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('user', '0002_token'),
+        ("user", "0002_token"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='token',
-            name='test_mode',
-            field=models.BooleanField(default=functools.partial(karrio.server.core.models._identity, *(), **{'value': False})),
+            model_name="token",
+            name="test_mode",
+            field=models.BooleanField(
+                default=functools.partial(karrio.server.core.models._identity, *(), **{"value": False})
+            ),
         ),
     ]

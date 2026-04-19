@@ -2,12 +2,12 @@
 # Adds applied_fees field to Shipment for tracking COGS accounting data
 
 import functools
-from django.db import migrations, models
+
 import karrio.server.core.utils as utils
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("manager", "0081_cleanup"),
     ]

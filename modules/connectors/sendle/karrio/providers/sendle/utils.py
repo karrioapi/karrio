@@ -1,7 +1,7 @@
 import base64
-import typing
-import karrio.lib as lib
+
 import karrio.core as core
+import karrio.lib as lib
 
 
 class Settings(core.Settings):
@@ -16,17 +16,15 @@ class Settings(core.Settings):
 
     @property
     def server_url(self):
-        return (
-            "https://sandbox.sendle.com" if self.test_mode else "https://api.sendle.com"
-        )
+        return "https://sandbox.sendle.com" if self.test_mode else "https://api.sendle.com"
 
     @property
     def authorization(self):
-        pair = "%s:%s" % (self.sendle_id, self.api_key)
+        pair = f"{self.sendle_id}:{self.api_key}"
         return base64.b64encode(pair.encode("utf-8")).decode("ascii")
 
 
-def check_for_order_failures(responses: typing.List[str]) -> bool:
+def check_for_order_failures(responses: list[str]) -> bool:
     """Check for shipment failures."""
     _responses = [lib.to_dict(_) for _ in responses]
 

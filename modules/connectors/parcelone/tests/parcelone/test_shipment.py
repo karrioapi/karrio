@@ -2,20 +2,19 @@
 
 import unittest
 from unittest.mock import patch
-from .fixture import gateway
 
-import karrio.sdk as karrio
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 
 class TestParcelOneShipping(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.ShipmentRequest = models.ShipmentRequest(**ShipmentPayload)
-        self.ShipmentCancelRequest = models.ShipmentCancelRequest(
-            **ShipmentCancelPayload
-        )
+        self.ShipmentCancelRequest = models.ShipmentCancelRequest(**ShipmentCancelPayload)
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
@@ -24,9 +23,7 @@ class TestParcelOneShipping(unittest.TestCase):
         self.assertDictEqual(serialized, ShipmentRequestJSON)
 
     def test_create_cancel_shipment_request(self):
-        request = gateway.mapper.create_cancel_shipment_request(
-            self.ShipmentCancelRequest
-        )
+        request = gateway.mapper.create_cancel_shipment_request(self.ShipmentCancelRequest)
 
         self.assertDictEqual(request.serialize(), ShipmentCancelRequestJSON)
 
@@ -53,35 +50,23 @@ class TestParcelOneShipping(unittest.TestCase):
     def test_parse_shipment_response(self):
         with patch("karrio.mappers.parcelone.proxy.lib.request") as mock:
             mock.return_value = ShipmentResponseJSON
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_parse_shipment_error_response(self):
         with patch("karrio.mappers.parcelone.proxy.lib.request") as mock:
             mock.return_value = ShipmentErrorResponseJSON
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
 
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedShipmentErrorResponse
-            )
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentErrorResponse)
 
     def test_parse_cancel_shipment_response(self):
         with patch("karrio.mappers.parcelone.proxy.lib.request") as mock:
             mock.return_value = ShipmentCancelResponseJSON
-            parsed_response = (
-                karrio.Shipment.cancel(self.ShipmentCancelRequest)
-                .from_(gateway)
-                .parse()
-            )
+            parsed_response = karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()
 
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedCancelShipmentResponse
-            )
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedCancelShipmentResponse)
 
 
 if __name__ == "__main__":

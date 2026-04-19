@@ -2,7 +2,7 @@
 
 import django.db.models as models
 import django.db.models.fields.json as json_fields
-from django.db import migrations, connection
+from django.db import connection, migrations
 
 
 def create_gin_indexes(apps, schema_editor):
@@ -86,7 +86,6 @@ class Migration(migrations.Migration):
         # ─────────────────────────────────────────────────────────────────
         # CARRIER SNAPSHOT INDEXES (KeyTextTransform - exact match queries)
         # ─────────────────────────────────────────────────────────────────
-
         # Shipment.carrier.carrier_code index
         # Used by: ShipmentFilters.carrier_filter, ManifestSerializer shipment filter
         migrations.AddIndex(
@@ -127,7 +126,6 @@ class Migration(migrations.Migration):
                 name="manifest_carrier_code_idx",
             ),
         ),
-
         # ─────────────────────────────────────────────────────────────────
         # GIN INDEXES (PostgreSQL only - for has_key, contains, text search)
         # ─────────────────────────────────────────────────────────────────

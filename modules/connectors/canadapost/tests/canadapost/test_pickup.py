@@ -1,12 +1,14 @@
 import unittest
 from unittest.mock import patch
+
 import karrio.sdk as karrio
-from karrio.core.utils import DP
 from karrio.core.models import (
+    PickupCancelRequest,
     PickupRequest,
     PickupUpdateRequest,
-    PickupCancelRequest,
 )
+from karrio.core.utils import DP
+
 from .fixture import gateway
 
 
@@ -35,15 +37,11 @@ class TestCanadaPostPickup(unittest.TestCase):
             update.data.serialize()["pickuprequest"],
             pickup_update_data["confirmation_number"],
         )
-        self.assertEqual(
-            details.data.serialize(), "/enab/2004381/pickuprequest/0074698052/details"
-        )
+        self.assertEqual(details.data.serialize(), "/enab/2004381/pickuprequest/0074698052/details")
 
     def test_cancel_pickup_request(self):
         request = gateway.mapper.create_cancel_pickup_request(self.PickupCancelRequest)
-        self.assertEqual(
-            request.serialize(), self.PickupCancelRequest.confirmation_number
-        )
+        self.assertEqual(request.serialize(), self.PickupCancelRequest.confirmation_number)
 
     def test_create_pickup(self):
         with patch("karrio.mappers.canadapost.proxy.lib.request") as mocks:
@@ -91,22 +89,16 @@ class TestCanadaPostPickup(unittest.TestCase):
     def test_parse_pickup_response(self):
         with patch("karrio.mappers.canadapost.proxy.lib.request") as mocks:
             mocks.side_effect = [PickupAvailabilityResponseXML, PickupResponseXML]
-            parsed_response = (
-                karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
 
             self.assertListEqual(DP.to_dict(parsed_response), ParsedPickupResponse)
 
     def test_parse_pickup_update_response(self):
         with patch("karrio.mappers.canadapost.proxy.lib.request") as mocks:
             mocks.side_effect = [None, PickupDetailseResponseXML]
-            parsed_response = (
-                karrio.Pickup.update(self.PickupUpdateRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Pickup.update(self.PickupUpdateRequest).from_(gateway).parse()
 
-            self.assertListEqual(
-                DP.to_dict(parsed_response), ParsedPickupUpdateResponse
-            )
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedPickupUpdateResponse)
 
 
 if __name__ == "__main__":
@@ -258,7 +250,7 @@ PickupResponseXML = f"""<wrapper>
 </wrapper>
 """
 
-PickupDetailseResponseXML = f"""<pickup-request-detailed-info>
+PickupDetailseResponseXML = """<pickup-request-detailed-info>
     <pickup-request-header>
         <request-id>0074698052</request-id>
         <request-status>Active</request-status>

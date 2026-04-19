@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("manager", "0064_shipment_shipment_created_at_idx_and_more"),
         ("orders", "0016_order_shipments"),

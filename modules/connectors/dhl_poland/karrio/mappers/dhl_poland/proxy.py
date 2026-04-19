@@ -1,8 +1,9 @@
 """Karrio DHL Poland client proxy module."""
-import karrio.lib as lib
+
 import karrio.api.proxy as proxy
-import karrio.universal.mappers.rating_proxy as rating_proxy
+import karrio.lib as lib
 import karrio.mappers.dhl_poland.settings as provider_settings
+import karrio.universal.mappers.rating_proxy as rating_proxy
 
 
 class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
@@ -37,9 +38,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
 
         return lib.Deserializable(
             responses,
-            lambda results: {
-                result["number"]: lib.to_element(result["data"]) for result in results
-            },
+            lambda results: {result["number"]: lib.to_element(result["data"]) for result in results},
         )
 
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable:

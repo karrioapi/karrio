@@ -1,10 +1,8 @@
+import karrio.providers.hermes.units as units
 from karrio.core.metadata import PluginMetadata
-
 from karrio.mappers.hermes.mapper import Mapper
 from karrio.mappers.hermes.proxy import Proxy
 from karrio.mappers.hermes.settings import Settings
-import karrio.providers.hermes.units as units
-
 
 # This METADATA object is used by Karrio to discover and register this plugin
 # when loaded through Python entrypoints or local plugin directories.

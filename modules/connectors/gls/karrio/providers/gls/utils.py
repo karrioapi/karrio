@@ -1,8 +1,9 @@
 import base64
 import datetime
-import karrio.lib as lib
+
 import karrio.core as core
 import karrio.core.errors as errors
+import karrio.lib as lib
 
 
 class Settings(core.Settings):
@@ -21,11 +22,7 @@ class Settings(core.Settings):
 
     @property
     def server_url(self):
-        return (
-            "https://api-sandbox.gls-group.net"
-            if self.test_mode
-            else "https://api.gls-group.net"
-        )
+        return "https://api-sandbox.gls-group.net" if self.test_mode else "https://api.gls-group.net"
 
     @property
     def shipment_api_url(self):
@@ -87,9 +84,7 @@ def login(settings: Settings):
     if any(messages):
         raise errors.ParsedMessagesError(messages=messages)
 
-    expiry = datetime.datetime.now() + datetime.timedelta(
-        seconds=float(response.get("expires_in", 0))
-    )
+    expiry = datetime.datetime.now() + datetime.timedelta(seconds=float(response.get("expires_in", 0)))
     return {**response, "expiry": lib.fdatetime(expiry)}
 
 
@@ -116,25 +111,31 @@ def parse_error_response(response):
         if parsed is not None:
             return content
         # Non-JSON body (e.g. plain text error message from GLS)
-        return lib.to_json(dict(
-            errors=[dict(
-                code=str(response.code),
-                message=content,
-            )]
-        ))
+        return lib.to_json(
+            dict(
+                errors=[
+                    dict(
+                        code=str(response.code),
+                        message=content,
+                    )
+                ]
+            )
+        )
 
     # GLS returns errors in headers with empty body
     error_code = lib.failsafe(lambda: response.headers.get("error"))
     message = lib.failsafe(lambda: response.headers.get("message"))
 
     if error_code or message:
-        return lib.to_json(dict(
-            errors=[dict(
-                code=error_code or str(response.code),
-                message=message or response.reason,
-            )]
-        ))
+        return lib.to_json(
+            dict(
+                errors=[
+                    dict(
+                        code=error_code or str(response.code),
+                        message=message or response.reason,
+                    )
+                ]
+            )
+        )
 
-    return lib.to_json(
-        dict(errors=[dict(code=str(response.code), message=response.reason)])
-    )
+    return lib.to_json(dict(errors=[dict(code=str(response.code), message=response.reason)]))

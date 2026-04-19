@@ -1,8 +1,9 @@
 import csv
 import pathlib
-import karrio.lib as lib
-import karrio.core.units as units
+
 import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
 
 
 class PackagingType(lib.StrEnum):
@@ -187,7 +188,7 @@ def load_services_from_csv() -> list:
     if not csv_path.exists():
         return []
     services_dict: dict[str, dict] = {}
-    with open(csv_path, "r", encoding="utf-8") as f:
+    with open(csv_path, encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
             service_code = row["service_code"]
@@ -214,7 +215,9 @@ def load_services_from_csv() -> list:
                 rate=float(row.get("rate", 0.0)),
                 min_weight=float(row["min_weight"]) if row.get("min_weight") else None,
                 max_weight=float(row["max_weight"]) if row.get("max_weight") else None,
-                transit_days=int(row["transit_days"].split("-")[0]) if row.get("transit_days") and row["transit_days"].split("-")[0].isdigit() else None,
+                transit_days=int(row["transit_days"].split("-")[0])
+                if row.get("transit_days") and row["transit_days"].split("-")[0].isdigit()
+                else None,
                 country_codes=country_codes if country_codes else None,
             )
             services_dict[karrio_service_code]["zones"].append(zone)

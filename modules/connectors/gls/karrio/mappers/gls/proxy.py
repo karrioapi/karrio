@@ -1,9 +1,9 @@
 """Karrio GLS Group client proxy."""
 
-import karrio.lib as lib
 import karrio.api.proxy as proxy
-import karrio.providers.gls.utils as provider_utils
+import karrio.lib as lib
 import karrio.mappers.gls.settings as provider_settings
+import karrio.providers.gls.utils as provider_utils
 import karrio.universal.mappers.rating_proxy as rating_proxy
 
 

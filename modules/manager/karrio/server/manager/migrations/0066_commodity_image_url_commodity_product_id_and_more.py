@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("manager", "0065_alter_address_city_alter_address_company_name_and_more"),
     ]

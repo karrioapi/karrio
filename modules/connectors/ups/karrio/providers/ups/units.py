@@ -1,10 +1,10 @@
 import csv
 import pathlib
-import typing
-import karrio.lib as lib
+
+import karrio.core.models as models
 import karrio.core.units as units
 import karrio.core.utils as utils
-import karrio.core.models as models
+import karrio.lib as lib
 
 PRESET_DEFAULTS = dict(
     dimension_unit="IN",
@@ -25,15 +25,9 @@ class PackagePresets(utils.Enum):
     ups_large_express_box = units.PackagePreset(
         **dict(weight=30.0, width=18.0, height=13.0, length=3.0), **PRESET_DEFAULTS
     )
-    ups_express_tube = units.PackagePreset(
-        **dict(width=38.0, height=6.0, length=6.0), **PRESET_DEFAULTS
-    )
-    ups_express_pak = units.PackagePreset(
-        **dict(width=16.0, height=11.75, length=1.5), **PRESET_DEFAULTS
-    )
-    ups_world_document_box = units.PackagePreset(
-        **dict(width=17.5, height=12.5, length=3.0), **PRESET_DEFAULTS
-    )
+    ups_express_tube = units.PackagePreset(**dict(width=38.0, height=6.0, length=6.0), **PRESET_DEFAULTS)
+    ups_express_pak = units.PackagePreset(**dict(width=16.0, height=11.75, length=1.5), **PRESET_DEFAULTS)
+    ups_world_document_box = units.PackagePreset(**dict(width=17.5, height=12.5, length=3.0), **PRESET_DEFAULTS)
 
 
 class LabelType(utils.Enum):
@@ -484,12 +478,13 @@ class DeliveryConfirmationLevel(utils.Enum):
         if origin == "US" and destination in ["US", "PR"]:
             return cls.PACKAGE.value  # type: ignore
         # US50 to CA/VI/Intl -> Shipment level
-        elif origin == "US" and destination in ["CA", "VI"]:
-            return cls.SHIPMENT.value  # type: ignore
-        elif origin == "US":  # Intl other than CA, PR, VI
-            return cls.SHIPMENT.value  # type: ignore
-        # CA to US50/PR/VI -> Shipment level
-        elif origin == "CA" and destination in ["US", "PR", "VI"]:
+        elif (
+            origin == "US"
+            and destination in ["CA", "VI"]
+            or origin == "US"
+            or origin == "CA"
+            and destination in ["US", "PR", "VI"]
+        ):
             return cls.SHIPMENT.value  # type: ignore
         # CA to CA -> Package level
         elif origin == "CA" and destination == "CA":
@@ -501,10 +496,7 @@ class DeliveryConfirmationLevel(utils.Enum):
         elif origin == "PR" and destination in ["US", "PR"]:
             return cls.PACKAGE.value  # type: ignore
         # PR to CA/VI -> Shipment level
-        elif origin == "PR" and destination in ["CA", "VI"]:
-            return cls.SHIPMENT.value  # type: ignore
-        # PR to Intl other than US50, CA, VI -> Shipment level
-        elif origin == "PR":
+        elif origin == "PR" and destination in ["CA", "VI"] or origin == "PR":
             return cls.SHIPMENT.value  # type: ignore
         # International-supported origin countries to any destination -> Shipment level
         return cls.SHIPMENT.value  # type: ignore
@@ -536,24 +528,30 @@ class DeliveryConfirmationAvailability(utils.Enum):
     INTL_ALL = ["INTL", "ALL", ["1", "2"], "1"]  # Both available, prefer SR
 
     @classmethod
-    def get_available_types(cls, origin: str, destination: str) -> typing.List[str]:
+    def get_available_types(cls, origin: str, destination: str) -> list[str]:
         for member in cls.__members__.values():
-            if member.value[0] == origin and member.value[1] == destination:
-                return member.value[2]
-            elif member.value[0] == origin and member.value[1] == "ALL":
-                return member.value[2]
-            elif member.value[0] == "INTL" and origin not in ["US", "CA", "PR"]:
+            if (
+                member.value[0] == origin
+                and member.value[1] == destination
+                or member.value[0] == origin
+                and member.value[1] == "ALL"
+                or member.value[0] == "INTL"
+                and origin not in ["US", "CA", "PR"]
+            ):
                 return member.value[2]
         return []
 
     @classmethod
     def get_preferred_type(cls, origin: str, destination: str) -> str:
         for member in cls.__members__.values():
-            if member.value[0] == origin and member.value[1] == destination:
-                return member.value[3]
-            elif member.value[0] == origin and member.value[1] == "ALL":
-                return member.value[3]
-            elif member.value[0] == "INTL" and origin not in ["US", "CA", "PR"]:
+            if (
+                member.value[0] == origin
+                and member.value[1] == destination
+                or member.value[0] == origin
+                and member.value[1] == "ALL"
+                or member.value[0] == "INTL"
+                and origin not in ["US", "CA", "PR"]
+            ):
                 return member.value[3]
         return "1"  # Default to signature required
 
@@ -606,15 +604,9 @@ def shipping_options_initializer(
 
     if _has_signature_required and origin_country and destination_country:
         dc_type = _options.get("ups_delivery_confirmation")
-        available_types = DeliveryConfirmationAvailability.get_available_types(
-            origin_country, destination_country
-        )
-        preferred_type = DeliveryConfirmationAvailability.get_preferred_type(
-            origin_country, destination_country
-        )
-        dc_level = DeliveryConfirmationLevel.get_level(
-            origin_country, destination_country
-        )
+        available_types = DeliveryConfirmationAvailability.get_available_types(origin_country, destination_country)
+        preferred_type = DeliveryConfirmationAvailability.get_preferred_type(origin_country, destination_country)
+        dc_level = DeliveryConfirmationLevel.get_level(origin_country, destination_country)
 
         # Validate and adjust delivery confirmation type if needed
         if dc_type and dc_type not in available_types:
@@ -622,16 +614,10 @@ def shipping_options_initializer(
         elif not dc_type and _has_signature_required:
             dc_type = preferred_type  # Use preferred type if none specified
 
-        _options.update(
-            ups_delivery_confirmation=dc_type, ups_delivery_confirmation_level=dc_level
-        )
+        _options.update(ups_delivery_confirmation=dc_type, ups_delivery_confirmation_level=dc_level)
 
-    if _has_dangerous_goods and not "ups_restricted_articles" in _options:
-        _options.update(
-            ups_restricted_articles=lib.identity(
-                _options.get("ups_restricted_articles") or "Y"
-            )
-        )
+    if _has_dangerous_goods and "ups_restricted_articles" not in _options:
+        _options.update(ups_restricted_articles=lib.identity(_options.get("ups_restricted_articles") or "Y"))
 
     # Define carrier option filter.
     def items_filter(key: str) -> bool:
@@ -720,6 +706,7 @@ class TrackingIncidentReason(utils.Enum):
 
     Based on UPS API exception/status codes.
     """
+
     # Carrier-caused issues
     carrier_damaged_parcel = ["DA", "DM", "DMG"]  # Damaged
     carrier_sorting_error = ["MR", "MSR"]  # Misrouted
@@ -902,7 +889,9 @@ def load_services_from_csv() -> list:
             service_code = row["service_code"]
             zone_label = row.get("zone_label", "")
             country_codes_str = row.get("country_codes", "")
-            country_codes = [c.strip() for c in country_codes_str.split(",") if c.strip()] if country_codes_str else None
+            country_codes = (
+                [c.strip() for c in country_codes_str.split(",") if c.strip()] if country_codes_str else None
+            )
 
             zone = models.ServiceZone(
                 label=zone_label if zone_label else None,
@@ -931,9 +920,7 @@ def load_services_from_csv() -> list:
             else:
                 services_dict[service_code]["zones"].append(zone)
 
-    return [
-        models.ServiceLevel(**service_data) for service_data in services_dict.values()
-    ]
+    return [models.ServiceLevel(**service_data) for service_data in services_dict.values()]
 
 
 DEFAULT_SERVICES = load_services_from_csv()

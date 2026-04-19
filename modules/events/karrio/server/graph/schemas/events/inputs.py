@@ -1,9 +1,9 @@
 import datetime
 import typing
-import strawberry
 
-import karrio.server.graph.utils as utils
 import karrio.server.events.serializers as serializers
+import karrio.server.graph.utils as utils
+import strawberry
 
 EventStatusEnum: typing.Any = strawberry.enum(serializers.EventTypes)
 
@@ -11,34 +11,34 @@ EventStatusEnum: typing.Any = strawberry.enum(serializers.EventTypes)
 @strawberry.input
 class CreateWebhookMutationInput(utils.BaseInput):
     url: str
-    enabled_events: typing.List[EventStatusEnum]
-    description: typing.Optional[str] = strawberry.UNSET
-    disabled: typing.Optional[bool] = False
+    enabled_events: list[EventStatusEnum]
+    description: str | None = strawberry.UNSET
+    disabled: bool | None = False
 
 
 @strawberry.input
 class WebhookFilter(utils.Paginated):
-    url: typing.Optional[str] = strawberry.UNSET
-    disabled: typing.Optional[bool] = strawberry.UNSET
-    test_mode: typing.Optional[bool] = strawberry.UNSET
-    events: typing.Optional[typing.List[EventStatusEnum]] = strawberry.UNSET
-    date_after: typing.Optional[datetime.datetime] = strawberry.UNSET
-    date_before: typing.Optional[datetime.datetime] = strawberry.UNSET
+    url: str | None = strawberry.UNSET
+    disabled: bool | None = strawberry.UNSET
+    test_mode: bool | None = strawberry.UNSET
+    events: list[EventStatusEnum] | None = strawberry.UNSET
+    date_after: datetime.datetime | None = strawberry.UNSET
+    date_before: datetime.datetime | None = strawberry.UNSET
 
 
 @strawberry.input
 class UpdateWebhookMutationInput(utils.BaseInput):
     id: str
-    url: typing.Optional[str] = strawberry.UNSET
-    enabled_events: typing.List[EventStatusEnum] = strawberry.UNSET
-    description: typing.Optional[str] = strawberry.UNSET
-    disabled: typing.Optional[bool] = strawberry.UNSET
+    url: str | None = strawberry.UNSET
+    enabled_events: list[EventStatusEnum] = strawberry.UNSET
+    description: str | None = strawberry.UNSET
+    disabled: bool | None = strawberry.UNSET
 
 
 @strawberry.input
 class EventFilter(utils.Paginated):
-    entity_id: typing.Optional[str] = strawberry.UNSET
-    type: typing.Optional[typing.List[EventStatusEnum]] = strawberry.UNSET
-    date_after: typing.Optional[datetime.datetime] = strawberry.UNSET
-    date_before: typing.Optional[datetime.datetime] = strawberry.UNSET
-    keyword: typing.Optional[str] = strawberry.UNSET
+    entity_id: str | None = strawberry.UNSET
+    type: list[EventStatusEnum] | None = strawberry.UNSET
+    date_after: datetime.datetime | None = strawberry.UNSET
+    date_before: datetime.datetime | None = strawberry.UNSET
+    keyword: str | None = strawberry.UNSET

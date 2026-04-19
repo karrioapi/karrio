@@ -1,22 +1,19 @@
-import karrio.schemas.australiapost.shipment_request as australiapost
-import karrio.schemas.australiapost.shipment_response as shipping
+import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
+import karrio.providers.australiapost.error as error
+import karrio.providers.australiapost.units as provider_units
+import karrio.providers.australiapost.utils as provider_utils
 import karrio.schemas.australiapost.label_request as label_request
 import karrio.schemas.australiapost.label_response as labels
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
-import karrio.core.models as models
-import karrio.providers.australiapost.error as error
-import karrio.providers.australiapost.utils as provider_utils
-import karrio.providers.australiapost.units as provider_units
+import karrio.schemas.australiapost.shipment_request as australiapost
+import karrio.schemas.australiapost.shipment_response as shipping
 
 
 def parse_shipment_response(
-    _response: lib.Deserializable[
-        typing.Tuple[dict, typing.Optional[dict], typing.Optional[str]]
-    ],
+    _response: lib.Deserializable[tuple[dict, dict | None, str | None]],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+) -> tuple[list[models.RateDetails], list[models.Message]]:
     [shipment_response, label_response, label] = _response.deserialize()
     shipments = shipment_response.get("shipments") or []
     labels = label_response.get("labels") or []
@@ -24,20 +21,17 @@ def parse_shipment_response(
         *error.parse_error_response(label_response, settings),
         *error.parse_error_response(shipment_response, settings),
     ]
-    shipment = (
-        _extract_details((shipments[0], labels[0], label), settings)
-        if label is not None
-        else None
-    )
+    shipment = _extract_details((shipments[0], labels[0], label), settings) if label is not None else None
 
     return shipment, messages
 
 
 def _extract_details(
-    data: typing.Tuple[dict, dict, str],
+    data: tuple[dict, dict, str],
     settings: provider_utils.Settings,
-    ctx: dict = {},
+    ctx: dict | None = None,
 ) -> models.ShipmentDetails:
+    ctx = ctx or {}
     [shipment_response, label_response, label] = data
     label_format = ctx.get("label_format") or "PDF"
     label_info = lib.to_object(labels.LabelType, label_response)
@@ -81,9 +75,7 @@ def shipment_request(
         shipping_options_initializer=provider_units.shipping_options_initializer,
     )
     customs = lib.to_customs_info(payload.customs, weight_unit=units.WeightUnit.KG.name)
-    label_format, label_layout = provider_units.LabelType.map(
-        payload.label_type or "PDF"
-    ).value
+    label_format, label_layout = provider_units.LabelType.map(payload.label_type or "PDF").value
     label_group = (
         provider_units.ServiceLabelGroup.map(service.name).value
         or provider_units.ServiceLabelGroup.australiapost_parcel_post.value
@@ -202,9 +194,7 @@ def shipment_request(
                                         else None
                                     ),
                                     COMMERCIAL_CLEARANCE=(
-                                        australiapost.CommercialClearanceType()
-                                        if payload.customs
-                                        else None
+                                        australiapost.CommercialClearanceType() if payload.customs else None
                                     ),
                                 )
                                 if any(
@@ -224,8 +214,8 @@ def shipment_request(
                             ),
                             classification_type=(
                                 # fmt: off
-                                provider_units.ContentType.map(customs.content_type).value or "OTHER" 
-                                if payload.customs 
+                                provider_units.ContentType.map(customs.content_type).value or "OTHER"
+                                if payload.customs
                                 else None
                                 # fmt: on
                             ),
@@ -245,11 +235,7 @@ def shipment_request(
                                         weight=content.weight,
                                         item_contents_reference=None,
                                     )
-                                    for content in (
-                                        package.items
-                                        if any(package.items)
-                                        else customs.commodities
-                                    )
+                                    for content in (package.items if any(package.items) else customs.commodities)
                                 ]
                                 if is_intl
                                 else []
@@ -285,9 +271,7 @@ def shipment_request(
     return lib.Serializable(
         request,
         lambda _: dict(
-            shipment=lib.to_dict(
-                lib.to_json(_["shipment"]).replace("shipment_from", "from")
-            ),
+            shipment=lib.to_dict(lib.to_json(_["shipment"]).replace("shipment_from", "from")),
             label=lib.to_dict(_["label"]),
         ),
         dict(label_format=label_format),

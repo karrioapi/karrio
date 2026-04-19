@@ -4,9 +4,8 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0005_alter_metafield_type_alter_metafield_value'),
+        ("core", "0005_alter_metafield_type_alter_metafield_value"),
     ]
 
     operations = [

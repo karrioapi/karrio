@@ -1,43 +1,49 @@
-from karrio.schemas.purolator.estimate_service_2_1_2 import (
-    GetFullEstimateRequest,
-    Shipment,
-    SenderInformation,
-    Address,
-    ReceiverInformation,
-    PackageInformation,
-    TrackingReferenceInformation,
-    PickupInformation,
-    ArrayOfPiece,
-    Piece,
-    Weight as PurolatorWeight,
-    WeightUnit as PurolatorWeightUnit,
-    RequestContext,
-    Dimension as PurolatorDimension,
-    DimensionUnit as PurolatorDimensionUnit,
-    TotalWeight,
-    ShipmentEstimate,
-    PickupType,
-    PhoneNumber,
-    PaymentInformation,
-    PaymentType,
-    InternationalInformation,
-    ArrayOfOptionIDValuePair,
-    OptionIDValuePair,
-)
-
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
 import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
 import karrio.providers.purolator.error as provider_error
 import karrio.providers.purolator.units as provider_units
 import karrio.providers.purolator.utils as provider_utils
+from karrio.schemas.purolator.estimate_service_2_1_2 import (
+    Address,
+    ArrayOfOptionIDValuePair,
+    ArrayOfPiece,
+    GetFullEstimateRequest,
+    InternationalInformation,
+    OptionIDValuePair,
+    PackageInformation,
+    PaymentInformation,
+    PaymentType,
+    PhoneNumber,
+    PickupInformation,
+    PickupType,
+    Piece,
+    ReceiverInformation,
+    RequestContext,
+    SenderInformation,
+    Shipment,
+    ShipmentEstimate,
+    TotalWeight,
+    TrackingReferenceInformation,
+)
+from karrio.schemas.purolator.estimate_service_2_1_2 import (
+    Dimension as PurolatorDimension,
+)
+from karrio.schemas.purolator.estimate_service_2_1_2 import (
+    DimensionUnit as PurolatorDimensionUnit,
+)
+from karrio.schemas.purolator.estimate_service_2_1_2 import (
+    Weight as PurolatorWeight,
+)
+from karrio.schemas.purolator.estimate_service_2_1_2 import (
+    WeightUnit as PurolatorWeightUnit,
+)
 
 
 def parse_rate_response(
     _response: lib.Deserializable[lib.Element],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+) -> tuple[list[models.RateDetails], list[models.Message]]:
     response = _response.deserialize()
     estimates = lib.find_element("ShipmentEstimate", response)
     return (
@@ -57,11 +63,7 @@ def _extract_rate(
         ("Base charge", estimate.BasePrice),
         *(
             (s.Description, s.Amount)
-            for s in (
-                estimate.Taxes.Tax
-                + estimate.Surcharges.Surcharge
-                + estimate.OptionPrices.OptionPrice
-            )
+            for s in (estimate.Taxes.Tax + estimate.Surcharges.Surcharge + estimate.OptionPrices.OptionPrice)
         ),
     ]
 
@@ -186,16 +188,10 @@ def rate_request(
                 ShipmentDate=options.shipment_date.state,
                 PackageInformation=PackageInformation(
                     ServiceID=service.value,
-                    Description=(
-                        packages.description[:25]
-                        if any(packages.description or "")
-                        else None
-                    ),
+                    Description=(packages.description[:25] if any(packages.description or "") else None),
                     TotalWeight=(
                         TotalWeight(
-                            Value=packages.weight.map(
-                                provider_units.MeasurementOptions
-                            ).LB,
+                            Value=packages.weight.map(provider_units.MeasurementOptions).LB,
                             WeightUnit=PurolatorWeightUnit.LB.value,
                         )
                         if packages.weight.value is not None
@@ -207,12 +203,8 @@ def rate_request(
                             Piece(
                                 Weight=(
                                     PurolatorWeight(
-                                        Value=package.weight.map(
-                                            provider_units.MeasurementOptions
-                                        ).value,
-                                        WeightUnit=PurolatorWeightUnit[
-                                            package.weight_unit.value
-                                        ].value,
+                                        Value=package.weight.map(provider_units.MeasurementOptions).value,
+                                        WeightUnit=PurolatorWeightUnit[package.weight_unit.value].value,
                                     )
                                     if package.weight.value
                                     else None
@@ -220,9 +212,7 @@ def rate_request(
                                 Length=(
                                     PurolatorDimension(
                                         Value=package.length.value,
-                                        DimensionUnit=PurolatorDimensionUnit[
-                                            package.dimension_unit.value
-                                        ].value,
+                                        DimensionUnit=PurolatorDimensionUnit[package.dimension_unit.value].value,
                                     )
                                     if package.length.value
                                     else None
@@ -230,9 +220,7 @@ def rate_request(
                                 Width=(
                                     PurolatorDimension(
                                         Value=package.width.value,
-                                        DimensionUnit=PurolatorDimensionUnit[
-                                            package.dimension_unit.value
-                                        ].value,
+                                        DimensionUnit=PurolatorDimensionUnit[package.dimension_unit.value].value,
                                     )
                                     if package.width.value
                                     else None
@@ -240,9 +228,7 @@ def rate_request(
                                 Height=(
                                     PurolatorDimension(
                                         Value=package.height.value,
-                                        DimensionUnit=PurolatorDimensionUnit[
-                                            package.dimension_unit.value
-                                        ].value,
+                                        DimensionUnit=PurolatorDimensionUnit[package.dimension_unit.value].value,
                                     )
                                     if package.height.value
                                     else None
@@ -283,14 +269,10 @@ def rate_request(
                     PaymentType=PaymentType.SENDER.value,
                     RegisteredAccountNumber=settings.account_number,
                 ),
-                PickupInformation=PickupInformation(
-                    PickupType=PickupType.DROP_OFF.value
-                ),
+                PickupInformation=PickupInformation(PickupType=PickupType.DROP_OFF.value),
                 NotificationInformation=None,
                 TrackingReferenceInformation=(
-                    TrackingReferenceInformation(Reference1=payload.reference)
-                    if payload.reference != ""
-                    else None
+                    TrackingReferenceInformation(Reference1=payload.reference) if payload.reference != "" else None
                 ),
                 OtherInformation=None,
                 ProactiveNotification=None,

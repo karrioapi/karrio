@@ -1,18 +1,17 @@
 """Karrio Teleship shipment cancellation API implementation."""
 
-import typing
-import karrio.schemas.teleship.shipment_cancel_request as teleship_req
-import karrio.schemas.teleship.shipment_cancel_response as teleship_res
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.teleship.error as error
 import karrio.providers.teleship.utils as provider_utils
+import karrio.schemas.teleship.shipment_cancel_request as teleship_req
+import karrio.schemas.teleship.shipment_cancel_response as teleship_res
 
 
 def parse_shipment_cancel_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
+) -> tuple[models.ConfirmationDetails, list[models.Message]]:
     """Parse shipment cancellation response from carrier API"""
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)

@@ -1,8 +1,11 @@
 # type: ignore
+# ruff: noqa: F403, F405
+from contextlib import suppress
+
 import posthog
 import sentry_sdk
-from sentry_sdk.integrations.django import DjangoIntegration
 from karrio.server.settings.base import *
+from sentry_sdk.integrations.django import DjangoIntegration
 
 # Try to import PostHog integration, fallback if not available
 try:
@@ -78,6 +81,17 @@ SENTRY_TRACE_PROPAGATION_TARGETS = config(
     default=r"localhost",
 )
 
+_SENTRY_NOISY_ENDPOINTS = (
+    "/health",
+    "/ready",
+    "/live",
+    "/status",
+    "/_health",
+    "/favicon.ico",
+    "/static/",
+    "/robots.txt",
+)
+
 
 def _sentry_traces_sampler(sampling_context):
     """Custom traces sampler that ensures requests with x-request-id are always traced."""
@@ -87,7 +101,7 @@ def _sentry_traces_sampler(sampling_context):
         return 1.0
     # Health checks - never trace
     path = wsgi_env.get("PATH_INFO", "")
-    if any(path.startswith(ep) for ep in ["/health", "/ready", "/live", "/status"]):
+    if any(path.startswith(endpoint) for endpoint in _SENTRY_NOISY_ENDPOINTS):
         return 0.0
     return SENTRY_TRACES_SAMPLE_RATE
 
@@ -114,9 +128,17 @@ def _sentry_before_send(event, hint):
         # Scrub POST data
         if "data" in request_data and isinstance(request_data["data"], dict):
             sensitive_fields = [
-                "password", "secret", "token", "api_key", "apikey",
-                "access_token", "refresh_token", "client_secret",
-                "account_number", "meter_number", "license_key",
+                "password",
+                "secret",
+                "token",
+                "api_key",
+                "apikey",
+                "access_token",
+                "refresh_token",
+                "client_secret",
+                "account_number",
+                "meter_number",
+                "license_key",
             ]
             for field in sensitive_fields:
                 for key in list(request_data["data"].keys()):
@@ -135,18 +157,7 @@ def _sentry_before_send_transaction(event, hint):
     """
     transaction_name = event.get("transaction", "")
 
-    # Filter out health check and monitoring endpoints
-    noisy_endpoints = [
-        "/health",
-        "/ready",
-        "/live",
-        "/_health",
-        "/favicon.ico",
-        "/static/",
-        "/robots.txt",
-    ]
-
-    for endpoint in noisy_endpoints:
+    for endpoint in _SENTRY_NOISY_ENDPOINTS:
         if transaction_name.startswith(endpoint):
             return None  # Drop this transaction
 
@@ -158,8 +169,8 @@ if SENTRY_DSN:
     integrations = [
         DjangoIntegration(
             transaction_style="url",  # Use URL patterns for transaction names
-            middleware_spans=False,   # Disabled for performance (request_id is tagged via set_tag, not spans)
-            signals_spans=False,      # Disabled for performance
+            middleware_spans=False,  # Disabled for performance (request_id is tagged via set_tag, not spans)
+            signals_spans=False,  # Disabled for performance
         ),
     ]
 
@@ -170,79 +181,69 @@ if SENTRY_DSN:
     # Try to add Redis integration if Redis is configured
     try:
         from sentry_sdk.integrations.redis import RedisIntegration
+
         if config("REDIS_URL", default=None) or config("REDIS_HOST", default=None):
             integrations.append(RedisIntegration())
     except ImportError:
         pass
 
-    # Try to add Huey integration for background tasks
-    try:
+    # Try to add Huey integration for background tasks (dev only; not installed in servicebus images)
+    with suppress(Exception):
         from sentry_sdk.integrations.huey import HueyIntegration
+
         integrations.append(HueyIntegration())
-    except ImportError:
-        pass
 
     # Note: karrio SDK uses urllib (not requests), so RequestsIntegration is not used here.
     # Carrier HTTP calls are instrumented via _urlopen_with_span() in karrio/core/utils/helpers.py
     # which wraps urlopen with sentry_sdk.start_span() directly.
 
     # Try to add httpx integration for async HTTP clients
-    try:
+    with suppress(Exception):
         from sentry_sdk.integrations.httpx import HttpxIntegration
+
         integrations.append(HttpxIntegration())
-    except Exception:
-        pass  # httpx may not be installed
 
     # Try to add Strawberry GraphQL integration
-    try:
+    with suppress(Exception):
         from sentry_sdk.integrations.strawberry import StrawberryIntegration
+
         integrations.append(StrawberryIntegration(async_execution=False))
-    except Exception:
-        pass  # strawberry integration may not be available
 
     # Parse trace propagation targets (comma-separated regex patterns)
-    trace_targets = [
-        pattern.strip()
-        for pattern in SENTRY_TRACE_PROPAGATION_TARGETS.split(",")
-        if pattern.strip()
-    ]
+    trace_targets = [pattern.strip() for pattern in SENTRY_TRACE_PROPAGATION_TARGETS.split(",") if pattern.strip()]
 
     sentry_sdk.init(
         dsn=SENTRY_DSN,
         integrations=integrations,
-
         # Environment and release tracking
         environment=SENTRY_ENVIRONMENT,
         release=SENTRY_RELEASE,
-
         # Performance monitoring — use sampler for fine-grained control
         # Always trace requests with explicit x-request-id; skip health checks
         traces_sampler=_sentry_traces_sampler,
         # Only enable profiling if explicitly configured (disabled by default)
-        **({"profile_session_sample_rate": SENTRY_PROFILES_SAMPLE_RATE, "profile_lifecycle": "trace"} if SENTRY_PROFILES_SAMPLE_RATE > 0 else {}),
-
+        **(
+            {"profile_session_sample_rate": SENTRY_PROFILES_SAMPLE_RATE, "profile_lifecycle": "trace"}
+            if SENTRY_PROFILES_SAMPLE_RATE > 0
+            else {}
+        ),
         # Distributed tracing - propagate trace headers to internal services
         # Note: Headers are NOT sent to carrier APIs (they wouldn't understand them)
         trace_propagation_targets=trace_targets,
-
         # Privacy settings
         send_default_pii=SENTRY_SEND_PII,
-
         # Logging integration
         enable_logs=True,
-
         # Debug mode
         debug=SENTRY_DEBUG,
-
         # Event processing hooks
         before_send=_sentry_before_send,
         before_send_transaction=_sentry_before_send_transaction,
-
         # Additional options (reduced for performance)
-        max_breadcrumbs=50,           # Enough for carrier call traces without excessive memory
-        attach_stacktrace=True,       # Attach stack traces to messages
-        include_source_context=False, # Disabled for performance (avoids file I/O on capture)
-        include_local_variables=False, # Disabled for performance (avoids capturing all stack locals)
+        max_breadcrumbs=50,  # Enough for carrier call traces without excessive memory
+        attach_stacktrace=True,  # Attach stack traces to messages
+        include_source_context=False,  # Disabled for performance (avoids file I/O on capture)
+        include_local_variables=False,  # Disabled for performance (avoids capturing all stack locals)
     )
 
     # Set default tags that will be applied to all events
@@ -250,11 +251,9 @@ if SENTRY_DSN:
     sentry_sdk.set_tag("framework", "django")
 
     import logging
+
     logger = logging.getLogger(__name__)
-    logger.info(
-        f"Sentry initialized: env={SENTRY_ENVIRONMENT}, "
-        f"traces_sample_rate={SENTRY_TRACES_SAMPLE_RATE}"
-    )
+    logger.info(f"Sentry initialized: env={SENTRY_ENVIRONMENT}, traces_sample_rate={SENTRY_TRACES_SAMPLE_RATE}")
 
 
 # OpenTelemetry Configuration
@@ -272,26 +271,27 @@ OTEL_ENVIRONMENT = config("OTEL_ENVIRONMENT", default=config("ENV", default="pro
 # Only initialize OpenTelemetry if enabled and endpoint is configured
 if OTEL_ENABLED and OTEL_EXPORTER_OTLP_ENDPOINT:
     import logging
-    from opentelemetry import trace, metrics
-    from opentelemetry.sdk.trace import TracerProvider
-    from opentelemetry.sdk.trace.export import BatchSpanProcessor
-    from opentelemetry.sdk.metrics import MeterProvider
-    from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
-    from opentelemetry.sdk.resources import Resource, SERVICE_NAME, SERVICE_VERSION
+
+    from opentelemetry import metrics, trace
     from opentelemetry.instrumentation.django import DjangoInstrumentor
-    from opentelemetry.instrumentation.requests import RequestsInstrumentor
     from opentelemetry.instrumentation.logging import LoggingInstrumentor
     from opentelemetry.instrumentation.psycopg2 import Psycopg2Instrumentor
     from opentelemetry.instrumentation.redis import RedisInstrumentor
-    
+    from opentelemetry.instrumentation.requests import RequestsInstrumentor
+    from opentelemetry.sdk.metrics import MeterProvider
+    from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
+    from opentelemetry.sdk.resources import SERVICE_NAME, SERVICE_VERSION, Resource
+    from opentelemetry.sdk.trace import TracerProvider
+    from opentelemetry.sdk.trace.export import BatchSpanProcessor
+
     # Import appropriate exporter based on protocol
     if OTEL_EXPORTER_OTLP_PROTOCOL == "grpc":
-        from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
         from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import OTLPMetricExporter
+        from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
     else:  # http/protobuf
-        from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
         from opentelemetry.exporter.otlp.proto.http.metric_exporter import OTLPMetricExporter
-    
+        from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+
     # Parse headers if provided
     headers = {}
     if OTEL_EXPORTER_OTLP_HEADERS:
@@ -299,7 +299,7 @@ if OTEL_ENABLED and OTEL_EXPORTER_OTLP_ENDPOINT:
             if "=" in header_pair:
                 key, value = header_pair.split("=", 1)
                 headers[key.strip()] = value.strip()
-    
+
     # Parse resource attributes
     resource_attributes = {
         SERVICE_NAME: OTEL_SERVICE_NAME,
@@ -307,20 +307,20 @@ if OTEL_ENABLED and OTEL_EXPORTER_OTLP_ENDPOINT:
         "environment": OTEL_ENVIRONMENT,
         "deployment.environment": OTEL_ENVIRONMENT,
     }
-    
+
     if OTEL_RESOURCE_ATTRIBUTES:
         for attr_pair in OTEL_RESOURCE_ATTRIBUTES.split(","):
             if "=" in attr_pair:
                 key, value = attr_pair.split("=", 1)
                 resource_attributes[key.strip()] = value.strip()
-    
+
     # Create resource
     resource = Resource(attributes=resource_attributes)
-    
+
     # Configure Trace Provider
     trace_provider = TracerProvider(resource=resource)
     trace.set_tracer_provider(trace_provider)
-    
+
     # Configure span exporter
     span_exporter = OTLPSpanExporter(
         endpoint=OTEL_EXPORTER_OTLP_ENDPOINT,
@@ -328,7 +328,7 @@ if OTEL_ENABLED and OTEL_EXPORTER_OTLP_ENDPOINT:
     )
     span_processor = BatchSpanProcessor(span_exporter)
     trace_provider.add_span_processor(span_processor)
-    
+
     # Configure Metrics Provider
     metric_exporter = OTLPMetricExporter(
         endpoint=OTEL_EXPORTER_OTLP_ENDPOINT,
@@ -343,42 +343,31 @@ if OTEL_ENABLED and OTEL_EXPORTER_OTLP_ENDPOINT:
         metric_readers=[metric_reader],
     )
     metrics.set_meter_provider(meter_provider)
-    
+
     # Instrument Django
     DjangoInstrumentor().instrument(
         is_sql_commentor_enabled=True,  # Add trace context to SQL queries
         request_hook=lambda span, request: span.set_attribute("http.client_ip", request.META.get("REMOTE_ADDR", "")),
-        response_hook=lambda span, request, response: span.set_attribute("http.response.size", len(response.content) if hasattr(response, 'content') else 0),
+        response_hook=lambda span, request, response: span.set_attribute(
+            "http.response.size", len(response.content) if hasattr(response, "content") else 0
+        ),
     )
-    
+
     # Instrument other libraries
     RequestsInstrumentor().instrument()  # HTTP client requests
     LoggingInstrumentor().instrument(set_logging_format=True)  # Add trace context to logs
-    
+
     # Instrument database if PostgreSQL is used
     if config("DATABASE_ENGINE", default="").endswith("postgresql"):
-        try:
+        with suppress(Exception):
             Psycopg2Instrumentor().instrument()
-        except Exception:
-            pass  # Psycopg2 might not be installed
-    
+
     # Instrument Redis if configured
     if config("REDIS_URL", default=None) or config("REDIS_HOST", default=None):
-        try:
+        with suppress(Exception):
             RedisInstrumentor().instrument()
-        except Exception:
-            pass  # Redis might not be installed
 
-    # Instrument Huey task queue
-    try:
-        from huey.contrib.djhuey import HUEY as huey_instance
-        from karrio.server.lib.otel_huey import HueyInstrumentor
-
-        instrumentor = HueyInstrumentor()
-        instrumentor.instrument(huey_instance)
-    except Exception as e:
-        logger = logging.getLogger(__name__)
-        logger.warning(f"Failed to instrument Huey: {e}")
+    # Huey OTel instrumentation is handled by karrio.server.huey.apps.HueyConfig.ready()
 
     # Log that OpenTelemetry is enabled
     logger = logging.getLogger(__name__)
@@ -432,7 +421,8 @@ if _datadog_enabled:
 
     try:
         import ddtrace
-        from ddtrace import config as dd_config, tracer, patch_all
+        from ddtrace import config as dd_config
+        from ddtrace import patch_all, tracer
 
         # Configure tracer
         ddtrace.config.service = DD_SERVICE
@@ -454,6 +444,7 @@ if _datadog_enabled:
 
         # Set global sample rate
         from ddtrace.sampler import DatadogSampler
+
         tracer.configure(sampler=DatadogSampler(default_sample_rate=DD_TRACE_SAMPLE_RATE))
 
         # Enable log injection
@@ -471,18 +462,15 @@ if _datadog_enabled:
         )
 
         # Patch Huey for background task tracing
-        try:
+        with suppress(Exception):
             from ddtrace import patch
+
             patch(huey=True)
-        except Exception:
-            pass  # Huey integration may not be available in all ddtrace versions
 
         # Enable profiling if configured
         if DD_PROFILING_ENABLED:
-            try:
+            with suppress(ImportError):
                 import ddtrace.profiling.auto  # noqa: F401
-            except ImportError:
-                pass
 
         # Configure DogStatsD for metrics
         try:
@@ -504,20 +492,19 @@ if _datadog_enabled:
             pass  # datadog package not installed, metrics won't work
 
         import logging
+
         logger = logging.getLogger(__name__)
         logger.info(
-            f"Datadog APM initialized: service={DD_SERVICE}, env={DD_ENV}, "
-            f"agent={DD_AGENT_HOST}:{DD_TRACE_AGENT_PORT}"
+            f"Datadog APM initialized: service={DD_SERVICE}, env={DD_ENV}, agent={DD_AGENT_HOST}:{DD_TRACE_AGENT_PORT}"
         )
 
     except ImportError:
         import logging
+
         logger = logging.getLogger(__name__)
-        logger.warning(
-            "Datadog tracing enabled but ddtrace package not installed. "
-            "Install with: pip install ddtrace"
-        )
+        logger.warning("Datadog tracing enabled but ddtrace package not installed. Install with: pip install ddtrace")
     except Exception as e:
         import logging
+
         logger = logging.getLogger(__name__)
         logger.warning(f"Failed to initialize Datadog APM: {e}")

@@ -1,13 +1,13 @@
-import os
-import time
-import typer
-import string
-import pathlib
-from rich.progress import Progress, SpinnerColumn, TextColumn
-import karrio_cli.templates as templates
-import karrio_cli.common.utils as utils
-import typing
 import datetime
+import os
+import pathlib
+import time
+
+import typer
+from rich.progress import Progress, SpinnerColumn, TextColumn
+
+import karrio_cli.common.utils as utils
+import karrio_cli.templates as templates
 
 
 def _add_extension(
@@ -31,11 +31,7 @@ def _add_extension(
         features=features,
         version=version,
         is_xml_api=is_xml_api,
-        compact_name=name.strip()
-        .replace("-", "")
-        .replace("_", "")
-        .replace("&", "")
-        .replace(" ", ""),
+        compact_name=name.strip().replace("-", "").replace("_", "").replace("&", "").replace(" ", ""),
     )
 
     # Update the directory templates with the base directory
@@ -62,48 +58,28 @@ def _add_extension(
         time.sleep(1)
 
         # project files
-        templates.PYPROJECT_TEMPLATE.stream(**context).dump(
-            f"{root_dir}/pyproject.toml"
+        templates.PYPROJECT_TEMPLATE.stream(**context).dump(f"{root_dir}/pyproject.toml")
+        templates.README_TEMPLATE.stream(**context).dump(f"{root_dir}/README.md")
+        (templates.XML_GENERATE_TEMPLATE if is_xml_api else templates.JSON_GENERATE_TEMPLATE).stream(**context).dump(
+            f"{root_dir}/generate"
         )
-        templates.README_TEMPLATE.stream(**context).dump(
-            f"{root_dir}/README.md"
-        )
-        (
-            templates.XML_GENERATE_TEMPLATE
-            if is_xml_api
-            else templates.JSON_GENERATE_TEMPLATE
-        ).stream(**context).dump(f"{root_dir}/generate")
 
         # schema files - create error response schema for all carriers
         if is_xml_api:
-            templates.XML_SCHEMA_ERROR_TEMPLATE.stream(**context).dump(
-                f"{schemas_dir}/error_response.xsd"
-            )
+            templates.XML_SCHEMA_ERROR_TEMPLATE.stream(**context).dump(f"{schemas_dir}/error_response.xsd")
         else:
-            templates.JSON_SCHEMA_ERROR_TEMPLATE.stream(**context).dump(
-                f"{schemas_dir}/error_response.json"
-            )
+            templates.JSON_SCHEMA_ERROR_TEMPLATE.stream(**context).dump(f"{schemas_dir}/error_response.json")
 
-        templates.EMPTY_FILE_TEMPLATE.stream(**context).dump(
-            f"{schema_datatypes_dir}/__init__.py"
-        )
+        templates.EMPTY_FILE_TEMPLATE.stream(**context).dump(f"{schema_datatypes_dir}/__init__.py")
 
         # Generate schema files for selected features
         if "rating" in features:
             if is_xml_api:
-                templates.XML_SCHEMA_RATE_REQUEST_TEMPLATE.stream(**context).dump(
-                    f"{schemas_dir}/rate_request.xsd"
-                )
-                templates.XML_SCHEMA_RATE_RESPONSE_TEMPLATE.stream(**context).dump(
-                    f"{schemas_dir}/rate_response.xsd"
-                )
+                templates.XML_SCHEMA_RATE_REQUEST_TEMPLATE.stream(**context).dump(f"{schemas_dir}/rate_request.xsd")
+                templates.XML_SCHEMA_RATE_RESPONSE_TEMPLATE.stream(**context).dump(f"{schemas_dir}/rate_response.xsd")
             else:
-                templates.JSON_SCHEMA_RATE_REQUEST_TEMPLATE.stream(**context).dump(
-                    f"{schemas_dir}/rate_request.json"
-                )
-                templates.JSON_SCHEMA_RATE_RESPONSE_TEMPLATE.stream(**context).dump(
-                    f"{schemas_dir}/rate_response.json"
-                )
+                templates.JSON_SCHEMA_RATE_REQUEST_TEMPLATE.stream(**context).dump(f"{schemas_dir}/rate_request.json")
+                templates.JSON_SCHEMA_RATE_RESPONSE_TEMPLATE.stream(**context).dump(f"{schemas_dir}/rate_response.json")
 
         if "tracking" in features:
             if is_xml_api:
@@ -206,169 +182,89 @@ def _add_extension(
                 )
 
         # tests files
-        templates.TEST_FIXTURE_TEMPLATE.stream(**context).dump(
-            f"{tests_dir}/fixture.py"
-        )
-        templates.TEST_PROVIDER_IMPORTS_TEMPLATE.stream(**context).dump(
-            f"{tests_dir}/__init__.py"
-        )
-        templates.TEST_IMPORTS_TEMPLATE.stream(**context).dump(
-            f"{root_dir}/tests/__init__.py"
-        )
+        templates.TEST_FIXTURE_TEMPLATE.stream(**context).dump(f"{tests_dir}/fixture.py")
+        templates.TEST_PROVIDER_IMPORTS_TEMPLATE.stream(**context).dump(f"{tests_dir}/__init__.py")
+        templates.TEST_IMPORTS_TEMPLATE.stream(**context).dump(f"{root_dir}/tests/__init__.py")
 
         # plugin files (new structure)
-        templates.PLUGIN_METADATA_TEMPLATE.stream(**context).dump(
-            f"{plugins_dir}/__init__.py"
-        )
+        templates.PLUGIN_METADATA_TEMPLATE.stream(**context).dump(f"{plugins_dir}/__init__.py")
 
         # mappers files (legacy structure)
-        templates.MAPPER_TEMPLATE.stream(**context).dump(
-            f"{mappers_dir}/mapper.py"
-        )
-        templates.MAPPER_PROXY_TEMPLATE.stream(**context).dump(
-            f"{mappers_dir}/proxy.py"
-        )
-        templates.MAPPER_SETTINGS_TEMPLATE.stream(**context).dump(
-            f"{mappers_dir}/settings.py"
-        )
-        templates.MAPPER_IMPORTS_TEMPLATE.stream(**context).dump(
-            f"{mappers_dir}/__init__.py"
-        )
+        templates.MAPPER_TEMPLATE.stream(**context).dump(f"{mappers_dir}/mapper.py")
+        templates.MAPPER_PROXY_TEMPLATE.stream(**context).dump(f"{mappers_dir}/proxy.py")
+        templates.MAPPER_SETTINGS_TEMPLATE.stream(**context).dump(f"{mappers_dir}/settings.py")
+        templates.MAPPER_IMPORTS_TEMPLATE.stream(**context).dump(f"{mappers_dir}/__init__.py")
 
         # providers files
-        templates.PROVIDER_ERROR_TEMPLATE.stream(**context).dump(
-            f"{providers_dir}/error.py"
-        )
-        templates.PROVIDER_UNITS_TEMPLATE.stream(**context).dump(
-            f"{providers_dir}/units.py"
-        )
-        templates.PROVIDER_UTILS_TEMPLATE.stream(**context).dump(
-            f"{providers_dir}/utils.py"
-        )
-        templates.PROVIDER_IMPORTS_TEMPLATE.stream(**context).dump(
-            f"{providers_dir}/__init__.py"
-        )
+        templates.PROVIDER_ERROR_TEMPLATE.stream(**context).dump(f"{providers_dir}/error.py")
+        templates.PROVIDER_UNITS_TEMPLATE.stream(**context).dump(f"{providers_dir}/units.py")
+        templates.PROVIDER_UTILS_TEMPLATE.stream(**context).dump(f"{providers_dir}/utils.py")
+        templates.PROVIDER_IMPORTS_TEMPLATE.stream(**context).dump(f"{providers_dir}/__init__.py")
 
         if "address" in features:
-            templates.TEST_ADDRESS_TEMPLATE.stream(**context).dump(
-                f"{tests_dir}/test_address.py"
-            )
+            templates.TEST_ADDRESS_TEMPLATE.stream(**context).dump(f"{tests_dir}/test_address.py")
 
-            templates.PROVIDER_ADDRESS_TEMPLATE.stream(**context).dump(
-                f"{providers_dir}/address.py"
-            )
+            templates.PROVIDER_ADDRESS_TEMPLATE.stream(**context).dump(f"{providers_dir}/address.py")
 
         if "rating" in features:
-            templates.TEST_RATE_TEMPLATE.stream(**context).dump(
-                f"{tests_dir}/test_rate.py"
-            )
+            templates.TEST_RATE_TEMPLATE.stream(**context).dump(f"{tests_dir}/test_rate.py")
 
-            templates.PROVIDER_RATE_TEMPLATE.stream(**context).dump(
-                f"{providers_dir}/rate.py"
-            )
+            templates.PROVIDER_RATE_TEMPLATE.stream(**context).dump(f"{providers_dir}/rate.py")
 
         if "tracking" in features:
-            templates.TEST_TRACKING_TEMPLATE.stream(**context).dump(
-                f"{tests_dir}/test_tracking.py"
-            )
+            templates.TEST_TRACKING_TEMPLATE.stream(**context).dump(f"{tests_dir}/test_tracking.py")
 
-            templates.PROVIDER_TRACKING_TEMPLATE.stream(**context).dump(
-                f"{providers_dir}/tracking.py"
-            )
+            templates.PROVIDER_TRACKING_TEMPLATE.stream(**context).dump(f"{providers_dir}/tracking.py")
 
         if "document" in features:
-            templates.TEST_DOCUMENT_UPLOAD_TEMPLATE.stream(**context).dump(
-                f"{tests_dir}/test_document.py"
-            )
+            templates.TEST_DOCUMENT_UPLOAD_TEMPLATE.stream(**context).dump(f"{tests_dir}/test_document.py")
 
-            templates.PROVIDER_DOCUMENT_UPLOAD_TEMPLATE.stream(**context).dump(
-                f"{providers_dir}/document.py"
-            )
+            templates.PROVIDER_DOCUMENT_UPLOAD_TEMPLATE.stream(**context).dump(f"{providers_dir}/document.py")
 
         if "manifest" in features:
-            templates.TEST_MANIFEST_TEMPLATE.stream(**context).dump(
-                f"{tests_dir}/test_manifest.py"
-            )
+            templates.TEST_MANIFEST_TEMPLATE.stream(**context).dump(f"{tests_dir}/test_manifest.py")
 
-            templates.PROVIDER_MANIFEST_TEMPLATE.stream(**context).dump(
-                f"{providers_dir}/manifest.py"
-            )
+            templates.PROVIDER_MANIFEST_TEMPLATE.stream(**context).dump(f"{providers_dir}/manifest.py")
 
         if "shipping" in features:
-            templates.TEST_SHIPMENT_TEMPLATE.stream(**context).dump(
-                f"{tests_dir}/test_shipment.py"
-            )
+            templates.TEST_SHIPMENT_TEMPLATE.stream(**context).dump(f"{tests_dir}/test_shipment.py")
 
             os.makedirs(f"{providers_dir}/shipment", exist_ok=True)
-            templates.PROVIDER_SHIPMENT_CANCEL_TEMPLATE.stream(**context).dump(
-                f"{providers_dir}/shipment/cancel.py"
-            )
-            templates.PROVIDER_SHIPMENT_CREATE_TEMPLATE.stream(**context).dump(
-                f"{providers_dir}/shipment/create.py"
-            )
-            templates.PROVIDER_SHIPMENT_IMPORTS_TEMPLATE.stream(**context).dump(
-                f"{providers_dir}/shipment/__init__.py"
-            )
+            templates.PROVIDER_SHIPMENT_CANCEL_TEMPLATE.stream(**context).dump(f"{providers_dir}/shipment/cancel.py")
+            templates.PROVIDER_SHIPMENT_CREATE_TEMPLATE.stream(**context).dump(f"{providers_dir}/shipment/create.py")
+            templates.PROVIDER_SHIPMENT_IMPORTS_TEMPLATE.stream(**context).dump(f"{providers_dir}/shipment/__init__.py")
 
         if "pickup" in features:
-            templates.TEST_PICKUP_TEMPLATE.stream(**context).dump(
-                f"{tests_dir}/test_pickup.py"
-            )
+            templates.TEST_PICKUP_TEMPLATE.stream(**context).dump(f"{tests_dir}/test_pickup.py")
 
             os.makedirs(f"{providers_dir}/pickup", exist_ok=True)
-            templates.PROVIDER_PICKUP_CANCEL_TEMPLATE.stream(**context).dump(
-                f"{providers_dir}/pickup/cancel.py"
-            )
-            templates.PROVIDER_PICKUP_CREATE_TEMPLATE.stream(**context).dump(
-                f"{providers_dir}/pickup/create.py"
-            )
-            templates.PROVIDER_PICKUP_UPDATE_TEMPLATE.stream(**context).dump(
-                f"{providers_dir}/pickup/update.py"
-            )
-            templates.PROVIDER_PICKUP_IMPORTS_TEMPLATE.stream(**context).dump(
-                f"{providers_dir}/pickup/__init__.py"
-            )
+            templates.PROVIDER_PICKUP_CANCEL_TEMPLATE.stream(**context).dump(f"{providers_dir}/pickup/cancel.py")
+            templates.PROVIDER_PICKUP_CREATE_TEMPLATE.stream(**context).dump(f"{providers_dir}/pickup/create.py")
+            templates.PROVIDER_PICKUP_UPDATE_TEMPLATE.stream(**context).dump(f"{providers_dir}/pickup/update.py")
+            templates.PROVIDER_PICKUP_IMPORTS_TEMPLATE.stream(**context).dump(f"{providers_dir}/pickup/__init__.py")
 
         if "webhook" in features:
             os.makedirs(f"{providers_dir}/webhook", exist_ok=True)
-            templates.webhook.WEBHOOK_REGISTER_TEMPLATE.stream(**context).dump(
-                f"{providers_dir}/webhook/register.py"
-            )
+            templates.webhook.WEBHOOK_REGISTER_TEMPLATE.stream(**context).dump(f"{providers_dir}/webhook/register.py")
             templates.webhook.WEBHOOK_DEREGISTER_TEMPLATE.stream(**context).dump(
                 f"{providers_dir}/webhook/deregister.py"
             )
-            templates.webhook.WEBHOOK_INIT_TEMPLATE.stream(**context).dump(
-                f"{providers_dir}/webhook/__init__.py"
-            )
+            templates.webhook.WEBHOOK_INIT_TEMPLATE.stream(**context).dump(f"{providers_dir}/webhook/__init__.py")
 
             os.makedirs(f"{providers_dir}/callback", exist_ok=True)
-            templates.callback.CALLBACK_EVENT_TEMPLATE.stream(**context).dump(
-                f"{providers_dir}/callback/event.py"
-            )
-            templates.callback.CALLBACK_OAUTH_TEMPLATE.stream(**context).dump(
-                f"{providers_dir}/callback/oauth.py"
-            )
-            templates.callback.CALLBACK_INIT_TEMPLATE.stream(**context).dump(
-                f"{providers_dir}/callback/__init__.py"
-            )
+            templates.callback.CALLBACK_EVENT_TEMPLATE.stream(**context).dump(f"{providers_dir}/callback/event.py")
+            templates.callback.CALLBACK_OAUTH_TEMPLATE.stream(**context).dump(f"{providers_dir}/callback/oauth.py")
+            templates.callback.CALLBACK_INIT_TEMPLATE.stream(**context).dump(f"{providers_dir}/callback/__init__.py")
 
-            templates.callback.CALLBACK_MAPPER_TEMPLATE.stream(**context).dump(
-                f"{mappers_dir}/callback.py"
-            )
+            templates.callback.CALLBACK_MAPPER_TEMPLATE.stream(**context).dump(f"{mappers_dir}/callback.py")
 
         if "duties" in features:
-            templates.duties.DUTIES_TEMPLATE.stream(**context).dump(
-                f"{providers_dir}/duties.py"
-            )
+            templates.duties.DUTIES_TEMPLATE.stream(**context).dump(f"{providers_dir}/duties.py")
 
         if "insurance" in features:
             os.makedirs(f"{providers_dir}/insurance", exist_ok=True)
-            templates.insurance.INSURANCE_APPLY_TEMPLATE.stream(**context).dump(
-                f"{providers_dir}/insurance/apply.py"
-            )
-            templates.insurance.INSURANCE_INIT_TEMPLATE.stream(**context).dump(
-                f"{providers_dir}/insurance/__init__.py"
-            )
+            templates.insurance.INSURANCE_APPLY_TEMPLATE.stream(**context).dump(f"{providers_dir}/insurance/apply.py")
+            templates.insurance.INSURANCE_INIT_TEMPLATE.stream(**context).dump(f"{providers_dir}/insurance/__init__.py")
 
         if "manifest" in features:
             if is_xml_api:
@@ -403,87 +299,49 @@ def _add_extension(
                 )
 
         if "address" in features:
-            templates.TEST_ADDRESS_TEMPLATE.stream(**context).dump(
-                f"{tests_dir}/test_address.py"
-            )
+            templates.TEST_ADDRESS_TEMPLATE.stream(**context).dump(f"{tests_dir}/test_address.py")
 
-            templates.PROVIDER_ADDRESS_TEMPLATE.stream(**context).dump(
-                f"{providers_dir}/address.py"
-            )
+            templates.PROVIDER_ADDRESS_TEMPLATE.stream(**context).dump(f"{providers_dir}/address.py")
 
         if "rating" in features:
-            templates.TEST_RATE_TEMPLATE.stream(**context).dump(
-                f"{tests_dir}/test_rate.py"
-            )
+            templates.TEST_RATE_TEMPLATE.stream(**context).dump(f"{tests_dir}/test_rate.py")
 
-            templates.PROVIDER_RATE_TEMPLATE.stream(**context).dump(
-                f"{providers_dir}/rate.py"
-            )
+            templates.PROVIDER_RATE_TEMPLATE.stream(**context).dump(f"{providers_dir}/rate.py")
 
         if "tracking" in features:
-            templates.TEST_TRACKING_TEMPLATE.stream(**context).dump(
-                f"{tests_dir}/test_tracking.py"
-            )
+            templates.TEST_TRACKING_TEMPLATE.stream(**context).dump(f"{tests_dir}/test_tracking.py")
 
-            templates.PROVIDER_TRACKING_TEMPLATE.stream(**context).dump(
-                f"{providers_dir}/tracking.py"
-            )
+            templates.PROVIDER_TRACKING_TEMPLATE.stream(**context).dump(f"{providers_dir}/tracking.py")
 
         if "document" in features:
-            templates.TEST_DOCUMENT_UPLOAD_TEMPLATE.stream(**context).dump(
-                f"{tests_dir}/test_document.py"
-            )
+            templates.TEST_DOCUMENT_UPLOAD_TEMPLATE.stream(**context).dump(f"{tests_dir}/test_document.py")
 
-            templates.PROVIDER_DOCUMENT_UPLOAD_TEMPLATE.stream(**context).dump(
-                f"{providers_dir}/document.py"
-            )
+            templates.PROVIDER_DOCUMENT_UPLOAD_TEMPLATE.stream(**context).dump(f"{providers_dir}/document.py")
 
         if "manifest" in features:
-            templates.TEST_MANIFEST_TEMPLATE.stream(**context).dump(
-                f"{tests_dir}/test_manifest.py"
-            )
+            templates.TEST_MANIFEST_TEMPLATE.stream(**context).dump(f"{tests_dir}/test_manifest.py")
 
-            templates.PROVIDER_MANIFEST_TEMPLATE.stream(**context).dump(
-                f"{providers_dir}/manifest.py"
-            )
+            templates.PROVIDER_MANIFEST_TEMPLATE.stream(**context).dump(f"{providers_dir}/manifest.py")
 
         if "shipping" in features:
-            templates.TEST_SHIPMENT_TEMPLATE.stream(**context).dump(
-                f"{tests_dir}/test_shipment.py"
-            )
+            templates.TEST_SHIPMENT_TEMPLATE.stream(**context).dump(f"{tests_dir}/test_shipment.py")
 
             os.makedirs(f"{providers_dir}/shipment", exist_ok=True)
-            templates.PROVIDER_SHIPMENT_CANCEL_TEMPLATE.stream(**context).dump(
-                f"{providers_dir}/shipment/cancel.py"
-            )
-            templates.PROVIDER_SHIPMENT_CREATE_TEMPLATE.stream(**context).dump(
-                f"{providers_dir}/shipment/create.py"
-            )
+            templates.PROVIDER_SHIPMENT_CANCEL_TEMPLATE.stream(**context).dump(f"{providers_dir}/shipment/cancel.py")
+            templates.PROVIDER_SHIPMENT_CREATE_TEMPLATE.stream(**context).dump(f"{providers_dir}/shipment/create.py")
             templates.PROVIDER_SHIPMENT_RETURN_TEMPLATE.stream(**context).dump(
                 f"{providers_dir}/shipment/return_shipment.py"
             )
-            templates.PROVIDER_SHIPMENT_IMPORTS_TEMPLATE.stream(**context).dump(
-                f"{providers_dir}/shipment/__init__.py"
-            )
+            templates.PROVIDER_SHIPMENT_IMPORTS_TEMPLATE.stream(**context).dump(f"{providers_dir}/shipment/__init__.py")
 
         if "pickup" in features:
-            templates.TEST_PICKUP_TEMPLATE.stream(**context).dump(
-                f"{tests_dir}/test_pickup.py"
-            )
+            templates.TEST_PICKUP_TEMPLATE.stream(**context).dump(f"{tests_dir}/test_pickup.py")
 
             os.makedirs(f"{providers_dir}/pickup", exist_ok=True)
-            templates.PROVIDER_PICKUP_CANCEL_TEMPLATE.stream(**context).dump(
-                f"{providers_dir}/pickup/cancel.py"
-            )
-            templates.PROVIDER_PICKUP_CREATE_TEMPLATE.stream(**context).dump(
-                f"{providers_dir}/pickup/create.py"
-            )
-            templates.PROVIDER_PICKUP_UPDATE_TEMPLATE.stream(**context).dump(
-                f"{providers_dir}/pickup/update.py"
-            )
-            templates.PROVIDER_PICKUP_IMPORTS_TEMPLATE.stream(**context).dump(
-                f"{providers_dir}/pickup/__init__.py"
-            )
+            templates.PROVIDER_PICKUP_CANCEL_TEMPLATE.stream(**context).dump(f"{providers_dir}/pickup/cancel.py")
+            templates.PROVIDER_PICKUP_CREATE_TEMPLATE.stream(**context).dump(f"{providers_dir}/pickup/create.py")
+            templates.PROVIDER_PICKUP_UPDATE_TEMPLATE.stream(**context).dump(f"{providers_dir}/pickup/update.py")
+            templates.PROVIDER_PICKUP_IMPORTS_TEMPLATE.stream(**context).dump(f"{providers_dir}/pickup/__init__.py")
 
     typer.echo("Done!")
 
@@ -512,11 +370,7 @@ def _add_features(
         name=name,
         features=features,
         is_xml_api=is_xml_api,
-        compact_name=name.strip()
-        .replace("-", "")
-        .replace("_", "")
-        .replace("&", "")
-        .replace(" ", ""),
+        compact_name=name.strip().replace("-", "").replace("_", "").replace("&", "").replace(" ", ""),
     )
 
     # Update the directory templates with the base directory
@@ -526,8 +380,6 @@ def _add_features(
     plugins_dir = os.path.join(root_dir, "karrio", "plugins", id)  # New plugin structure
     mappers_dir = os.path.join(root_dir, "karrio", "mappers", id)
     providers_dir = os.path.join(root_dir, "karrio", "providers", id)
-    schema_datatypes_dir = os.path.join(root_dir, "karrio", "schemas", id)
-
     with Progress(
         SpinnerColumn(),
         TextColumn("[progress.description]{task.description}"),
@@ -556,14 +408,10 @@ def _add_features(
                 )
 
             utils.karrio_log("Adding rating test file...")
-            templates.TEST_RATE_TEMPLATE.stream(**context).dump(
-                os.path.join(tests_dir, "test_rate.py")
-            )
+            templates.TEST_RATE_TEMPLATE.stream(**context).dump(os.path.join(tests_dir, "test_rate.py"))
 
             utils.karrio_log("Adding rating provider files...")
-            templates.PROVIDER_RATE_TEMPLATE.stream(**context).dump(
-                os.path.join(providers_dir, "rate.py")
-            )
+            templates.PROVIDER_RATE_TEMPLATE.stream(**context).dump(os.path.join(providers_dir, "rate.py"))
 
         if "tracking" in features:
             if is_xml_api:
@@ -584,20 +432,14 @@ def _add_features(
                 )
 
             utils.karrio_log("Adding tracking test file...")
-            templates.TEST_TRACKING_TEMPLATE.stream(**context).dump(
-                os.path.join(tests_dir, "test_tracking.py")
-            )
+            templates.TEST_TRACKING_TEMPLATE.stream(**context).dump(os.path.join(tests_dir, "test_tracking.py"))
 
             utils.karrio_log("Adding tracking provider files...")
-            templates.PROVIDER_TRACKING_TEMPLATE.stream(**context).dump(
-                os.path.join(providers_dir, "tracking.py")
-            )
+            templates.PROVIDER_TRACKING_TEMPLATE.stream(**context).dump(os.path.join(providers_dir, "tracking.py"))
 
         if "shipping" in features:
             os.makedirs(os.path.join(providers_dir, "shipment"), exist_ok=True)
-            templates.EMPTY_FILE_TEMPLATE.stream(**context).dump(
-                os.path.join(providers_dir, "shipment", "__init__.py")
-            )
+            templates.EMPTY_FILE_TEMPLATE.stream(**context).dump(os.path.join(providers_dir, "shipment", "__init__.py"))
 
             if is_xml_api:
                 utils.karrio_log("Adding shipment schema files...")
@@ -629,9 +471,7 @@ def _add_features(
                 )
 
             utils.karrio_log("Adding shipment test file...")
-            templates.TEST_SHIPMENT_TEMPLATE.stream(**context).dump(
-                os.path.join(tests_dir, "test_shipment.py")
-            )
+            templates.TEST_SHIPMENT_TEMPLATE.stream(**context).dump(os.path.join(tests_dir, "test_shipment.py"))
 
             utils.karrio_log("Adding shipment provider files...")
             templates.PROVIDER_SHIPMENT_TEMPLATE.stream(**context).dump(
@@ -649,9 +489,7 @@ def _add_features(
 
         if "pickup" in features:
             os.makedirs(os.path.join(providers_dir, "pickup"), exist_ok=True)
-            templates.EMPTY_FILE_TEMPLATE.stream(**context).dump(
-                os.path.join(providers_dir, "pickup", "__init__.py")
-            )
+            templates.EMPTY_FILE_TEMPLATE.stream(**context).dump(os.path.join(providers_dir, "pickup", "__init__.py"))
 
             if is_xml_api:
                 utils.karrio_log("Adding pickup schema files...")
@@ -695,9 +533,7 @@ def _add_features(
                 )
 
             utils.karrio_log("Adding pickup test file...")
-            templates.TEST_PICKUP_TEMPLATE.stream(**context).dump(
-                os.path.join(tests_dir, "test_pickup.py")
-            )
+            templates.TEST_PICKUP_TEMPLATE.stream(**context).dump(os.path.join(tests_dir, "test_pickup.py"))
 
             utils.karrio_log("Adding pickup provider files...")
             templates.PROVIDER_PICKUP_TEMPLATE.stream(**context).dump(
@@ -709,9 +545,7 @@ def _add_features(
             templates.PROVIDER_PICKUP_CANCEL_TEMPLATE.stream(**context).dump(
                 os.path.join(providers_dir, "pickup", "cancel.py")
             )
-            templates.PROVIDER_PICKUP_INDEX_TEMPLATE.stream(**context).dump(
-                os.path.join(providers_dir, "pickup.py")
-            )
+            templates.PROVIDER_PICKUP_INDEX_TEMPLATE.stream(**context).dump(os.path.join(providers_dir, "pickup.py"))
 
         if "address" in features:
             if is_xml_api:
@@ -732,24 +566,16 @@ def _add_features(
                 )
 
             utils.karrio_log("Adding address test file...")
-            templates.TEST_ADDRESS_TEMPLATE.stream(**context).dump(
-                os.path.join(tests_dir, "test_address.py")
-            )
+            templates.TEST_ADDRESS_TEMPLATE.stream(**context).dump(os.path.join(tests_dir, "test_address.py"))
 
             utils.karrio_log("Adding address provider files...")
-            templates.PROVIDER_ADDRESS_TEMPLATE.stream(**context).dump(
-                os.path.join(providers_dir, "address.py")
-            )
+            templates.PROVIDER_ADDRESS_TEMPLATE.stream(**context).dump(os.path.join(providers_dir, "address.py"))
 
             # If this is a validator plugin, create validators directory
             validators_dir = os.path.join(root_dir, "karrio", "validators", id)
             os.makedirs(validators_dir, exist_ok=True)
-            templates.VALIDATOR_TEMPLATE.stream(**context).dump(
-                os.path.join(validators_dir, "validator.py")
-            )
-            templates.VALIDATOR_IMPORTS_TEMPLATE.stream(**context).dump(
-                os.path.join(validators_dir, "__init__.py")
-            )
+            templates.VALIDATOR_TEMPLATE.stream(**context).dump(os.path.join(validators_dir, "validator.py"))
+            templates.VALIDATOR_IMPORTS_TEMPLATE.stream(**context).dump(os.path.join(validators_dir, "__init__.py"))
 
         if "document" in features:
             if is_xml_api:
@@ -770,14 +596,10 @@ def _add_features(
                 )
 
             utils.karrio_log("Adding document test file...")
-            templates.TEST_DOCUMENT_TEMPLATE.stream(**context).dump(
-                os.path.join(tests_dir, "test_document.py")
-            )
+            templates.TEST_DOCUMENT_TEMPLATE.stream(**context).dump(os.path.join(tests_dir, "test_document.py"))
 
             utils.karrio_log("Adding document provider files...")
-            templates.PROVIDER_DOCUMENT_TEMPLATE.stream(**context).dump(
-                os.path.join(providers_dir, "document.py")
-            )
+            templates.PROVIDER_DOCUMENT_TEMPLATE.stream(**context).dump(os.path.join(providers_dir, "document.py"))
 
         if "manifest" in features:
             if is_xml_api:
@@ -798,14 +620,10 @@ def _add_features(
                 )
 
             utils.karrio_log("Adding manifest test file...")
-            templates.TEST_MANIFEST_TEMPLATE.stream(**context).dump(
-                os.path.join(tests_dir, "test_manifest.py")
-            )
+            templates.TEST_MANIFEST_TEMPLATE.stream(**context).dump(os.path.join(tests_dir, "test_manifest.py"))
 
             utils.karrio_log("Adding manifest provider files...")
-            templates.PROVIDER_MANIFEST_TEMPLATE.stream(**context).dump(
-                os.path.join(providers_dir, "manifest.py")
-            )
+            templates.PROVIDER_MANIFEST_TEMPLATE.stream(**context).dump(os.path.join(providers_dir, "manifest.py"))
 
         # Create plugins directory if it doesn't exist (for new structure)
         if not os.path.exists(plugins_dir):
@@ -817,19 +635,15 @@ def _add_features(
                 mappers_init_path = os.path.join(mappers_dir, "__init__.py")
                 if os.path.exists(mappers_init_path):
                     utils.karrio_log("Creating plugin METADATA file...")
-                    templates.PLUGIN_METADATA_TEMPLATE.stream(**context).dump(
-                        os.path.join(plugins_dir, "__init__.py")
-                    )
+                    templates.PLUGIN_METADATA_TEMPLATE.stream(**context).dump(os.path.join(plugins_dir, "__init__.py"))
 
                     # If the mapper has METADATA, convert it to just imports
-                    with open(mappers_init_path, "r") as f:
+                    with open(mappers_init_path) as f:
                         content = f.read()
 
                     if "METADATA" in content:
                         utils.karrio_log("Updating mapper __init__.py to use imports only...")
-                        templates.MAPPER_IMPORTS_TEMPLATE.stream(**context).dump(
-                            mappers_init_path
-                        )
+                        templates.MAPPER_IMPORTS_TEMPLATE.stream(**context).dump(mappers_init_path)
 
 
 app = typer.Typer()
@@ -839,23 +653,15 @@ app = typer.Typer()
 def add_extension(
     path: str = typer.Option(..., "--path", "-p", help="Path where the extension will be created"),
     carrier_slug: str = typer.Option(
-        ...,
-        prompt=True,
-        help="The unique identifier for the carrier (e.g., dhl_express, ups, fedex, canadapost)"
+        ..., prompt=True, help="The unique identifier for the carrier (e.g., dhl_express, ups, fedex, canadapost)"
     ),
     display_name: str = typer.Option(
-        ...,
-        prompt=True,
-        help="The human-readable name for the carrier (e.g., DHL, UPS, FedEx, Canada Post)"
+        ..., prompt=True, help="The human-readable name for the carrier (e.g., DHL, UPS, FedEx, Canada Post)"
     ),
-    features: typing.Optional[str] = typer.Option(
-        ", ".join(utils.DEFAULT_FEATURES), prompt=True
-    ),
-    version: typing.Optional[str] = typer.Option(
-        f"{datetime.datetime.now().strftime('%Y.%-m')}", prompt=True
-    ),
-    is_xml_api: typing.Optional[bool] = typer.Option(False, prompt="Is XML API?"),
-    confirm: typing.Optional[bool] = typer.Option(False, "--confirm", help="Skip confirmation prompt"),
+    features: str | None = typer.Option(", ".join(utils.DEFAULT_FEATURES), prompt=True),
+    version: str | None = typer.Option(f"{datetime.datetime.now().strftime('%Y.%-m')}", prompt=True),
+    is_xml_api: bool | None = typer.Option(False, prompt="Is XML API?"),
+    confirm: bool | None = typer.Option(False, "--confirm", help="Skip confirmation prompt"),
 ):
     # Resolve the provided path for confirmation
     full_path = pathlib.Path(path).resolve() / carrier_slug.lower()
@@ -885,21 +691,15 @@ def add_extension(
 @app.command()
 def add_features(
     carrier_slug: str = typer.Option(
-        ...,
-        prompt=True,
-        help="The unique identifier for the carrier (e.g., dhl_express, ups, fedex, canadapost)"
+        ..., prompt=True, help="The unique identifier for the carrier (e.g., dhl_express, ups, fedex, canadapost)"
     ),
     display_name: str = typer.Option(
-        ...,
-        prompt=True,
-        help="The human-readable name for the carrier (e.g., DHL, UPS, FedEx, Canada Post)"
+        ..., prompt=True, help="The human-readable name for the carrier (e.g., DHL, UPS, FedEx, Canada Post)"
     ),
-    features: typing.Optional[str] = typer.Option(
-        ", ".join(utils.DEFAULT_FEATURES), prompt=True
-    ),
-    is_xml_api: typing.Optional[bool] = typer.Option(False, prompt="Is XML API?"),
+    features: str | None = typer.Option(", ".join(utils.DEFAULT_FEATURES), prompt=True),
+    is_xml_api: bool | None = typer.Option(False, prompt="Is XML API?"),
     path: str = typer.Option(..., "--path", "-p", help="Path where the features will be created"),
-    confirm: typing.Optional[bool] = typer.Option(False, "--confirm", help="Skip confirmation prompt"),
+    confirm: bool | None = typer.Option(False, "--confirm", help="Skip confirmation prompt"),
 ):
     # Resolve the provided path for confirmation
     full_path = pathlib.Path(path).resolve() / carrier_slug.lower()

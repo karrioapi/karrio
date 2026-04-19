@@ -1,12 +1,11 @@
 import json
-from import_export import resources
 
-import karrio.server.serializers as serializers
 import karrio.server.manager.models as manager
 import karrio.server.providers.models as providers
-from karrio.server.core import utils, gateway, exceptions
+import karrio.server.serializers as serializers
+from import_export import resources
+from karrio.server.core import exceptions, gateway, utils
 from karrio.server.core.utils import create_carrier_snapshot
-
 
 DEFAULT_HEADERS = {
     "id": "ID",
@@ -34,7 +33,7 @@ def tracker_export_resource(query_params: dict, context, data_fields: dict = Non
             model = manager.Tracking
             fields = _fields
             exclude = _exclude
-            export_order = [k for k in field_headers.keys() if k not in _exclude]
+            export_order = [k for k in field_headers if k not in _exclude]
 
         def get_queryset(self):
             return queryset
@@ -83,7 +82,7 @@ def tracker_import_resource(
             model = manager.Tracking
             fields = _fields
             exclude = _exclude
-            export_order = [k for k in field_headers.keys() if k not in _exclude]
+            export_order = [k for k in field_headers if k not in _exclude]
 
         def get_queryset(self):
             return queryset
@@ -100,14 +99,14 @@ def tracker_import_resource(
             if len(tracking_number or "") == 0:
                 errors.append(
                     exceptions.APIException(
-                        f"A tracking number is required.",
+                        "A tracking number is required.",
                         code="tracking_number_required",
                     )
                 )
             if carrier_id is None:
                 errors.append(
                     exceptions.APIException(
-                        f"No carrier connection found.",
+                        "No carrier connection found.",
                         code="invalid_carrier",
                     )
                 )
@@ -117,11 +116,7 @@ def tracker_import_resource(
                     code="invalid_row",
                 )
 
-            tracker = (
-                manager.Tracking.access_by(context)
-                .filter(tracking_number=tracking_number)
-                .first()
-            )
+            tracker = manager.Tracking.access_by(context).filter(tracking_number=tracking_number).first()
             carrier = providers.CarrierConnection.objects.get(id=carrier_id)
             exists = getattr(tracker, "carrier_name", None) == carrier.carrier_name
             meta_dict = {} if batch_id is None else dict(meta=dict(batch_id=batch_id))
@@ -144,9 +139,7 @@ def tracker_import_resource(
             )
             return instance
 
-        def save_instance(
-            self, instance, is_create, using_transactions=True, dry_run=False
-        ):
+        def save_instance(self, instance, is_create, using_transactions=True, dry_run=False):
             is_create = instance.pk is None
 
             result = super().save_instance(
@@ -164,12 +157,10 @@ def tracker_import_resource(
         def before_import(self, dataset, using_transactions, dry_run, **kwargs):
             if dry_run:
                 # Retrieve requested carriers from the database to set their id in the carrier column
-                carrier_col = dataset.get_col(
-                    dataset.headers.index(data_fields.get("carrier"))
-                )
+                carrier_col = dataset.get_col(dataset.headers.index(data_fields.get("carrier")))
                 carriers = {
                     carrier_name: utils.failsafe(
-                        lambda: gateway.Carriers.first(
+                        lambda carrier_name=carrier_name: gateway.Carriers.first(
                             context=context,
                             capability="tracking",
                             carrier_name=carrier_name,
@@ -181,10 +172,7 @@ def tracker_import_resource(
 
                 del dataset[data_fields.get("carrier")]
                 dataset.append_col(
-                    [
-                        getattr(carriers.get(carrier_name), "id", None)
-                        for carrier_name in carrier_col
-                    ],
+                    [getattr(carriers.get(carrier_name), "id", None) for carrier_name in carrier_col],
                     header="carrier",
                 )
 
@@ -197,11 +185,7 @@ def tracker_import_resource(
                     for header in dataset.headers
                 ]
 
-                unknown_headers = [
-                    header
-                    for header in dataset.headers
-                    if header not in manager.Tracking.__dict__
-                ]
+                unknown_headers = [header for header in dataset.headers if header not in manager.Tracking.__dict__]
 
                 if any(unknown_headers):
                     raise exceptions.APIException(

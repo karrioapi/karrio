@@ -5,18 +5,25 @@ import django.db.models.fields.json
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('tracing', '0001_initial'),
+        ("tracing", "0001_initial"),
     ]
 
     operations = [
         migrations.AddIndex(
-            model_name='tracingrecord',
-            index=models.Index(django.db.models.fields.json.KeyTextTransform('object_id', 'meta'), condition=models.Q(('meta__object_id__isnull', False)), name='trace_object_idx'),
+            model_name="tracingrecord",
+            index=models.Index(
+                django.db.models.fields.json.KeyTextTransform("object_id", "meta"),
+                condition=models.Q(("meta__object_id__isnull", False)),
+                name="trace_object_idx",
+            ),
         ),
         migrations.AddIndex(
-            model_name='tracingrecord',
-            index=models.Index(django.db.models.fields.json.KeyTextTransform('request_log_id', 'meta'), condition=models.Q(('meta__request_log_id__isnull', False)), name='request_log_idx'),
+            model_name="tracingrecord",
+            index=models.Index(
+                django.db.models.fields.json.KeyTextTransform("request_log_id", "meta"),
+                condition=models.Q(("meta__request_log_id__isnull", False)),
+                name="request_log_idx",
+            ),
         ),
     ]

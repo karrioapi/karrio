@@ -1,19 +1,16 @@
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.usps_international.error as error
 import karrio.providers.usps_international.utils as provider_utils
-import karrio.providers.usps_international.units as provider_units
 
 
 def parse_pickup_cancel_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
+) -> tuple[models.ConfirmationDetails, list[models.Message]]:
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
-    success = response.get("ok") == True
+    success = response.get("ok") is True
 
     confirmation = (
         models.ConfirmationDetails(

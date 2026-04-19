@@ -1,9 +1,9 @@
 """Karrio Teleship OAuth processing implementation."""
 
-import typing
 import urllib.parse
-import karrio.lib as lib
+
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.teleship.error as error
 import karrio.providers.teleship.utils as provider_utils
 
@@ -11,13 +11,13 @@ import karrio.providers.teleship.utils as provider_utils
 def on_oauth_authorize(
     payload: models.OAuthAuthorizePayload,
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.OAuthAuthorizeRequest, typing.List[models.Message]]:
+) -> tuple[models.OAuthAuthorizeRequest, list[models.Message]]:
     """Create OAuth authorize request for Teleship.
 
     Generates the authorization URL and parameters needed to initiate
     the OAuth flow with Teleship.
     """
-    messages: typing.List[models.Message] = []
+    messages: list[models.Message] = []
 
     # Get OAuth credentials from system config
     scope = payload.options.get("scope", "read_accounts write_shipments")
@@ -41,9 +41,7 @@ def on_oauth_authorize(
         scope=scope,
     )
 
-    authorization_url = lib.identity(
-        f"{settings.server_url}/oauth/authorize?{urllib.parse.urlencode(auth_params)}"
-    )
+    authorization_url = lib.identity(f"{settings.server_url}/oauth/authorize?{urllib.parse.urlencode(auth_params)}")
 
     return (
         models.OAuthAuthorizeRequest(
@@ -58,7 +56,7 @@ def on_oauth_authorize(
 def on_oauth_callback(
     payload: models.RequestPayload,
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.Optional[typing.Dict], typing.List[models.Message]]:
+) -> tuple[dict | None, list[models.Message]]:
     """Process OAuth authorization callback.
 
     Extracts the authorization code and user credentials from the callback.

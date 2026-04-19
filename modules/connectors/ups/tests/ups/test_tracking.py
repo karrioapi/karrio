@@ -1,10 +1,12 @@
 import unittest
 import uuid
 from unittest.mock import patch
-from karrio.core.utils import DP
-from karrio.core.models import TrackingRequest
-from .fixture import gateway
+
 import karrio.sdk as karrio
+from karrio.core.models import TrackingRequest
+from karrio.core.utils import DP
+
+from .fixture import gateway
 
 
 class TestUPSTracking(unittest.TestCase):
@@ -34,25 +36,19 @@ class TestUPSTracking(unittest.TestCase):
     def test_tracking_auth_error_parsing(self):
         with patch("karrio.mappers.ups.proxy.lib.request") as mock:
             mock.return_value = AuthError
-            parsed_response = (
-                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             self.assertEqual(DP.to_dict(parsed_response), ParsedAuthError)
 
     def test_tracking_response_parsing(self):
         with patch("karrio.mappers.ups.proxy.lib.request") as mock:
             mock.return_value = TrackingResponseJSON
-            parsed_response = (
-                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             self.assertListEqual(DP.to_dict(parsed_response), ParsedTrackingResponse)
 
     def test_invalid_tracking_number_response_parsing(self):
         with patch("karrio.mappers.ups.proxy.lib.request") as mock:
             mock.return_value = InvalidTrackingNumberResponseJSON
-            parsed_response = (
-                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             self.assertListEqual(
                 DP.to_dict(parsed_response),
                 ParsedInvalidTrackingNumberResponse,
@@ -61,9 +57,7 @@ class TestUPSTracking(unittest.TestCase):
     def test_tracking_number_not_found_response_parsing(self):
         with patch("karrio.mappers.ups.proxy.lib.request") as mock:
             mock.return_value = TrackingNumberNotFoundResponseJSON
-            parsed_response = (
-                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             self.assertListEqual(
                 DP.to_dict(parsed_response),
                 ParsedTrackingNumberNotFound,

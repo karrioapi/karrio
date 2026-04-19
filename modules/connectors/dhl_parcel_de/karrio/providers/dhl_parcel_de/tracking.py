@@ -1,23 +1,22 @@
-import karrio.schemas.dhl_parcel_de.tracking_request as dhl
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.dhl_parcel_de.error as error
 import karrio.providers.dhl_parcel_de.units as provider_units
 import karrio.providers.dhl_parcel_de.utils as provider_utils
+import karrio.schemas.dhl_parcel_de.tracking_request as dhl
 
 
 def parse_tracking_response(
-    _response: lib.Deserializable[typing.List[lib.Element]],
+    _response: lib.Deserializable[list[lib.Element]],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+) -> tuple[list[models.TrackingDetails], list[models.Message]]:
     responses = _response.deserialize()
     shipments = sum(
         [
             [
-                s for s in lib.find_element("data", r)
-                if s.get("name") == "piece-shipment"
-                and (s.get("error-status") or "0") == "0"
+                s
+                for s in lib.find_element("data", r)
+                if s.get("name") == "piece-shipment" and (s.get("error-status") or "0") == "0"
             ]
             for r in responses
             if (r.get("code") or "0") == "0"
@@ -25,24 +24,16 @@ def parse_tracking_response(
         [],
     )
     messages = sum(
-        [
-            error.parse_tracking_error_response(r, settings)
-            for r in responses
-            if r.get("code") and r.get("code") != "0"
-        ]
+        [error.parse_tracking_error_response(r, settings) for r in responses if r.get("code") and r.get("code") != "0"]
         + [
             error.parse_tracking_error_response(s, settings)
             for r in responses
             for s in lib.find_element("data", r)
-            if s.get("name") == "piece-shipment"
-            and s.get("error-status")
-            and s.get("error-status") != "0"
+            if s.get("name") == "piece-shipment" and s.get("error-status") and s.get("error-status") != "0"
         ],
         [],
     )
-    tracking_details = [
-        _extract_tracking(s, settings) for s in shipments
-    ]
+    tracking_details = [_extract_tracking(s, settings) for s in shipments]
 
     return [d for d in tracking_details if d], messages
 
@@ -50,11 +41,9 @@ def parse_tracking_response(
 def _extract_tracking(
     shipment: lib.Element,
     settings: provider_utils.Settings,
-) -> typing.Optional[models.TrackingDetails]:
+) -> models.TrackingDetails | None:
     tracking_number = (
-        shipment.get("piece-code")
-        or shipment.get("piece-identifier")
-        or shipment.get("searched-piece-code")
+        shipment.get("piece-code") or shipment.get("piece-identifier") or shipment.get("searched-piece-code")
     )
     if not tracking_number:
         return None
@@ -65,11 +54,7 @@ def _extract_tracking(
         provider_units.TrackingStatus.delivered.name
         if delivered
         else next(
-            (
-                s.name
-                for s in list(provider_units.TrackingStatus)
-                if ice_code in s.value
-            ),
+            (s.name for s in list(provider_units.TrackingStatus) if ice_code in s.value),
             provider_units.TrackingStatus.in_transit.name,
         )
     )
@@ -87,15 +72,8 @@ def _extract_tracking(
                     models.TrackingEvent(
                         date=lib.fdate(e.get("event-timestamp"), "%d.%m.%Y %H:%M"),
                         time=lib.flocaltime(e.get("event-timestamp"), "%d.%m.%Y %H:%M"),
-                        timestamp=lib.fiso_timestamp(
-                            e.get("event-timestamp"), current_format="%d.%m.%Y %H:%M"
-                        ),
-                        description=(
-                            e.get("event-status")
-                            or e.get("event-text")
-                            or e.get("event-short-status")
-                            or ""
-                        ),
+                        timestamp=lib.fiso_timestamp(e.get("event-timestamp"), current_format="%d.%m.%Y %H:%M"),
+                        description=(e.get("event-status") or e.get("event-text") or e.get("event-short-status") or ""),
                         location=lib.join(
                             e.get("event-location"),
                             e.get("event-country"),
@@ -103,11 +81,21 @@ def _extract_tracking(
                             separator=", ",
                         ),
                         code=e.get("standard-event-code") or (e.get("ice") or "").upper(),
+                        # ICE code takes priority; TTPRO is fallback for events
+                        # where ICE is missing or not in the enum.
                         status=next(
                             (
                                 s.name
                                 for s in list(provider_units.TrackingStatus)
                                 if (e.get("ice") or "").lower() in s.value
+                            ),
+                            None,
+                        )
+                        or next(
+                            (
+                                s.name
+                                for s in list(provider_units.TrackingStatus)
+                                if (e.get("standard-event-code") or "").lower() in s.value
                             ),
                             None,
                         ),
@@ -129,9 +117,7 @@ def _extract_tracking(
         ),
         info=models.TrackingInfo(
             carrier_tracking_link=settings.tracking_url.format(tracking_number),
-            customer_name=(
-                shipment.get("recipient-name") or shipment.get("pan-recipient-name")
-            ),
+            customer_name=(shipment.get("recipient-name") or shipment.get("pan-recipient-name")),
             shipment_destination_country=shipment.get("dest-country"),
             shipment_destination_postal_code=shipment.get("pan-recipient-postalcode"),
             shipment_origin_country=shipment.get("origin-country"),
@@ -143,10 +129,7 @@ def _extract_tracking(
         meta=dict(
             piece_id=shipment.get("piece-id"),
             product_code=shipment.get("product-code"),
-            reference=(
-                shipment.get("piece-customer-reference")
-                or shipment.get("shipment-customer-reference")
-            ),
+            reference=(shipment.get("piece-customer-reference") or shipment.get("shipment-customer-reference")),
         ),
     )
 
@@ -172,7 +155,6 @@ def tracking_request(
     return lib.Serializable(
         requests,
         lambda reqs: [
-            f'<?xml version="1.0" encoding="UTF-8" standalone="no"?>{lib.to_xml(req, name_="data")}'
-            for req in reqs
+            f'<?xml version="1.0" encoding="UTF-8" standalone="no"?>{lib.to_xml(req, name_="data")}' for req in reqs
         ],
     )

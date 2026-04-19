@@ -1,16 +1,17 @@
-from karrio.server.core.logging import logger
 import karrio.server.core.utils as utils
 import karrio.server.manager.models as models
 import karrio.server.serializers as serializers
+from karrio.server.core.logging import logger
 from karrio.server.manager.serializers import (
-    fetch_shipment_rates,
-    can_mutate_shipment,
     buy_shipment_label,
+    can_mutate_shipment,
+    fetch_shipment_rates,
 )
 
 
 @utils.error_wrapper
-def process_shipments(shipment_ids=[]):
+def process_shipments(shipment_ids=None):
+    shipment_ids = shipment_ids or []
     logger.info("Starting batch shipments processing", shipment_count=len(shipment_ids))
 
     shipments = models.Shipment.objects.filter(id__in=shipment_ids, status="draft")

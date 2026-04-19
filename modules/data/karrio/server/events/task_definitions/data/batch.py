@@ -1,14 +1,12 @@
-import typing
+import karrio.server.core.utils as utils
+import karrio.server.data.models as models
+import karrio.server.data.resources as resources
+import karrio.server.data.serializers as serializers
 import tablib
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from import_export.resources import ModelResource
-
 from karrio.server.core.logging import logger
-import karrio.server.core.utils as utils
-import karrio.server.data.serializers as serializers
-import karrio.server.data.resources as resources
-import karrio.server.data.models as models
 
 User = get_user_model()
 
@@ -23,9 +21,7 @@ def trigger_batch_import(
     logger.info("Starting batch import operation", batch_id=batch_id)
     try:
         context = retrieve_context(ctx)
-        batch_operation = (
-            models.BatchOperation.access_by(context).filter(pk=batch_id).first()
-        )
+        batch_operation = models.BatchOperation.access_by(context).filter(pk=batch_id).first()
 
         if batch_operation is not None:
             dataset = data["dataset"]
@@ -58,14 +54,10 @@ def trigger_batch_saving(
     logger.info("Starting batch resources saving", batch_id=batch_id)
     try:
         context = retrieve_context(ctx)
-        batch_operation = (
-            models.BatchOperation.access_by(context).filter(pk=batch_id).first()
-        )
+        batch_operation = models.BatchOperation.access_by(context).filter(pk=batch_id).first()
 
         if batch_operation is not None:
-            batch_seriazlizer = serializers.ResourceType.get_serialiazer(
-                batch_operation.resource_type
-            )
+            batch_seriazlizer = serializers.ResourceType.get_serialiazer(batch_operation.resource_type)
             batch_resources = batch_seriazlizer.save_resources(data, batch_id, context)
             update_batch_operation_resources(batch_operation, batch_resources)
         else:
@@ -88,9 +80,7 @@ def process_resources(
         dict(
             id=id,
             status=(
-                serializers.ResourceStatus.failed.value
-                if any(errors)
-                else serializers.ResourceStatus.queued.value
+                serializers.ResourceStatus.failed.value if any(errors) else serializers.ResourceStatus.queued.value
             ),
         )
         for id, errors in _object_ids
@@ -99,7 +89,7 @@ def process_resources(
 
 def update_batch_operation_resources(
     batch_operation: models.BatchOperation,
-    batch_resources: typing.List[dict],
+    batch_resources: list[dict],
 ):
     try:
         logger.debug("Updating batch operation", batch_id=batch_operation.id)

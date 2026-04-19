@@ -1,8 +1,10 @@
 import unittest
 from unittest.mock import patch
+
+from karrio.core.models import TrackingRequest
 from karrio.core.utils import DP
 from karrio.sdk import Tracking
-from karrio.core.models import TrackingRequest
+
 from .fixture import gateway
 
 
@@ -18,9 +20,7 @@ class TestCarrierTracking(unittest.TestCase):
         # Request should be a list of XML strings
         self.assertEqual(len(serialized), 1)
         # Check that the request contains expected XML elements
-        self.assertIn(
-            '<?xml version="1.0" encoding="UTF-8" standalone="no"?>', serialized[0]
-        )
+        self.assertIn('<?xml version="1.0" encoding="UTF-8" standalone="no"?>', serialized[0])
         self.assertIn('appname="zt12345"', serialized[0])
         self.assertIn('password="geheim"', serialized[0])
         self.assertIn('request="d-get-piece-detail"', serialized[0])
@@ -45,22 +45,16 @@ class TestCarrierTracking(unittest.TestCase):
     def test_parse_tracking_response(self):
         with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
             mock.return_value = TrackingResponseXML
-            parsed_response = (
-                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
+            parsed_response = Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
 
             self.assertListEqual(DP.to_dict(parsed_response), ParsedTrackingResponse)
 
     def test_parse_tracking_error_response(self):
         with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
             mock.return_value = TrackingErrorResponseXML
-            parsed_response = (
-                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
+            parsed_response = Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
 
-            self.assertListEqual(
-                DP.to_dict(parsed_response), ParsedTrackingErrorResponse
-            )
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedTrackingErrorResponse)
 
 
 if __name__ == "__main__":

@@ -1,22 +1,20 @@
 import base64
+
 import django.urls as urls
+import karrio.lib as lib
+import karrio.server.core.views.api as api
+import karrio.server.documents.generator as generator
+import karrio.server.documents.models as models
+import karrio.server.documents.serializers as serializers
+import karrio.server.openapi as openapi
+import rest_framework.pagination as pagination
+from karrio.server.core.logging import logger
 from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
-import rest_framework.pagination as pagination
-
-import karrio.lib as lib
-import karrio.server.openapi as openapi
-import karrio.server.core.views.api as api
-import karrio.server.documents.models as models
-import karrio.server.documents.generator as generator
-import karrio.server.documents.serializers as serializers
-from karrio.server.core.logging import logger
 
 ENDPOINT_ID = "&&&&$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
-DocumentTemplates = serializers.PaginatedResult(
-    "DocumentTemplateList", serializers.DocumentTemplate
-)
+DocumentTemplates = serializers.PaginatedResult("DocumentTemplateList", serializers.DocumentTemplate)
 
 
 class DocumentTemplateList(api.GenericAPIView):
@@ -44,9 +42,7 @@ class DocumentTemplateList(api.GenericAPIView):
         Retrieve all templates.
         """
         templates = models.DocumentTemplate.access_by(request)
-        response = self.paginate_queryset(
-            serializers.DocumentTemplate(templates, many=True).data
-        )
+        response = self.paginate_queryset(serializers.DocumentTemplate(templates, many=True).data)
         return self.get_paginated_response(response)
 
     @openapi.extend_schema(
@@ -65,13 +61,7 @@ class DocumentTemplateList(api.GenericAPIView):
         """
         Create a new template.
         """
-        template = (
-            serializers.DocumentTemplateModelSerializer.map(
-                data=request.data, context=request
-            )
-            .save()
-            .instance
-        )
+        template = serializers.DocumentTemplateModelSerializer.map(data=request.data, context=request).save().instance
 
         return Response(
             serializers.DocumentTemplate(template).data,
@@ -80,7 +70,6 @@ class DocumentTemplateList(api.GenericAPIView):
 
 
 class DocumentTemplateDetail(api.APIView):
-
     @openapi.extend_schema(
         tags=["Documents"],
         operation_id=f"{ENDPOINT_ID}retrieve",
@@ -219,7 +208,7 @@ class DocumentGenerator(api.BaseAPIView):
                     status=status.HTTP_404_NOT_FOUND,
                 )
             except Exception as e:
-                logger.exception("Document generation failed", template_id=data.get('template_id'), error=str(e))
+                logger.exception("Document generation failed", template_id=data.get("template_id"), error=str(e))
                 return Response(
                     {"errors": [{"message": f"Document generation failed: {str(e)}"}]},
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR,

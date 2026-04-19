@@ -1,7 +1,7 @@
 """Karrio MyDHL client proxy."""
 
-import karrio.lib as lib
 import karrio.api.proxy as proxy
+import karrio.lib as lib
 import karrio.mappers.mydhl.settings as provider_settings
 
 # IMPLEMENTATION INSTRUCTIONS:
@@ -114,11 +114,7 @@ class Proxy(proxy.Proxy):
 
     def cancel_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
         pickup_data = request.serialize()
-        confirmation_number = (
-            pickup_data
-            if isinstance(pickup_data, str)
-            else pickup_data.get("confirmationNumber", "")
-        )
+        confirmation_number = pickup_data if isinstance(pickup_data, str) else pickup_data.get("confirmationNumber", "")
 
         response = lib.request(
             url=f"{self.settings.server_url}/pickups/{confirmation_number}",
@@ -133,9 +129,7 @@ class Proxy(proxy.Proxy):
 
     def validate_address(self, request: lib.Serializable) -> lib.Deserializable[str]:
         query_params = request.serialize()
-        query_string = "&".join(
-            f"{key}={value}" for key, value in query_params.items() if value
-        )
+        query_string = "&".join(f"{key}={value}" for key, value in query_params.items() if value)
         response = lib.request(
             url=f"{self.settings.server_url}/address-validate?{query_string}",
             trace=self.trace_as("json"),

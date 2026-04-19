@@ -12,11 +12,7 @@ def forwards_func(apps, schema_editor):
     db_alias = schema_editor.connection.alias
     Carrier = apps.get_model("providers", "Carrier")
 
-    (
-        Carrier.objects.using(db_alias)
-        .filter(created_by__isnull=True)
-        .update(is_system=True)
-    )
+    (Carrier.objects.using(db_alias).filter(created_by__isnull=True).update(is_system=True))
 
 
 def reverse_func(apps, schema_editor):
@@ -44,9 +40,7 @@ class Migration(migrations.Migration):
             name="metadata",
             field=models.JSONField(
                 blank=True,
-                default=functools.partial(
-                    karrio.server.core.models._identity, *(), **{"value": {}}
-                ),
+                default=functools.partial(karrio.server.core.models._identity, *(), **{"value": {}}),
                 help_text="User defined metadata",
                 null=True,
             ),
@@ -59,11 +53,7 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.CharField(
-                        default=functools.partial(
-                            karrio.server.core.models.base.uuid,
-                            *(),
-                            **{"prefix": "cfg_"}
-                        ),
+                        default=functools.partial(karrio.server.core.models.base.uuid, *(), **{"prefix": "cfg_"}),
                         editable=False,
                         max_length=50,
                         primary_key=True,
@@ -73,9 +63,7 @@ class Migration(migrations.Migration):
                 (
                     "config",
                     models.JSONField(
-                        default=functools.partial(
-                            karrio.server.core.models._identity, *(), **{"value": {}}
-                        )
+                        default=functools.partial(karrio.server.core.models._identity, *(), **{"value": {}})
                     ),
                 ),
                 (

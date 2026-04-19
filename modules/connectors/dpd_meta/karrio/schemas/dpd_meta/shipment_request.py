@@ -31,6 +31,7 @@ class ExporterAddressType:
 
 @attr.s(auto_attribs=True)
 class ExporterContactType:
+    contactPerson: typing.Optional[str] = None
     phone1: typing.Optional[str] = None
     email: typing.Optional[str] = None
 
@@ -127,23 +128,11 @@ class InsuranceType:
 
 
 @attr.s(auto_attribs=True)
-class Email1Type:
-    notificationType: typing.Optional[str] = None
-    notificationEmail: typing.Optional[str] = None
-    notificationLanguage: typing.Optional[str] = None
-
-
-@attr.s(auto_attribs=True)
-class Sms1Type:
-    notificationType: typing.Optional[str] = None
-    notificationPhone: typing.Optional[str] = None
-    notificationLanguage: typing.Optional[str] = None
-
-
-@attr.s(auto_attribs=True)
-class MessagesType:
-    email1: typing.Optional[Email1Type] = jstruct.JStruct[Email1Type]
-    sms1: typing.Optional[Sms1Type] = jstruct.JStruct[Sms1Type]
+class MessageType:
+    messageType: typing.Optional[str] = None
+    messageDestination: typing.Optional[str] = None
+    messageLanguage: typing.Optional[str] = None
+    senderCompany: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
@@ -173,7 +162,7 @@ class ParcelType:
     hazardous: typing.Optional[HazardousType] = jstruct.JStruct[HazardousType]
     cod: typing.Optional[CodType] = jstruct.JStruct[CodType]
     insurance: typing.Optional[InsuranceType] = jstruct.JStruct[InsuranceType]
-    messages: typing.Optional[MessagesType] = jstruct.JStruct[MessagesType]
+    messages: typing.Optional[typing.List[MessageType]] = jstruct.JList[MessageType]
     person: typing.Optional[PersonType] = jstruct.JStruct[PersonType]
 
 

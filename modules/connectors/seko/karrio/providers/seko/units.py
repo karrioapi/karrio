@@ -1,8 +1,9 @@
 import csv
 import pathlib
-import karrio.lib as lib
-import karrio.core.units as units
+
 import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
 
 
 class LabelType(lib.Enum):
@@ -269,7 +270,12 @@ class TrackingIncidentReason(lib.Enum):
     consignee_not_home = ["OP-24", "OP-84"]  # Receiver carded, Recipient not available
     consignee_not_available = ["OP-59", "OP-65"]  # Card Left Never Collected, Unclaimed
     consignee_business_closed = ["OP-43"]  # Not collected from store
-    consignee_incorrect_address = ["OP-23", "OP-27", "OP-41", "OP-61"]  # Invalid/Insufficient Address, Customer not known, Incorrect details, RTS - Invalid Address
+    consignee_incorrect_address = [
+        "OP-23",
+        "OP-27",
+        "OP-41",
+        "OP-61",
+    ]  # Invalid/Insufficient Address, Customer not known, Incorrect details, RTS - Invalid Address
     consignee_access_restricted = ["OP-37"]  # No access to receivers address
     consignee_identification_failed = ["OP-38"]  # Customer Identification failed
 
@@ -277,8 +283,17 @@ class TrackingIncidentReason(lib.Enum):
     customs_delay = ["OP-6"]  # Customs held for inspection and clearance
 
     # Payment/Delivery issues
-    delivery_exception_hold = ["OP-26", "OP-49", "OP-87", "OP-88"]  # Held by carrier, Held by Delivery Courier, High Value Unpaid, Additional Payment Required
-    delivery_exception_undeliverable = ["OP-30", "OP-70", "OP-91"]  # Non delivery, Parcel Blocked, Parcel Blocked - Declared LIT
+    delivery_exception_hold = [
+        "OP-26",
+        "OP-49",
+        "OP-87",
+        "OP-88",
+    ]  # Held by carrier, Held by Delivery Courier, High Value Unpaid, Additional Payment Required
+    delivery_exception_undeliverable = [
+        "OP-30",
+        "OP-70",
+        "OP-91",
+    ]  # Non delivery, Parcel Blocked, Parcel Blocked - Declared LIT
     delivery_exception_cancelled = ["OP-34", "OP-60", "OP-67"]  # Cancelled, RTS - Fraudulent, RTS - Cancelled Order
     delivery_exception_high_value_rejected = ["OP-63"]  # RTS - High Value Rejected
 
@@ -291,7 +306,7 @@ def load_services_from_csv() -> list:
     if not csv_path.exists():
         return []
     services_dict: dict[str, dict] = {}
-    with open(csv_path, "r", encoding="utf-8") as f:
+    with open(csv_path, encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
             service_code = row["service_code"]
@@ -318,7 +333,9 @@ def load_services_from_csv() -> list:
                 rate=float(row.get("rate", 0.0)),
                 min_weight=float(row["min_weight"]) if row.get("min_weight") else None,
                 max_weight=float(row["max_weight"]) if row.get("max_weight") else None,
-                transit_days=int(row["transit_days"].split("-")[0]) if row.get("transit_days") and row["transit_days"].split("-")[0].isdigit() else None,
+                transit_days=int(row["transit_days"].split("-")[0])
+                if row.get("transit_days") and row["transit_days"].split("-")[0].isdigit()
+                else None,
                 country_codes=country_codes if country_codes else None,
             )
             services_dict[karrio_service_code]["zones"].append(zone)

@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("events", "0009_alter_webhook_enabled_events"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),

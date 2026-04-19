@@ -5,15 +5,15 @@ for various resources (documents, exports, etc.).
 """
 
 from datetime import datetime, timezone
-from django.urls import path
-from rest_framework import serializers, status
-from rest_framework.views import APIView
-from rest_framework.request import Request
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 
 import karrio.server.openapi as openapi
+from django.urls import path
 from karrio.server.core.utils import ResourceAccessToken
+from rest_framework import serializers, status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import Request
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 ENDPOINT_ID = "&&"  # Unique endpoint ID for OpenAPI operation IDs
 
@@ -103,10 +103,7 @@ def _build_template_urls(resource_ids: list, token: str) -> dict:
     templates = DocumentTemplate.objects.filter(pk__in=resource_ids).values("pk", "slug")
     template_map = {t["pk"]: t["slug"] for t in templates}
 
-    return {
-        rid: f"/documents/templates/{rid}.{template_map.get(rid, 'doc')}?token={token}"
-        for rid in resource_ids
-    }
+    return {rid: f"/documents/templates/{rid}.{template_map.get(rid, 'doc')}?token={token}" for rid in resource_ids}
 
 
 def _build_document_urls(resource_ids: list, access: list, format_ext: str, token: str) -> dict:
@@ -139,7 +136,6 @@ def build_resource_urls(
     }
 
     return builders.get(resource_type, lambda: {})()
-
 
 
 class ResourceTokenView(APIView):

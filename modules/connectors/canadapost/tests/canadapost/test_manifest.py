@@ -1,10 +1,12 @@
 import unittest
-from unittest.mock import patch, ANY
-from .fixture import gateway, LabelResponse as ManifestFile
+from unittest.mock import ANY, patch
 
-import karrio.sdk as karrio
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import LabelResponse as ManifestFile
+from .fixture import gateway
 
 
 class TestCanadaPostManifest(unittest.TestCase):
@@ -12,9 +14,7 @@ class TestCanadaPostManifest(unittest.TestCase):
         self.maxDiff = None
         self.ManifestRequest = models.ManifestRequest(**ManifestPayload)
         self.ManifestRequestWithIDs = models.ManifestRequest(**ManifestPayloadWithIDs)
-        self.ManifestRequestWithShipments = models.ManifestRequest(
-            **ManifestPayloadWithShipments
-        )
+        self.ManifestRequestWithShipments = models.ManifestRequest(**ManifestPayloadWithShipments)
 
     def test_create_tracking_request(self):
         request = gateway.mapper.create_manifest_request(self.ManifestRequest)
@@ -39,15 +39,15 @@ class TestCanadaPostManifest(unittest.TestCase):
             )
             self.assertEqual(
                 manifest1[1]["url"],
-                f"https://XX/1111111111/222222222/manifest/444444444444",
+                "https://XX/1111111111/222222222/manifest/444444444444",
             )
             self.assertEqual(
                 manifest2[1]["url"],
-                f"https://XX/1111111111/222222222/manifest/333333333333",
+                "https://XX/1111111111/222222222/manifest/333333333333",
             )
             self.assertEqual(
                 download1[1]["url"],
-                f"https://ct.soa-gw.canadapost.ca/rs/artifact/6e93d53968881714/10005457526/0",
+                "https://ct.soa-gw.canadapost.ca/rs/artifact/6e93d53968881714/10005457526/0",
             )
 
     def test_parse_manifest_response(self):
@@ -59,9 +59,7 @@ class TestCanadaPostManifest(unittest.TestCase):
                 ManifestFile,
                 ManifestFile,
             ]
-            parsed_response = (
-                karrio.Manifest.create(self.ManifestRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Manifest.create(self.ManifestRequest).from_(gateway).parse()
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedManifestResponse)
 
@@ -76,15 +74,9 @@ class TestCanadaPostManifest(unittest.TestCase):
                 ManifestFile,
                 ManifestFile,
             ]
-            parsed_response = (
-                karrio.Manifest.create(self.ManifestRequestWithIDs)
-                .from_(gateway)
-                .parse()
-            )
+            parsed_response = karrio.Manifest.create(self.ManifestRequestWithIDs).from_(gateway).parse()
 
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedManifestResponsWithIDs
-            )
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedManifestResponsWithIDs)
 
     def test_parse_manifest_response_from_shipments(self):
         with patch("karrio.mappers.canadapost.proxy.lib.request") as mock:
@@ -95,15 +87,9 @@ class TestCanadaPostManifest(unittest.TestCase):
                 ManifestFile,
                 ManifestFile,
             ]
-            parsed_response = (
-                karrio.Manifest.create(self.ManifestRequestWithShipments)
-                .from_(gateway)
-                .parse()
-            )
+            parsed_response = karrio.Manifest.create(self.ManifestRequestWithShipments).from_(gateway).parse()
 
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedManifestResponseWithShipments
-            )
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedManifestResponseWithShipments)
 
 
 if __name__ == "__main__":

@@ -1,23 +1,19 @@
 """Karrio Landmark Global shipment creation implementation."""
 
+import karrio.core.models as models
+import karrio.lib as lib
+import karrio.providers.landmark.error as error
+import karrio.providers.landmark.units as provider_units
+import karrio.providers.landmark.utils as provider_utils
 import karrio.schemas.landmark.import_request as import_req
-import karrio.schemas.landmark.import_response as import_res
 import karrio.schemas.landmark.ship_request as ship_req
 import karrio.schemas.landmark.ship_response as ship_res
-
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
-import karrio.core.models as models
-import karrio.providers.landmark.error as error
-import karrio.providers.landmark.utils as provider_utils
-import karrio.providers.landmark.units as provider_units
 
 
 def parse_shipment_response(
     _response: lib.Deserializable[lib.Element],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+) -> tuple[models.ShipmentDetails, list[models.Message]]:
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
 
@@ -33,10 +29,11 @@ def parse_shipment_response(
 def _extract_details(
     data: lib.Element,
     settings: provider_utils.Settings,
-    ctx: dict = dict(),
+    ctx: dict | None = None,
 ) -> models.ShipmentDetails:
     """Extract shipment details from ImportResponse or ShipResponse"""
     # fmt: off
+    ctx = ctx or {}
     label_format = ctx.get("label_format", "PDF")
     packages = lib.find_element("Package", data, ship_res.PackageType)
     result = lib.find_element("Result", data, ship_res.ResultType, first=True)
@@ -116,9 +113,7 @@ def shipment_request(
             third_party=customs.duty_billing_address,
         )[customs.duty.paid_by]
     )
-    label_format = lib.identity(
-        payload.label_type or settings.connection_config.label_type.state
-    )
+    label_format = lib.identity(payload.label_type or settings.connection_config.label_type.state)
     label_encoding = "BASE64"
     is_import_request = lib.identity(
         options.landmark_import_request.state
@@ -130,8 +125,7 @@ def shipment_request(
         if options.landmark_produce_label.state is not None
         else (
             settings.connection_config.impport_request_produce_label.state
-            if settings.connection_config.impport_request_produce_label.state
-            is not None
+            if settings.connection_config.impport_request_produce_label.state is not None
             else False
         )
     )
@@ -165,9 +159,7 @@ def shipment_request(
                 Region=settings.region,
             ),
             ShipMethod=service,
-            OrderTotal=lib.identity(
-                customs.duty.declared_value or options.declared_value.state
-            ),
+            OrderTotal=lib.identity(customs.duty.declared_value or options.declared_value.state),
             OrderInsuranceFreightTotal=options.landmark_order_insurance_freight_total.state,
             ShipmentInsuranceFreight=options.landmark_shipment_insurance_freight.state,
             ItemsCurrency=options.currency.state,
@@ -211,9 +203,7 @@ def shipment_request(
             SendReturnToAddress=lib.identity(
                 import_req.SendReturnToAddressType(
                     Code=options.landmark_return_address_code.state,
-                    Name=return_address.company_name
-                    or return_address.person_name
-                    or "",
+                    Name=return_address.company_name or return_address.person_name or "",
                     Attention=return_address.person_name,
                     Address1=return_address.address_line1 or "",
                     Address2=return_address.address_line2,
@@ -273,19 +263,11 @@ def shipment_request(
                                     import_req.DangerousGoodsInformationType(
                                         UNCode=item.metadata.get("UNCode"),
                                         PackingGroup=item.metadata.get("PackingGroup"),
-                                        PackingInstructions=item.metadata.get(
-                                            "PackingInstructions"
-                                        ),
+                                        PackingInstructions=item.metadata.get("PackingInstructions"),
                                         ItemWeight=item.weight,
-                                        ItemWeightUnit=(
-                                            item.weight_unit.lower()
-                                            if item.weight_unit
-                                            else None
-                                        ),
+                                        ItemWeightUnit=(item.weight_unit.lower() if item.weight_unit else None),
                                         ItemVolume=item.metadata.get("ItemVolume"),
-                                        ItemVolumeUnit=item.metadata.get(
-                                            "ItemVolumeUnit"
-                                        ),
+                                        ItemVolumeUnit=item.metadata.get("ItemVolumeUnit"),
                                     )
                                     if options.dangerous_goods.state
                                     else None
@@ -304,8 +286,7 @@ def shipment_request(
                     ProNumber=options.landmark_freight_pro_number.state or "",
                     PieceUnit=options.landmark_freight_piece_unit.state or "",
                 )
-                if options.landmark_freight_pro_number.state
-                and options.landmark_freight_piece_unit.state
+                if options.landmark_freight_pro_number.state and options.landmark_freight_piece_unit.state
                 else None
             ),
         )
@@ -333,11 +314,7 @@ def shipment_request(
                 Email=recipient.email,
                 ConsigneeTaxID=recipient.tax_id,
             ),
-            ShippingLane=lib.identity(
-                ship_req.ShippingLaneType(Region=settings.region)
-                if settings.region
-                else None
-            ),
+            ShippingLane=lib.identity(ship_req.ShippingLaneType(Region=settings.region) if settings.region else None),
             ShipMethod=service,
             OrderTotal=lib.identity(
                 customs.duty.declared_value
@@ -388,9 +365,7 @@ def shipment_request(
             SendReturnToAddress=lib.identity(
                 ship_req.SendReturnToAddressType(
                     Code=options.landmark_return_address_code.state,
-                    Name=return_address.company_name
-                    or return_address.person_name
-                    or "",
+                    Name=return_address.company_name or return_address.person_name or "",
                     Attention=return_address.person_name,
                     Address1=return_address.address_line1 or "",
                     Address2=return_address.address_line2,
@@ -457,8 +432,7 @@ def shipment_request(
                     ProNumber=options.landmark_freight_pro_number.state or "",
                     PieceUnit=options.landmark_freight_piece_unit.state or "",
                 )
-                if options.landmark_freight_pro_number.state
-                and options.landmark_freight_piece_unit.state
+                if options.landmark_freight_pro_number.state and options.landmark_freight_piece_unit.state
                 else None
             ),
         )

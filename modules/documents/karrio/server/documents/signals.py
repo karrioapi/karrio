@@ -1,9 +1,8 @@
+import karrio.server.documents.models as models
 from django.db.models import signals
-
+from karrio.server import serializers
 from karrio.server.core import utils
 from karrio.server.core.logging import logger
-from karrio.server import serializers
-import karrio.server.documents.models as models
 
 
 def register_all():
@@ -19,11 +18,8 @@ def document_updated(sender, instance, *args, **kwargs):
 
     if post_create:
         duplicates = models.DocumentTemplate.objects.filter(
-            slug=instance.slug,
-            **({"org__id": instance.link.org.id} if hasattr(instance, "link") else {})
+            slug=instance.slug, **({"org__id": instance.link.org.id} if hasattr(instance, "link") else {})
         ).count()
 
         if duplicates > 1:
-            raise serializers.ValidationError(
-                {"slug": "Document template with this slug already exists."}
-            )
+            raise serializers.ValidationError({"slug": "Document template with this slug already exists."})

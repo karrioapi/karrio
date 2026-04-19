@@ -1,5 +1,5 @@
-from dataclasses import make_dataclass, asdict, field
-from typing import Any, Optional
+from dataclasses import asdict, field, make_dataclass
+from typing import Any
 
 
 class DictMixin:
@@ -17,8 +17,8 @@ def _make_class(name: str, schema: dict[str, type]):
     return make_dataclass(
         name,
         [(k, v) for k, v in schema.items()],
-        bases=(DictMixin,),   # inherit our mixin
-        repr=False            # disable auto repr so DictMixin takes effect
+        bases=(DictMixin,),  # inherit our mixin
+        repr=False,  # disable auto repr so DictMixin takes effect
     )
 
 
@@ -30,12 +30,12 @@ def _make_union_class(name: str, items: list[dict[str, Any]]):
             if k not in schema:
                 schema[k] = type(v)
 
-    fields = [(k, Optional[t], field(default=None)) for k, t in schema.items()]
+    fields = [(k, t | None, field(default=None)) for k, t in schema.items()]
     return make_dataclass(
         name,
         fields,
-        bases=(DictMixin,),   # inherit DictMixin
-        repr=False            # disable auto repr
+        bases=(DictMixin,),  # inherit DictMixin
+        repr=False,  # disable auto repr
     )
 
 

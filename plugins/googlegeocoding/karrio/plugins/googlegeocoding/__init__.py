@@ -5,11 +5,9 @@ This module provides address validation using the Google Geocoding API.
 """
 
 from karrio.core.metadata import PluginMetadata
-
 from karrio.mappers.googlegeocoding.mapper import Mapper
 from karrio.mappers.googlegeocoding.proxy import Proxy
 from karrio.mappers.googlegeocoding.settings import Settings
-
 
 METADATA = PluginMetadata(
     id="googlegeocoding",

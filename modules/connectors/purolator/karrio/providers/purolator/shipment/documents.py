@@ -1,21 +1,19 @@
-from karrio.schemas.purolator.shipping_documents_service_1_3_0 import (
-    GetDocumentsRequest,
-    RequestContext,
-    DocumentCriteria,
-    ArrayOfDocumentCriteria,
-    PIN,
-    DocumentTypes,
-)
-from karrio.core.utils.soap import Envelope, create_envelope, apply_namespaceprefix
 from karrio.core.models import ShipmentRequest
-from karrio.core.utils import Serializable, XP, SF
+from karrio.core.utils import SF, XP, Serializable
+from karrio.core.utils.soap import Envelope, apply_namespaceprefix, create_envelope
 from karrio.providers.purolator.units import PrintType
 from karrio.providers.purolator.utils import Settings
+from karrio.schemas.purolator.shipping_documents_service_1_3_0 import (
+    PIN,
+    ArrayOfDocumentCriteria,
+    DocumentCriteria,
+    DocumentTypes,
+    GetDocumentsRequest,
+    RequestContext,
+)
 
 
-def get_shipping_documents_request(
-    pin: str, payload: ShipmentRequest, settings: Settings
-) -> Serializable:
+def get_shipping_documents_request(pin: str, payload: ShipmentRequest, settings: Settings) -> Serializable:
     is_international = payload.shipper.country_code != payload.recipient.country_code
     label_type = PrintType.map(payload.label_type or "PDF").name
     documents = [
@@ -57,7 +55,9 @@ def get_shipping_documents_request(
 
 
 def _request_serializer(envelope: Envelope) -> str:
-    namespacedef_ = 'xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://purolator.com/pws/datatypes/v1"'
+    namespacedef_ = (
+        'xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://purolator.com/pws/datatypes/v1"'
+    )
     envelope.ns_prefix_ = "soap"
     envelope.Body.ns_prefix_ = envelope.ns_prefix_
     envelope.Header.ns_prefix_ = envelope.ns_prefix_

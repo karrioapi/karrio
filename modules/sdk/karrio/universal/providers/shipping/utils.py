@@ -1,10 +1,8 @@
-from typing import List
 import attr
-from jstruct import JStruct, JList
+from jstruct import JList, JStruct
 
+from karrio.core.models import LabelTemplate, ServiceLevel
 from karrio.core.settings import Settings as BaseSettings
-from karrio.core.models import LabelTemplate
-from karrio.core.models import ServiceLevel
 
 
 @attr.s(auto_attribs=True)
@@ -15,6 +13,6 @@ class ShippingMixinSettings(BaseSettings):
     custom_carrier_name: str = "custom_carrier"
 
     # Additional properties
-    services: List[ServiceLevel] = JList[ServiceLevel]
+    services: list[ServiceLevel] = JList[ServiceLevel]
     label_template: LabelTemplate = JStruct[LabelTemplate]
     metadata: dict = {}

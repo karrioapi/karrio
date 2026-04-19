@@ -1,27 +1,21 @@
 """Karrio Landmark Global shipment cancellation implementation."""
 
-import karrio.schemas.landmark.cancel_request as cancel_req
-import karrio.schemas.landmark.cancel_response as cancel_res
-
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.landmark.error as error
 import karrio.providers.landmark.utils as provider_utils
+import karrio.schemas.landmark.cancel_request as cancel_req
+import karrio.schemas.landmark.cancel_response as cancel_res
 
 
 def parse_shipment_cancel_response(
     _response: lib.Deserializable[lib.Element],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
+) -> tuple[models.ConfirmationDetails, list[models.Message]]:
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
 
-    cancellation = (
-        _extract_cancellation_details(response, settings)
-        if len(messages) == 0
-        else None
-    )
+    cancellation = _extract_cancellation_details(response, settings) if len(messages) == 0 else None
 
     return cancellation, messages
 
@@ -60,10 +54,7 @@ def shipment_cancel_request(
         ClientID=settings.client_id,
         TrackingNumber=payload.shipment_identifier,
         DeleteShipment=True,
-        Reason=lib.identity(
-            payload.options.get("reason")
-            or "Consignee canceled shipment."
-        ),
+        Reason=lib.identity(payload.options.get("reason") or "Consignee canceled shipment."),
     )
 
     return lib.Serializable(request, lib.to_xml)

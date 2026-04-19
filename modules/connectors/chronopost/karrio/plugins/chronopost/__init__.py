@@ -2,7 +2,6 @@ import karrio.core.metadata as metadata
 import karrio.mappers.chronopost as mappers
 from karrio.providers.chronopost import units
 
-
 METADATA = metadata.PluginMetadata(
     status="beta",
     id="chronopost",

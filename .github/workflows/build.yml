@@ -92,6 +92,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: "npm"
 
       - id: get_tag
         run: |
@@ -111,14 +112,14 @@ jobs:
 
           # Build browser JS bundle
           cd packages/karriojs
-          npm install
+          npm ci
           npx gulp build --output "${GITHUB_WORKSPACE}/apps/api/karrio/server/static/karrio/js/karrio.js"
           cd -
 
       - name: Build embeddable elements
         run: |
           cd packages/elements
-          npm install
+          npm ci
           npm run build
 
           # Copy built elements to Django static directory
@@ -163,15 +164,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - id: get_tag
         run: |
           cat ./apps/api/karrio/server/VERSION
           echo "tag=$(cat ./apps/api/karrio/server/VERSION)" >> "$GITHUB_ENV"
 
       - name: Build karrio dashboard image
-        run: |
-          echo 'Building karrio dashboard:${{ env.tag }}...'
-          ./bin/build-dashboard-image ${{ env.tag }}
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./docker/dashboard/Dockerfile
+          push: false
+          load: true
+          tags: karrio/dashboard:${{ env.tag }}
+          build-args: |
+            VERSION=${{ env.tag }}
+            NEXT_PUBLIC_DASHBOARD_VERSION=${{ env.tag }}
+            SOURCE=https://github.com/karrioapi/karrio
+          cache-from: type=gha,scope=dashboard
+          cache-to: type=gha,mode=max,scope=dashboard
 
       - name: Push karrio dashboard image
         run: |

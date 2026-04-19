@@ -1,7 +1,7 @@
 """Karrio ParcelOne REST API client proxy."""
 
-import karrio.lib as lib
 import karrio.api.proxy as proxy
+import karrio.lib as lib
 import karrio.mappers.parcelone.settings as provider_settings
 
 

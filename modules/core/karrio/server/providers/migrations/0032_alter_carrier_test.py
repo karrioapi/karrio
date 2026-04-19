@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('providers', '0031_delete_amazonmwssettings'),
+        ("providers", "0031_delete_amazonmwssettings"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='carrier',
-            name='test',
-            field=models.BooleanField(db_column='test_mode', default=True, help_text='Toggle carrier connection mode'),
+            model_name="carrier",
+            name="test",
+            field=models.BooleanField(db_column="test_mode", default=True, help_text="Toggle carrier connection mode"),
         ),
     ]

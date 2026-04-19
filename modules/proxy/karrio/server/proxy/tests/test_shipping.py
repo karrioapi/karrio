@@ -1,9 +1,10 @@
 import json
-from unittest.mock import patch, ANY
+from unittest.mock import ANY, patch
+
 from django.urls import reverse
-from rest_framework import status
-from karrio.core.models import ShipmentDetails, ConfirmationDetails, Message
+from karrio.core.models import ConfirmationDetails, Message, ShipmentDetails
 from karrio.server.core.tests import APITestCase
+from rest_framework import status
 
 
 class TestShipping(APITestCase):
@@ -92,7 +93,6 @@ SHIPPING_DATA = {
             "carrier_id": "canadapost",
             "carrier_name": "canadapost",
             "currency": "CAD",
-            "estimated_delivery": ANY,
             "discount": -9.04,
             "duties_and_taxes": 13.92,
             "estimated_delivery": "2020-06-22",
@@ -110,7 +110,6 @@ SHIPPING_DATA = {
             "carrier_id": "canadapost",
             "carrier_name": "canadapost",
             "currency": "CAD",
-            "estimated_delivery": None,
             "discount": -3.06,
             "duties_and_taxes": 3.65,
             "estimated_delivery": "2020-07-02",

@@ -1,12 +1,13 @@
 """Karrio DPD Global client proxy."""
 
 import datetime
-import karrio.lib as lib
+
 import karrio.api.proxy as proxy
 import karrio.core.errors as errors
-import karrio.providers.dpd_meta.utils as provider_utils
-import karrio.providers.dpd_meta.error as provider_error
+import karrio.lib as lib
 import karrio.mappers.dpd_meta.settings as provider_settings
+import karrio.providers.dpd_meta.error as provider_error
+import karrio.providers.dpd_meta.utils as provider_utils
 import karrio.universal.mappers.rating_proxy as rating_proxy
 
 
@@ -25,20 +26,12 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
         - X-DPD-CLIENTID + X-DPD-CLIENTSECRET + X-DPD-BUCODE
         """
         has_user_pass = any([self.settings.dpd_login, self.settings.dpd_password])
-        has_client_creds = any(
-            [self.settings.dpd_client_id, self.settings.dpd_client_secret]
-        )
+        has_client_creds = any([self.settings.dpd_client_id, self.settings.dpd_client_secret])
 
         # Build cache key
-        identity = (
-            f"u:{self.settings.dpd_login}"
-            if has_user_pass
-            else f"c:{self.settings.dpd_client_id}"
-        )
+        identity = f"u:{self.settings.dpd_login}" if has_user_pass else f"c:{self.settings.dpd_client_id}"
         env = "test" if self.settings.test_mode else "prod"
-        cache_key = (
-            f"{self.settings.carrier_name}|{identity}|{self.settings.dpd_bucode}|{env}"
-        )
+        cache_key = f"{self.settings.carrier_name}|{identity}|{self.settings.dpd_bucode}|{env}"
 
         def get_token():
             # Build headers using lib.to_dict to filter None values
@@ -46,15 +39,9 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
                 {
                     "X-DPD-BUCODE": self.settings.dpd_bucode,
                     "X-DPD-LOGIN": self.settings.dpd_login if has_user_pass else None,
-                    "X-DPD-PASSWORD": (
-                        self.settings.dpd_password if has_user_pass else None
-                    ),
-                    "X-DPD-CLIENTID": (
-                        self.settings.dpd_client_id if has_client_creds else None
-                    ),
-                    "X-DPD-CLIENTSECRET": (
-                        self.settings.dpd_client_secret if has_client_creds else None
-                    ),
+                    "X-DPD-PASSWORD": (self.settings.dpd_password if has_user_pass else None),
+                    "X-DPD-CLIENTID": (self.settings.dpd_client_id if has_client_creds else None),
+                    "X-DPD-CLIENTSECRET": (self.settings.dpd_client_secret if has_client_creds else None),
                 }
             )
 
@@ -67,24 +54,19 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
 
             if response.is_error:
                 error_data = lib.to_dict_safe(response.content)
-                messages = provider_error.parse_error_response(
-                    error_data, self.settings
-                )
+                messages = provider_error.parse_error_response(error_data, self.settings)
 
                 if any(messages):
                     raise errors.ParsedMessagesError(messages=messages)
 
-                raise errors.ShippingSDKError(
-                    f"DPD login failed: HTTP {response.status_code} | {response.content}"
-                )
+                raise errors.ShippingSDKError(f"DPD login failed: HTTP {response.status_code} | {response.content}")
 
             # Extract token from response headers
             token = response.get_header("X-DPD-TOKEN")
 
             if not token:
                 raise errors.ShippingSDKError(
-                    f"DPD login succeeded but no token in headers. "
-                    f"Headers: {response.headers}"
+                    f"DPD login succeeded but no token in headers. Headers: {response.headers}"
                 )
 
             # Token is valid for 24 hours according to DPD docs
@@ -135,10 +117,9 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
         access_token = self.authenticate().deserialize()
 
         # Extract depot from JWT payload or ConnectionConfig override
-        depot = (
-            self.settings.connection_config.sending_depot.state
-            or provider_utils.decode_jwt_payload(access_token).get("depot")
-        )
+        depot = self.settings.connection_config.sending_depot.state or provider_utils.decode_jwt_payload(
+            access_token
+        ).get("depot")
 
         # Inject sendingDepot into the serialized request
         payload = request.serialize()

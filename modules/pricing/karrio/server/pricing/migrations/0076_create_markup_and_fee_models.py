@@ -31,14 +31,10 @@ def handle_interrupted_migration(apps, schema_editor):
     for table in ("fee", "markup"):
         if table in existing_tables:
             logger.warning(
-                "Table '%s' exists from interrupted migration, "
-                "dropping for clean recreation",
+                "Table '%s' exists from interrupted migration, dropping for clean recreation",
                 table,
             )
-            schema_editor.execute(
-                schema_editor.sql_delete_table
-                % {"table": schema_editor.quote_name(table)}
-            )
+            schema_editor.execute(schema_editor.sql_delete_table % {"table": schema_editor.quote_name(table)})
 
 
 class Migration(migrations.Migration):
@@ -76,9 +72,7 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.CharField(
-                        default=functools.partial(
-                            karrio.server.core.models.uuid, prefix="mkp_"
-                        ),
+                        default=functools.partial(karrio.server.core.models.uuid, prefix="mkp_"),
                         editable=False,
                         max_length=50,
                         primary_key=True,
@@ -181,9 +175,7 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.CharField(
-                        default=functools.partial(
-                            karrio.server.core.models.uuid, prefix="fee_"
-                        ),
+                        default=functools.partial(karrio.server.core.models.uuid, prefix="fee_"),
                         editable=False,
                         max_length=50,
                         primary_key=True,
@@ -287,26 +279,18 @@ class Migration(migrations.Migration):
         # Add indexes for Fee model
         migrations.AddIndex(
             model_name="fee",
-            index=models.Index(
-                fields=["shipment_id"], name="fee_shipmen_d4e9f2_idx"
-            ),
+            index=models.Index(fields=["shipment_id"], name="fee_shipmen_d4e9f2_idx"),
         ),
         migrations.AddIndex(
             model_name="fee",
-            index=models.Index(
-                fields=["markup_id"], name="fee_markup__29f8a1_idx"
-            ),
+            index=models.Index(fields=["markup_id"], name="fee_markup__29f8a1_idx"),
         ),
         migrations.AddIndex(
             model_name="fee",
-            index=models.Index(
-                fields=["carrier_code"], name="fee_carrier_3c7b8e_idx"
-            ),
+            index=models.Index(fields=["carrier_code"], name="fee_carrier_3c7b8e_idx"),
         ),
         migrations.AddIndex(
             model_name="fee",
-            index=models.Index(
-                fields=["created_at"], name="fee_created_a1b2c3_idx"
-            ),
+            index=models.Index(fields=["created_at"], name="fee_created_a1b2c3_idx"),
         ),
     ]

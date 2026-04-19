@@ -1,6 +1,5 @@
-
-import karrio.lib as lib
 import karrio.core as core
+import karrio.lib as lib
 
 
 class Settings(core.Settings):
@@ -14,11 +13,7 @@ class Settings(core.Settings):
 
     @property
     def server_url(self):
-        return (
-            "https://mtapi.net/?testMode=1"
-            if self.test_mode
-            else "https://mtapi.net/"
-        )
+        return "https://mtapi.net/?testMode=1" if self.test_mode else "https://mtapi.net/"
 
     @property
     def tracking_url(self):

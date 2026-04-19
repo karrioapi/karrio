@@ -1,11 +1,10 @@
 import typing
-from django.db.models import Q
 
 import karrio.server.core.gateway as gateway
-import karrio.server.manager.models as models
 import karrio.server.core.serializers as core
-import karrio.server.serializers as serializers
+import karrio.server.manager.models as models
 import karrio.server.manager.serializers as manager
+import karrio.server.serializers as serializers
 from karrio.server.core.utils import create_carrier_snapshot
 
 DEFAULT_CARRIER_FILTER: typing.Any = dict(active=True, capability="manifest")
@@ -13,9 +12,7 @@ DEFAULT_CARRIER_FILTER: typing.Any = dict(active=True, capability="manifest")
 
 @serializers.owned_model_serializer
 class ManifestSerializer(core.ManifestData):
-    def create(
-        self, validated_data: dict, context: serializers.Context, **kwargs
-    ) -> models.Manifest:
+    def create(self, validated_data: dict, context: serializers.Context, **kwargs) -> models.Manifest:
         data = validated_data.copy()
         shipment_ids = list(set(data.pop("shipment_ids")))
         carrier_name = data["carrier_name"]
@@ -33,10 +30,7 @@ class ManifestSerializer(core.ManifestData):
         )
         shipment_identifiers = [_.shipment_identifier for _ in shipments]
 
-        if (
-            len(shipment_identifiers) > len(shipment_ids)
-            or len(shipment_identifiers) == 0
-        ):
+        if len(shipment_identifiers) > len(shipment_ids) or len(shipment_identifiers) == 0:
             raise serializers.ValidationError(
                 {
                     "shipment_ids": (
@@ -74,6 +68,7 @@ class ManifestSerializer(core.ManifestData):
 
         # Merge request_id into meta for request correlation
         from karrio.server.core.middleware import get_request_id
+
         _request_id = get_request_id()
         _manifest_meta = {
             **(payload.get("meta") or {}),

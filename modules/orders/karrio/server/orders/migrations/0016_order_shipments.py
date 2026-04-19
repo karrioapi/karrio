@@ -58,9 +58,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="order",
             name="shipments",
-            field=models.ManyToManyField(
-                related_name="shipment_order", to="manager.shipment"
-            ),
+            field=models.ManyToManyField(related_name="shipment_order", to="manager.shipment"),
         ),
         migrations.RunPython(forwards_func, reverse_func),
     ]

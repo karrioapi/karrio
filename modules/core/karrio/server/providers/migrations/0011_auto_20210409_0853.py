@@ -4,18 +4,17 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('providers', '0010_auto_20210409_0852'),
+        ("providers", "0010_auto_20210409_0852"),
     ]
 
     operations = [
         migrations.AlterModelTable(
-            name='fedexsettings',
-            table='fedex-settings',
+            name="fedexsettings",
+            table="fedex-settings",
         ),
         migrations.AlterModelTable(
-            name='upssettings',
-            table='ups-settings',
+            name="upssettings",
+            table="ups-settings",
         ),
     ]

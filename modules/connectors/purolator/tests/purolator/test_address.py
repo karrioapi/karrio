@@ -1,22 +1,20 @@
 import unittest
 from unittest.mock import patch
+
 import karrio.sdk as karrio
-from karrio.core.utils import DP
 from karrio.core.models import AddressValidationRequest
+from karrio.core.utils import DP
+
 from .fixture import gateway
 
 
 class TestPurolatorAddressValidation(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        self.AddressValidationRequest = AddressValidationRequest(
-            **AddressValidationPayload
-        )
+        self.AddressValidationRequest = AddressValidationRequest(**AddressValidationPayload)
 
     def test_create_address_validation_request(self):
-        request = gateway.mapper.create_address_validation_request(
-            self.AddressValidationRequest
-        )
+        request = gateway.mapper.create_address_validation_request(self.AddressValidationRequest)
 
         self.assertEqual(
             request.serialize(),
@@ -36,15 +34,9 @@ class TestPurolatorAddressValidation(unittest.TestCase):
     def test_parse_address_validation_response(self):
         with patch("karrio.mappers.purolator.proxy.http") as mock:
             mock.return_value = AddressValidationResponseXML
-            parsed_response = (
-                karrio.Address.validate(self.AddressValidationRequest)
-                .from_(gateway)
-                .parse()
-            )
+            parsed_response = karrio.Address.validate(self.AddressValidationRequest).from_(gateway).parse()
 
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedAddressValidationResponse)
-            )
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedAddressValidationResponse))
 
 
 if __name__ == "__main__":

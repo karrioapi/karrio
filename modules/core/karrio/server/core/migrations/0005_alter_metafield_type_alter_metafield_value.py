@@ -4,20 +4,33 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0004_metafield'),
+        ("core", "0004_metafield"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='metafield',
-            name='type',
-            field=models.CharField(choices=[('text', 'text'), ('number', 'number'), ('boolean', 'boolean'), ('json', 'json'), ('date', 'date'), ('date_time', 'date_time'), ('password', 'password')], db_index=True, default='text', max_length=50, verbose_name='type'),
+            model_name="metafield",
+            name="type",
+            field=models.CharField(
+                choices=[
+                    ("text", "text"),
+                    ("number", "number"),
+                    ("boolean", "boolean"),
+                    ("json", "json"),
+                    ("date", "date"),
+                    ("date_time", "date_time"),
+                    ("password", "password"),
+                ],
+                db_index=True,
+                default="text",
+                max_length=50,
+                verbose_name="type",
+            ),
         ),
         migrations.AlterField(
-            model_name='metafield',
-            name='value',
+            model_name="metafield",
+            name="value",
             field=models.JSONField(blank=True, null=True),
         ),
     ]

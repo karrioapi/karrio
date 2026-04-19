@@ -1,12 +1,13 @@
 """Karrio USPS client proxy."""
 
 import datetime
-import karrio.lib as lib
+
 import karrio.api.proxy as proxy
 import karrio.core.errors as errors
+import karrio.lib as lib
+import karrio.mappers.usps.settings as provider_settings
 import karrio.providers.usps.error as provider_error
 import karrio.providers.usps.utils as provider_utils
-import karrio.mappers.usps.settings as provider_settings
 
 
 class Proxy(proxy.Proxy):
@@ -57,9 +58,7 @@ class Proxy(proxy.Proxy):
             if any(messages):
                 raise errors.ParsedMessagesError(messages)
 
-            expiry = datetime.datetime.now() + datetime.timedelta(
-                seconds=float(response.get("expires_in", 0))
-            )
+            expiry = datetime.datetime.now() + datetime.timedelta(seconds=float(response.get("expires_in", 0)))
 
             return {**response, "expiry": lib.fdatetime(expiry)}
 

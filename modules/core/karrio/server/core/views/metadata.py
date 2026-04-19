@@ -1,12 +1,11 @@
-import rest_framework.request as request
-import rest_framework.response as response
-import rest_framework.renderers as renderers
+import karrio.server.conf as conf
+import karrio.server.core.dataunits as dataunits
+import karrio.server.openapi as openapi
 import rest_framework.decorators as decorators
 import rest_framework.permissions as permissions
-
-import karrio.server.conf as conf
-import karrio.server.openapi as openapi
-import karrio.server.core.dataunits as dataunits
+import rest_framework.renderers as renderers
+import rest_framework.request as request
+import rest_framework.response as response
 
 ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 Metadata = openapi.OpenApiResponse(

@@ -1,9 +1,9 @@
-import karrio.schemas.dhl_express.datatypes_global_v62 as dhl
 import time
-import typing
-import karrio.lib as lib
+
 import karrio.core as core
 import karrio.core.units as units
+import karrio.lib as lib
+import karrio.schemas.dhl_express.datatypes_global_v62 as dhl
 
 
 class Settings(core.Settings):
@@ -23,11 +23,7 @@ class Settings(core.Settings):
 
     @property
     def server_url(self):
-        return (
-            "https://xmlpitest-ea.dhl.com"
-            if self.test_mode
-            else "https://xmlpi-ea.dhl.com"
-        )
+        return "https://xmlpitest-ea.dhl.com" if self.test_mode else "https://xmlpi-ea.dhl.com"
 
     @property
     def tracking_url(self):
@@ -43,7 +39,7 @@ class Settings(core.Settings):
         )
 
     @property
-    def default_currency(self) -> typing.Optional[str]:
+    def default_currency(self) -> str | None:
         return units.CountryCurrency.map(self.account_country_code).value or "USD"
 
     def Request(self, **kwargs) -> dhl.Request:

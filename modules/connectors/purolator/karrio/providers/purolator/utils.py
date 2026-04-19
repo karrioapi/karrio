@@ -2,7 +2,7 @@ import base64
 
 import karrio.lib as lib
 from karrio.core import Settings as BaseSettings
-from karrio.core.utils import Envelope, apply_namespaceprefix, XP
+from karrio.core.utils import XP, Envelope, apply_namespaceprefix
 
 LanguageEnum = lib.units.create_enum("LanguageEnum", ["en", "fr"])
 
@@ -26,15 +26,11 @@ class Settings(BaseSettings):
 
     @property
     def server_url(self):
-        return (
-            "https://devwebservices.purolator.com"
-            if self.test_mode
-            else "https://webservices.purolator.com"
-        )
+        return "https://devwebservices.purolator.com" if self.test_mode else "https://webservices.purolator.com"
 
     @property
     def authorization(self):
-        pair = "%s:%s" % (self.username, self.password)
+        pair = f"{self.username}:{self.password}"
         return base64.b64encode(pair.encode("utf-8")).decode("ascii")
 
     @property

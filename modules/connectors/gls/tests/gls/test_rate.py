@@ -1,8 +1,10 @@
 import unittest
+
 import karrio.sdk as karrio
-from karrio.core.utils import DP
 from karrio.core.models import RateRequest
+from karrio.core.utils import DP
 from karrio.providers.gls import units
+
 from .fixture import gateway
 
 
@@ -38,14 +40,10 @@ class TestGLSGroupServiceFiltering(unittest.TestCase):
 
     def test_domestic_service_marked_correctly(self):
         """Test that domestic service has domicile=True."""
-        domestic_service = next(
-            (s for s in self.services if s.service_code == "gls_parcel"), None
-        )
+        domestic_service = next((s for s in self.services if s.service_code == "gls_parcel"), None)
 
         self.assertIsNotNone(domestic_service)
-        self.assertTrue(
-            domestic_service.domicile, "Domestic service should have domicile=True"
-        )
+        self.assertTrue(domestic_service.domicile, "Domestic service should have domicile=True")
         self.assertIsNone(
             domestic_service.international,
             "Domestic service should not have international flag set",
@@ -136,9 +134,7 @@ class TestGLSGroupServiceFiltering(unittest.TestCase):
             }
         )
 
-        parsed_response = (
-            karrio.Rating.fetch(international_request).from_(gateway).parse()
-        )
+        parsed_response = karrio.Rating.fetch(international_request).from_(gateway).parse()
         rates = parsed_response[0]
 
         # All returned services should be international
@@ -152,9 +148,7 @@ class TestGLSGroupServiceFiltering(unittest.TestCase):
 
     def test_weight_limits_respected(self):
         """Test that weight limits are properly checked."""
-        domestic_service = next(
-            (s for s in self.services if s.service_code == "gls_parcel"), None
-        )
+        domestic_service = next((s for s in self.services if s.service_code == "gls_parcel"), None)
 
         self.assertIsNotNone(domestic_service)
         self.assertEqual(domestic_service.min_weight, 0.01)

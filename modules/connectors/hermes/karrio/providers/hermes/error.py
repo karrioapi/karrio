@@ -1,18 +1,16 @@
 """Karrio Hermes error parser."""
 
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.hermes.utils as provider_utils
 
 
 def parse_error_response(
-    response: typing.Union[dict, str, None],
+    response: dict | str | None,
     settings: provider_utils.Settings,
     **kwargs,
-) -> typing.List[models.Message]:
+) -> list[models.Message]:
     """Parse Hermes error response into karrio messages."""
-    messages: typing.List[models.Message] = []
+    messages: list[models.Message] = []
 
     if response is None:
         return messages
@@ -67,9 +65,9 @@ def parse_warning_response(
     response: dict,
     settings: provider_utils.Settings,
     **kwargs,
-) -> typing.List[models.Message]:
+) -> list[models.Message]:
     """Parse Hermes warning response into karrio messages."""
-    messages: typing.List[models.Message] = []
+    messages: list[models.Message] = []
 
     if response is None:
         return messages

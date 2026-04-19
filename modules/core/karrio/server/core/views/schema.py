@@ -1,14 +1,18 @@
-import jinja2
 import django.conf as django
-import drf_spectacular.views as views
-import rest_framework.response as response
-
 import django.urls as urls
+import drf_spectacular.views as views
+import jinja2
 import karrio.server.conf as conf
 import karrio.server.core.dataunits as dataunits
+import rest_framework.response as response
 
 VERSION = getattr(django.settings, "VERSION", "")
-non_null = lambda items: [i for i in items if i is not None]
+
+
+def non_null(items):
+    return [i for i in items if i is not None]
+
+
 RedocView = views.SpectacularRedocView.as_view(
     url_name="shipping-openapi",
     template_name="openapi/openapi.html",
@@ -17,12 +21,8 @@ RedocView = views.SpectacularRedocView.as_view(
 
 class ShippingOpenAPIView(views.SpectacularAPIView):
     def _get_schema_response(self, request):
-        version = (
-            self.api_version or request.version or self._get_version_parameter(request)
-        )
-        generator = self.generator_class(
-            urlconf=self.urlconf, api_version=version, patterns=self.patterns
-        )
+        version = self.api_version or request.version or self._get_version_parameter(request)
+        generator = self.generator_class(urlconf=self.urlconf, api_version=version, patterns=self.patterns)
         data = generator.get_schema(request=request, public=self.serve_public)
 
         data["tags"] = render_tags(request, conf.settings.APP_NAME)
@@ -39,9 +39,7 @@ class ShippingOpenAPIView(views.SpectacularAPIView):
 
         return response.Response(
             data=data,
-            headers={
-                "Content-Disposition": f'inline; filename="{self._get_filename(request, version)}"'
-            },
+            headers={"Content-Disposition": f'inline; filename="{self._get_filename(request, version)}"'},
         )
 
 
@@ -159,7 +157,7 @@ def render_reference_descriptions(request):
             if v is not None
         ]
 
-        return f'{" x ".join(vals)} {preset.get("dimension_unit").lower()}'
+        return f"{' x '.join(vals)} {preset.get('dimension_unit').lower()}"
 
     template = """## Carriers
 | Carrier Name | Display Name |

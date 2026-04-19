@@ -20,9 +20,7 @@ def populate_dhl_parcel_de_required_credentials(apps, schema_editor):
     db_alias = schema_editor.connection.alias
 
     # Find all dhl_parcel_de carriers
-    dhl_parcel_de_carriers = Carrier.objects.using(db_alias).filter(
-        carrier_code="dhl_parcel_de"
-    )
+    dhl_parcel_de_carriers = Carrier.objects.using(db_alias).filter(carrier_code="dhl_parcel_de")
 
     timestamp = timezone.now().strftime("%Y%m%d%H%M%S")
 
@@ -49,9 +47,7 @@ def reverse_dhl_parcel_de_required_credentials(apps, schema_editor):
     Carrier = apps.get_model("providers", "Carrier")
     db_alias = schema_editor.connection.alias
 
-    dhl_parcel_de_carriers = Carrier.objects.using(db_alias).filter(
-        carrier_code="dhl_parcel_de"
-    )
+    dhl_parcel_de_carriers = Carrier.objects.using(db_alias).filter(carrier_code="dhl_parcel_de")
 
     for carrier in dhl_parcel_de_carriers:
         credentials = carrier.credentials or {}
@@ -69,7 +65,6 @@ def reverse_dhl_parcel_de_required_credentials(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("providers", "0084_alter_servicelevel_currency"),
     ]

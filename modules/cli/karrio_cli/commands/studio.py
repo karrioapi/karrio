@@ -1,18 +1,20 @@
-import os
-import sys
+import importlib.util
 import json
+import logging
+import os
+import pathlib
+import shutil
+import subprocess
+import sys
 import time
+from typing import Any
+
 import typer
 import uvicorn
-import logging
-import pathlib
-import subprocess
-import shutil
-import importlib.util
-from typing import List, Optional, Tuple, Dict, Any
-from fastapi import FastAPI, Request, Form, HTTPException
+from fastapi import FastAPI, Form, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+
 import karrio_cli.commands.sdk as sdk_cmd
 
 app = typer.Typer()
@@ -25,11 +27,11 @@ templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
 ROOT_DIR = pathlib.Path(os.getenv("KARRIO_ROOT", os.getcwd())).resolve()
 CACHE_TTL = 5
-EXTENSION_CACHE: Dict[str, Any] = {"timestamp": 0, "data": []}
-AI_TOOL_CACHE: Dict[str, Any] = {"timestamp": 0, "tools": []}
+EXTENSION_CACHE: dict[str, Any] = {"timestamp": 0, "data": []}
+AI_TOOL_CACHE: dict[str, Any] = {"timestamp": 0, "tools": []}
 
 
-def detect_ai_tools(force: bool = False) -> List[Dict[str, Any]]:
+def detect_ai_tools(force: bool = False) -> list[dict[str, Any]]:
     now = time.time()
     if not force and now - AI_TOOL_CACHE["timestamp"] < CACHE_TTL:
         return AI_TOOL_CACHE["tools"]
@@ -333,11 +335,11 @@ AI_PROMPTS_METADATA = [
 ]
 
 
-def _scan_extensions() -> List[Dict[str, Any]]:
+def _scan_extensions() -> list[dict[str, Any]]:
     connectors_dir = ROOT_DIR / "modules" / "connectors"
     plugins_dir = ROOT_DIR / "community" / "plugins"
 
-    extensions: List[Dict[str, Any]] = []
+    extensions: list[dict[str, Any]] = []
 
     for base_dir in [connectors_dir, plugins_dir]:
         if not base_dir.exists():
@@ -380,7 +382,7 @@ def _scan_extensions() -> List[Dict[str, Any]]:
     return extensions
 
 
-def get_extensions(force_refresh: bool = False) -> List[Dict[str, Any]]:
+def get_extensions(force_refresh: bool = False) -> list[dict[str, Any]]:
     now = time.time()
     if not force_refresh and now - EXTENSION_CACHE["timestamp"] < CACHE_TTL:
         return EXTENSION_CACHE["data"]
@@ -390,22 +392,28 @@ def get_extensions(force_refresh: bool = False) -> List[Dict[str, Any]]:
     EXTENSION_CACHE["data"] = data
     return data
 
+
 @studio_api.get("/", response_class=HTMLResponse)
 async def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
+
 @studio_api.get("/partials/dashboard", response_class=HTMLResponse)
 async def dashboard(request: Request):
     extensions = get_extensions()
-    connectors_count = sum(1 for e in extensions if e['type'] == 'connector')
+    connectors_count = sum(1 for e in extensions if e["type"] == "connector")
     plugins_count = len(extensions) - connectors_count
-    
-    return templates.TemplateResponse("dashboard.html", {
-        "request": request,
-        "extensions": extensions,
-        "connectors_count": connectors_count,
-        "plugins_count": plugins_count
-    })
+
+    return templates.TemplateResponse(
+        "dashboard.html",
+        {
+            "request": request,
+            "extensions": extensions,
+            "connectors_count": connectors_count,
+            "plugins_count": plugins_count,
+        },
+    )
+
 
 @studio_api.get("/api/extensions")
 async def list_extensions_sidebar(request: Request):
@@ -415,9 +423,11 @@ async def list_extensions_sidebar(request: Request):
         {"request": request, "extensions": extensions},
     )
 
+
 @studio_api.get("/partials/new-extension", response_class=HTMLResponse)
 async def new_extension_form(request: Request):
     return templates.TemplateResponse("new_extension.html", {"request": request})
+
 
 @studio_api.post("/api/extensions", response_class=HTMLResponse)
 async def create_extension(
@@ -425,14 +435,13 @@ async def create_extension(
     display_name: str = Form(...),
     carrier_slug: str = Form(...),
     type: str = Form(...),
-    features: List[str] = Form(...),
-    is_xml_api: bool = Form(False)
+    features: list[str] = Form(...),
+    is_xml_api: bool = Form(False),
 ):
     try:
-        root_dir = pathlib.Path(os.getcwd())
         path = "modules/connectors" if type == "connector" else "community/plugins"
-        version = "2025.5" # Default version
-        
+        version = "2025.5"  # Default version
+
         # Call the SDK command logic
         sdk_cmd._add_extension(
             id=carrier_slug.lower(),
@@ -440,11 +449,11 @@ async def create_extension(
             feature=",".join(features),
             version=version,
             is_xml_api=is_xml_api,
-            path=path
+            path=path,
         )
 
         get_extensions(force_refresh=True)
-        
+
         # Return a success toast and redirect to dashboard
         response = await dashboard(request)
         response.headers["HX-Trigger"] = json.dumps(
@@ -454,30 +463,23 @@ async def create_extension(
             }
         )
         return response
-        
+
     except Exception as e:
         logging.error(f"Failed to create extension: {e}")
         # Return error toast (using HX-Trigger with error)
         return HTMLResponse(
             status_code=200,  # HTMX handles 200 best for swapping
             content=f"<div class='p-4 bg-red-50 text-red-600 rounded'>Error: {str(e)}</div>",
-            headers={
-                "HX-Trigger": json.dumps(
-                    {"notify": {"message": "Failed to create extension", "type": "error"}}
-                )
-            },
+            headers={"HX-Trigger": json.dumps({"notify": {"message": "Failed to create extension", "type": "error"}})},
         )
 
 
-def _format_progress_report(items: List[Dict[str, Any]]) -> str:
-    return "\n".join(
-        f"{'✅' if item['status'] else '⚠️'} {item['label']}: {item['detail']}"
-        for item in items
-    )
+def _format_progress_report(items: list[dict[str, Any]]) -> str:
+    return "\n".join(f"{'✅' if item['status'] else '⚠️'} {item['label']}: {item['detail']}" for item in items)
 
 
-def _evaluate_extension(ext: Dict[str, Any]) -> Dict[str, Any]:
-    items: List[Dict[str, Any]] = []
+def _evaluate_extension(ext: dict[str, Any]) -> dict[str, Any]:
+    items: list[dict[str, Any]] = []
 
     def add(label: str, detail: str, status: bool):
         items.append({"label": label, "detail": detail, "status": status})
@@ -489,36 +491,26 @@ def _evaluate_extension(ext: Dict[str, Any]) -> Dict[str, Any]:
     add("Generate script", "generate file present", generate_script.exists())
 
     schemas_dir = root / "schemas"
-    schema_files = (
-        [f for f in schemas_dir.glob("*") if f.is_file()] if schemas_dir.exists() else []
-    )
+    schema_files = [f for f in schemas_dir.glob("*") if f.is_file()] if schemas_dir.exists() else []
     add("Schema samples", f"{len(schema_files)} files in schemas/", len(schema_files) >= 2)
 
     generated_dir = root / "karrio" / "schemas" / carrier_id
-    generated_files = (
-        [f for f in generated_dir.glob("*.py")] if generated_dir.exists() else []
-    )
+    generated_files = [f for f in generated_dir.glob("*.py")] if generated_dir.exists() else []
     add("Generated dataclasses", f"{len(generated_files)} python files", len(generated_files) > 0)
 
     providers_dir = root / "karrio" / "providers" / carrier_id
-    provider_files = (
-        [f for f in providers_dir.glob("*.py")] if providers_dir.exists() else []
-    )
+    provider_files = [f for f in providers_dir.glob("*.py")] if providers_dir.exists() else []
     add("Provider logic", f"{len(provider_files)} modules", len(provider_files) > 0)
 
     tests_dir = root / "tests" / carrier_id
-    test_files = (
-        [f for f in tests_dir.glob("test_*.py")] if tests_dir.exists() else []
-    )
+    test_files = [f for f in tests_dir.glob("test_*.py")] if tests_dir.exists() else []
     add("Carrier tests", f"{len(test_files)} test files", len(test_files) > 0)
 
     plugin_file = root / "karrio" / "plugins" / carrier_id / "__init__.py"
     metadata_ok = False
     if plugin_file.exists():
         try:
-            spec = importlib.util.spec_from_file_location(
-                f"studio_plugin_{carrier_id}", plugin_file
-            )
+            spec = importlib.util.spec_from_file_location(f"studio_plugin_{carrier_id}", plugin_file)
             if spec and spec.loader:
                 module = importlib.util.module_from_spec(spec)
                 spec.loader.exec_module(module)  # type: ignore
@@ -539,7 +531,8 @@ def _evaluate_extension(ext: Dict[str, Any]) -> Dict[str, Any]:
         "report": _format_progress_report(items),
     }
 
-def get_extension_details(id: str) -> Optional[Tuple[Dict[str, Any], List[str]]]:
+
+def get_extension_details(id: str) -> tuple[dict[str, Any], list[str]] | None:
     lookup = id.strip().lower()
     extensions = get_extensions()
     ext = next((e for e in extensions if e["id"].lower() == lookup), None)
@@ -551,20 +544,19 @@ def get_extension_details(id: str) -> Optional[Tuple[Dict[str, Any], List[str]]]
 
     ext_path = ROOT_DIR / ext["path"]
     schema_dir = ext_path / "schemas"
-    schemas: List[str] = []
+    schemas: list[str] = []
     if schema_dir.exists():
-        schemas = sorted(
-            f.name for f in schema_dir.iterdir() if f.is_file() and f.suffix in [".json", ".xsd"]
-        )
+        schemas = sorted(f.name for f in schema_dir.iterdir() if f.is_file() and f.suffix in [".json", ".xsd"])
 
     return ext, schemas
+
 
 @studio_api.get("/partials/extension/{id}", response_class=HTMLResponse)
 async def extension_detail(request: Request, id: str):
     data = get_extension_details(id)
     if not data:
         return HTMLResponse("Extension not found", status_code=404)
-        
+
     ext, schemas = data
     progress = _evaluate_extension(ext)
     prompt_cards = [
@@ -590,7 +582,7 @@ async def extension_detail(request: Request, id: str):
     )
 
 
-def run_cli_command(command: List[str]) -> Dict[str, Any]:
+def run_cli_command(command: list[str]) -> dict[str, Any]:
     """Execute repository CLI commands and capture output."""
     process = subprocess.run(
         command,
@@ -606,7 +598,7 @@ def run_cli_command(command: List[str]) -> Dict[str, Any]:
     }
 
 
-def render_action_response(request: Request, title: str, result: Dict[str, Any]):
+def render_action_response(request: Request, title: str, result: dict[str, Any]):
     status = "success" if result["success"] else "error"
     message = f"{title} {'completed' if result['success'] else 'failed'}"
     headers = {"HX-Trigger": json.dumps({"notify": {"message": message, "type": status}})}
@@ -629,14 +621,14 @@ def render_action_response(request: Request, title: str, result: Dict[str, Any])
     )
 
 
-def _build_script_command(script_id: str, ext: Dict[str, Any]) -> Optional[List[str]]:
+def _build_script_command(script_id: str, ext: dict[str, Any]) -> list[str] | None:
     definition = SCRIPT_COMMAND_DEFS.get(script_id)
     if not definition:
         return None
     return definition["build"](ext)
 
 
-def _build_ai_prompt(prompt_id: str, ext: Dict[str, Any], progress: Dict[str, Any]) -> Optional[str]:
+def _build_ai_prompt(prompt_id: str, ext: dict[str, Any], progress: dict[str, Any]) -> str | None:
     definition = AI_PROMPT_DEFS.get(prompt_id)
     if not definition:
         return None
@@ -650,7 +642,7 @@ def _build_ai_prompt(prompt_id: str, ext: Dict[str, Any], progress: Dict[str, An
     return definition["template"].format(**context)
 
 
-def _run_ai_prompt(prompt: str) -> Dict[str, Any]:
+def _run_ai_prompt(prompt: str) -> dict[str, Any]:
     tools = detect_ai_tools()
     tool = next((t for t in tools if t["preferred"]), tools[0] if tools else None)
 
@@ -750,6 +742,7 @@ def start(
     """Launch the Karrio Studio server."""
     typer.echo(f"Starting Karrio Studio at http://{host}:{port}")
     uvicorn.run(studio_api, host=host, port=port)
+
 
 if __name__ == "__main__":
     app()

@@ -8,18 +8,18 @@ test monolith: every happy-path mutation had zero coverage for:
   - Invalid / missing input (400 / GraphQL errors)
   - Cross-user data isolation
 """
-from django.contrib.auth import get_user_model
-from rest_framework.test import APITestCase, APIClient
-from rest_framework import status
 
-from karrio.server.user.models import Token
-from karrio.server.admin.tests.base import AdminGraphTestCase, Result
 import karrio.server.providers.models as providers
-
+from django.contrib.auth import get_user_model
+from karrio.server.admin.tests.base import AdminGraphTestCase
+from karrio.server.user.models import Token
+from rest_framework import status
+from rest_framework.test import APIClient, APITestCase
 
 # ---------------------------------------------------------------------------
 # Unauthenticated access
 # ---------------------------------------------------------------------------
+
 
 class TestAdminUnauthenticated(APITestCase):
     """Admin GraphQL endpoint must reject unauthenticated requests."""
@@ -32,6 +32,7 @@ class TestAdminUnauthenticated(APITestCase):
         requirement is that rate_sheets data is NOT returned.
         """
         from django.urls import reverse
+
         client = APIClient()  # No credentials
         response = client.post(
             reverse("karrio.server.admin:admin-graph"),
@@ -49,6 +50,7 @@ class TestAdminUnauthenticated(APITestCase):
     def test_unauthenticated_mutation_is_rejected(self):
         """Unauthenticated mutation must not create resources."""
         from django.urls import reverse
+
         client = APIClient()
         response = client.post(
             reverse("karrio.server.admin:admin-graph"),
@@ -73,14 +75,13 @@ class TestAdminUnauthenticated(APITestCase):
 # Non-admin (non-staff) user access
 # ---------------------------------------------------------------------------
 
+
 class TestAdminNonStaffUser(APITestCase):
     """Regular (non-staff) users must not access admin endpoints."""
 
     @classmethod
     def setUpTestData(cls):
-        cls.regular_user = get_user_model().objects.create_user(
-            email="regular@example.com", password="test"
-        )
+        cls.regular_user = get_user_model().objects.create_user(email="regular@example.com", password="test")
         cls.regular_token = Token.objects.create(user=cls.regular_user, test_mode=False)
 
     def setUp(self):
@@ -89,20 +90,21 @@ class TestAdminNonStaffUser(APITestCase):
 
     def test_non_staff_cannot_query_admin_rate_sheets(self):
         from django.urls import reverse
+
         response = self.client.post(
             reverse("karrio.server.admin:admin-graph"),
             {"query": "{ rate_sheets { edges { node { id } } } }"},
         )
         # Must either reject outright or return a permission error in GraphQL errors
         data = response.json() if response.status_code == 200 else {}
-        non_staff_blocked = (
-            response.status_code in [status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN]
-            or (data.get("errors") is not None and len(data["errors"]) > 0)
+        non_staff_blocked = response.status_code in [status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN] or (
+            data.get("errors") is not None and len(data["errors"]) > 0
         )
         self.assertTrue(non_staff_blocked, f"Non-staff got unrestricted access: {response.status_code} {data}")
 
     def test_non_staff_cannot_create_system_connection(self):
         from django.urls import reverse
+
         response = self.client.post(
             reverse("karrio.server.admin:admin-graph"),
             {
@@ -118,9 +120,8 @@ class TestAdminNonStaffUser(APITestCase):
             },
         )
         data = response.json() if response.status_code == 200 else {}
-        non_staff_blocked = (
-            response.status_code in [status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN]
-            or (data.get("errors") is not None and len(data["errors"]) > 0)
+        non_staff_blocked = response.status_code in [status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN] or (
+            data.get("errors") is not None and len(data["errors"]) > 0
         )
         self.assertTrue(non_staff_blocked)
 
@@ -128,6 +129,7 @@ class TestAdminNonStaffUser(APITestCase):
 # ---------------------------------------------------------------------------
 # Invalid input validation
 # ---------------------------------------------------------------------------
+
 
 class TestAdminRateSheetValidation(AdminGraphTestCase):
     """Admin mutations must reject invalid or missing input."""
@@ -166,8 +168,7 @@ class TestAdminRateSheetValidation(AdminGraphTestCase):
             },
         )
         has_error = (
-            result.data.get("errors") is not None
-            or result.data.get("data", {}).get("create_rate_sheet") is None
+            result.data.get("errors") is not None or result.data.get("data", {}).get("create_rate_sheet") is None
         )
         self.assertTrue(has_error, "Expected error for unknown carrier_name")
 
@@ -186,10 +187,7 @@ class TestAdminRateSheetValidation(AdminGraphTestCase):
                 }
             },
         )
-        has_error = (
-            result.data.get("errors") is not None
-            or result.data.get("data", {}).get("add_shared_zone") is None
-        )
+        has_error = result.data.get("errors") is not None or result.data.get("data", {}).get("add_shared_zone") is None
         self.assertTrue(has_error, "Expected error for nonexistent rate_sheet_id")
 
     def test_delete_nonexistent_rate_sheet_returns_error(self):
@@ -203,8 +201,7 @@ class TestAdminRateSheetValidation(AdminGraphTestCase):
             variables={"id": "nonexistent-rate-sheet-id"},
         )
         has_error = (
-            result.data.get("errors") is not None
-            or result.data.get("data", {}).get("delete_rate_sheet") is None
+            result.data.get("errors") is not None or result.data.get("data", {}).get("delete_rate_sheet") is None
         )
         self.assertTrue(has_error, "Expected error when deleting nonexistent rate sheet")
 
@@ -285,10 +282,7 @@ class TestAdminMarkupValidation(AdminGraphTestCase):
                 }
             },
         )
-        has_error = (
-            result.data.get("errors") is not None
-            or result.data.get("data", {}).get("create_markup") is None
-        )
+        has_error = result.data.get("errors") is not None or result.data.get("data", {}).get("create_markup") is None
         self.assertTrue(has_error, "Expected validation error for negative markup amount")
 
     def test_delete_nonexistent_markup_returns_error(self):
@@ -301,16 +295,14 @@ class TestAdminMarkupValidation(AdminGraphTestCase):
             operation_name="delete_markup",
             variables={"id": "nonexistent-markup-id"},
         )
-        has_error = (
-            result.data.get("errors") is not None
-            or result.data.get("data", {}).get("delete_markup") is None
-        )
+        has_error = result.data.get("errors") is not None or result.data.get("data", {}).get("delete_markup") is None
         self.assertTrue(has_error, "Expected error when deleting nonexistent markup")
 
 
 # ---------------------------------------------------------------------------
 # Cross-user data isolation
 # ---------------------------------------------------------------------------
+
 
 class TestAdminDataIsolation(APITestCase):
     """
@@ -321,20 +313,17 @@ class TestAdminDataIsolation(APITestCase):
     @classmethod
     def setUpTestData(cls):
         from django.urls import reverse as _reverse
+
         cls.reverse = staticmethod(_reverse)
 
         # Admin 1
-        cls.admin1 = get_user_model().objects.create_superuser(
-            "admin1@example.com", "test"
-        )
+        cls.admin1 = get_user_model().objects.create_superuser("admin1@example.com", "test")
         cls.admin1.is_staff = True
         cls.admin1.save()
         cls.token1 = Token.objects.create(user=cls.admin1, test_mode=False)
 
         # Admin 2
-        cls.admin2 = get_user_model().objects.create_superuser(
-            "admin2@example.com", "test"
-        )
+        cls.admin2 = get_user_model().objects.create_superuser("admin2@example.com", "test")
         cls.admin2.is_staff = True
         cls.admin2.save()
         cls.token2 = Token.objects.create(user=cls.admin2, test_mode=False)
@@ -354,8 +343,8 @@ class TestAdminDataIsolation(APITestCase):
         return client
 
     def _query(self, client, query, variables=None):
-        import json
         from django.urls import reverse
+
         response = client.post(
             reverse("karrio.server.admin:admin-graph"),
             {"query": query, "variables": variables},
@@ -371,10 +360,7 @@ class TestAdminDataIsolation(APITestCase):
         )
         self.assertEqual(code, 200)
         self.assertIsNone(data.get("errors"))
-        ids = [
-            edge["node"]["carrier_id"]
-            for edge in data["data"]["system_carrier_connections"]["edges"]
-        ]
+        ids = [edge["node"]["carrier_id"] for edge in data["data"]["system_carrier_connections"]["edges"]]
         self.assertIn("dhl_isolation_test", ids)
 
     def test_token_for_admin1_cannot_be_used_by_admin2(self):
@@ -385,8 +371,8 @@ class TestAdminDataIsolation(APITestCase):
         client_fake.credentials(HTTP_AUTHORIZATION="Token " + self.token1.key)
         # Make a query that would reveal admin1's context; the test itself
         # just verifies the token resolves to admin1's user in the response
-        import json
         from django.urls import reverse
+
         response = client_fake.post(
             reverse("karrio.server.admin:admin-graph"),
             {"query": "{ user { email } }"},

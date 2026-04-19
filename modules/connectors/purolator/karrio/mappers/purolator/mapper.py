@@ -1,52 +1,53 @@
-from typing import List, Tuple
-from karrio.core.utils.serializable import Serializable, Deserializable
 from karrio.api.mapper import Mapper as BaseMapper
 from karrio.core.models import (
-    AddressValidationRequest,
-    ShipmentCancelRequest,
-    PickupUpdateRequest,
-    PickupCancelRequest,
-    ShipmentRequest,
-    TrackingRequest,
-    PickupRequest,
-    RateRequest,
     AddressValidationDetails,
+    AddressValidationRequest,
     ConfirmationDetails,
-    TrackingDetails,
-    ShipmentDetails,
-    PickupDetails,
-    RateDetails,
     Message,
+    PickupCancelRequest,
+    PickupDetails,
+    PickupRequest,
+    PickupUpdateRequest,
+    RateDetails,
+    RateRequest,
+    ShipmentCancelRequest,
+    ShipmentDetails,
+    ShipmentRequest,
+    TrackingDetails,
+    TrackingRequest,
+)
+from karrio.core.utils.serializable import Deserializable, Serializable
+from karrio.mappers.purolator.settings import Settings
+from karrio.providers.purolator import (
+    address_validation_request,
+    parse_address_validation_response,
+    parse_pickup_cancel_response,
+    parse_pickup_response,
+    parse_pickup_update_response,
+    parse_rate_response,
+    parse_shipment_cancel_response,
+    parse_shipment_response,
+    parse_tracking_response,
+    pickup_cancel_request,
+    pickup_request,
+    pickup_update_request,
+    rate_request,
+    shipment_cancel_request,
+    shipment_request,
+    tracking_request,
 )
 from karrio.providers.purolator import (
     parse_return_shipment_response as _parse_return_shipment_response,
-    return_shipment_request as _return_shipment_request,
-    parse_address_validation_response,
-    parse_pickup_update_response,
-    parse_pickup_cancel_response,
-    parse_tracking_response,
-    parse_pickup_response,
-    parse_shipment_cancel_response,
-    parse_shipment_response,
-    parse_rate_response,
-    address_validation_request,
-    pickup_update_request,
-    pickup_cancel_request,
-    tracking_request,
-    pickup_request,
-    shipment_cancel_request,
-    shipment_request,
-    rate_request,
 )
-from karrio.mappers.purolator.settings import Settings
+from karrio.providers.purolator import (
+    return_shipment_request as _return_shipment_request,
+)
 
 
 class Mapper(BaseMapper):
     settings: Settings
 
-    def create_address_validation_request(
-        self, payload: AddressValidationRequest
-    ) -> Serializable:
+    def create_address_validation_request(self, payload: AddressValidationRequest) -> Serializable:
         return address_validation_request(payload, self.settings)
 
     def create_rate_request(self, payload: RateRequest) -> Serializable:
@@ -61,67 +62,43 @@ class Mapper(BaseMapper):
     def create_pickup_request(self, payload: PickupRequest) -> Serializable:
         return pickup_request(payload, self.settings)
 
-    def create_pickup_update_request(
-        self, payload: PickupUpdateRequest
-    ) -> Serializable:
+    def create_pickup_update_request(self, payload: PickupUpdateRequest) -> Serializable:
         return pickup_update_request(payload, self.settings)
 
-    def create_cancel_pickup_request(
-        self, payload: PickupCancelRequest
-    ) -> Serializable:
+    def create_cancel_pickup_request(self, payload: PickupCancelRequest) -> Serializable:
         return pickup_cancel_request(payload, self.settings)
 
-    def create_cancel_shipment_request(
-        self, payload: ShipmentCancelRequest
-    ) -> Serializable:
+    def create_cancel_shipment_request(self, payload: ShipmentCancelRequest) -> Serializable:
         return shipment_cancel_request(payload, self.settings)
 
     def parse_address_validation_response(
         self, response: Deserializable
-    ) -> Tuple[AddressValidationDetails, List[Message]]:
+    ) -> tuple[AddressValidationDetails, list[Message]]:
         return parse_address_validation_response(response, self.settings)
 
-    def parse_cancel_pickup_response(
-        self, response: Deserializable
-    ) -> Tuple[ConfirmationDetails, List[Message]]:
+    def parse_cancel_pickup_response(self, response: Deserializable) -> tuple[ConfirmationDetails, list[Message]]:
         return parse_pickup_cancel_response(response, self.settings)
 
-    def parse_cancel_shipment_response(
-        self, response: Deserializable
-    ) -> Tuple[ConfirmationDetails, List[Message]]:
+    def parse_cancel_shipment_response(self, response: Deserializable) -> tuple[ConfirmationDetails, list[Message]]:
         return parse_shipment_cancel_response(response, self.settings)
 
-    def parse_pickup_response(
-        self, response: Deserializable
-    ) -> Tuple[PickupDetails, List[Message]]:
+    def parse_pickup_response(self, response: Deserializable) -> tuple[PickupDetails, list[Message]]:
         return parse_pickup_response(response, self.settings)
 
-    def parse_pickup_update_response(
-        self, response: Deserializable
-    ) -> Tuple[PickupDetails, List[Message]]:
+    def parse_pickup_update_response(self, response: Deserializable) -> tuple[PickupDetails, list[Message]]:
         return parse_pickup_update_response(response, self.settings)
 
-    def parse_rate_response(
-        self, response: Deserializable
-    ) -> Tuple[List[RateDetails], List[Message]]:
+    def parse_rate_response(self, response: Deserializable) -> tuple[list[RateDetails], list[Message]]:
         return parse_rate_response(response, self.settings)
 
-    def parse_shipment_response(
-        self, response: Deserializable
-    ) -> Tuple[ShipmentDetails, List[Message]]:
+    def parse_shipment_response(self, response: Deserializable) -> tuple[ShipmentDetails, list[Message]]:
         return parse_shipment_response(response, self.settings)
 
-    def parse_tracking_response(
-        self, response: Deserializable
-    ) -> Tuple[List[TrackingDetails], List[Message]]:
+    def parse_tracking_response(self, response: Deserializable) -> tuple[list[TrackingDetails], list[Message]]:
         return parse_tracking_response(response, self.settings)
 
-    def create_return_shipment_request(
-        self, payload: ShipmentRequest
-    ) -> Serializable:
+    def create_return_shipment_request(self, payload: ShipmentRequest) -> Serializable:
         return _return_shipment_request(payload, self.settings)
 
-    def parse_return_shipment_response(
-        self, response: Deserializable
-    ) -> Tuple[ShipmentDetails, List[Message]]:
+    def parse_return_shipment_response(self, response: Deserializable) -> tuple[ShipmentDetails, list[Message]]:
         return _parse_return_shipment_response(response, self.settings)

@@ -1,9 +1,9 @@
 """Karrio Landmark Global client proxy."""
 
-import karrio.lib as lib
 import karrio.api.proxy as proxy
-import karrio.universal.mappers.rating_proxy as rating_proxy
+import karrio.lib as lib
 import karrio.mappers.landmark.settings as provider_settings
+import karrio.universal.mappers.rating_proxy as rating_proxy
 
 
 class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
@@ -58,9 +58,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
 
         return lib.Deserializable(
             responses,
-            lambda res: [
-                (num, lib.to_element(track)) for num, track in res if any(track.strip())
-            ],
+            lambda res: [(num, lib.to_element(track)) for num, track in res if any(track.strip())],
         )
 
     def create_return_shipment(self, request: lib.Serializable) -> lib.Deserializable:

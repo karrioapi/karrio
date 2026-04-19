@@ -1,6 +1,6 @@
-from django.db import models
 from django.conf import settings
-from karrio.server.core.models.base import uuid, ControlledAccessModel
+from django.db import models
+from karrio.server.core.models.base import ControlledAccessModel, uuid
 
 
 class Entity(models.Model):
@@ -12,9 +12,7 @@ class Entity(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return (
-            str(self.id) if self.id is not None else f"{self.__class__.__name__}(None)"
-        )
+        return str(self.id) if self.id is not None else f"{self.__class__.__name__}(None)"
 
 
 class OwnedEntity(ControlledAccessModel, Entity):

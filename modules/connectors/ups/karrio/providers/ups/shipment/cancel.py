@@ -1,21 +1,16 @@
-import karrio.schemas.ups.shipping_cancel_response as ups
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.ups.error as provider_error
-import karrio.providers.ups.units as provider_units
 import karrio.providers.ups.utils as provider_utils
+import karrio.schemas.ups.shipping_cancel_response as ups
 
 
 def parse_shipment_cancel_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
+) -> tuple[models.ConfirmationDetails, list[models.Message]]:
     response = _response.deserialize()
-    result = lib.to_object(
-        ups.VoidShipmentResponseType, (response.get("VoidShipmentResponse") or {})
-    )
+    result = lib.to_object(ups.VoidShipmentResponseType, (response.get("VoidShipmentResponse") or {}))
     success = lib.failsafe(lambda: result.Response.ResponseStatus.Code) == "1"
 
     cancellation = (

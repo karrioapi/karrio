@@ -77,8 +77,8 @@ Attributes:
 
 """
 
-from karrio.api.gateway import GatewayInitializer, Gateway
 import karrio.api.interface as interface
+from karrio.api.gateway import Gateway, GatewayInitializer
 
 gateway = GatewayInitializer.get_instance()
 Pickup = interface.Pickup

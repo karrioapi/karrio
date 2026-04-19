@@ -1,8 +1,7 @@
 """Karrio MyDHL error parser."""
 
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.mydhl.utils as provider_utils
 import karrio.schemas.mydhl.error_response as mydhl
 
@@ -11,7 +10,7 @@ def parse_error_response(
     response: dict,
     settings: provider_utils.Settings,
     **kwargs,
-) -> typing.List[models.Message]:
+) -> list[models.Message]:
     responses = response if isinstance(response, list) else [response]
     errors = [
         lib.to_object(mydhl.ErrorResponseType, error)

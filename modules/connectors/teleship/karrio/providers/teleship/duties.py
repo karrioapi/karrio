@@ -1,18 +1,17 @@
 """Karrio Teleship duties calculation implementation."""
 
-import typing
-import karrio.schemas.teleship.duties_taxes_request as teleship
-import karrio.schemas.teleship.duties_taxes_response as duties
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.teleship.error as error
 import karrio.providers.teleship.utils as provider_utils
+import karrio.schemas.teleship.duties_taxes_request as teleship
+import karrio.schemas.teleship.duties_taxes_response as duties
 
 
 def parse_duties_calculation_response(
     _response: lib.Deserializable[str],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.DutiesCalculationDetails, typing.List[models.Message]]:
+) -> tuple[models.DutiesCalculationDetails, list[models.Message]]:
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
     details = lib.to_object(duties.DutiesTaxesResponseType, response)
@@ -82,9 +81,7 @@ def duties_calculation_request(
             teleship.CommodityType(
                 quantity=commodity.quantity,
                 title=commodity.title or commodities.description,
-                description=lib.identity(
-                    commodity.description if commodity.title else None
-                ),
+                description=lib.identity(commodity.description if commodity.title else None),
                 hsCode=commodity.hs_code,
                 sku=commodity.sku,
                 value=teleship.ConsigneeChargesType(

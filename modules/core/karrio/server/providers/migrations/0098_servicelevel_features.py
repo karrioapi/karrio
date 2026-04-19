@@ -101,7 +101,6 @@ def revert_features_object_to_array(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("providers", "0097_servicelevel_volumetric_weight_fields"),
     ]

@@ -1,22 +1,20 @@
 import unittest
-from unittest.mock import patch, ANY
-import karrio.sdk as karrio
-import karrio.lib as lib
+from unittest.mock import ANY, patch
+
 import karrio.core.models as models
-from .fixture import gateway, LabelResponse
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import LabelResponse, gateway
 
 
 class TestCanadaPostReturnShipment(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        self.ReturnShipmentRequest = models.ShipmentRequest(
-            **return_shipment_data
-        )
+        self.ReturnShipmentRequest = models.ShipmentRequest(**return_shipment_data)
 
     def test_create_return_shipment_request(self):
-        request = gateway.mapper.create_return_shipment_request(
-            self.ReturnShipmentRequest
-        )
+        request = gateway.mapper.create_return_shipment_request(self.ReturnShipmentRequest)
 
         self.assertEqual(request.serialize(), ReturnShipmentRequestXML)
 
@@ -33,30 +31,18 @@ class TestCanadaPostReturnShipment(unittest.TestCase):
     def test_parse_return_shipment_response(self):
         with patch("karrio.mappers.canadapost.proxy.lib.request") as mock:
             mock.side_effect = [ReturnShipmentResponseXML, LabelResponse]
-            parsed_response = (
-                karrio.Shipment.create(self.ReturnShipmentRequest)
-                .from_(gateway)
-                .parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ReturnShipmentRequest).from_(gateway).parse()
 
             print(parsed_response)
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedReturnShipmentResponse
-            )
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedReturnShipmentResponse)
 
     def test_parse_return_shipment_error_response(self):
         with patch("karrio.mappers.canadapost.proxy.lib.request") as mock:
             mock.side_effect = [ReturnShipmentErrorResponseXML, None]
-            parsed_response = (
-                karrio.Shipment.create(self.ReturnShipmentRequest)
-                .from_(gateway)
-                .parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ReturnShipmentRequest).from_(gateway).parse()
 
             print(parsed_response)
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedReturnShipmentErrorResponse
-            )
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedReturnShipmentErrorResponse)
 
 
 if __name__ == "__main__":

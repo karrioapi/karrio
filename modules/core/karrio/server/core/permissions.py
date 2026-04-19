@@ -1,13 +1,9 @@
 import pydoc
-import typing
-from rest_framework import permissions, exceptions
-from karrio.server.core.logging import logger
 
 import karrio.server.conf as conf
+from rest_framework import exceptions, permissions
 
-PERMISSION_CHECKS = getattr(
-    conf.settings, "PERMISSION_CHECKS", ["karrio.server.core.permissions.check_feature_flags"]
-)
+PERMISSION_CHECKS = getattr(conf.settings, "PERMISSION_CHECKS", ["karrio.server.core.permissions.check_feature_flags"])
 
 
 class AllowEnabledAPI(permissions.BasePermission):
@@ -25,12 +21,13 @@ class AllowEnabledAPI(permissions.BasePermission):
         return super().has_permission(request, view)
 
 
-def check_permissions(context, keys: typing.List[str]):
+def check_permissions(context, keys: list[str]):
     for check in PERMISSION_CHECKS:
-        pydoc.locate(check)(context=context, keys=keys) # type: ignore
+        pydoc.locate(check)(context=context, keys=keys)  # type: ignore
 
 
-def check_feature_flags(keys: typing.List[str] = [], **kwargs):
+def check_feature_flags(keys: list[str] | None = None, **kwargs):
+    keys = keys or []
     flags = [flag for flag in keys if flag in conf.FEATURE_FLAGS]
     if any([conf.settings.get(flag) is False for flag in flags]):
         raise exceptions.PermissionDenied()

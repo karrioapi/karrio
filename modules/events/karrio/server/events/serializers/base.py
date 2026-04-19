@@ -30,9 +30,7 @@ EVENT_TYPES = [(c.value, c.value) for c in list(EventTypes)]
 
 
 class WebhookData(serializers.Serializer):
-    url = serializers.URLField(
-        required=True, help_text="The URL of the webhook endpoint."
-    )
+    url = serializers.URLField(required=True, help_text="The URL of the webhook endpoint.")
     description = serializers.CharField(
         required=False,
         allow_blank=True,
@@ -52,9 +50,7 @@ class WebhookData(serializers.Serializer):
 
 
 class Webhook(serializers.EntitySerializer, WebhookData):
-    object_type = serializers.CharField(
-        default="webhook", help_text="Specifies the object type"
-    )
+    object_type = serializers.CharField(default="webhook", help_text="Specifies the object type")
     last_event_at = serializers.DateTimeField(
         required=False,
         allow_null=True,
