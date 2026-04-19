@@ -1,27 +1,28 @@
-from typing import Tuple, List
-from karrio.schemas.dhl_express.routing_global_req_2_0 import (
-    RouteRequest,
-    RequestTypeType as RequestType,
-    MetaData,
-    Note,
-)
 import karrio.lib as lib
-from karrio.core.units import CountryState, Country
-from karrio.core.utils import Serializable, Element, SF, XP
 from karrio.core.models import (
+    AddressValidationDetails,
     AddressValidationRequest,
     Message,
-    AddressValidationDetails,
 )
+from karrio.core.units import Country, CountryState
+from karrio.core.utils import XP, Element, Serializable
+from karrio.providers.dhl_express.error import parse_error_response
 from karrio.providers.dhl_express.units import CountryRegion
 from karrio.providers.dhl_express.utils import Settings
-from karrio.providers.dhl_express.error import parse_error_response
+from karrio.schemas.dhl_express.routing_global_req_2_0 import (
+    MetaData,
+    Note,
+    RouteRequest,
+)
+from karrio.schemas.dhl_express.routing_global_req_2_0 import (
+    RequestTypeType as RequestType,
+)
 
 
 def parse_address_validation_response(
     _response: lib.Deserializable[Element],
     settings: Settings,
-) -> Tuple[AddressValidationDetails, List[Message]]:
+) -> tuple[AddressValidationDetails, list[Message]]:
     response = _response.deserialize()
     notes = lib.find_element("Note", response)
     success = next(
@@ -37,20 +38,13 @@ def parse_address_validation_response(
     return validation_details, parse_error_response(response, settings)
 
 
-def address_validation_request(
-    payload: AddressValidationRequest, settings: Settings
-) -> Serializable:
-    country = (
-        Country[payload.address.country_code]
-        if payload.address.country_code is not None
-        else None
-    )
+def address_validation_request(payload: AddressValidationRequest, settings: Settings) -> Serializable:
+    country = Country[payload.address.country_code] if payload.address.country_code is not None else None
     division = (
         CountryState[country.name].value[payload.address.state_code].value
         if (
             country.name in CountryState.__members__
-            and payload.address.state_code
-            in CountryState[country.name].value.__members__
+            and payload.address.state_code in CountryState[country.name].value.__members__
         )
         else None
     )
@@ -82,6 +76,4 @@ def _request_serializer(request: RouteRequest) -> str:
         ' xsi:schemaLocation="http://www.dhl.com routing-global-req.xsd"'
     )
 
-    return XP.export(request, namespacedef_=namespacedef_).replace(
-        'schemaVersion="2."', 'schemaVersion="2.0"'
-    )
+    return XP.export(request, namespacedef_=namespacedef_).replace('schemaVersion="2."', 'schemaVersion="2.0"')

@@ -5,11 +5,10 @@ correctly sets Sentry tags and structured context for shipment data.
 
 The function under test is imported directly to avoid Django bootstrap.
 """
+
 import sys
-import types
 import unittest
 from unittest import mock
-
 
 # Replicate the exact logic from karrio.server.tracing.utils._propagate_to_sentry
 # so we can test it without Django. The real module is integration-tested via
@@ -81,10 +80,12 @@ class TestPropagateToSentry(unittest.TestCase):
     @mock.patch("sentry_sdk.set_context")
     @mock.patch("sentry_sdk.set_tag")
     def test_sets_sentry_shipment_context(self, mock_set_tag, mock_set_context):
-        _propagate_to_sentry({
-            "shipment_id": "shp_abc123",
-            "tracking_number": "1Z999",
-        })
+        _propagate_to_sentry(
+            {
+                "shipment_id": "shp_abc123",
+                "tracking_number": "1Z999",
+            }
+        )
         mock_set_context.assert_called_once_with(
             "shipment",
             {"shipment_id": "shp_abc123", "tracking_number": "1Z999"},

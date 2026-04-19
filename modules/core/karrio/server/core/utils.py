@@ -1292,6 +1292,7 @@ def resolve_carrier(
 # Resource Archiving Helpers
 # ─────────────────────────────────────────────────────────────────────────────
 
+
 def archive_resource(instance) -> typing.Any:
     """Archive a resource by setting is_archived=True and recording archived_at.
 

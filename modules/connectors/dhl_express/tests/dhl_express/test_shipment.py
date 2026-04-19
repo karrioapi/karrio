@@ -1,10 +1,12 @@
 import re
 import time
 import unittest
-from unittest.mock import patch, ANY
+from unittest.mock import ANY, patch
+
 import karrio.sdk as karrio
+from karrio.core.models import ShipmentCancelRequest, ShipmentRequest
 from karrio.core.utils import DP
-from karrio.core.models import ShipmentRequest, ShipmentCancelRequest
+
 from .fixture import gateway
 
 
@@ -12,9 +14,7 @@ class TestDHLShipment(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.ShipmentRequest = ShipmentRequest(**shipment_data)
-        self.NonPaperlessShipmentRequest = ShipmentRequest(
-            **non_paperless_intl_shipment_data
-        )
+        self.NonPaperlessShipmentRequest = ShipmentRequest(**non_paperless_intl_shipment_data)
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
@@ -29,9 +29,7 @@ class TestDHLShipment(unittest.TestCase):
         self.assertEqual(serialized_request, ShipmentRequestXml)
 
     def test_create_non_paperless_shipment_request(self):
-        request = gateway.mapper.create_shipment_request(
-            self.NonPaperlessShipmentRequest
-        )
+        request = gateway.mapper.create_shipment_request(self.NonPaperlessShipmentRequest)
 
         # remove MessageTime, Date for testing purpose
         serialized_request = re.sub(
@@ -55,29 +53,19 @@ class TestDHLShipment(unittest.TestCase):
     def test_parse_shipment_error(self):
         with patch("karrio.mappers.dhl_express.proxy.lib.request") as mock:
             mock.return_value = ShipmentParsingError
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentParsingError)
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentParsingError))
 
     def test_shipment_missing_args_error_parsing(self):
         with patch("karrio.mappers.dhl_express.proxy.lib.request") as mock:
             mock.return_value = ShipmentMissingArgsError
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentMissingArgsError)
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedShipmentMissingArgsError))
 
     def test_parse_shipment_response(self):
         with patch("karrio.mappers.dhl_express.proxy.lib.request") as mock:
             mock.return_value = ShipmentResponseXml
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
 
             self.assertListEqual(DP.to_dict(parsed_response), ParsedShipmentResponse)
 
@@ -85,9 +73,7 @@ class TestDHLShipment(unittest.TestCase):
         cancel_request = ShipmentCancelRequest(shipment_identifier="IDENTIFIER")
         response = karrio.Shipment.cancel(cancel_request).from_(gateway).parse()
 
-        self.assertListEqual(
-            DP.to_dict(response), ParsedNotSupportedShipmentCancelResponse
-        )
+        self.assertListEqual(DP.to_dict(response), ParsedNotSupportedShipmentCancelResponse)
 
 
 if __name__ == "__main__":
@@ -136,9 +122,7 @@ shipment_data = {
         "incoterm": "DAP",
         "invoice": "N/A",
         "invoice_date": "2021-05-03",
-        "commodities": [
-            {"description": "cn", "weight": 4.0, "sku": "sku", "hs_code": "hs_code"}
-        ],
+        "commodities": [{"description": "cn", "weight": 4.0, "sku": "sku", "hs_code": "hs_code"}],
         "duty": {
             "account_number": "123456789",
             "paid_by": "sender",
@@ -421,7 +405,7 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xsi:schemaLocation="http://www.dhl
         </Pieces>
         <WeightUnit>K</WeightUnit>
         <GlobalProductCode>P</GlobalProductCode>
-        <Date>{time.strftime('%Y-%m-%d')}</Date>
+        <Date>{time.strftime("%Y-%m-%d")}</Date>
         <Contents>N/A</Contents>
         <DimensionUnit>C</DimensionUnit>
         <PackageType>PA</PackageType>

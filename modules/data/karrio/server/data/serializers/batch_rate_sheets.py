@@ -10,12 +10,7 @@ Handles:
   - Sync upsert (no background queue needed for rate sheets — data is small)
 """
 
-import io
-
-import karrio.server.serializers as serializers
 import karrio.server.data.resources.rate_sheets as rs_resource
-import karrio.server.data.models as models
-import karrio.server.core.exceptions as exceptions
 
 
 def process_rate_sheet_import(
@@ -58,8 +53,9 @@ def process_rate_sheet_import(
             if not carrier_inputs:
                 return {
                     "dry_run": dry_run,
-                    "errors": [{"sheet": "service_rates", "row": 0, "field": "",
-                                "message": "No carrier data found in CSV"}],
+                    "errors": [
+                        {"sheet": "service_rates", "row": 0, "field": "", "message": "No carrier data found in CSV"}
+                    ],
                 }
             carrier_name = next(iter(carrier_inputs))
             payload = rs_resource.flat_carrier_to_upsert_payload(carrier_inputs[carrier_name])
@@ -68,22 +64,19 @@ def process_rate_sheet_import(
             parsed = rs_resource.parse_csv(raw, context=context, rate_sheet_id=rate_sheet_id)
             if rate_sheet_id:
                 existing = (
-                    RateSheet.access_by(context)
-                    .filter(slug=rate_sheet_id)
-                    .first()
-                    or RateSheet.access_by(context)
-                    .filter(id=rate_sheet_id)
-                    .first()
+                    RateSheet.access_by(context).filter(slug=rate_sheet_id).first()
+                    or RateSheet.access_by(context).filter(id=rate_sheet_id).first()
                 )
                 if existing:
-                    parsed["rate_sheet"] = [{
-                        "name": existing.name,
-                        "carrier_name": existing.carrier_name,
-                        "slug": existing.slug,
-                    }]
+                    parsed["rate_sheet"] = [
+                        {
+                            "name": existing.name,
+                            "carrier_name": existing.carrier_name,
+                            "slug": existing.slug,
+                        }
+                    ]
                     parsed["zones"] = [
-                        {"zone_id": z.get("id"), "zone_label": z.get("label"), **z}
-                        for z in (existing.zones or [])
+                        {"zone_id": z.get("id"), "zone_label": z.get("label"), **z} for z in (existing.zones or [])
                     ]
                     parsed["services"] = []
                     parsed["surcharges"] = [
@@ -111,8 +104,14 @@ def process_rate_sheet_import(
             if not carrier_inputs:
                 return {
                     "dry_run": dry_run,
-                    "errors": [{"sheet": "service_rates", "row": 0, "field": "",
-                                "message": "No carrier data found in workbook"}],
+                    "errors": [
+                        {
+                            "sheet": "service_rates",
+                            "row": 0,
+                            "field": "",
+                            "message": "No carrier data found in workbook",
+                        }
+                    ],
                 }
             # Take the first carrier (most files contain a single carrier)
             carrier_name = next(iter(carrier_inputs))

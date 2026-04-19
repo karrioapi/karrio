@@ -1,16 +1,15 @@
 """Karrio SmartKargo shipment cancellation API implementation."""
 
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.smartkargo.error as error
 import karrio.providers.smartkargo.utils as provider_utils
 
 
 def parse_shipment_cancel_response(
-    _response: lib.Deserializable[typing.List[typing.Tuple[str, dict]]],
+    _response: lib.Deserializable[list[tuple[str, dict]]],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
+) -> tuple[models.ConfirmationDetails, list[models.Message]]:
     """Parse shipment cancellation response from SmartKargo void API.
 
     For multi-piece shipments, receives a list of (tracking_number, response) tuples.
@@ -18,7 +17,7 @@ def parse_shipment_cancel_response(
     """
     responses = _response.deserialize()
 
-    messages: typing.List[models.Message] = sum(
+    messages: list[models.Message] = sum(
         [
             error.parse_error_response(response, settings, tracking_number=tracking_number)
             for tracking_number, response in responses
@@ -60,10 +59,7 @@ def parse_shipment_cancel_response(
 def _is_cancelled(response: dict) -> bool:
     """Check if a single void response indicates successful cancellation."""
     result = response.get("result") or {}
-    return (
-        result.get("cancelled", False)
-        or response.get("status", "").lower() == "success"
-    )
+    return result.get("cancelled", False) or response.get("status", "").lower() == "success"
 
 
 def shipment_cancel_request(
@@ -102,12 +98,18 @@ def shipment_cancel_request(
     # Build one cancel request per tracking number (filter Nones inline)
     request = [
         {
-            k: v for k, v in dict(
-                prefix=tracking_number[:3] if len(tracking_number) >= 11 else (options.get("prefix") or options.get("smartkargo_prefix")),
-                airWaybill=tracking_number[3:] if len(tracking_number) >= 11 else (options.get("air_waybill") or options.get("smartkargo_air_waybill")),
+            k: v
+            for k, v in dict(
+                prefix=tracking_number[:3]
+                if len(tracking_number) >= 11
+                else (options.get("prefix") or options.get("smartkargo_prefix")),
+                airWaybill=tracking_number[3:]
+                if len(tracking_number) >= 11
+                else (options.get("air_waybill") or options.get("smartkargo_air_waybill")),
                 userName=user_name,
                 reason=reason,
-            ).items() if v is not None
+            ).items()
+            if v is not None
         }
         for tracking_number in tracking_numbers
         if len(tracking_number) >= 11 or options.get("prefix")

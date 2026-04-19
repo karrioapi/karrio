@@ -1,19 +1,19 @@
-import karrio.schemas.ups.rating_request as ups
-import karrio.schemas.ups.rating_response as rating
 import time
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
+
 import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
 import karrio.providers.ups.error as provider_error
 import karrio.providers.ups.units as provider_units
 import karrio.providers.ups.utils as provider_utils
+import karrio.schemas.ups.rating_request as ups
+import karrio.schemas.ups.rating_response as rating
 
 
 def parse_rate_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+) -> tuple[list[models.RateDetails], list[models.Message]]:
     response = _response.deserialize()
     messages = provider_error.parse_error_response(response, settings)
     raw_rates = response.get("RateResponse", {}).get("RatedShipment") or []
@@ -26,11 +26,9 @@ def _extract_details(
     detail: dict,
     settings: provider_utils.Settings,
     ctx: dict,
-) -> typing.List[models.RateDetails]:
+) -> list[models.RateDetails]:
     rate = lib.to_object(rating.RatedShipmentType, detail)
-    effective_rate: typing.Union[
-        rating.NegotiatedRateChargesType, rating.RatedShipmentType
-    ] = lib.identity(
+    effective_rate: rating.NegotiatedRateChargesType | rating.RatedShipmentType = lib.identity(
         rate.NegotiatedRateCharges if rate.NegotiatedRateCharges is not None else rate
     )
     total_charge: rating.BaseServiceChargeType = lib.identity(
@@ -44,11 +42,7 @@ def _extract_details(
 
     charges = [
         ("BASE CHARGE", effective_rate.BaseServiceCharge.MonetaryValue),
-        *lib.identity(
-            []
-            if any(itemized_charges)
-            else [("Taxes", sum(lib.to_money(c.MonetaryValue) for c in taxes))]
-        ),
+        *lib.identity([] if any(itemized_charges) else [("Taxes", sum(lib.to_money(c.MonetaryValue) for c in taxes))]),
         *lib.identity(
             [(rate.Service.Code, rate.ServiceOptionsCharges.MonetaryValue)]
             if lib.to_int(rate.ServiceOptionsCharges.MonetaryValue) > 0
@@ -57,13 +51,7 @@ def _extract_details(
         *lib.identity(
             (
                 lib.identity(
-                    provider_units.SurchargeType.map(
-                        str(
-                            getattr(c, "Code", None)
-                            or getattr(c, "Type", None)
-                            or "000"
-                        )
-                    )
+                    provider_units.SurchargeType.map(str(getattr(c, "Code", None) or getattr(c, "Type", None) or "000"))
                     .name_or_key.replace("_", " ")
                     .upper()
                 ),
@@ -128,24 +116,17 @@ def rate_request(
         weight_unit=packages.weight_unit,
     )
     declared_value = (
-        lib.to_money(customs.duty.declared_value if customs.duty else None)
-        or options.declared_value.state
-        or 1.0
+        lib.to_money(customs.duty.declared_value if customs.duty else None) or options.declared_value.state or 1.0
     )
-    mps_packaging = lib.identity(
-        provider_units.PackagingType.ups_unknown.value if len(packages) > 1 else None
-    )
+    mps_packaging = lib.identity(provider_units.PackagingType.ups_unknown.value if len(packages) > 1 else None)
     weight_unit, dim_unit = lib.identity(
-        provider_units.COUNTRY_PREFERED_UNITS.get(shipper.country_code)
-        or packages.compatible_units
+        provider_units.COUNTRY_PREFERED_UNITS.get(shipper.country_code) or packages.compatible_units
     )
     indications = [
         *(["01"] if options.pickup_options.state else []),
         *(["02"] if options.delivery_options.state else []),
     ]
-    origin = lib.identity(
-        "EU" if shipper.country_code in units.EUCountry else shipper.country_code
-    )
+    origin = lib.identity("EU" if shipper.country_code in units.EUCountry else shipper.country_code)
 
     dc_type = options.ups_delivery_confirmation.state
     dc_level = options.ups_delivery_confirmation_level.state
@@ -173,9 +154,7 @@ def rate_request(
                     AttentionName=shipper.contact,
                     ShipperNumber=settings.account_number,
                     Address=ups.ShipFromAddressType(
-                        AddressLine=[
-                            lib.text(line, max=35) for line in shipper.address_lines
-                        ],
+                        AddressLine=[lib.text(line, max=35) for line in shipper.address_lines],
                         City=shipper.city,
                         StateProvinceCode=shipper.state_code,
                         PostalCode=shipper.postal_code,
@@ -186,16 +165,12 @@ def rate_request(
                     Name=recipient.name,
                     AttentionName=recipient.contact,
                     Address=ups.AlternateDeliveryAddressAddressType(
-                        AddressLine=[
-                            lib.text(line, max=35) for line in recipient.address_lines
-                        ],
+                        AddressLine=[lib.text(line, max=35) for line in recipient.address_lines],
                         City=recipient.city,
                         StateProvinceCode=recipient.state_code,
                         PostalCode=recipient.postal_code,
                         CountryCode=recipient.country_code,
-                        ResidentialAddressIndicator=(
-                            "Y" if recipient.residential else None
-                        ),
+                        ResidentialAddressIndicator=("Y" if recipient.residential else None),
                         POBoxIndicator=None,
                     ),
                 ),
@@ -203,10 +178,7 @@ def rate_request(
                     Name=return_address.name,
                     AttentionName=return_address.contact,
                     Address=ups.ShipFromAddressType(
-                        AddressLine=[
-                            lib.text(line, max=35)
-                            for line in return_address.address_lines
-                        ],
+                        AddressLine=[lib.text(line, max=35) for line in return_address.address_lines],
                         City=return_address.city,
                         StateProvinceCode=return_address.state_code,
                         PostalCode=return_address.postal_code,
@@ -215,8 +187,7 @@ def rate_request(
                 ),
                 AlternateDeliveryAddress=None,
                 ShipmentIndicatorType=[
-                    ups.CustomerClassificationType(Code=code, Description="Indicator")
-                    for code in indications
+                    ups.CustomerClassificationType(Code=code, Description="Indicator") for code in indications
                 ],
                 PaymentDetails=ups.PaymentDetailsType(
                     ShipmentCharge=[
@@ -236,11 +207,7 @@ def rate_request(
                 FreightShipmentInformation=None,
                 GoodsNotInFreeCirculationIndicator=None,
                 Service=ups.CustomerClassificationType(
-                    Code=(
-                        service.value
-                        if service
-                        else provider_units.ServiceCode.ups_standard.value
-                    ),
+                    Code=(service.value if service else provider_units.ServiceCode.ups_standard.value),
                     Description="Weight",
                 ),
                 NumOfPieces=None,  # Only required for Freight
@@ -257,9 +224,7 @@ def rate_request(
                         PackagingType=ups.CustomerClassificationType(
                             Code=(
                                 mps_packaging
-                                or provider_units.PackagingType.map(
-                                    package.packaging_type
-                                ).value
+                                or provider_units.PackagingType.map(package.packaging_type).value
                                 or provider_units.PackagingType.ups_customer_supplied_package.value
                             ),
                             Description="Packaging Type",
@@ -280,9 +245,7 @@ def rate_request(
                         DimWeight=None,
                         PackageWeight=ups.WeightType(
                             UnitOfMeasurement=ups.CustomerClassificationType(
-                                Code=provider_units.WeightUnit.map(
-                                    weight_unit.name
-                                ).value,
+                                Code=provider_units.WeightUnit.map(weight_unit.name).value,
                                 Description="Weight",
                             ),
                             Weight=str(package.weight[weight_unit.name]),
@@ -294,15 +257,11 @@ def rate_request(
                                     ups.DeliveryConfirmationType(
                                         DCISType=dc_type,
                                     )
-                                    if dc_type
-                                    and dc_level
-                                    == provider_units.DeliveryConfirmationLevel.PACKAGE.value
+                                    if dc_type and dc_level == provider_units.DeliveryConfirmationLevel.PACKAGE.value
                                     else None
                                 ),
                             )
-                            if dc_type
-                            and dc_level
-                            == provider_units.DeliveryConfirmationLevel.PACKAGE.value
+                            if dc_type and dc_level == provider_units.DeliveryConfirmationLevel.PACKAGE.value
                             else None
                         ),
                         UPSPremier=None,
@@ -314,9 +273,7 @@ def rate_request(
                 ShipmentServiceOptions=lib.identity(
                     ups.ShipmentServiceOptionsType(
                         SaturdayDeliveryIndicator=lib.identity(
-                            "Y"
-                            if options.ups_saturday_delivery_indicator.state
-                            else None
+                            "Y" if options.ups_saturday_delivery_indicator.state else None
                         ),
                         SaturdayPickupIndicator=lib.identity(
                             "Y" if options.ups_saturday_pickup_indicator.state else None
@@ -324,28 +281,20 @@ def rate_request(
                         SundayDeliveryIndicator=lib.identity(
                             "Y" if options.ups_sunday_delivery_indicator.state else None
                         ),
-                        AvailableServicesOption=lib.identity(
-                            options.ups_available_services_option.state
-                        ),
+                        AvailableServicesOption=lib.identity(options.ups_available_services_option.state),
                         AccessPointCOD=lib.identity(
                             ups.InvoiceLineTotalType(
                                 CurrencyCode=options.currency.state,
-                                MonetaryValue=lib.to_money(
-                                    options.ups_access_point_cod.state
-                                ),
+                                MonetaryValue=lib.to_money(options.ups_access_point_cod.state),
                             )
                             if options.ups_access_point_cod.state
                             else None
                         ),
                         DeliverToAddresseeOnlyIndicator=lib.identity(
-                            "Y"
-                            if options.ups_deliver_to_addressee_only_indicator.state
-                            else None
+                            "Y" if options.ups_deliver_to_addressee_only_indicator.state else None
                         ),
                         DirectDeliveryOnlyIndicator=lib.identity(
-                            "Y"
-                            if options.ups_direct_delivery_only_indicator.state
-                            else None
+                            "Y" if options.ups_direct_delivery_only_indicator.state else None
                         ),
                         COD=lib.identity(
                             ups.CodType(
@@ -362,32 +311,22 @@ def rate_request(
                             ups.DeliveryConfirmationType(
                                 DCISType=dc_type,
                             )
-                            if dc_type
-                            and dc_level
-                            == provider_units.DeliveryConfirmationLevel.SHIPMENT.value
+                            if dc_type and dc_level == provider_units.DeliveryConfirmationLevel.SHIPMENT.value
                             else None
                         ),
                         ReturnOfDocumentIndicator=lib.identity(
-                            "Y"
-                            if options.ups_return_of_document_indicator.state
-                            else None
+                            "Y" if options.ups_return_of_document_indicator.state else None
                         ),
                         UPScarbonneutralIndicator=lib.identity(
                             "Y" if options.ups_carbonneutral_indicator.state else None
                         ),
                         CertificateOfOriginIndicator=lib.identity(
-                            "Y"
-                            if options.ups_certificate_of_origin_indicator.state
-                            else None
+                            "Y" if options.ups_certificate_of_origin_indicator.state else None
                         ),
                         PickupOptions=lib.identity(
                             ups.PickupOptionsType(
                                 HoldForPickupIndicator="Y",
-                                LiftGateForPickUpIndicator=(
-                                    "Y"
-                                    if options.ups_lift_gate_for_pickup.state
-                                    else None
-                                ),
+                                LiftGateForPickUpIndicator=("Y" if options.ups_lift_gate_for_pickup.state else None),
                             )
                             if options.pickup_options.state
                             else None
@@ -396,9 +335,7 @@ def rate_request(
                             ups.DeliveryOptionsType(
                                 DropOffAtUPSFacilityIndicator="Y",
                                 LiftGateForDeliveryIndicator=(
-                                    "Y"
-                                    if options.ups_lift_gate_for_delivery.state
-                                    else None
+                                    "Y" if options.ups_lift_gate_for_delivery.state else None
                                 ),
                             )
                             if options.delivery_options.state
@@ -407,60 +344,35 @@ def rate_request(
                         RestrictedArticles=lib.identity(
                             ups.RestrictedArticlesType(
                                 AlcoholicBeveragesIndicator=lib.identity(
-                                    "Y"
-                                    if options.ups_alcoholic_beverages_indicator.state
-                                    else None
+                                    "Y" if options.ups_alcoholic_beverages_indicator.state else None
                                 ),
                                 DiagnosticSpecimensIndicator=lib.identity(
-                                    "Y"
-                                    if options.ups_diagnostic_specimens_indicator.state
-                                    else None
+                                    "Y" if options.ups_diagnostic_specimens_indicator.state else None
                                 ),
                                 PerishablesIndicator=lib.identity(
-                                    "Y"
-                                    if options.ups_perishables_indicator.state
-                                    else None
+                                    "Y" if options.ups_perishables_indicator.state else None
                                 ),
-                                PlantsIndicator=lib.identity(
-                                    "Y" if options.ups_plants_indicator.state else None
-                                ),
-                                SeedsIndicator=lib.identity(
-                                    "Y" if options.ups_seeds_indicator.state else None
-                                ),
+                                PlantsIndicator=lib.identity("Y" if options.ups_plants_indicator.state else None),
+                                SeedsIndicator=lib.identity("Y" if options.ups_seeds_indicator.state else None),
                                 SpecialExceptionsIndicator=lib.identity(
                                     "Y"
-                                    if (
-                                        options.ups_special_exceptions_indicator.state
-                                        or options.dangerous_goods.state
-                                    )
+                                    if (options.ups_special_exceptions_indicator.state or options.dangerous_goods.state)
                                     else None
                                 ),
-                                TobaccoIndicator=lib.identity(
-                                    "Y" if options.ups_tobacco_indicator.state else None
-                                ),
+                                TobaccoIndicator=lib.identity("Y" if options.ups_tobacco_indicator.state else None),
                                 ECigarettesIndicator=lib.identity(
-                                    "Y"
-                                    if options.ups_ecigarettes_indicator.state
-                                    else None
+                                    "Y" if options.ups_ecigarettes_indicator.state else None
                                 ),
-                                HempCBDIndicator=lib.identity(
-                                    "Y"
-                                    if options.ups_hemp_cbd_indicator.state
-                                    else None
-                                ),
+                                HempCBDIndicator=lib.identity("Y" if options.ups_hemp_cbd_indicator.state else None),
                             )
                             if options.ups_restricted_articles.state
                             else None
                         ),
                         ShipperExportDeclarationIndicator=lib.identity(
-                            "Y"
-                            if options.ups_shipper_export_declaration_indicator.state
-                            else None
+                            "Y" if options.ups_shipper_export_declaration_indicator.state else None
                         ),
                         CommercialInvoiceRemovalIndicator=lib.identity(
-                            "Y"
-                            if options.ups_commercial_invoice_removal_indicator.state
-                            else None
+                            "Y" if options.ups_commercial_invoice_removal_indicator.state else None
                         ),
                         ImportControl=lib.identity(
                             ups.CustomerClassificationType(
@@ -480,39 +392,25 @@ def rate_request(
                             if options.ups_return_service.state
                             else None
                         ),
-                        SDLShipmentIndicator=lib.identity(
-                            "Y" if options.ups_sdl_shipment_indicator.state else None
-                        ),
-                        EPRAIndicator=lib.identity(
-                            "Y" if options.ups_epra_indicator.state else None
-                        ),
+                        SDLShipmentIndicator=lib.identity("Y" if options.ups_sdl_shipment_indicator.state else None),
+                        EPRAIndicator=lib.identity("Y" if options.ups_epra_indicator.state else None),
                         InsideDelivery=options.ups_inside_delivery.state,
-                        ItemDisposalIndicator=lib.identity(
-                            "Y" if options.ups_item_disposal.state else None
-                        ),
+                        ItemDisposalIndicator=lib.identity("Y" if options.ups_item_disposal.state else None),
                     )
                     if any(options.items())
                     else None
                 ),
                 ShipmentRatingOptions=ups.ShipmentShipmentRatingOptionsType(
                     NegotiatedRatesIndicator=lib.identity(
-                        "Y"
-                        if options.ups_negotiated_rates_indicator.state is not False
-                        else None
+                        "Y" if options.ups_negotiated_rates_indicator.state is not False else None
                     ),
-                    FRSShipmentIndicator=lib.identity(
-                        "Y" if options.ups_frs_shipment_indicator.state else None
-                    ),
-                    RateChartIndicator=lib.identity(
-                        "Y" if options.ups_rate_chart_indicator.state else None
-                    ),
+                    FRSShipmentIndicator=lib.identity("Y" if options.ups_frs_shipment_indicator.state else None),
+                    RateChartIndicator=lib.identity("Y" if options.ups_rate_chart_indicator.state else None),
                     UserLevelDiscountIndicator=lib.identity(
                         "Y" if options.ups_user_level_discount_indicator.state else None
                     ),
                     TPFCNegotiatedRatesIndicator=lib.identity(
-                        "Y"
-                        if options.ups_tpfc_negotiated_rates_indicator.state
-                        else None
+                        "Y" if options.ups_tpfc_negotiated_rates_indicator.state else None
                     ),
                 ),
                 InvoiceLineTotal=ups.InvoiceLineTotalType(

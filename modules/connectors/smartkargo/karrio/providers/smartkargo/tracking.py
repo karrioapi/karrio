@@ -1,26 +1,22 @@
 """Karrio SmartKargo tracking API implementation."""
 
-import karrio.schemas.smartkargo.tracking_response as smartkargo
-
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.smartkargo.error as error
-import karrio.providers.smartkargo.utils as provider_utils
 import karrio.providers.smartkargo.units as provider_units
+import karrio.providers.smartkargo.utils as provider_utils
+import karrio.schemas.smartkargo.tracking_response as smartkargo
 
 
 def parse_tracking_response(
-    _response: lib.Deserializable[typing.List[typing.Tuple[str, dict]]],
+    _response: lib.Deserializable[list[tuple[str, dict]]],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+) -> tuple[list[models.TrackingDetails], list[models.Message]]:
     responses = _response.deserialize()
 
-    messages: typing.List[models.Message] = sum(
+    messages: list[models.Message] = sum(
         [
-            error.parse_error_response(
-                response, settings, tracking_number=tracking_number
-            )
+            error.parse_error_response(response, settings, tracking_number=tracking_number)
             for tracking_number, response in responses
         ],
         start=[],
@@ -36,7 +32,7 @@ def parse_tracking_response(
 
 
 def _extract_details(
-    data: typing.List[dict],
+    data: list[dict],
     settings: provider_utils.Settings,
     tracking_number: str,
 ) -> models.TrackingDetails:
@@ -46,15 +42,10 @@ def _extract_details(
     When present (partner response), it provides rich address data.
     When absent (standard response), `eventLocation` code is used.
     """
-    events = [
-        lib.to_object(smartkargo.TrackingResponseElementType, event) for event in data
-    ]
+    events = [lib.to_object(smartkargo.TrackingResponseElementType, event) for event in data]
 
     latest = events[0] if events else None
-    status = (
-        provider_units.TrackingStatus.find(latest.eventType if latest else "").name
-        or "in_transit"
-    )
+    status = provider_units.TrackingStatus.find(latest.eventType if latest else "").name or "in_transit"
 
     return models.TrackingDetails(
         carrier_id=settings.carrier_id,
@@ -76,13 +67,11 @@ def _extract_details(
                     if e.location and e.location.city
                     else e.eventLocation
                 ),
-                timestamp=lib.fiso_timestamp(
-                    e.eventDate, current_format="%Y-%m-%dT%H:%M:%S"
-                ),
+                timestamp=lib.fiso_timestamp(e.eventDate, current_format="%Y-%m-%dT%H:%M:%S"),
                 status=provider_units.TrackingStatus.find(e.eventType).name,
                 reason=provider_units.TrackingIncidentReason.find(e.eventType).name,
-                latitude=lib.failsafe(lambda: float(e.location.latitude)),
-                longitude=lib.failsafe(lambda: float(e.location.longitude)),
+                latitude=lib.failsafe(lambda e=e: float(e.location.latitude)),
+                longitude=lib.failsafe(lambda e=e: float(e.location.longitude)),
             )
             for e in events
         ],

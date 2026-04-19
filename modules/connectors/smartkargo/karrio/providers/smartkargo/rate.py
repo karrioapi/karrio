@@ -1,35 +1,31 @@
 """Karrio SmartKargo rate API implementation."""
 
+import datetime
+
+import karrio.core.models as models
+import karrio.lib as lib
+import karrio.providers.smartkargo.error as error
+import karrio.providers.smartkargo.units as provider_units
+import karrio.providers.smartkargo.utils as provider_utils
 import karrio.schemas.smartkargo.rate_request as smartkargo_req
 import karrio.schemas.smartkargo.rate_response as smartkargo_res
 
-import typing
-import datetime
-import karrio.lib as lib
-import karrio.core.models as models
-import karrio.providers.smartkargo.error as error
-import karrio.providers.smartkargo.utils as provider_utils
-import karrio.providers.smartkargo.units as provider_units
-
 
 def parse_rate_response(
-    _response: lib.Deserializable[typing.List[dict]],
+    _response: lib.Deserializable[list[dict]],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+) -> tuple[list[models.RateDetails], list[models.Message]]:
     responses = _response.deserialize()
 
-    messages: typing.List[models.Message] = sum(
+    messages: list[models.Message] = sum(
         [error.parse_error_response(response, settings) for response in responses],
         start=[],
     )
 
-    package_rates: typing.List[typing.Tuple[str, typing.List[models.RateDetails]]] = [
+    package_rates: list[tuple[str, list[models.RateDetails]]] = [
         (
             f"{idx}",
-            [
-                _extract_details(detail, settings)
-                for detail in (response.get("details") or [])
-            ],
+            [_extract_details(detail, settings) for detail in (response.get("details") or [])],
         )
         for idx, response in enumerate(responses, start=1)
         if response.get("status", "").upper() == "QUOTED"
@@ -61,8 +57,7 @@ def _extract_details(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         service=service.name_or_key,
-        total_charge=lib.to_money(detail.total or 0)
-        + lib.to_money(detail.totalTax or 0),
+        total_charge=lib.to_money(detail.total or 0) + lib.to_money(detail.totalTax or 0),
         currency=settings.connection_config.currency.state or "USD",
         transit_days=transit_days,
         extra_charges=[
@@ -102,16 +97,8 @@ def rate_request(
     # SmartKargo uses KG/LBR for weight and CMQ/CFT for volume
     # Typically KG correlates with CM dimensions, LB with IN
     is_metric = packages.weight_unit == "KG"
-    weight_unit = (
-        provider_units.WeightUnit.KG.value
-        if is_metric
-        else provider_units.WeightUnit.LBR.value
-    )
-    dimension_unit = (
-        provider_units.DimensionUnit.CMQ.value
-        if is_metric
-        else provider_units.DimensionUnit.CFT.value
-    )
+    weight_unit = provider_units.WeightUnit.KG.value if is_metric else provider_units.WeightUnit.LBR.value
+    dimension_unit = provider_units.DimensionUnit.CMQ.value if is_metric else provider_units.DimensionUnit.CFT.value
 
     # Resolve common request fields
     primary_id = settings.connection_config.primary_id.state or settings.account_number
@@ -124,8 +111,7 @@ def rate_request(
         max=35,
     )
     shipment_date = lib.fdatetime(
-        options.shipment_date.state
-        or lib.to_next_business_datetime(datetime.datetime.now()),
+        options.shipment_date.state or lib.to_next_business_datetime(datetime.datetime.now()),
         current_format="%Y-%m-%d",
         output_format="%Y-%m-%d %H:%M",
     )
@@ -150,9 +136,7 @@ def rate_request(
                     totalGrossWeight=package.weight.value,
                     grossWeightUnityMeasure=weight_unit,
                     hasInsurance=options.smartkargo_declared_value.state is not None,
-                    insuranceAmmount=lib.to_money(
-                        options.smartkargo_declared_value.state or 0
-                    ),
+                    insuranceAmmount=lib.to_money(options.smartkargo_declared_value.state or 0),
                     specialHandlingType=options.smartkargo_special_handling.state,
                     dimensions=[
                         smartkargo_req.DimensionType(
@@ -200,8 +184,12 @@ def rate_request(
                     customItems=(
                         [
                             smartkargo_req.CustomItemType(
-                                exportHsCode=item.hs_code or lib.identity(item.metadata or {}).get("export_hs_code") or "N/A",
-                                importHsCode=lib.identity(item.metadata or {}).get("import_hs_code") or item.hs_code or "N/A",
+                                exportHsCode=item.hs_code
+                                or lib.identity(item.metadata or {}).get("export_hs_code")
+                                or "N/A",
+                                importHsCode=lib.identity(item.metadata or {}).get("import_hs_code")
+                                or item.hs_code
+                                or "N/A",
                                 description=lib.text(item.description or item.title, max=500),
                                 quantity=item.quantity,
                                 quantityUnit=item.weight_unit or "kg",
