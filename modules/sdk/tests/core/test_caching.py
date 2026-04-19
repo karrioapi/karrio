@@ -1,5 +1,5 @@
-import unittest
 import datetime
+import unittest
 
 from karrio.core.utils.caching import Cache, ThreadSafeTokenManager
 
@@ -80,12 +80,8 @@ class TestThreadSafeTokenManager(unittest.TestCase):
 
     def setUp(self):
         self.maxDiff = None
-        self.future_expiry = (
-            datetime.datetime.now() + datetime.timedelta(hours=2)
-        ).strftime("%Y-%m-%d %H:%M:%S")
-        self.past_expiry = (
-            datetime.datetime.now() - datetime.timedelta(hours=1)
-        ).strftime("%Y-%m-%d %H:%M:%S")
+        self.future_expiry = (datetime.datetime.now() + datetime.timedelta(hours=2)).strftime("%Y-%m-%d %H:%M:%S")
+        self.past_expiry = (datetime.datetime.now() - datetime.timedelta(hours=1)).strftime("%Y-%m-%d %H:%M:%S")
 
     def test_get_token_calls_refresh_when_no_cached_token(self):
         cache = Cache()
@@ -155,10 +151,13 @@ class TestThreadSafeTokenManager(unittest.TestCase):
         self.assertEqual(call_count["n"], 1)
 
         # Simulate expiry by setting an expired token in cache
-        cache.set(manager.cache_key, {
-            "access_token": "token_1",
-            "expiry": self.past_expiry,
-        })
+        cache.set(
+            manager.cache_key,
+            {
+                "access_token": "token_1",
+                "expiry": self.past_expiry,
+            },
+        )
 
         # Next call should trigger a new refresh
         token = manager.get_token()
@@ -178,9 +177,7 @@ class TestThreadSafeTokenManager(unittest.TestCase):
     def test_get_token_propagates_refresh_errors(self):
         cache = Cache()
         manager = cache.thread_safe(
-            refresh_func=lambda: (_ for _ in ()).throw(
-                ConnectionError("network down")
-            ),
+            refresh_func=lambda: (_ for _ in ()).throw(ConnectionError("network down")),
             cache_key="test|key",
         )
 

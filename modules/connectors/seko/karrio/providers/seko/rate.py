@@ -1,21 +1,18 @@
 """Karrio SEKO Logistics rating API implementation."""
 
+import karrio.core.models as models
+import karrio.lib as lib
+import karrio.providers.seko.error as error
+import karrio.providers.seko.units as provider_units
+import karrio.providers.seko.utils as provider_utils
 import karrio.schemas.seko.rating_request as seko
 import karrio.schemas.seko.rating_response as rating
-
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
-import karrio.core.models as models
-import karrio.providers.seko.error as error
-import karrio.providers.seko.utils as provider_utils
-import karrio.providers.seko.units as provider_units
 
 
 def parse_rate_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+) -> tuple[list[models.RateDetails], list[models.Message]]:
     response = _response.deserialize()
 
     messages = error.parse_error_response(response, settings)
@@ -72,9 +69,7 @@ def rate_request(
         recipient=payload.recipient,
         weight_unit="KG",
     )
-    commodities = lib.identity(
-        packages.items if any(packages.items) else customs.commodities
-    )
+    commodities = lib.identity(packages.items if any(packages.items) else customs.commodities)
 
     # map data to convert karrio model to seko specific type
     request = seko.RatingRequestType(
@@ -122,9 +117,7 @@ def rate_request(
         DangerousGoods=None,
         Commodities=[
             seko.CommodityType(
-                Description=lib.text(
-                    commodity.title, commodity.description, separator=" - ", max=200
-                ),
+                Description=lib.text(commodity.title, commodity.description, separator=" - ", max=200),
                 HarmonizedCode=commodity.sku,
                 Units=commodity.quantity,
                 UnitValue=commodity.value_amount,
@@ -149,9 +142,7 @@ def rate_request(
                 Kg=package.weight.KG,
                 Name=lib.text(package.description, max=50),
                 PackageCode=None,
-                Type=provider_units.PackagingType.map(
-                    package.packaging_type or "your_packaging"
-                ).value,
+                Type=provider_units.PackagingType.map(package.packaging_type or "your_packaging").value,
             )
             for package in packages
         ],
@@ -163,9 +154,7 @@ def rate_request(
         AmountCollected=options.seko_amount_collected.state,
         CIFValue=options.seko_cif_value.state,
         FreightValue=options.seko_freight_value.state,
-        DutiesAndTaxesByReceiver=lib.identity(
-            customs.duty.paid_by == "recipient" if payload.customs else None
-        ),
+        DutiesAndTaxesByReceiver=lib.identity(customs.duty.paid_by == "recipient" if payload.customs else None),
         TaxIds=[
             seko.TaxIDType(
                 IdType=option.code,

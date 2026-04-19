@@ -4,50 +4,49 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('manager', '0005_auto_20210216_0758'),
+        ("manager", "0005_auto_20210216_0758"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='address',
-            old_name='user',
-            new_name='created_by',
+            model_name="address",
+            old_name="user",
+            new_name="created_by",
         ),
         migrations.RenameField(
-            model_name='commodity',
-            old_name='user',
-            new_name='created_by',
+            model_name="commodity",
+            old_name="user",
+            new_name="created_by",
         ),
         migrations.RenameField(
-            model_name='customs',
-            old_name='user',
-            new_name='created_by',
+            model_name="customs",
+            old_name="user",
+            new_name="created_by",
         ),
         migrations.RenameField(
-            model_name='parcel',
-            old_name='user',
-            new_name='created_by',
+            model_name="parcel",
+            old_name="user",
+            new_name="created_by",
         ),
         migrations.RenameField(
-            model_name='payment',
-            old_name='user',
-            new_name='created_by',
+            model_name="payment",
+            old_name="user",
+            new_name="created_by",
         ),
         migrations.RenameField(
-            model_name='pickup',
-            old_name='user',
-            new_name='created_by',
+            model_name="pickup",
+            old_name="user",
+            new_name="created_by",
         ),
         migrations.RenameField(
-            model_name='shipment',
-            old_name='user',
-            new_name='created_by',
+            model_name="shipment",
+            old_name="user",
+            new_name="created_by",
         ),
         migrations.RenameField(
-            model_name='tracking',
-            old_name='user',
-            new_name='created_by',
+            model_name="tracking",
+            old_name="user",
+            new_name="created_by",
         ),
     ]

@@ -1,13 +1,14 @@
 """Spring carrier shipment tests."""
 
-import unittest
-from unittest.mock import patch, ANY
-from .fixture import gateway
 import logging
+import unittest
+from unittest.mock import patch
 
-import karrio.sdk as karrio
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 logger = logging.getLogger(__name__)
 
@@ -16,9 +17,7 @@ class TestSpringShipment(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.ShipmentRequest = models.ShipmentRequest(**ShipmentPayload)
-        self.ShipmentCancelRequest = models.ShipmentCancelRequest(
-            **ShipmentCancelPayload
-        )
+        self.ShipmentCancelRequest = models.ShipmentCancelRequest(**ShipmentCancelPayload)
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
@@ -35,16 +34,12 @@ class TestSpringShipment(unittest.TestCase):
     def test_parse_shipment_response(self):
         with patch("karrio.mappers.spring.proxy.lib.run_asynchronously") as mock_async:
             mock_async.return_value = [ShipmentResponse]
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_create_cancel_shipment_request(self):
-        request = gateway.mapper.create_cancel_shipment_request(
-            self.ShipmentCancelRequest
-        )
+        request = gateway.mapper.create_cancel_shipment_request(self.ShipmentCancelRequest)
 
         self.assertEqual(lib.to_dict(request.serialize()), ShipmentCancelRequest)
 
@@ -61,22 +56,14 @@ class TestSpringShipment(unittest.TestCase):
     def test_parse_cancel_shipment_response(self):
         with patch("karrio.mappers.spring.proxy.lib.request") as mock:
             mock.return_value = ShipmentCancelResponse
-            parsed_response = (
-                karrio.Shipment.cancel(self.ShipmentCancelRequest)
-                .from_(gateway)
-                .parse()
-            )
+            parsed_response = karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()
 
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedShipmentCancelResponse
-            )
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentCancelResponse)
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.spring.proxy.lib.run_asynchronously") as mock_async:
             mock_async.return_value = [ErrorResponse]
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
@@ -86,9 +73,7 @@ class TestSpringMultiPieceShipment(unittest.TestCase):
 
     def setUp(self):
         self.maxDiff = None
-        self.MultiPieceShipmentRequest = models.ShipmentRequest(
-            **MultiPieceShipmentPayload
-        )
+        self.MultiPieceShipmentRequest = models.ShipmentRequest(**MultiPieceShipmentPayload)
 
     def test_create_multi_piece_shipment_request(self):
         """Verify that multi-piece shipments create one request per package."""
@@ -111,11 +96,7 @@ class TestSpringMultiPieceShipment(unittest.TestCase):
                 MultiPieceShipmentResponse1,
                 MultiPieceShipmentResponse2,
             ]
-            parsed_response = (
-                karrio.Shipment.create(self.MultiPieceShipmentRequest)
-                .from_(gateway)
-                .parse()
-            )
+            parsed_response = karrio.Shipment.create(self.MultiPieceShipmentRequest).from_(gateway).parse()
 
             result = lib.to_dict(parsed_response)
             # Should have shipment details

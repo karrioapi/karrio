@@ -24,15 +24,13 @@ def fix_stale_tracker_snapshots(apps, schema_editor):
 
     try:
         SystemConnection = apps.get_model("providers", "SystemConnection")
-        BrokeredConnection = apps.get_model("providers", "BrokeredConnection")
+        apps.get_model("providers", "BrokeredConnection")
     except LookupError:
         # System/Brokered models don't exist yet
         return
 
     # Get all active CarrierConnection IDs for quick lookup
-    active_carrier_ids = set(
-        CarrierConnection.objects.filter(active=True).values_list("id", flat=True)
-    )
+    active_carrier_ids = set(CarrierConnection.objects.filter(active=True).values_list("id", flat=True))
 
     # Build a lookup: (carrier_code, carrier_id, test_mode) -> sys_connection_id
     system_lookup = {}

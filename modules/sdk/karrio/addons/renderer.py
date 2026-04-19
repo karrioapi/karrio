@@ -1,10 +1,12 @@
-import io
 import base64
+import io
 from pathlib import Path
+
 from barcode import Code128
-from lxml.etree import fromstring
 from barcode.writer import ImageWriter
+from lxml.etree import fromstring
 from PIL import Image, ImageDraw, ImageFont
+
 from karrio.core.utils import DP, request
 
 FONTS_DIR = Path(__file__).resolve().parent / "fonts"
@@ -17,9 +19,8 @@ def generate_pdf_from_svg_label(content: str, **kwargs):
     label = Image.new("L", (1200, 1800), "white")
     draw = ImageDraw.Draw(label)
 
-    font = lambda size=10, bold=False: ImageFont.truetype(
-        f"{FONTS_DIR}/Oswald-{'SemiBold' if bold else 'Regular'}.ttf", size
-    )
+    def font(size=10, bold=False):
+        return ImageFont.truetype(f"{FONTS_DIR}/Oswald-{'SemiBold' if bold else 'Regular'}.ttf", size)
 
     for element in template:
         tag = element.tag if isinstance(element.tag, str) else ""
@@ -31,13 +32,7 @@ def generate_pdf_from_svg_label(content: str, **kwargs):
             height = int(element.get("height") or 0)
             value = element.get("data-value")
             style_text = element.get("style")
-            style = dict(
-                [
-                    [k.strip() for k in s.split(":")]
-                    for s in style_text.split(";")
-                    if s != ""
-                ]
-            )
+            style = dict([[k.strip() for k in s.split(":")] for s in style_text.split(";") if s != ""])
             bold = "bold" in style_text
             font_size = int(style.get("font-size", "40").replace("px", ""))
 
@@ -72,13 +67,7 @@ def generate_pdf_from_svg_label(content: str, **kwargs):
             text = element.text or ""
             fill = element.get("fill")
             style_text = element.get("style")
-            style = dict(
-                [
-                    [k.strip() for k in s.split(":")]
-                    for s in style_text.split(";")
-                    if s != ""
-                ]
-            )
+            style = dict([[k.strip() for k in s.split(":")] for s in style_text.split(";") if s != ""])
             bold = "bold" in style_text
             font_size = int(style.get("font-size", "10").replace("px", ""))
 
@@ -98,7 +87,10 @@ def generate_pdf_from_svg_label(content: str, **kwargs):
 
 def generate_zpl_from_svg_label(content: str, **kwargs) -> str:
     template = fromstring(content)
-    concat = lambda *args: LINE_SEPARATOR.join(args)
+
+    def concat(*args):
+        return LINE_SEPARATOR.join(args)
+
     doc = "^XA"
 
     for element in template:
@@ -113,13 +105,7 @@ def generate_zpl_from_svg_label(content: str, **kwargs) -> str:
             width_ratio = int(element.get("data-width-ratio") or 2)
             value = element.get("data-value")
             style_text = element.get("style")
-            style = dict(
-                [
-                    [k.strip() for k in s.split(":")]
-                    for s in style_text.split(";")
-                    if s != ""
-                ]
-            )
+            style = dict([[k.strip() for k in s.split(":")] for s in style_text.split(";") if s != ""])
             bold = "bold" in style_text
             font_size = int(style.get("font-size", "40").replace("px", ""))
 
@@ -151,13 +137,7 @@ def generate_zpl_from_svg_label(content: str, **kwargs) -> str:
             y = int(element.get("y") or 0)
             text = element.text
             style_text = element.get("style")
-            style = dict(
-                [
-                    [k.strip() for k in s.split(":")]
-                    for s in style_text.split(";")
-                    if s != ""
-                ]
-            )
+            style = dict([[k.strip() for k in s.split(":")] for s in style_text.split(";") if s != ""])
             bold = "bold" in style_text
             font_size = int(style.get("font-size", "10").replace("px", ""))
 

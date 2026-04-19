@@ -4,12 +4,14 @@ Product REST API Tests
 Comprehensive tests for the full CRUD operations on product templates.
 Covers all endpoints, edge cases, validation, and access control.
 """
+
 import json
 from unittest.mock import ANY
+
 from django.urls import reverse
-from rest_framework import status
 from karrio.server.core.tests import APITestCase
 from karrio.server.manager.models import Commodity
+from rest_framework import status
 
 
 class TestProductsList(APITestCase):
@@ -222,9 +224,7 @@ class TestProductsList(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Should only return the template, not the non-template commodity
         self.assertEqual(len(response_data["results"]), 1)
-        self.assertEqual(
-            response_data["results"][0]["meta"]["label"], "Template Product"
-        )
+        self.assertEqual(response_data["results"][0]["meta"]["label"], "Template Product")
 
     def test_list_products_pagination(self):
         """Test that product listing supports pagination."""
@@ -297,9 +297,7 @@ class TestProductDetails(APITestCase):
 
     def test_retrieve_product(self):
         """Test retrieving a product by ID."""
-        url = reverse(
-            "karrio.server.manager:product-details", kwargs=dict(pk=self.product.pk)
-        )
+        url = reverse("karrio.server.manager:product-details", kwargs=dict(pk=self.product.pk))
 
         response = self.client.get(url)
         response_data = json.loads(response.content)
@@ -311,9 +309,7 @@ class TestProductDetails(APITestCase):
 
     def test_retrieve_product_not_found(self):
         """Test retrieving a non-existent product returns 404."""
-        url = reverse(
-            "karrio.server.manager:product-details", kwargs=dict(pk="nonexistent_id")
-        )
+        url = reverse("karrio.server.manager:product-details", kwargs=dict(pk="nonexistent_id"))
 
         response = self.client.get(url)
 
@@ -321,9 +317,7 @@ class TestProductDetails(APITestCase):
 
     def test_update_product(self):
         """Test updating a product."""
-        url = reverse(
-            "karrio.server.manager:product-details", kwargs=dict(pk=self.product.pk)
-        )
+        url = reverse("karrio.server.manager:product-details", kwargs=dict(pk=self.product.pk))
         data = PRODUCT_UPDATE_DATA
 
         response = self.client.patch(url, data)
@@ -334,9 +328,7 @@ class TestProductDetails(APITestCase):
 
     def test_update_product_label(self):
         """Test updating a product's label."""
-        url = reverse(
-            "karrio.server.manager:product-details", kwargs=dict(pk=self.product.pk)
-        )
+        url = reverse("karrio.server.manager:product-details", kwargs=dict(pk=self.product.pk))
         data = {"meta": {"label": "Updated Label"}}
 
         response = self.client.patch(url, data)
@@ -347,9 +339,7 @@ class TestProductDetails(APITestCase):
 
     def test_update_product_default_flag(self):
         """Test updating a product's default flag."""
-        url = reverse(
-            "karrio.server.manager:product-details", kwargs=dict(pk=self.product.pk)
-        )
+        url = reverse("karrio.server.manager:product-details", kwargs=dict(pk=self.product.pk))
         data = {"meta": {"is_default": True}}
 
         response = self.client.patch(url, data)
@@ -360,9 +350,7 @@ class TestProductDetails(APITestCase):
 
     def test_update_product_single_field(self):
         """Test updating a single field on a product."""
-        url = reverse(
-            "karrio.server.manager:product-details", kwargs=dict(pk=self.product.pk)
-        )
+        url = reverse("karrio.server.manager:product-details", kwargs=dict(pk=self.product.pk))
         data = {"weight": 3.0}
 
         response = self.client.patch(url, data)
@@ -375,9 +363,7 @@ class TestProductDetails(APITestCase):
 
     def test_update_product_sku(self):
         """Test updating a product's SKU."""
-        url = reverse(
-            "karrio.server.manager:product-details", kwargs=dict(pk=self.product.pk)
-        )
+        url = reverse("karrio.server.manager:product-details", kwargs=dict(pk=self.product.pk))
         data = {"sku": "NEW-SKU-002"}
 
         response = self.client.patch(url, data)
@@ -388,9 +374,7 @@ class TestProductDetails(APITestCase):
 
     def test_update_product_value_and_currency(self):
         """Test updating a product's value and currency."""
-        url = reverse(
-            "karrio.server.manager:product-details", kwargs=dict(pk=self.product.pk)
-        )
+        url = reverse("karrio.server.manager:product-details", kwargs=dict(pk=self.product.pk))
         data = {"value_amount": 199.99, "value_currency": "CAD"}
 
         response = self.client.patch(url, data)
@@ -402,9 +386,7 @@ class TestProductDetails(APITestCase):
 
     def test_update_product_metadata(self):
         """Test updating a product's metadata."""
-        url = reverse(
-            "karrio.server.manager:product-details", kwargs=dict(pk=self.product.pk)
-        )
+        url = reverse("karrio.server.manager:product-details", kwargs=dict(pk=self.product.pk))
         data = {"metadata": {"custom_key": "custom_value"}}
 
         response = self.client.patch(url, data)
@@ -415,9 +397,7 @@ class TestProductDetails(APITestCase):
 
     def test_update_product_not_found(self):
         """Test updating a non-existent product returns 404."""
-        url = reverse(
-            "karrio.server.manager:product-details", kwargs=dict(pk="nonexistent_id")
-        )
+        url = reverse("karrio.server.manager:product-details", kwargs=dict(pk="nonexistent_id"))
         data = {"weight": 2.0}
 
         response = self.client.patch(url, data)
@@ -427,9 +407,7 @@ class TestProductDetails(APITestCase):
     def test_delete_product(self):
         """Test deleting a product."""
         product_pk = self.product.pk
-        url = reverse(
-            "karrio.server.manager:product-details", kwargs=dict(pk=product_pk)
-        )
+        url = reverse("karrio.server.manager:product-details", kwargs=dict(pk=product_pk))
 
         response = self.client.delete(url)
         response_data = json.loads(response.content)
@@ -440,9 +418,7 @@ class TestProductDetails(APITestCase):
 
     def test_delete_product_not_found(self):
         """Test deleting a non-existent product returns 404."""
-        url = reverse(
-            "karrio.server.manager:product-details", kwargs=dict(pk="nonexistent_id")
-        )
+        url = reverse("karrio.server.manager:product-details", kwargs=dict(pk="nonexistent_id"))
 
         response = self.client.delete(url)
 
@@ -503,7 +479,7 @@ class TestProductValidation(APITestCase):
             "meta": {"label": "Negative Weight"},
         }
 
-        response = self.client.post(url, data)
+        self.client.post(url, data)
         # The API may accept negative weight (floats aren't validated for min)
         # This tests the current behavior
 
@@ -516,7 +492,7 @@ class TestProductValidation(APITestCase):
             "meta": {"label": "Zero Weight"},
         }
 
-        response = self.client.post(url, data)
+        self.client.post(url, data)
         # Zero weight might be allowed for some use cases
 
     def test_negative_quantity(self):
@@ -529,7 +505,7 @@ class TestProductValidation(APITestCase):
             "meta": {"label": "Negative Quantity"},
         }
 
-        response = self.client.post(url, data)
+        self.client.post(url, data)
 
 
 # Test data

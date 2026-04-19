@@ -1,23 +1,22 @@
 """Karrio USPS rating API implementation."""
 
+import time
+
+import karrio.core.errors as errors
+import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
+import karrio.providers.usps.error as error
+import karrio.providers.usps.units as provider_units
+import karrio.providers.usps.utils as provider_utils
 import karrio.schemas.usps.rate_request as usps
 import karrio.schemas.usps.rate_response as rating
-
-import time
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
-import karrio.core.models as models
-import karrio.core.errors as errors
-import karrio.providers.usps.error as error
-import karrio.providers.usps.utils as provider_utils
-import karrio.providers.usps.units as provider_units
 
 
 def parse_rate_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+) -> tuple[list[models.RateDetails], list[models.Message]]:
     responses = _response.deserialize()
 
     messages = error.parse_error_response(responses, settings)
@@ -26,7 +25,8 @@ def parse_rate_response(
             (
                 f"{_}",
                 [
-                    _ for _ in [
+                    _
+                    for _ in [
                         _extract_details(dict(rate=rate, rateOption=rateOption), settings, _response.ctx)
                         for pricingOption in response.get("pricingOptions", [])
                         for shippingOption in pricingOption.get("shippingOptions", [])
@@ -46,12 +46,13 @@ def parse_rate_response(
 def _extract_details(
     data: dict,
     settings: provider_utils.Settings,
-    ctx: dict = dict(),
-) -> typing.Optional[models.RateDetails]:
+    ctx: dict | None = None,
+) -> models.RateDetails | None:
+    ctx = ctx or {}
     currency = "USD"
     machinable_piece = data.get("machinable_piece")
-    rate = lib.to_object(rating.RateType, data['rate'])
-    rateOption = lib.to_object(rating.RateOptionType, data['rateOption'])
+    rate = lib.to_object(rating.RateType, data["rate"])
+    rateOption = lib.to_object(rating.RateOptionType, data["rateOption"])
     product_name = rate.productName or rate.description or rate.mailClass
     service_code = provider_units.ShippingService.to_product_code(product_name)
     service_name = provider_units.ShippingService.to_product_name(service_code)
@@ -99,9 +100,7 @@ def _extract_details(
             usps_rate_sku=lib.failsafe(lambda: rate.SKU),
             usps_zone=lib.failsafe(lambda: rate.zone),
             rate_zone=lib.failsafe(lambda: rate.zone),
-            usps_extra_services=lib.failsafe(
-                lambda: [lib.to_int(_.extraService) for _ in rateOption.extraServices]
-            ),
+            usps_extra_services=lib.failsafe(lambda: [lib.to_int(_.extraService) for _ in rateOption.extraServices]),
         ),
     )
 
@@ -113,21 +112,15 @@ def rate_request(
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
 
-    if (
-        shipper.country_code is not None
-        and shipper.country_code != units.Country.US.name
-    ):
+    if shipper.country_code is not None and shipper.country_code != units.Country.US.name:
         raise errors.OriginNotServicedError(shipper.country_code)
 
-    if (
-        recipient.country_code is not None
-        and recipient.country_code != units.Country.US.name
-    ):
+    if recipient.country_code is not None and recipient.country_code != units.Country.US.name:
         raise errors.DestinationNotServicedError(recipient.country_code)
 
     services = lib.to_services(
         [provider_units.ShippingService.to_mail_class(_).name_or_key for _ in payload.services],
-        provider_units.ShippingService
+        provider_units.ShippingService,
     )
     options = lib.to_shipping_options(
         payload.options,
@@ -139,22 +132,19 @@ def rate_request(
         package_option_type=provider_units.ShippingOption,
         shipping_options_initializer=provider_units.shipping_options_initializer,
     )
-    price_type = lib.identity(
-        options.usps_price_type.state
-        or settings.connection_config.price_type.state
-        or "RETAIL"
-    )
+    price_type = lib.identity(options.usps_price_type.state or settings.connection_config.price_type.state or "RETAIL")
 
-    package_mail_class = lambda package: lib.identity(
-        provider_units.ShippingService.to_mail_class(package.options.usps_mail_class.state).value
-        if package.options.usps_mail_class.state
-        else getattr(services.first, "value", "ALL")
-    )
-    package_options = lambda package: lib.identity(
-        package.options
-        if package_mail_class(package) not in provider_units.INCOMPATIBLE_SERVICES
-        else {}
-    )
+    def package_mail_class(package):
+        return lib.identity(
+            provider_units.ShippingService.to_mail_class(package.options.usps_mail_class.state).value
+            if package.options.usps_mail_class.state
+            else getattr(services.first, "value", "ALL")
+        )
+
+    def package_options(package):
+        return lib.identity(
+            package.options if package_mail_class(package) not in provider_units.INCOMPATIBLE_SERVICES else {}
+        )
 
     # map data to convert karrio model to usps specific type
     request = [
@@ -170,18 +160,13 @@ def rate_request(
             ],
             originZIPCode=shipper.postal_code,
             destinationZIPCode=recipient.postal_code,
-            destinationEntryFacilityType=lib.identity(
-                options.usps_destination_entry_facility_type.state
-                or "NONE"
-            ),
+            destinationEntryFacilityType=lib.identity(options.usps_destination_entry_facility_type.state or "NONE"),
             packageDescription=usps.PackageDescriptionType(
                 weight=package.weight.LB,
                 length=package.length.IN,
                 height=package.height.IN,
                 width=package.width.IN,
-                girth=lib.identity(
-                    package.girth.value if package.packaging_type == "tube" else None
-                ),
+                girth=lib.identity(package.girth.value if package.packaging_type == "tube" else None),
                 mailClass=package_mail_class(package),
                 extraServices=[
                     lib.to_int(_.code)
@@ -189,9 +174,7 @@ def rate_request(
                     if __ not in provider_units.CUSTOM_OPTIONS
                 ],
                 packageValue=package.options.package_value.state,
-                mailingDate=lib.fdate(
-                    package.options.shipment_date.state or time.strftime("%Y-%m-%d")
-                ),
+                mailingDate=lib.fdate(package.options.shipment_date.state or time.strftime("%Y-%m-%d")),
             ),
             shippingFilter=package.options.usps_shipping_filter.state,
         )

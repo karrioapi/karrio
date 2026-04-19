@@ -39,7 +39,6 @@ def noop(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("manager", "0075_populate_template_meta"),
         ("graph", "0003_remove_template_customs"),  # Remove template.customs FK first

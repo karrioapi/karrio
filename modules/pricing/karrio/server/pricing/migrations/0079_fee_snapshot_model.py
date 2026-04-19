@@ -34,15 +34,11 @@ def copy_fk_values_to_temp_fields(apps, schema_editor):
         update_batch.append(fee)
 
         if len(update_batch) >= batch_size:
-            Fee.objects.bulk_update(
-                update_batch, ["_shipment_id", "_markup_id"], batch_size=batch_size
-            )
+            Fee.objects.bulk_update(update_batch, ["_shipment_id", "_markup_id"], batch_size=batch_size)
             update_batch = []
 
     if update_batch:
-        Fee.objects.bulk_update(
-            update_batch, ["_shipment_id", "_markup_id"], batch_size=batch_size
-        )
+        Fee.objects.bulk_update(update_batch, ["_shipment_id", "_markup_id"], batch_size=batch_size)
 
 
 def populate_snapshot_fields(apps, schema_editor):
@@ -53,13 +49,8 @@ def populate_snapshot_fields(apps, schema_editor):
     # Populate test_mode from shipment
     try:
         Shipment = apps.get_model("manager", "Shipment")
-        shipment_ids = list(
-            Fee.objects.values_list("shipment_id", flat=True).distinct()[:10000]
-        )
-        test_mode_map = dict(
-            Shipment.objects.filter(id__in=shipment_ids)
-            .values_list("id", "test_mode")
-        )
+        shipment_ids = list(Fee.objects.values_list("shipment_id", flat=True).distinct()[:10000])
+        test_mode_map = dict(Shipment.objects.filter(id__in=shipment_ids).values_list("id", "test_mode"))
 
         update_batch = []
         for fee in Fee.objects.all().iterator(chunk_size=batch_size):
@@ -79,14 +70,9 @@ def populate_snapshot_fields(apps, schema_editor):
     try:
         ShipmentLink = apps.get_model("orgs", "ShipmentLink")
         shipment_ids = list(
-            Fee.objects.filter(account_id__isnull=True)
-            .values_list("shipment_id", flat=True)
-            .distinct()[:10000]
+            Fee.objects.filter(account_id__isnull=True).values_list("shipment_id", flat=True).distinct()[:10000]
         )
-        link_map = dict(
-            ShipmentLink.objects.filter(item_id__in=shipment_ids)
-            .values_list("item_id", "org_id")
-        )
+        link_map = dict(ShipmentLink.objects.filter(item_id__in=shipment_ids).values_list("item_id", "org_id"))
 
         update_batch = []
         for fee in Fee.objects.filter(account_id__isnull=True).iterator(chunk_size=batch_size):
@@ -104,7 +90,6 @@ def populate_snapshot_fields(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("pricing", "0078_cleanup"),
     ]
@@ -127,7 +112,6 @@ class Migration(migrations.Migration):
             model_name="fee",
             name="fee_created_050ccc_idx",
         ),
-
         # ─── Step 2: Add temporary CharField fields to hold FK values ────
         migrations.AddField(
             model_name="fee",
@@ -147,13 +131,11 @@ class Migration(migrations.Migration):
                 blank=True,
             ),
         ),
-
         # ─── Step 3: Copy FK values to temp fields ──────────────────────
         migrations.RunPython(
             copy_fk_values_to_temp_fields,
             migrations.RunPython.noop,
         ),
-
         # ─── Step 4: Remove FK fields (drops constraints automatically) ─
         migrations.RemoveField(
             model_name="fee",
@@ -163,7 +145,6 @@ class Migration(migrations.Migration):
             model_name="fee",
             name="markup",
         ),
-
         # ─── Step 5: Rename temp fields to final names ──────────────────
         migrations.RenameField(
             model_name="fee",
@@ -175,7 +156,6 @@ class Migration(migrations.Migration):
             old_name="_markup_id",
             new_name="markup_id",
         ),
-
         # ─── Step 6: Update field attributes (add indexes, help_text) ───
         migrations.AlterField(
             model_name="fee",
@@ -197,7 +177,6 @@ class Migration(migrations.Migration):
                 help_text="The markup ID that generated this fee",
             ),
         ),
-
         # ─── Step 7: Rename existing fields ─────────────────────────────
         migrations.RenameField(
             model_name="fee",
@@ -209,7 +188,6 @@ class Migration(migrations.Migration):
             old_name="markup_percentage",
             new_name="percentage",
         ),
-
         # ─── Step 8: Add new snapshot fields ─────────────────────────────
         migrations.AddField(
             model_name="fee",
@@ -227,7 +205,6 @@ class Migration(migrations.Migration):
             name="test_mode",
             field=models.BooleanField(default=False),
         ),
-
         # ─── Step 9: Update connection_id to be indexed ─────────────────
         migrations.AlterField(
             model_name="fee",
@@ -238,46 +215,34 @@ class Migration(migrations.Migration):
                 help_text="Connection ID used for this shipment",
             ),
         ),
-
         # ─── Step 10: Data migration — populate snapshot fields ─────────
         migrations.RunPython(
             populate_snapshot_fields,
             migrations.RunPython.noop,
         ),
-
         # ─── Step 11: Add indexes ───────────────────────────────────────
         # Single-field indexes for fields without db_index=True
         # (shipment_id, markup_id, account_id, connection_id already
         #  get indexes via db_index=True on the field definition)
         migrations.AddIndex(
             model_name="fee",
-            index=models.Index(
-                fields=["carrier_code"], name="fee_carrier_86bb46_idx"
-            ),
+            index=models.Index(fields=["carrier_code"], name="fee_carrier_86bb46_idx"),
         ),
         migrations.AddIndex(
             model_name="fee",
-            index=models.Index(
-                fields=["created_at"], name="fee_created_050ccc_idx"
-            ),
+            index=models.Index(fields=["created_at"], name="fee_created_050ccc_idx"),
         ),
         # Composite indexes for time-series queries
         migrations.AddIndex(
             model_name="fee",
-            index=models.Index(
-                fields=["account_id", "created_at"], name="fee_account_507a12_idx"
-            ),
+            index=models.Index(fields=["account_id", "created_at"], name="fee_account_507a12_idx"),
         ),
         migrations.AddIndex(
             model_name="fee",
-            index=models.Index(
-                fields=["connection_id", "created_at"], name="fee_connect_3aeeec_idx"
-            ),
+            index=models.Index(fields=["connection_id", "created_at"], name="fee_connect_3aeeec_idx"),
         ),
         migrations.AddIndex(
             model_name="fee",
-            index=models.Index(
-                fields=["markup_id", "created_at"], name="fee_markup__130c94_idx"
-            ),
+            index=models.Index(fields=["markup_id", "created_at"], name="fee_markup__130c94_idx"),
         ),
     ]

@@ -1,9 +1,9 @@
 import functools
-import django.urls as urls
-from django.db import models
-from django.core.validators import RegexValidator
 
+import django.urls as urls
 import karrio.server.core.models as core
+from django.core.validators import RegexValidator
+from django.db import models
 
 
 @core.register_model
@@ -55,7 +55,10 @@ class DocumentTemplate(core.OwnedEntity):
 
     @property
     def preview_url(self):
-        return urls.reverse(
-            "karrio.server.documents:templates-documents-print",
-            kwargs=dict(pk=self.pk, slug=self.slug),
-        ) + f"?{self.related_object or 'shipment'}s=sample"
+        return (
+            urls.reverse(
+                "karrio.server.documents:templates-documents-print",
+                kwargs=dict(pk=self.pk, slug=self.slug),
+            )
+            + f"?{self.related_object or 'shipment'}s=sample"
+        )

@@ -1,37 +1,31 @@
 """Karrio Teleship shipment API implementation."""
 
+import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
+import karrio.providers.teleship.error as error
+import karrio.providers.teleship.units as provider_units
+import karrio.providers.teleship.utils as provider_utils
 import karrio.schemas.teleship.shipment_request as teleship_req
 import karrio.schemas.teleship.shipment_response as teleship_res
 
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
-import karrio.core.models as models
-import karrio.providers.teleship.error as error
-import karrio.providers.teleship.utils as provider_utils
-import karrio.providers.teleship.units as provider_units
-
 
 def parse_shipment_response(
-    _responses: lib.Deserializable[typing.List[dict]],
+    _responses: lib.Deserializable[list[dict]],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+) -> tuple[models.ShipmentDetails, list[models.Message]]:
     responses = _responses.deserialize()
 
     shipment = lib.to_multi_piece_shipment(
         [
             (
                 f"{_}",
-                (
-                    _extract_details(response.get("shipment"), settings)
-                    if response.get("shipment")
-                    else None
-                ),
+                (_extract_details(response.get("shipment"), settings) if response.get("shipment") else None),
             )
             for _, response in enumerate(responses, start=1)
         ]
     )
-    messages: typing.List[models.Message] = sum(
+    messages: list[models.Message] = sum(
         [error.parse_error_response(response, settings) for response in responses],
         start=[],
     )
@@ -140,9 +134,7 @@ def shipment_request(
             shipDate=options.shipping_date.state,
             orderTrackingReference=options.teleship_order_tracking_reference.state,
             commercialInvoiceReference=customs.invoice,
-            packageType=provider_units.PackagingType.map(
-                package.packaging_type or "your_packaging"
-            ).value_or_key,
+            packageType=provider_units.PackagingType.map(package.packaging_type or "your_packaging").value_or_key,
             shipTo=teleship_req.BillToType(
                 name=recipient.contact or "N/A",
                 company=recipient.company_name,
@@ -253,9 +245,7 @@ def shipment_request(
                     sku=commodity.sku,
                     hsCode=commodity.hs_code,
                     title=lib.text(commodity.title or commodity.description, max=200),
-                    description=lib.text(
-                        commodity.description if commodity.title else None, max=200
-                    ),
+                    description=lib.text(commodity.description if commodity.title else None, max=200),
                     category=commodity.category,
                     value=teleship_req.ValueType(
                         amount=commodity.value_amount,
@@ -271,9 +261,7 @@ def shipment_request(
                     productUrl=commodity.product_url,
                     compliance=None,
                 )
-                for commodity in (
-                    package.items if any(package.items) else customs.commodities or []
-                )
+                for commodity in (package.items if any(package.items) else customs.commodities or [])
             ],
             customs=lib.identity(
                 teleship_req.CustomsType(
@@ -285,9 +273,7 @@ def shipment_request(
                     importerGST=customs.options.importer_gst.state,
                     exporterGST=customs.options.exporter_gst.state,
                     consigneeGST=customs.options.consignee_gst.state,
-                    contentType=provider_units.CustomsContentType.map(
-                        customs.content_type or "other"
-                    ).value,
+                    contentType=provider_units.CustomsContentType.map(customs.content_type or "other").value,
                     invoiceDate=customs.invoice_date,
                     invoiceNumber=customs.invoice,
                     GPSRContactInfo=options.teleship_gpsr_contact_info.state,

@@ -1,40 +1,40 @@
-from typing import Tuple, List
-import karrio.schemas.dhl_express.book_pickup_global_req_3_0 as dhl
-from karrio.schemas.dhl_express.book_pickup_global_res_3_0 import BookPUResponse
-from karrio.schemas.dhl_express.pickupdatatypes_global_3_0 import (
-    Requestor,
-    Pickup,
-    WeightSeg,
-    RequestorContact,
-)
-import karrio.schemas.dhl_express.datatypes_global_v62 as dhl_global
 import karrio.lib as lib
+import karrio.schemas.dhl_express.book_pickup_global_req_3_0 as dhl
+from karrio.core.models import (
+    ChargeDetails,
+    Message,
+    PickupDetails,
+    PickupRequest,
+)
+from karrio.core.units import Packages
 from karrio.core.utils import (
-    Serializable,
-    Element,
     DF,
     NF,
     XP,
+    Element,
+    Serializable,
 )
-from karrio.core.models import (
-    PickupRequest,
-    Message,
-    PickupDetails,
-    ChargeDetails,
-)
-from karrio.core.units import WeightUnit, Weight, Packages
+from karrio.providers.dhl_express.error import parse_error_response
 from karrio.providers.dhl_express.units import (
     CountryRegion,
+)
+from karrio.providers.dhl_express.units import (
     WeightUnit as DHLWeightUnit,
 )
 from karrio.providers.dhl_express.utils import Settings, reformat_time
-from karrio.providers.dhl_express.error import parse_error_response
+from karrio.schemas.dhl_express.book_pickup_global_res_3_0 import BookPUResponse
+from karrio.schemas.dhl_express.pickupdatatypes_global_3_0 import (
+    Pickup,
+    Requestor,
+    RequestorContact,
+    WeightSeg,
+)
 
 
 def parse_pickup_response(
     _response: lib.Deserializable[lib.Element],
     settings: Settings,
-) -> Tuple[PickupDetails, List[Message]]:
+) -> tuple[PickupDetails, list[Message]]:
     response = _response.deserialize()
     successful = len(lib.find_element("ConfirmationNumber", response)) > 0
     pickup = _extract_pickup(response, settings) if successful else None
@@ -68,22 +68,20 @@ def pickup_request(payload: PickupRequest, settings: Settings) -> Serializable:
     # DHL Express only supports one-time pickups via API
     pickup_type = getattr(payload, "pickup_type", "one_time") or "one_time"
     if pickup_type not in ("one_time", None):
-        raise lib.exceptions.FieldError({
-            "pickup_type": f"DHL Express only supports 'one_time' pickups via API. Received: '{pickup_type}'. "
-            "For daily/recurring pickups, please contact DHL to set up a regular pickup schedule."
-        })
+        raise lib.exceptions.FieldError(
+            {
+                "pickup_type": f"DHL Express only supports 'one_time' pickups via API. Received: '{pickup_type}'. "
+                "For daily/recurring pickups, please contact DHL to set up a regular pickup schedule."
+            }
+        )
 
     packages = Packages(payload.parcels)
     address = lib.to_address(payload.address)
 
     request = dhl.BookPURequest(
-        Request=settings.Request(
-            MetaData=dhl.MetaData(SoftwareName="XMLPI", SoftwareVersion=3.0)
-        ),
+        Request=settings.Request(MetaData=dhl.MetaData(SoftwareName="XMLPI", SoftwareVersion=3.0)),
         schemaVersion=3.0,
-        RegionCode=(
-            CountryRegion[address.country_code].value if address.country_code else "AM"
-        ),
+        RegionCode=(CountryRegion[address.country_code].value if address.country_code else "AM"),
         Requestor=Requestor(
             AccountNumber=settings.account_number,
             AccountType="D",

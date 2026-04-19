@@ -4,37 +4,36 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('providers', '0020_genericsettings_labeltemplate'),
+        ("providers", "0020_genericsettings_labeltemplate"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='labeltemplate',
-            old_name='name',
-            new_name='alias',
+            model_name="labeltemplate",
+            old_name="name",
+            new_name="alias",
         ),
         migrations.AddField(
-            model_name='genericsettings',
-            name='name',
-            field=models.CharField(default='template', max_length=50),
+            model_name="genericsettings",
+            name="name",
+            field=models.CharField(default="template", max_length=50),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='labeltemplate',
-            name='height',
+            model_name="labeltemplate",
+            name="height",
             field=models.IntegerField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='labeltemplate',
-            name='template_type',
-            field=models.CharField(choices=[('SVG', 'SVG'), ('ZPL', 'ZPL')], default='SVG', max_length=3),
+            model_name="labeltemplate",
+            name="template_type",
+            field=models.CharField(choices=[("SVG", "SVG"), ("ZPL", "ZPL")], default="SVG", max_length=3),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='labeltemplate',
-            name='width',
+            model_name="labeltemplate",
+            name="width",
             field=models.IntegerField(blank=True, null=True),
         ),
     ]

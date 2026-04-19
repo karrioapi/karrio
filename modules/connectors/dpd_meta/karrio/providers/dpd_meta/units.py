@@ -1,8 +1,9 @@
 import csv
 import pathlib
-import karrio.lib as lib
-import karrio.core.units as units
+
 import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
 
 
 class BusinessUnit(lib.StrEnum):
@@ -90,9 +91,7 @@ class ConnectionConfig(lib.Enum):
     label_type = lib.OptionEnum("label_type", LabelPaperFormat, "A4")
     label_format = lib.OptionEnum("label_format", LabelFormat, "PDF")
     label_paper_format = lib.OptionEnum("label_paper_format", LabelPaperFormat)
-    label_printer_position = lib.OptionEnum(
-        "label_printer_position", LabelPrinterPosition
-    )
+    label_printer_position = lib.OptionEnum("label_printer_position", LabelPrinterPosition)
     dropoff_type = lib.OptionEnum("dropoff_type", DropOffType)
     sending_depot = lib.OptionEnum("sending_depot")
     simulate = lib.OptionEnum("simulate", bool)
@@ -136,9 +135,7 @@ class CustomsTerms(lib.StrEnum):
     """DPD customs terms (Incoterms)."""
 
     DAP_NOT_CLEARED = "s01"  # DAP, not cleared
-    DDP_DUTIES_EXCL_TAXES = (
-        "s02"  # DDP, delivered duty paid (incl. duties, excl. taxes)
-    )
+    DDP_DUTIES_EXCL_TAXES = "s02"  # DDP, delivered duty paid (incl. duties, excl. taxes)
     DDP_DUTIES_INCL_TAXES = "s03"  # DDP, delivered duty paid (incl. duties and taxes)
     EXW = "s05"  # Ex Works
     DAP = "s06"  # DAP
@@ -474,24 +471,14 @@ class ShippingOption(lib.Enum):
     )
 
     # --- Label Options (internal — not configurable in shipping method editor) ---
-    dpd_meta_label_format = lib.OptionEnum(
-        "label_format", str, meta=dict(configurable=False)
-    )
-    dpd_meta_label_paper_format = lib.OptionEnum(
-        "label_paper_format", str, meta=dict(configurable=False)
-    )
-    dpd_meta_label_printer_position = lib.OptionEnum(
-        "label_printer_position", str, meta=dict(configurable=False)
-    )
+    dpd_meta_label_format = lib.OptionEnum("label_format", str, meta=dict(configurable=False))
+    dpd_meta_label_paper_format = lib.OptionEnum("label_paper_format", str, meta=dict(configurable=False))
+    dpd_meta_label_printer_position = lib.OptionEnum("label_printer_position", str, meta=dict(configurable=False))
 
     # --- Internal/Debug Options (not configurable) ---
     dpd_meta_simulate = lib.OptionEnum("simulate", bool, meta=dict(configurable=False))
-    dpd_meta_extra_barcode = lib.OptionEnum(
-        "extra_barcode", bool, meta=dict(configurable=False)
-    )
-    dpd_meta_with_document = lib.OptionEnum(
-        "with_document", bool, meta=dict(configurable=False)
-    )
+    dpd_meta_extra_barcode = lib.OptionEnum("extra_barcode", bool, meta=dict(configurable=False))
+    dpd_meta_with_document = lib.OptionEnum("with_document", bool, meta=dict(configurable=False))
 
     """Unified Option type mapping"""
     saturday_delivery = dpd_meta_saturday_delivery
@@ -521,9 +508,7 @@ class ShippingOption(lib.Enum):
         help="Declared value for customs",
         meta=dict(category="INVOICE", configurable=True),
     )
-    currency = lib.OptionEnum(
-        "currency", str, help="Currency code for values", meta=dict(configurable=False)
-    )
+    currency = lib.OptionEnum("currency", str, help="Currency code for values", meta=dict(configurable=False))
 
 
 def shipping_options_initializer(
@@ -586,7 +571,7 @@ def load_services_from_csv() -> list:
     # Group zones by service
     services_dict: dict[str, dict] = {}
 
-    with open(csv_path, "r", encoding="utf-8") as f:
+    with open(csv_path, encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
             service_code = row["service_code"]
@@ -601,34 +586,27 @@ def load_services_from_csv() -> list:
                     "service_name": service_name,
                     "service_code": karrio_service_code,
                     "currency": row.get("currency", "EUR"),
-                    "min_weight": (
-                        float(row["min_weight"]) if row.get("min_weight") else None
-                    ),
-                    "max_weight": (
-                        float(row["max_weight"]) if row.get("max_weight") else None
-                    ),
-                    "max_length": (
-                        float(row["max_length"]) if row.get("max_length") else None
-                    ),
-                    "max_width": (
-                        float(row["max_width"]) if row.get("max_width") else None
-                    ),
-                    "max_height": (
-                        float(row["max_height"]) if row.get("max_height") else None
-                    ),
+                    "min_weight": (float(row["min_weight"]) if row.get("min_weight") else None),
+                    "max_weight": (float(row["max_weight"]) if row.get("max_weight") else None),
+                    "max_length": (float(row["max_length"]) if row.get("max_length") else None),
+                    "max_width": (float(row["max_width"]) if row.get("max_width") else None),
+                    "max_height": (float(row["max_height"]) if row.get("max_height") else None),
                     "weight_unit": "KG",
                     "dimension_unit": "CM",
                     "domicile": row.get("domicile", "").lower() == "true",
-                    "international": (
-                        True if row.get("international", "").lower() == "true" else None
-                    ),
+                    "international": (True if row.get("international", "").lower() == "true" else None),
                     "zones": [],
                 }
+            else:
+                current = services_dict[karrio_service_code]
+                # Merge domicile/international flags from subsequent rows
+                if row.get("domicile", "").lower() == "true":
+                    current["domicile"] = True
+                if row.get("international", "").lower() == "true":
+                    current["international"] = True
 
             # Parse country codes
-            country_codes = [
-                c.strip() for c in row.get("country_codes", "").split(",") if c.strip()
-            ]
+            country_codes = [c.strip() for c in row.get("country_codes", "").split(",") if c.strip()]
 
             # Create zone
             zone = models.ServiceZone(
@@ -636,18 +614,14 @@ def load_services_from_csv() -> list:
                 rate=float(row.get("rate", 0.0)),
                 min_weight=float(row["min_weight"]) if row.get("min_weight") else None,
                 max_weight=float(row["max_weight"]) if row.get("max_weight") else None,
-                transit_days=(
-                    int(row["transit_days"].split("-")[0]) if row.get("transit_days") else None
-                ),
+                transit_days=(int(row["transit_days"].split("-")[0]) if row.get("transit_days") else None),
                 country_codes=country_codes if country_codes else None,
             )
 
             services_dict[karrio_service_code]["zones"].append(zone)
 
     # Convert to ServiceLevel objects
-    return [
-        models.ServiceLevel(**service_data) for service_data in services_dict.values()
-    ]
+    return [models.ServiceLevel(**service_data) for service_data in services_dict.values()]
 
 
 DEFAULT_SERVICES = load_services_from_csv()

@@ -6,7 +6,7 @@ import importlib
 
 from django import forms
 from django.contrib import admin
-from karrio.server.pricing.models import Markup, Fee
+from karrio.server.pricing.models import Fee, Markup
 
 if importlib.util.find_spec("karrio.server.orgs") is not None:
     import karrio.server.orgs.models as orgs
@@ -26,27 +26,36 @@ class MarkupAdmin(admin.ModelAdmin):
     readonly_fields = ("id",)
 
     fieldsets = (
-        (None, {
-            "fields": (
-                "id",
-                ("name", "active"),
-                ("amount", "markup_type"),
-                "is_visible",
-            )
-        }),
-        ("Filters", {
-            "classes": ("collapse",),
-            "description": "Leave empty to apply to all carriers/services/connections",
-            "fields": (
-                "carrier_codes",
-                "service_codes",
-                "connection_ids",
-            ),
-        }),
-        ("Metadata", {
-            "classes": ("collapse",),
-            "fields": ("metadata",),
-        }),
+        (
+            None,
+            {
+                "fields": (
+                    "id",
+                    ("name", "active"),
+                    ("amount", "markup_type"),
+                    "is_visible",
+                )
+            },
+        ),
+        (
+            "Filters",
+            {
+                "classes": ("collapse",),
+                "description": "Leave empty to apply to all carriers/services/connections",
+                "fields": (
+                    "carrier_codes",
+                    "service_codes",
+                    "connection_ids",
+                ),
+            },
+        ),
+        (
+            "Metadata",
+            {
+                "classes": ("collapse",),
+                "fields": ("metadata",),
+            },
+        ),
     )
 
     if importlib.util.find_spec("karrio.server.orgs") is not None:
@@ -54,16 +63,25 @@ class MarkupAdmin(admin.ModelAdmin):
         class MarkupForm(forms.ModelForm):
             class Meta:
                 model = Markup
-                fields = "__all__"
+                fields = [  # noqa: DJ007
+                    "name",
+                    "active",
+                    "amount",
+                    "markup_type",
+                    "is_visible",
+                    "carrier_codes",
+                    "service_codes",
+                    "connection_ids",
+                    "organization_ids",
+                    "metadata",
+                ]
 
             def __init__(self, *args, **kwargs):
                 super().__init__(*args, **kwargs)
 
                 if kwargs.get("instance") is not None:
                     org_ids = kwargs["instance"].organization_ids or []
-                    self.fields["organizations"].initial = (
-                        orgs.Organization.objects.filter(id__in=org_ids)
-                    )
+                    self.fields["organizations"].initial = orgs.Organization.objects.filter(id__in=org_ids)
 
             organizations = forms.ModelMultipleChoiceField(
                 queryset=orgs.Organization.objects.all(),
@@ -97,34 +115,47 @@ class FeeAdmin(admin.ModelAdmin):
     list_filter = ("fee_type", "carrier_code", "currency", "test_mode")
     search_fields = ("name", "shipment_id", "markup_id", "account_id")
     readonly_fields = (
-        "id", "shipment_id", "markup_id", "account_id", "name", "amount", "currency",
-        "fee_type", "percentage", "carrier_code", "service_code",
-        "connection_id", "test_mode", "created_at",
+        "id",
+        "shipment_id",
+        "markup_id",
+        "account_id",
+        "name",
+        "amount",
+        "currency",
+        "fee_type",
+        "percentage",
+        "carrier_code",
+        "service_code",
+        "connection_id",
+        "test_mode",
+        "created_at",
     )
     date_hierarchy = "created_at"
 
     fieldsets = (
-        (None, {
-            "fields": ("id", "shipment_id", "markup_id", "account_id")
-        }),
-        ("Fee Details", {
-            "fields": (
-                "name",
-                ("amount", "currency"),
-                ("fee_type", "percentage"),
-            )
-        }),
-        ("Context", {
-            "fields": (
-                "carrier_code",
-                "service_code",
-                "connection_id",
-                "test_mode",
-            )
-        }),
-        ("Timestamps", {
-            "fields": ("created_at",)
-        }),
+        (None, {"fields": ("id", "shipment_id", "markup_id", "account_id")}),
+        (
+            "Fee Details",
+            {
+                "fields": (
+                    "name",
+                    ("amount", "currency"),
+                    ("fee_type", "percentage"),
+                )
+            },
+        ),
+        (
+            "Context",
+            {
+                "fields": (
+                    "carrier_code",
+                    "service_code",
+                    "connection_id",
+                    "test_mode",
+                )
+            },
+        ),
+        ("Timestamps", {"fields": ("created_at",)}),
     )
 
     def has_add_permission(self, request):

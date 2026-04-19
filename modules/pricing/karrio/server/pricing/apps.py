@@ -7,9 +7,10 @@ class PricingConfig(AppConfig):
     verbose_name = _("Shipping Markup")
 
     def ready(self):
+        # Deferred import avoids app-loading cycles while keeping signal registration local.
         from karrio.server.pricing.signals import (
-            register_rate_post_processing,
             register_fee_capture,
+            register_rate_post_processing,
         )
 
         register_rate_post_processing()

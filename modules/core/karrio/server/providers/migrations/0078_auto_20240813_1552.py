@@ -33,8 +33,7 @@ def forwards_func(apps, schema_editor):
                 if hasattr(_carrier, model.__name__.lower())
             ),
             (
-                _carrier.metadata.get("__settings", {}).get("carrier_name")
-                or "eshipper",
+                _carrier.metadata.get("__settings", {}).get("carrier_name") or "eshipper",
                 _carrier.metadata.get("__settings", {}),
             ),
         )
@@ -62,9 +61,7 @@ def forwards_func(apps, schema_editor):
         }
         _carrier.carrier_code = _carrier_name
         _carrier.metadata = {
-            key: value
-            for key, value in (_carrier.metadata or {}).items()
-            if key not in ["__settings"]
+            key: value for key, value in (_carrier.metadata or {}).items() if key not in ["__settings"]
         }
 
         if "username" in _settings and "password" in _settings:
@@ -96,8 +93,7 @@ def forwards_func(apps, schema_editor):
                     slug=f"{_carrier_name} - rate-sheet",
                     carrier_name=_carrier_name,
                     is_system=_carrier.is_system,
-                    created_by=_carrier.created_by
-                    or User.objects.filter(is_superuser=True).first(),
+                    created_by=_carrier.created_by or User.objects.filter(is_superuser=True).first(),
                 )
             )
             _carrier.rate_sheet.services.set(_services)
@@ -110,7 +106,6 @@ def reverse_func(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("providers", "0077_uspswtinternationalsettings_uspswtsettings_and_more"),
     ]

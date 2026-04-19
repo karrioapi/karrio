@@ -1,9 +1,6 @@
-from unittest.mock import ANY
-from django.contrib.auth import get_user_model
-from rest_framework.test import APITestCase as BaseAPITestCase, APIClient
 from karrio.server.admin.tests.base import AdminGraphTestCase
-from karrio.server.user.models import Token
-import karrio.server.providers.models as providers
+from rest_framework.test import APITestCase as BaseAPITestCase
+
 
 class TestAdminMarkups(AdminGraphTestCase):
     """Tests for Admin Markup CRUD operations including meta field."""
@@ -422,12 +419,8 @@ class TestAdminMarkups(AdminGraphTestCase):
         )
 
         self.assertResponseNoErrors(response)
-        self.assertEqual(
-            response.data["data"]["delete_markup"]["id"], to_delete.id
-        )
-        self.assertFalse(
-            self.pricing.Markup.objects.filter(id=to_delete.id).exists()
-        )
+        self.assertEqual(response.data["data"]["delete_markup"]["id"], to_delete.id)
+        self.assertFalse(self.pricing.Markup.objects.filter(id=to_delete.id).exists())
 
     def test_query_markups_returns_all(self):
         """Test querying markups returns all markups."""
@@ -858,9 +851,9 @@ class TestMarkupFeatureGating(BaseAPITestCase):
 
     def setUp(self):
         super().setUp()
-        import karrio.server.pricing.models as pricing
-        import karrio.server.core.datatypes as datatypes
         import karrio.core.models as karrio_models
+        import karrio.server.core.datatypes as datatypes
+        import karrio.server.pricing.models as pricing
 
         self.pricing = pricing
         self.datatypes = datatypes
@@ -972,9 +965,7 @@ class TestMarkupFeatureGating(BaseAPITestCase):
         rate_with = self.make_rate(service_features=["address_validation"])
         rate_without = self.make_rate(service_features=["tracked"])
 
-        result_applies = self.address_validation_markup._is_applicable(
-            rate_with, options={"address_validation": True}
-        )
+        result_applies = self.address_validation_markup._is_applicable(rate_with, options={"address_validation": True})
         result_no_feature = self.address_validation_markup._is_applicable(
             rate_without, options={"address_validation": True}
         )
@@ -994,15 +985,9 @@ class TestMarkupFeatureGating(BaseAPITestCase):
         rate_with = self.make_rate(service_features=["fuel_surcharge"])
         rate_without = self.make_rate(service_features=["tracked"])
 
-        result_applies = self.surcharge_markup._is_applicable(
-            rate_with, options={"fuel_surcharge": True}
-        )
-        result_no_feature = self.surcharge_markup._is_applicable(
-            rate_without, options={"fuel_surcharge": True}
-        )
-        result_no_option = self.surcharge_markup._is_applicable(
-            rate_with, options={}
-        )
+        result_applies = self.surcharge_markup._is_applicable(rate_with, options={"fuel_surcharge": True})
+        result_no_feature = self.surcharge_markup._is_applicable(rate_without, options={"fuel_surcharge": True})
+        result_no_option = self.surcharge_markup._is_applicable(rate_with, options={})
 
         self.assertTrue(result_applies)
         self.assertFalse(result_no_feature)

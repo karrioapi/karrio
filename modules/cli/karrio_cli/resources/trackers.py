@@ -1,6 +1,7 @@
-import typer
-import typing
 import datetime
+
+import typer
+
 import karrio_cli.common.utils as utils
 
 app = typer.Typer()
@@ -8,21 +9,15 @@ app = typer.Typer()
 
 @app.command("list")
 def list_trackers(
-    carrier_name: typing.Optional[str] = None,
-    tracking_number: typing.Optional[str] = None,
-    status: typing.Optional[str] = None,
-    created_after: typing.Optional[datetime.datetime] = None,
-    created_before: typing.Optional[datetime.datetime] = None,
+    carrier_name: str | None = None,
+    tracking_number: str | None = None,
+    status: str | None = None,
+    created_after: datetime.datetime | None = None,
+    created_before: datetime.datetime | None = None,
     limit: int = typer.Option(20, help="Number of results to return per page"),
-    offset: int = typer.Option(
-        0, help="The initial index from which to return the results"
-    ),
-    pretty: bool = typer.Option(
-        False, "--pretty", "-p", help="Pretty print the output"
-    ),
-    line_numbers: bool = typer.Option(
-        False, "--line-numbers", "-n", help="Show line numbers in pretty print"
-    ),
+    offset: int = typer.Option(0, help="The initial index from which to return the results"),
+    pretty: bool = typer.Option(False, "--pretty", "-p", help="Pretty print the output"),
+    line_numbers: bool = typer.Option(False, "--line-numbers", "-n", help="Show line numbers in pretty print"),
 ):
     """
     List all trackers with optional filters and pagination.
@@ -78,20 +73,14 @@ def list_trackers(
     # Remove None values from params
     params = {k: v for k, v in params.items() if v is not None}
 
-    utils.make_get_request(
-        "v1/trackers", params=params, pretty_print=pretty, line_numbers=line_numbers
-    )
+    utils.make_get_request("v1/trackers", params=params, pretty_print=pretty, line_numbers=line_numbers)
 
 
 @app.command("retrieve")
 def retrieve_tracker(
     tracker_id: str,
-    pretty: bool = typer.Option(
-        False, "--pretty", "-p", help="Pretty print the output"
-    ),
-    line_numbers: bool = typer.Option(
-        False, "--line-numbers", "-n", help="Show line numbers in pretty print"
-    ),
+    pretty: bool = typer.Option(False, "--pretty", "-p", help="Pretty print the output"),
+    line_numbers: bool = typer.Option(False, "--line-numbers", "-n", help="Show line numbers in pretty print"),
 ):
     """
     Retrieve a tracker by ID.
@@ -123,33 +112,23 @@ def retrieve_tracker(
     }
     ```
     """
-    utils.make_get_request(
-        f"v1/trackers/{tracker_id}", pretty_print=pretty, line_numbers=line_numbers
-    )
+    utils.make_get_request(f"v1/trackers/{tracker_id}", pretty_print=pretty, line_numbers=line_numbers)
 
 
 @app.command("create")
 def create_tracker(
     tracking_number: str = typer.Option(..., help="The tracking number"),
     carrier_name: str = typer.Option(..., help="The carrier name"),
-    account_number: typing.Optional[str] = typer.Option(
-        None, help="The account number"
-    ),
-    reference: typing.Optional[str] = typer.Option(
-        None, help="A reference for the tracker"
-    ),
-    property: typing.List[str] = typer.Option(
+    account_number: str | None = typer.Option(None, help="The account number"),
+    reference: str | None = typer.Option(None, help="A reference for the tracker"),
+    property: list[str] = typer.Option(
         [],
         "--property",
         "-d",
         help="Set nested properties (e.g. -d info[customer_name]=John Doe)",
     ),
-    pretty: bool = typer.Option(
-        False, "--pretty", "-p", help="Pretty print the output"
-    ),
-    line_numbers: bool = typer.Option(
-        False, "--line-numbers", "-n", help="Show line numbers in pretty print"
-    ),
+    pretty: bool = typer.Option(False, "--pretty", "-p", help="Pretty print the output"),
+    line_numbers: bool = typer.Option(False, "--line-numbers", "-n", help="Show line numbers in pretty print"),
 ):
     """
     Create a new tracker.
@@ -194,26 +173,20 @@ def create_tracker(
         typer.echo(str(e), err=True)
         raise typer.Exit(code=1)
 
-    utils.make_post_request(
-        "v1/trackers", payload=payload, pretty_print=pretty, line_numbers=line_numbers
-    )
+    utils.make_post_request("v1/trackers", payload=payload, pretty_print=pretty, line_numbers=line_numbers)
 
 
 @app.command("update")
 def update_tracker(
     tracker_id: str,
-    property: typing.List[str] = typer.Option(
+    property: list[str] = typer.Option(
         [],
         "--property",
         "-d",
         help="Set nested properties (e.g. -d info[customer_name]=John Doe)",
     ),
-    pretty: bool = typer.Option(
-        False, "--pretty", "-p", help="Pretty print the output"
-    ),
-    line_numbers: bool = typer.Option(
-        False, "--line-numbers", "-n", help="Show line numbers in pretty print"
-    ),
+    pretty: bool = typer.Option(False, "--pretty", "-p", help="Pretty print the output"),
+    line_numbers: bool = typer.Option(False, "--line-numbers", "-n", help="Show line numbers in pretty print"),
 ):
     """
     Update an existing tracker.
@@ -260,12 +233,8 @@ def update_tracker(
 @app.command("delete")
 def delete_tracker(
     tracker_id: str,
-    pretty: bool = typer.Option(
-        False, "--pretty", "-p", help="Pretty print the output"
-    ),
-    line_numbers: bool = typer.Option(
-        False, "--line-numbers", "-n", help="Show line numbers in pretty print"
-    ),
+    pretty: bool = typer.Option(False, "--pretty", "-p", help="Pretty print the output"),
+    line_numbers: bool = typer.Option(False, "--line-numbers", "-n", help="Show line numbers in pretty print"),
 ):
     """
     Delete a tracker.
@@ -282,6 +251,4 @@ def delete_tracker(
     }
     ```
     """
-    utils.make_delete_request(
-        f"v1/trackers/{tracker_id}", pretty_print=pretty, line_numbers=line_numbers
-    )
+    utils.make_delete_request(f"v1/trackers/{tracker_id}", pretty_print=pretty, line_numbers=line_numbers)

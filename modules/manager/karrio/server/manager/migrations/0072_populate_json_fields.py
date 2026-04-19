@@ -61,10 +61,7 @@ def parcel_to_dict(parcel):
     if parcel is None:
         return None
 
-    items = [
-        commodity_to_dict(item, id_prefix="itm")
-        for item in parcel.items.all()
-    ]
+    items = [commodity_to_dict(item, id_prefix="itm") for item in parcel.items.all()]
 
     return {
         "id": f"pcl_{parcel.id[-12:]}",  # Generate new JSON ID
@@ -92,10 +89,7 @@ def customs_to_dict(customs):
     if customs is None:
         return None
 
-    commodities = [
-        commodity_to_dict(c, id_prefix="cmd")
-        for c in customs.commodities.all()
-    ]
+    commodities = [commodity_to_dict(c, id_prefix="cmd") for c in customs.commodities.all()]
 
     return {
         "id": customs.id,
@@ -134,7 +128,7 @@ def populate_shipment_json_fields(apps, schema_editor):
             "parcels",
             "parcels__items",
             "customs__commodities",
-        )[offset:offset + batch_size]
+        )[offset : offset + batch_size]
 
         for shipment in shipments:
             changes = []
@@ -161,9 +155,7 @@ def populate_shipment_json_fields(apps, schema_editor):
 
             # Populate parcels_data
             if shipment.parcels.exists() and not shipment.parcels_data:
-                shipment.parcels_data = [
-                    parcel_to_dict(p) for p in shipment.parcels.all()
-                ]
+                shipment.parcels_data = [parcel_to_dict(p) for p in shipment.parcels.all()]
                 changes.append("parcels_data")
 
             # Populate customs_data
@@ -212,7 +204,7 @@ def populate_order_json_fields(apps, schema_editor):
             "billing_address",
         ).prefetch_related(
             "line_items",
-        )[offset:offset + batch_size]
+        )[offset : offset + batch_size]
 
         for order in orders:
             changes = []
@@ -234,9 +226,7 @@ def populate_order_json_fields(apps, schema_editor):
 
             # Populate line_items_data
             if order.line_items.exists() and not order.line_items_data:
-                order.line_items_data = [
-                    line_item_to_dict(item) for item in order.line_items.all()
-                ]
+                order.line_items_data = [line_item_to_dict(item) for item in order.line_items.all()]
                 changes.append("line_items_data")
 
             if changes:
@@ -249,7 +239,6 @@ def reverse_noop(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("manager", "0071_product_proxy"),
         ("orders", "0021_add_json_fields"),

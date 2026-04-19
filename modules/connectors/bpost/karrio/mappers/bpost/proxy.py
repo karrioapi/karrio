@@ -1,7 +1,7 @@
 """Karrio Belgian Post client proxy."""
 
-import karrio.lib as lib
 import karrio.api.proxy as proxy
+import karrio.lib as lib
 import karrio.mappers.bpost.settings as provider_settings
 import karrio.universal.mappers.rating_proxy as rating_proxy
 
@@ -79,9 +79,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
 
         return lib.Deserializable(
             responses,
-            lambda results: [
-                (result[0], lib.to_element(result[1])) for result in results
-            ],
+            lambda results: [(result[0], lib.to_element(result[1])) for result in results],
         )
 
     def create_return_shipment(self, request: lib.Serializable) -> lib.Deserializable:

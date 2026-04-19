@@ -1,11 +1,9 @@
+import karrio.providers.dpd_meta.units as units
+import karrio.providers.dpd_meta.utils as utils
 from karrio.core.metadata import PluginMetadata
-
 from karrio.mappers.dpd_meta.mapper import Mapper
 from karrio.mappers.dpd_meta.proxy import Proxy
 from karrio.mappers.dpd_meta.settings import Settings
-import karrio.providers.dpd_meta.units as units
-import karrio.providers.dpd_meta.utils as utils
-
 
 # This METADATA object is used by Karrio to discover and register this plugin
 # when loaded through Python entrypoints or local plugin directories.

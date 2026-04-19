@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('providers', '0017_auto_20210805_0359'),
+        ("providers", "0017_auto_20210805_0359"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='fedexsettings',
-            name='user_key',
+            model_name="fedexsettings",
+            name="user_key",
             field=models.CharField(blank=True, max_length=200),
         ),
     ]

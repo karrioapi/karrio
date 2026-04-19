@@ -5,7 +5,6 @@ import karrio.server.core.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("pricing", "0054_alter_surcharge_services"),
     ]

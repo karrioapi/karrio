@@ -1,9 +1,10 @@
 import unittest
-from karrio.core.utils import DP, Serializable
+
 from karrio.core.models import RateRequest
+from karrio.core.utils import DP, Serializable
 from karrio.universal.mappers.rating_proxy import (
-    RatingMixinSettings,
     RatingMixinProxy,
+    RatingMixinSettings,
 )
 from karrio.universal.providers.rating.rate import parse_rate_response
 
@@ -231,9 +232,7 @@ class TestUniversalRating(unittest.TestCase):
 
     def test_zone_specificity_city_over_country(self):
         """Test that city-specific zone is preferred over country-only zone."""
-        settings_with_specific_zones = RatingMixinSettings(
-            **zone_specificity_settings_data
-        )
+        settings_with_specific_zones = RatingMixinSettings(**zone_specificity_settings_data)
         proxy = RatingMixinProxy(settings_with_specific_zones)
 
         CitySpecificRequest = Serializable(
@@ -366,9 +365,7 @@ class TestUniversalRating(unittest.TestCase):
         settings_no_surcharges = RatingMixinSettings(**settings_data)
         proxy = RatingMixinProxy(settings_no_surcharges)
 
-        request = Serializable(
-            RateRequest(**{**rate_request_data, "services": ["carrier_standard"]})
-        )
+        request = Serializable(RateRequest(**{**rate_request_data, "services": ["carrier_standard"]}))
         response_data = proxy.get_rates(request)
         rates = parse_rate_response(response_data, settings_no_surcharges)
 
@@ -462,9 +459,7 @@ ParsedRateResponseWithoutSelection = [
             },
             "service": "carrier_standard",
             "total_charge": 10.0,
-            "extra_charges": [
-                {"amount": 10.0, "currency": "USD", "name": "Base Charge"}
-            ],
+            "extra_charges": [{"amount": 10.0, "currency": "USD", "name": "Base Charge"}],
         },
         {
             "carrier_id": "universal",
@@ -476,9 +471,7 @@ ParsedRateResponseWithoutSelection = [
             },
             "service": "carrier_premium",
             "total_charge": 15.0,
-            "extra_charges": [
-                {"amount": 15.0, "currency": "USD", "name": "Base Charge"}
-            ],
+            "extra_charges": [{"amount": 15.0, "currency": "USD", "name": "Base Charge"}],
         },
     ],
     [],
@@ -496,9 +489,7 @@ ParsedRateResponseStandardService = [
             },
             "service": "carrier_standard",
             "total_charge": 10.0,
-            "extra_charges": [
-                {"amount": 10.0, "currency": "USD", "name": "Base Charge"}
-            ],
+            "extra_charges": [{"amount": 10.0, "currency": "USD", "name": "Base Charge"}],
         }
     ],
     [],
@@ -516,9 +507,7 @@ ParsedRateResponseHighWeightService = [
             },
             "service": "carrier_premium",
             "total_charge": 15.0,
-            "extra_charges": [
-                {"amount": 15.0, "currency": "USD", "name": "Base Charge"}
-            ],
+            "extra_charges": [{"amount": 15.0, "currency": "USD", "name": "Base Charge"}],
         }
     ],
     [
@@ -542,9 +531,7 @@ ParsedInternationalRateResponseService = [
             },
             "service": "carrier_interational_parcel",
             "total_charge": 25.0,
-            "extra_charges": [
-                {"amount": 25.0, "currency": "USD", "name": "Base Charge"}
-            ],
+            "extra_charges": [{"amount": 25.0, "currency": "USD", "name": "Base Charge"}],
         }
     ],
     [],
@@ -566,9 +553,7 @@ ParsedMultiPieceRateResponse = [
         {
             "carrier_id": "universal",
             "currency": "USD",
-            "extra_charges": [
-                {"amount": 20.0, "currency": "USD", "name": "Base Charge"}
-            ],
+            "extra_charges": [{"amount": 20.0, "currency": "USD", "name": "Base Charge"}],
             "meta": {
                 "service_name": "Standard",
                 "shipping_charges": 10.0,
@@ -580,9 +565,7 @@ ParsedMultiPieceRateResponse = [
         {
             "carrier_id": "universal",
             "currency": "USD",
-            "extra_charges": [
-                {"amount": 30.0, "currency": "USD", "name": "Base Charge"}
-            ],
+            "extra_charges": [{"amount": 30.0, "currency": "USD", "name": "Base Charge"}],
             "meta": {
                 "service_name": "Premium",
                 "shipping_charges": 15.0,
@@ -645,9 +628,7 @@ ParsedWeightTierLightPackage = [
             },
             "service": "carrier_weight_tiered",
             "total_charge": 5.0,  # Tier 1: 0-0.5kg
-            "extra_charges": [
-                {"amount": 5.0, "currency": "USD", "name": "Base Charge"}
-            ],
+            "extra_charges": [{"amount": 5.0, "currency": "USD", "name": "Base Charge"}],
         }
     ],
     [],
@@ -665,9 +646,7 @@ ParsedWeightTierMediumPackage = [
             },
             "service": "carrier_weight_tiered",
             "total_charge": 8.0,  # Tier 2: 0.5-1.0kg
-            "extra_charges": [
-                {"amount": 8.0, "currency": "USD", "name": "Base Charge"}
-            ],
+            "extra_charges": [{"amount": 8.0, "currency": "USD", "name": "Base Charge"}],
         }
     ],
     [],
@@ -685,9 +664,7 @@ ParsedWeightTierHeavyPackage = [
             },
             "service": "carrier_weight_tiered",
             "total_charge": 12.0,  # Tier 3: 1.0-2.0kg
-            "extra_charges": [
-                {"amount": 12.0, "currency": "USD", "name": "Base Charge"}
-            ],
+            "extra_charges": [{"amount": 12.0, "currency": "USD", "name": "Base Charge"}],
         }
     ],
     [],
@@ -705,9 +682,7 @@ ParsedWeightTierBoundaryPackage = [
             },
             "service": "carrier_weight_tiered",
             "total_charge": 8.0,  # Tier 2: 0.5-1.0kg (0.5 is inclusive min of tier 2)
-            "extra_charges": [
-                {"amount": 8.0, "currency": "USD", "name": "Base Charge"}
-            ],
+            "extra_charges": [{"amount": 8.0, "currency": "USD", "name": "Base Charge"}],
         }
     ],
     [],
@@ -758,9 +733,7 @@ ParsedZoneSpecificityCityMatch = [
             },
             "service": "carrier_zone_specific",
             "total_charge": 12.0,  # City-specific rate, not country rate
-            "extra_charges": [
-                {"amount": 12.0, "currency": "USD", "name": "Base Charge"}
-            ],
+            "extra_charges": [{"amount": 12.0, "currency": "USD", "name": "Base Charge"}],
         }
     ],
     [],
@@ -799,9 +772,7 @@ ParsedRateResponseWeightOnly = [
             },
             "service": "carrier_dimensional",
             "total_charge": 18.0,
-            "extra_charges": [
-                {"amount": 18.0, "currency": "USD", "name": "Base Charge"}
-            ],
+            "extra_charges": [{"amount": 18.0, "currency": "USD", "name": "Base Charge"}],
         }
     ],
     [],

@@ -1,15 +1,12 @@
 """Karrio Landmark Global tracking API implementation."""
 
+import karrio.core.models as models
+import karrio.lib as lib
+import karrio.providers.landmark.error as error
+import karrio.providers.landmark.units as provider_units
+import karrio.providers.landmark.utils as provider_utils
 import karrio.schemas.landmark.track_request as landmark_req
 import karrio.schemas.landmark.track_response as landmark_res
-
-import typing
-import karrio.lib as lib
-import karrio.core.models as models
-import karrio.providers.landmark.error as error
-import karrio.providers.landmark.utils as provider_utils
-import karrio.providers.landmark.units as provider_units
-
 
 # Supported datetime formats for Landmark Global
 DATETIME_FORMATS = [
@@ -20,16 +17,14 @@ DATETIME_FORMATS = [
 
 
 def parse_tracking_response(
-    _response: lib.Deserializable[typing.List[typing.Tuple[str, lib.Element]]],
+    _response: lib.Deserializable[list[tuple[str, lib.Element]]],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+) -> tuple[list[models.TrackingDetails], list[models.Message]]:
     responses = _response.deserialize()
 
-    messages: typing.List[models.Message] = sum(
+    messages: list[models.Message] = sum(
         [
-            error.parse_error_response(
-                response, settings, tracking_number=tracking_number
-            )
+            error.parse_error_response(response, settings, tracking_number=tracking_number)
             for tracking_number, response in responses
         ],
         start=[],
@@ -50,9 +45,7 @@ def _extract_details(
 ) -> models.TrackingDetails:
     """Extract tracking details from carrier response data"""
 
-    details = lib.find_element(
-        "ShipmentDetails", data, landmark_res.ShipmentDetailsType, first=True
-    )
+    details = lib.find_element("ShipmentDetails", data, landmark_res.ShipmentDetailsType, first=True)
     package = lib.find_element("Package", data, landmark_res.PackageType, first=True)
 
     # Build events in carrier order (preserves multi-leg sequencing)
@@ -72,19 +65,11 @@ def _extract_details(
                 try_formats=DATETIME_FORMATS,
             ),
             status=next(
-                (
-                    s.name
-                    for s in list(provider_units.TrackingStatus)
-                    if event.EventCode in s.value
-                ),
+                (s.name for s in list(provider_units.TrackingStatus) if event.EventCode in s.value),
                 None,
             ),
             reason=next(
-                (
-                    r.name
-                    for r in list(provider_units.TrackingIncidentReason)
-                    if event.EventCode in r.value
-                ),
+                (r.name for r in list(provider_units.TrackingIncidentReason) if event.EventCode in r.value),
                 None,
             ),
         )
@@ -125,17 +110,13 @@ def _extract_details(
         delivered=status == "delivered",
         status=status,
         info=models.TrackingInfo(
-            carrier_tracking_link=settings.tracking_url.format(
-                package.LandmarkTrackingNumber
-            ),
+            carrier_tracking_link=settings.tracking_url.format(package.LandmarkTrackingNumber),
         ),
         meta=lib.to_dict(
             dict(
                 last_mile_tracking_number=package.TrackingNumber,
                 last_mile_carrier=lib.identity(
-                    None
-                    if "routed" in (details.EndDeliveryCarrier or "").lower()
-                    else details.EndDeliveryCarrier
+                    None if "routed" in (details.EndDeliveryCarrier or "").lower() else details.EndDeliveryCarrier
                 ),
             )
         ),
@@ -166,7 +147,5 @@ def tracking_request(
 
     return lib.Serializable(
         requests,
-        lambda __: [
-            lib.typed(number=_.TrackingNumber, request=lib.to_xml(_)) for _ in __
-        ],
+        lambda __: [lib.typed(number=_.TrackingNumber, request=lib.to_xml(_)) for _ in __],
     )

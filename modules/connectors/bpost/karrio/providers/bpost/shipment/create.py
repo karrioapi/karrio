@@ -1,26 +1,21 @@
-import karrio.schemas.bpost.shm_deep_integration_v5 as bpost
 import uuid
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
+
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.bpost.error as error
-import karrio.providers.bpost.utils as provider_utils
 import karrio.providers.bpost.units as provider_units
+import karrio.providers.bpost.utils as provider_utils
+import karrio.schemas.bpost.shm_deep_integration_v5 as bpost
 
 
 def parse_shipment_response(
     _response: lib.Deserializable[lib.Element],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+) -> tuple[list[models.RateDetails], list[models.Message]]:
     response = _response.deserialize()
 
     messages = error.parse_error_response(response, settings)
-    shipment = (
-        _extract_details(response, settings, _response.ctx)
-        if _response.ctx.get("label") is not None
-        else None
-    )
+    shipment = _extract_details(response, settings, _response.ctx) if _response.ctx.get("label") is not None else None
 
     return shipment, messages
 
@@ -33,10 +28,8 @@ def _extract_details(
     labels = lib.to_object(bpost.LabelsType, ctx["label"])
     details = labels.label[0]
     label_type = "PDF" if "pdf" in details.mimeType else "PNG"
-    label = lib.bundle_base64(
-        [lib.encode_base64(_.bytes) for _ in labels.label], format=label_type
-    )
-    tracking_numbers: typing.List[str] = sum([_.barcode for _ in labels.label], [])
+    label = lib.bundle_base64([lib.encode_base64(_.bytes) for _ in labels.label], format=label_type)
+    tracking_numbers: list[str] = sum([_.barcode for _ in labels.label], [])
     tracking_number = tracking_numbers[0]
     shipment_identifier = ctx["reference"]
 
@@ -77,13 +70,10 @@ def shipment_request(
         shipper=shipper,
         recipient=recipient,
     )
-    hold_location = lib.to_address(
-        options.hold_at_location_address.state or payload.recipient
-    )
+    hold_location = lib.to_address(options.hold_at_location_address.state or payload.recipient)
     lines = customs.commodities if any(customs.commodities) else packages.items
     label_format, label_header = (
-        provider_units.LabelType.map(payload.label_type).value
-        or provider_units.LabelType.PDF.value
+        provider_units.LabelType.map(payload.label_type).value or provider_units.LabelType.PDF.value
     )
 
     request = bpost.OrderType(
@@ -128,13 +118,9 @@ def shipment_request(
                                         infoDistributed=(
                                             bpost.NotificationType(
                                                 language=settings.connection_config.lang.state,
-                                                emailAddress=(
-                                                    options.email_notification_to.state
-                                                    or recipient.email
-                                                ),
+                                                emailAddress=(options.email_notification_to.state or recipient.email),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                             )
                                             if (
@@ -157,8 +143,7 @@ def shipment_request(
                                                     or recipient.email
                                                 ),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                             )
                                             if (
@@ -175,13 +160,9 @@ def shipment_request(
                                         infoReminder=(
                                             bpost.NotificationType(
                                                 language=settings.connection_config.lang.state,
-                                                emailAddress=(
-                                                    options.email_notification_to.state
-                                                    or recipient.email
-                                                ),
+                                                emailAddress=(options.email_notification_to.state or recipient.email),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                             )
                                             if (
@@ -204,8 +185,7 @@ def shipment_request(
                                                     or recipient.email
                                                 ),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                             )
                                             if (
@@ -227,11 +207,7 @@ def shipment_request(
                                             if options.bpost_auto_second_presentation.state
                                             else None
                                         ),
-                                        fragile=(
-                                            bpost.FragileType()
-                                            if options.bpost_fragile.state
-                                            else None
-                                        ),
+                                        fragile=(bpost.FragileType() if options.bpost_fragile.state else None),
                                         insured=(
                                             bpost.InsuranceType(
                                                 basicInsurance=options.bpost_insured.state,
@@ -240,21 +216,13 @@ def shipment_request(
                                             if options.bpost_insured.state is not None
                                             else None
                                         ),
-                                        signed=(
-                                            bpost.SignatureType()
-                                            if options.bpost_signed.state
-                                            else None
-                                        ),
+                                        signed=(bpost.SignatureType() if options.bpost_signed.state else None),
                                         timeSlotDelivery=(
                                             bpost.TimeSlotDeliveryType(
                                                 language=settings.connection_config.lang.state,
-                                                emailAddress=(
-                                                    options.email_notification_to.state
-                                                    or recipient.email
-                                                ),
+                                                emailAddress=(options.email_notification_to.state or recipient.email),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                                 value=options.bpost_time_slot_delivery.state,
                                             )
@@ -275,20 +243,14 @@ def shipment_request(
                                             else None
                                         ),
                                         sundayDelivery=(
-                                            bpost.SundayDeliveryType()
-                                            if options.bpost_sunday_delivery.state
-                                            else None
+                                            bpost.SundayDeliveryType() if options.bpost_sunday_delivery.state else None
                                         ),
                                         sameDayDelivery=(
                                             bpost.NotificationType(
                                                 language=settings.connection_config.lang.state,
-                                                emailAddress=(
-                                                    options.email_notification_to.state
-                                                    or recipient.email
-                                                ),
+                                                emailAddress=(options.email_notification_to.state or recipient.email),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                             )
                                             if (
@@ -313,9 +275,7 @@ def shipment_request(
                                         ),
                                         preferredDeliveryWindow=options.bpost_preferred_delivery_window.state,
                                         fullService=(
-                                            bpost.FullServiceType()
-                                            if options.bpost_full_service.state
-                                            else None
+                                            bpost.FullServiceType() if options.bpost_full_service.state else None
                                         ),
                                         doorStepPlusService=(
                                             bpost.DoorStepPlusServiceType()
@@ -365,13 +325,9 @@ def shipment_request(
                                         infoDistributed=(
                                             bpost.NotificationType(
                                                 language=settings.connection_config.lang.state,
-                                                emailAddress=(
-                                                    options.email_notification_to.state
-                                                    or recipient.email
-                                                ),
+                                                emailAddress=(options.email_notification_to.state or recipient.email),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                             )
                                             if (
@@ -394,8 +350,7 @@ def shipment_request(
                                                     or recipient.email
                                                 ),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                             )
                                             if (
@@ -412,13 +367,9 @@ def shipment_request(
                                         infoReminder=(
                                             bpost.NotificationType(
                                                 language=settings.connection_config.lang.state,
-                                                emailAddress=(
-                                                    options.email_notification_to.state
-                                                    or recipient.email
-                                                ),
+                                                emailAddress=(options.email_notification_to.state or recipient.email),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                             )
                                             if (
@@ -441,8 +392,7 @@ def shipment_request(
                                                     or recipient.email
                                                 ),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                             )
                                             if (
@@ -464,11 +414,7 @@ def shipment_request(
                                             if options.bpost_auto_second_presentation.state
                                             else None
                                         ),
-                                        fragile=(
-                                            bpost.FragileType()
-                                            if options.bpost_fragile.state
-                                            else None
-                                        ),
+                                        fragile=(bpost.FragileType() if options.bpost_fragile.state else None),
                                         insured=(
                                             bpost.InsuranceType(
                                                 basicInsurance=options.bpost_insured.state,
@@ -477,21 +423,13 @@ def shipment_request(
                                             if options.bpost_insured.state is not None
                                             else None
                                         ),
-                                        signed=(
-                                            bpost.SignatureType()
-                                            if options.bpost_signed.state
-                                            else None
-                                        ),
+                                        signed=(bpost.SignatureType() if options.bpost_signed.state else None),
                                         timeSlotDelivery=(
                                             bpost.TimeSlotDeliveryType(
                                                 language=settings.connection_config.lang.state,
-                                                emailAddress=(
-                                                    options.email_notification_to.state
-                                                    or recipient.email
-                                                ),
+                                                emailAddress=(options.email_notification_to.state or recipient.email),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                                 value=options.bpost_time_slot_delivery.state,
                                             )
@@ -512,20 +450,14 @@ def shipment_request(
                                             else None
                                         ),
                                         sundayDelivery=(
-                                            bpost.SundayDeliveryType()
-                                            if options.bpost_sunday_delivery.state
-                                            else None
+                                            bpost.SundayDeliveryType() if options.bpost_sunday_delivery.state else None
                                         ),
                                         sameDayDelivery=(
                                             bpost.NotificationType(
                                                 language=settings.connection_config.lang.state,
-                                                emailAddress=(
-                                                    options.email_notification_to.state
-                                                    or recipient.email
-                                                ),
+                                                emailAddress=(options.email_notification_to.state or recipient.email),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                             )
                                             if (
@@ -550,9 +482,7 @@ def shipment_request(
                                         ),
                                         preferredDeliveryWindow=options.bpost_preferred_delivery_window.state,
                                         fullService=(
-                                            bpost.FullServiceType()
-                                            if options.bpost_full_service.state
-                                            else None
+                                            bpost.FullServiceType() if options.bpost_full_service.state else None
                                         ),
                                         doorStepPlusService=(
                                             bpost.DoorStepPlusServiceType()
@@ -601,13 +531,9 @@ def shipment_request(
                                         infoDistributed=(
                                             bpost.NotificationType(
                                                 language=settings.connection_config.lang.state,
-                                                emailAddress=(
-                                                    options.email_notification_to.state
-                                                    or recipient.email
-                                                ),
+                                                emailAddress=(options.email_notification_to.state or recipient.email),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                             )
                                             if (
@@ -630,8 +556,7 @@ def shipment_request(
                                                     or recipient.email
                                                 ),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                             )
                                             if (
@@ -648,13 +573,9 @@ def shipment_request(
                                         infoReminder=(
                                             bpost.NotificationType(
                                                 language=settings.connection_config.lang.state,
-                                                emailAddress=(
-                                                    options.email_notification_to.state
-                                                    or recipient.email
-                                                ),
+                                                emailAddress=(options.email_notification_to.state or recipient.email),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                             )
                                             if (
@@ -677,8 +598,7 @@ def shipment_request(
                                                     or recipient.email
                                                 ),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                             )
                                             if (
@@ -700,11 +620,7 @@ def shipment_request(
                                             if options.bpost_auto_second_presentation.state
                                             else None
                                         ),
-                                        fragile=(
-                                            bpost.FragileType()
-                                            if options.bpost_fragile.state
-                                            else None
-                                        ),
+                                        fragile=(bpost.FragileType() if options.bpost_fragile.state else None),
                                         insured=(
                                             bpost.InsuranceType(
                                                 basicInsurance=options.bpost_insured.state,
@@ -713,21 +629,13 @@ def shipment_request(
                                             if options.bpost_insured.state is not None
                                             else None
                                         ),
-                                        signed=(
-                                            bpost.SignatureType()
-                                            if options.bpost_signed.state
-                                            else None
-                                        ),
+                                        signed=(bpost.SignatureType() if options.bpost_signed.state else None),
                                         timeSlotDelivery=(
                                             bpost.TimeSlotDeliveryType(
                                                 language=settings.connection_config.lang.state,
-                                                emailAddress=(
-                                                    options.email_notification_to.state
-                                                    or recipient.email
-                                                ),
+                                                emailAddress=(options.email_notification_to.state or recipient.email),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                                 value=options.bpost_time_slot_delivery.state,
                                             )
@@ -748,20 +656,14 @@ def shipment_request(
                                             else None
                                         ),
                                         sundayDelivery=(
-                                            bpost.SundayDeliveryType()
-                                            if options.bpost_sunday_delivery.state
-                                            else None
+                                            bpost.SundayDeliveryType() if options.bpost_sunday_delivery.state else None
                                         ),
                                         sameDayDelivery=(
                                             bpost.NotificationType(
                                                 language=settings.connection_config.lang.state,
-                                                emailAddress=(
-                                                    options.email_notification_to.state
-                                                    or recipient.email
-                                                ),
+                                                emailAddress=(options.email_notification_to.state or recipient.email),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                             )
                                             if (
@@ -786,9 +688,7 @@ def shipment_request(
                                         ),
                                         preferredDeliveryWindow=options.bpost_preferred_delivery_window.state,
                                         fullService=(
-                                            bpost.FullServiceType()
-                                            if options.bpost_full_service.state
-                                            else None
+                                            bpost.FullServiceType() if options.bpost_full_service.state else None
                                         ),
                                         doorStepPlusService=(
                                             bpost.DoorStepPlusServiceType()
@@ -840,13 +740,9 @@ def shipment_request(
                                         infoDistributed=(
                                             bpost.NotificationType(
                                                 language=settings.connection_config.lang.state,
-                                                emailAddress=(
-                                                    options.email_notification_to.state
-                                                    or recipient.email
-                                                ),
+                                                emailAddress=(options.email_notification_to.state or recipient.email),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                             )
                                             if (
@@ -869,8 +765,7 @@ def shipment_request(
                                                     or recipient.email
                                                 ),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                             )
                                             if (
@@ -887,13 +782,9 @@ def shipment_request(
                                         infoReminder=(
                                             bpost.NotificationType(
                                                 language=settings.connection_config.lang.state,
-                                                emailAddress=(
-                                                    options.email_notification_to.state
-                                                    or recipient.email
-                                                ),
+                                                emailAddress=(options.email_notification_to.state or recipient.email),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                             )
                                             if (
@@ -916,8 +807,7 @@ def shipment_request(
                                                     or recipient.email
                                                 ),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                             )
                                             if (
@@ -939,11 +829,7 @@ def shipment_request(
                                             if options.bpost_auto_second_presentation.state
                                             else None
                                         ),
-                                        fragile=(
-                                            bpost.FragileType()
-                                            if options.bpost_fragile.state
-                                            else None
-                                        ),
+                                        fragile=(bpost.FragileType() if options.bpost_fragile.state else None),
                                         insured=(
                                             bpost.InsuranceType(
                                                 basicInsurance=options.bpost_insured.state,
@@ -952,21 +838,13 @@ def shipment_request(
                                             if options.bpost_insured.state is not None
                                             else None
                                         ),
-                                        signed=(
-                                            bpost.SignatureType()
-                                            if options.bpost_signed.state
-                                            else None
-                                        ),
+                                        signed=(bpost.SignatureType() if options.bpost_signed.state else None),
                                         timeSlotDelivery=(
                                             bpost.TimeSlotDeliveryType(
                                                 language=settings.connection_config.lang.state,
-                                                emailAddress=(
-                                                    options.email_notification_to.state
-                                                    or recipient.email
-                                                ),
+                                                emailAddress=(options.email_notification_to.state or recipient.email),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                                 value=options.bpost_time_slot_delivery.state,
                                             )
@@ -987,20 +865,14 @@ def shipment_request(
                                             else None
                                         ),
                                         sundayDelivery=(
-                                            bpost.SundayDeliveryType()
-                                            if options.bpost_sunday_delivery.state
-                                            else None
+                                            bpost.SundayDeliveryType() if options.bpost_sunday_delivery.state else None
                                         ),
                                         sameDayDelivery=(
                                             bpost.NotificationType(
                                                 language=settings.connection_config.lang.state,
-                                                emailAddress=(
-                                                    options.email_notification_to.state
-                                                    or recipient.email
-                                                ),
+                                                emailAddress=(options.email_notification_to.state or recipient.email),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                             )
                                             if (
@@ -1025,9 +897,7 @@ def shipment_request(
                                         ),
                                         preferredDeliveryWindow=options.bpost_preferred_delivery_window.state,
                                         fullService=(
-                                            bpost.FullServiceType()
-                                            if options.bpost_full_service.state
-                                            else None
+                                            bpost.FullServiceType() if options.bpost_full_service.state else None
                                         ),
                                         doorStepPlusService=(
                                             bpost.DoorStepPlusServiceType()
@@ -1063,22 +933,12 @@ def shipment_request(
                                 parcelLength=package.length.MM,
                                 parcelWidth=package.width.MM,
                                 customsInfo=bpost.CustomsType(
-                                    parcelValue=(
-                                        customs.duty.declared_value
-                                        or options.declared_value.state
-                                    ),
+                                    parcelValue=(customs.duty.declared_value or options.declared_value.state),
                                     contentDescription=customs.content_description,
-                                    shipmentType=provider_units.CustomsContentType.map(
-                                        customs.content_type
-                                    ).value,
-                                    parcelReturnInstructions=(
-                                        options.bpost_parcel_return_instructions.state
-                                        or "RTS"
-                                    ),
+                                    shipmentType=provider_units.CustomsContentType.map(customs.content_type).value,
+                                    parcelReturnInstructions=(options.bpost_parcel_return_instructions.state or "RTS"),
                                     privateAddress=customs.duty_billing_address.residential,
-                                    currency=(
-                                        customs.duty.currency or options.currency.state
-                                    ),
+                                    currency=(customs.duty.currency or options.currency.state),
                                     amtPostagePaidByAddresse=None,
                                 ),
                                 parcelContents=(
@@ -1087,18 +947,12 @@ def shipment_request(
                                             bpost.ParcelContentDetail(
                                                 numberOfItemType=item.quantity,
                                                 valueOfItem=item.value_amount,
-                                                itemDescription=(
-                                                    item.title or item.description
-                                                ),
+                                                itemDescription=(item.title or item.description),
                                                 nettoWeight=item.weight,
                                                 hsTariffCode=(item.hs_code or item.sku),
                                                 originOfGoods=item.origin_country,
                                             )
-                                            for item in (
-                                                package.items
-                                                if any(package.items)
-                                                else customs.commodities
-                                            )
+                                            for item in (package.items if any(package.items) else customs.commodities)
                                         ],
                                     )
                                     if (any(package.items) or any(customs.commodities))
@@ -1116,13 +970,9 @@ def shipment_request(
                                         infoDistributed=(
                                             bpost.NotificationType(
                                                 language=settings.connection_config.lang.state,
-                                                emailAddress=(
-                                                    options.email_notification_to.state
-                                                    or recipient.email
-                                                ),
+                                                emailAddress=(options.email_notification_to.state or recipient.email),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                             )
                                             if (
@@ -1145,8 +995,7 @@ def shipment_request(
                                                     or recipient.email
                                                 ),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                             )
                                             if (
@@ -1163,13 +1012,9 @@ def shipment_request(
                                         infoReminder=(
                                             bpost.NotificationType(
                                                 language=settings.connection_config.lang.state,
-                                                emailAddress=(
-                                                    options.email_notification_to.state
-                                                    or recipient.email
-                                                ),
+                                                emailAddress=(options.email_notification_to.state or recipient.email),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                             )
                                             if (
@@ -1192,8 +1037,7 @@ def shipment_request(
                                                     or recipient.email
                                                 ),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                             )
                                             if (
@@ -1215,11 +1059,7 @@ def shipment_request(
                                             if options.bpost_auto_second_presentation.state
                                             else None
                                         ),
-                                        fragile=(
-                                            bpost.FragileType()
-                                            if options.bpost_fragile.state
-                                            else None
-                                        ),
+                                        fragile=(bpost.FragileType() if options.bpost_fragile.state else None),
                                         insured=(
                                             bpost.InsuranceType(
                                                 basicInsurance=options.bpost_insured.state,
@@ -1228,21 +1068,13 @@ def shipment_request(
                                             if options.bpost_insured.state is not None
                                             else None
                                         ),
-                                        signed=(
-                                            bpost.SignatureType()
-                                            if options.bpost_signed.state
-                                            else None
-                                        ),
+                                        signed=(bpost.SignatureType() if options.bpost_signed.state else None),
                                         timeSlotDelivery=(
                                             bpost.TimeSlotDeliveryType(
                                                 language=settings.connection_config.lang.state,
-                                                emailAddress=(
-                                                    options.email_notification_to.state
-                                                    or recipient.email
-                                                ),
+                                                emailAddress=(options.email_notification_to.state or recipient.email),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                                 value=options.bpost_time_slot_delivery.state,
                                             )
@@ -1263,20 +1095,14 @@ def shipment_request(
                                             else None
                                         ),
                                         sundayDelivery=(
-                                            bpost.SundayDeliveryType()
-                                            if options.bpost_sunday_delivery.state
-                                            else None
+                                            bpost.SundayDeliveryType() if options.bpost_sunday_delivery.state else None
                                         ),
                                         sameDayDelivery=(
                                             bpost.NotificationType(
                                                 language=settings.connection_config.lang.state,
-                                                emailAddress=(
-                                                    options.email_notification_to.state
-                                                    or recipient.email
-                                                ),
+                                                emailAddress=(options.email_notification_to.state or recipient.email),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                             )
                                             if (
@@ -1301,9 +1127,7 @@ def shipment_request(
                                         ),
                                         preferredDeliveryWindow=options.bpost_preferred_delivery_window.state,
                                         fullService=(
-                                            bpost.FullServiceType()
-                                            if options.bpost_full_service.state
-                                            else None
+                                            bpost.FullServiceType() if options.bpost_full_service.state else None
                                         ),
                                         doorStepPlusService=(
                                             bpost.DoorStepPlusServiceType()
@@ -1339,22 +1163,12 @@ def shipment_request(
                                 parcelLength=package.length.MM,
                                 parcelWidth=package.width.MM,
                                 customsInfo=bpost.CustomsType(
-                                    parcelValue=(
-                                        customs.duty.declared_value
-                                        or options.declared_value.state
-                                    ),
+                                    parcelValue=(customs.duty.declared_value or options.declared_value.state),
                                     contentDescription=customs.content_description,
-                                    shipmentType=provider_units.CustomsContentType.map(
-                                        customs.content_type
-                                    ).value,
-                                    parcelReturnInstructions=(
-                                        options.bpost_parcel_return_instructions.state
-                                        or "RTS"
-                                    ),
+                                    shipmentType=provider_units.CustomsContentType.map(customs.content_type).value,
+                                    parcelReturnInstructions=(options.bpost_parcel_return_instructions.state or "RTS"),
                                     privateAddress=customs.duty_billing_address.residential,
-                                    currency=(
-                                        customs.duty.currency or options.currency.state
-                                    ),
+                                    currency=(customs.duty.currency or options.currency.state),
                                     amtPostagePaidByAddresse=None,
                                 ),
                                 parcelContents=(
@@ -1363,18 +1177,12 @@ def shipment_request(
                                             bpost.ParcelContentDetail(
                                                 numberOfItemType=item.quantity,
                                                 valueOfItem=item.value_amount,
-                                                itemDescription=(
-                                                    item.title or item.description
-                                                ),
+                                                itemDescription=(item.title or item.description),
                                                 nettoWeight=item.weight,
                                                 hsTariffCode=(item.hs_code or item.sku),
                                                 originOfGoods=item.origin_country,
                                             )
-                                            for item in (
-                                                package.items
-                                                if any(package.items)
-                                                else customs.commodities
-                                            )
+                                            for item in (package.items if any(package.items) else customs.commodities)
                                         ],
                                     )
                                     if (any(package.items) or any(customs.commodities))
@@ -1392,13 +1200,9 @@ def shipment_request(
                                         infoDistributed=(
                                             bpost.NotificationType(
                                                 language=settings.connection_config.lang.state,
-                                                emailAddress=(
-                                                    options.email_notification_to.state
-                                                    or recipient.email
-                                                ),
+                                                emailAddress=(options.email_notification_to.state or recipient.email),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                             )
                                             if (
@@ -1421,8 +1225,7 @@ def shipment_request(
                                                     or recipient.email
                                                 ),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                             )
                                             if (
@@ -1439,13 +1242,9 @@ def shipment_request(
                                         infoReminder=(
                                             bpost.NotificationType(
                                                 language=settings.connection_config.lang.state,
-                                                emailAddress=(
-                                                    options.email_notification_to.state
-                                                    or recipient.email
-                                                ),
+                                                emailAddress=(options.email_notification_to.state or recipient.email),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                             )
                                             if (
@@ -1468,8 +1267,7 @@ def shipment_request(
                                                     or recipient.email
                                                 ),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                             )
                                             if (
@@ -1491,11 +1289,7 @@ def shipment_request(
                                             if options.bpost_auto_second_presentation.state
                                             else None
                                         ),
-                                        fragile=(
-                                            bpost.FragileType()
-                                            if options.bpost_fragile.state
-                                            else None
-                                        ),
+                                        fragile=(bpost.FragileType() if options.bpost_fragile.state else None),
                                         insured=(
                                             bpost.InsuranceType(
                                                 basicInsurance=options.bpost_insured.state,
@@ -1504,21 +1298,13 @@ def shipment_request(
                                             if options.bpost_insured.state is not None
                                             else None
                                         ),
-                                        signed=(
-                                            bpost.SignatureType()
-                                            if options.bpost_signed.state
-                                            else None
-                                        ),
+                                        signed=(bpost.SignatureType() if options.bpost_signed.state else None),
                                         timeSlotDelivery=(
                                             bpost.TimeSlotDeliveryType(
                                                 language=settings.connection_config.lang.state,
-                                                emailAddress=(
-                                                    options.email_notification_to.state
-                                                    or recipient.email
-                                                ),
+                                                emailAddress=(options.email_notification_to.state or recipient.email),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                                 value=options.bpost_time_slot_delivery.state,
                                             )
@@ -1539,20 +1325,14 @@ def shipment_request(
                                             else None
                                         ),
                                         sundayDelivery=(
-                                            bpost.SundayDeliveryType()
-                                            if options.bpost_sunday_delivery.state
-                                            else None
+                                            bpost.SundayDeliveryType() if options.bpost_sunday_delivery.state else None
                                         ),
                                         sameDayDelivery=(
                                             bpost.NotificationType(
                                                 language=settings.connection_config.lang.state,
-                                                emailAddress=(
-                                                    options.email_notification_to.state
-                                                    or recipient.email
-                                                ),
+                                                emailAddress=(options.email_notification_to.state or recipient.email),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                             )
                                             if (
@@ -1577,9 +1357,7 @@ def shipment_request(
                                         ),
                                         preferredDeliveryWindow=options.bpost_preferred_delivery_window.state,
                                         fullService=(
-                                            bpost.FullServiceType()
-                                            if options.bpost_full_service.state
-                                            else None
+                                            bpost.FullServiceType() if options.bpost_full_service.state else None
                                         ),
                                         doorStepPlusService=(
                                             bpost.DoorStepPlusServiceType()
@@ -1615,22 +1393,12 @@ def shipment_request(
                                 parcelLength=package.length.MM,
                                 parcelWidth=package.width.MM,
                                 customsInfo=bpost.CustomsType(
-                                    parcelValue=(
-                                        customs.duty.declared_value
-                                        or options.declared_value.state
-                                    ),
+                                    parcelValue=(customs.duty.declared_value or options.declared_value.state),
                                     contentDescription=customs.content_description,
-                                    shipmentType=provider_units.CustomsContentType.map(
-                                        customs.content_type
-                                    ).value,
-                                    parcelReturnInstructions=(
-                                        options.bpost_parcel_return_instructions.state
-                                        or "RTS"
-                                    ),
+                                    shipmentType=provider_units.CustomsContentType.map(customs.content_type).value,
+                                    parcelReturnInstructions=(options.bpost_parcel_return_instructions.state or "RTS"),
                                     privateAddress=customs.duty_billing_address.residential,
-                                    currency=(
-                                        customs.duty.currency or options.currency.state
-                                    ),
+                                    currency=(customs.duty.currency or options.currency.state),
                                     amtPostagePaidByAddresse=None,
                                 ),
                                 parcelContents=(
@@ -1639,18 +1407,12 @@ def shipment_request(
                                             bpost.ParcelContentDetail(
                                                 numberOfItemType=item.quantity,
                                                 valueOfItem=item.value_amount,
-                                                itemDescription=(
-                                                    item.title or item.description
-                                                ),
+                                                itemDescription=(item.title or item.description),
                                                 nettoWeight=item.weight,
                                                 hsTariffCode=(item.hs_code or item.sku),
                                                 originOfGoods=item.origin_country,
                                             )
-                                            for item in (
-                                                package.items
-                                                if any(package.items)
-                                                else customs.commodities
-                                            )
+                                            for item in (package.items if any(package.items) else customs.commodities)
                                         ],
                                     )
                                     if (any(package.items) or any(customs.commodities))
@@ -1679,13 +1441,9 @@ def shipment_request(
                                         infoDistributed=(
                                             bpost.NotificationType(
                                                 language=settings.connection_config.lang.state,
-                                                emailAddress=(
-                                                    options.email_notification_to.state
-                                                    or recipient.email
-                                                ),
+                                                emailAddress=(options.email_notification_to.state or recipient.email),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                             )
                                             if (
@@ -1708,8 +1466,7 @@ def shipment_request(
                                                     or recipient.email
                                                 ),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                             )
                                             if (
@@ -1726,13 +1483,9 @@ def shipment_request(
                                         infoReminder=(
                                             bpost.NotificationType(
                                                 language=settings.connection_config.lang.state,
-                                                emailAddress=(
-                                                    options.email_notification_to.state
-                                                    or recipient.email
-                                                ),
+                                                emailAddress=(options.email_notification_to.state or recipient.email),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                             )
                                             if (
@@ -1755,8 +1508,7 @@ def shipment_request(
                                                     or recipient.email
                                                 ),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                             )
                                             if (
@@ -1778,11 +1530,7 @@ def shipment_request(
                                             if options.bpost_auto_second_presentation.state
                                             else None
                                         ),
-                                        fragile=(
-                                            bpost.FragileType()
-                                            if options.bpost_fragile.state
-                                            else None
-                                        ),
+                                        fragile=(bpost.FragileType() if options.bpost_fragile.state else None),
                                         insured=(
                                             bpost.InsuranceType(
                                                 basicInsurance=options.bpost_insured.state,
@@ -1791,21 +1539,13 @@ def shipment_request(
                                             if options.bpost_insured.state is not None
                                             else None
                                         ),
-                                        signed=(
-                                            bpost.SignatureType()
-                                            if options.bpost_signed.state
-                                            else None
-                                        ),
+                                        signed=(bpost.SignatureType() if options.bpost_signed.state else None),
                                         timeSlotDelivery=(
                                             bpost.TimeSlotDeliveryType(
                                                 language=settings.connection_config.lang.state,
-                                                emailAddress=(
-                                                    options.email_notification_to.state
-                                                    or recipient.email
-                                                ),
+                                                emailAddress=(options.email_notification_to.state or recipient.email),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                                 value=options.bpost_time_slot_delivery.state,
                                             )
@@ -1826,20 +1566,14 @@ def shipment_request(
                                             else None
                                         ),
                                         sundayDelivery=(
-                                            bpost.SundayDeliveryType()
-                                            if options.bpost_sunday_delivery.state
-                                            else None
+                                            bpost.SundayDeliveryType() if options.bpost_sunday_delivery.state else None
                                         ),
                                         sameDayDelivery=(
                                             bpost.NotificationType(
                                                 language=settings.connection_config.lang.state,
-                                                emailAddress=(
-                                                    options.email_notification_to.state
-                                                    or recipient.email
-                                                ),
+                                                emailAddress=(options.email_notification_to.state or recipient.email),
                                                 phoneNumber=(
-                                                    options.sms_notification_to.state
-                                                    or recipient.phone_number
+                                                    options.sms_notification_to.state or recipient.phone_number
                                                 ),
                                             )
                                             if (
@@ -1864,9 +1598,7 @@ def shipment_request(
                                         ),
                                         preferredDeliveryWindow=options.bpost_preferred_delivery_window.state,
                                         fullService=(
-                                            bpost.FullServiceType()
-                                            if options.bpost_full_service.state
-                                            else None
+                                            bpost.FullServiceType() if options.bpost_full_service.state else None
                                         ),
                                         doorStepPlusService=(
                                             bpost.DoorStepPlusServiceType()
@@ -1902,22 +1634,12 @@ def shipment_request(
                                 parcelLength=package.length.MM,
                                 parcelWidth=package.width.MM,
                                 customsInfo=bpost.CustomsType(
-                                    parcelValue=(
-                                        customs.duty.declared_value
-                                        or options.declared_value.state
-                                    ),
+                                    parcelValue=(customs.duty.declared_value or options.declared_value.state),
                                     contentDescription=customs.content_description,
-                                    shipmentType=provider_units.CustomsContentType.map(
-                                        customs.content_type
-                                    ).value,
-                                    parcelReturnInstructions=(
-                                        options.bpost_parcel_return_instructions.state
-                                        or "RTS"
-                                    ),
+                                    shipmentType=provider_units.CustomsContentType.map(customs.content_type).value,
+                                    parcelReturnInstructions=(options.bpost_parcel_return_instructions.state or "RTS"),
                                     privateAddress=customs.duty_billing_address.residential,
-                                    currency=(
-                                        customs.duty.currency or options.currency.state
-                                    ),
+                                    currency=(customs.duty.currency or options.currency.state),
                                     amtPostagePaidByAddresse=None,
                                 ),
                                 parcelContents=(
@@ -1926,18 +1648,12 @@ def shipment_request(
                                             bpost.ParcelContentDetail(
                                                 numberOfItemType=item.quantity,
                                                 valueOfItem=item.value_amount,
-                                                itemDescription=(
-                                                    item.title or item.description
-                                                ),
+                                                itemDescription=(item.title or item.description),
                                                 nettoWeight=item.weight,
                                                 hsTariffCode=(item.hs_code or item.sku),
                                                 originOfGoods=item.origin_country,
                                             )
-                                            for item in (
-                                                package.items
-                                                if any(package.items)
-                                                else customs.commodities
-                                            )
+                                            for item in (package.items if any(package.items) else customs.commodities)
                                         ],
                                     )
                                     if (any(package.items) or any(customs.commodities))

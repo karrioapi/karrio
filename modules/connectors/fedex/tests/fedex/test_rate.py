@@ -1,10 +1,11 @@
 import unittest
-from unittest.mock import patch, ANY
-from .fixture import gateway
+from unittest.mock import ANY, patch
 
-import karrio.sdk as karrio
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 
 class TestFedExRating(unittest.TestCase):
@@ -30,18 +31,14 @@ class TestFedExRating(unittest.TestCase):
     def test_parse_rate_response(self):
         with patch("karrio.mappers.fedex.proxy.lib.request") as mock:
             mock.return_value = RateResponse
-            parsed_response = (
-                karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedRateResponse)
 
     def test_parse_intl_rate_response(self):
         with patch("karrio.mappers.fedex.proxy.lib.request") as mock:
             mock.return_value = IntlRateResponse
-            parsed_response = (
-                karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
 
             self.assertListEqual(lib.to_dict(parsed_response), IntlParsedRateResponse)
 
@@ -312,9 +309,7 @@ RateRequest = {
         "pickupType": "DROPOFF_AT_FEDEX_LOCATION",
         "preferredCurrency": "USD",
         "rateRequestType": ["LIST", "ACCOUNT", "PREFERRED"],
-        "recipient": {
-            "address": {"city": "Lome", "countryCode": "TG", "residential": False}
-        },
+        "recipient": {"address": {"city": "Lome", "countryCode": "TG", "residential": False}},
         "requestedPackageLineItems": [
             {
                 "declaredValue": {"amount": 0.0, "currency": "USD"},

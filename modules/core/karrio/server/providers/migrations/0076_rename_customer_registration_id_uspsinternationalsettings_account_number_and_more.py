@@ -12,9 +12,7 @@ def forwards_func(apps, schema_editor):
     USPSInternationalSettings = apps.get_model("providers", "USPSInternationalSettings")
 
     usps_accounts = USPSSettings.objects.using(db_alias).all().iterator()
-    usps_intl_accounts = (
-        USPSInternationalSettings.objects.using(db_alias).all().iterator()
-    )
+    usps_intl_accounts = USPSInternationalSettings.objects.using(db_alias).all().iterator()
 
     carrier_accounts = [
         *[(_.carrier_ptr, _) for _ in usps_accounts],
@@ -39,7 +37,6 @@ def reverse_func(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("providers", "0075_haypostsettings"),
     ]

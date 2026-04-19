@@ -4,19 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('graph', '0001_initial'),
+        ("graph", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='template',
-            options={'ordering': ['-is_default', '-created_by']},
+            name="template",
+            options={"ordering": ["-is_default", "-created_by"]},
         ),
         migrations.AlterField(
-            model_name='template',
-            name='is_default',
+            model_name="template",
+            name="is_default",
             field=models.BooleanField(blank=True, default=False),
         ),
     ]

@@ -1,17 +1,17 @@
 import unittest
 from unittest.mock import patch
-from karrio.core.utils import DP
+
 from karrio.core.models import TrackingRequest
+from karrio.core.utils import DP
 from karrio.sdk import Tracking
+
 from .fixture import gateway
 
 
 class TestPurolatorTracking(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        self.TrackingRequest = TrackingRequest(
-            tracking_numbers=TRACKING_REQUEST_PAYLOAD
-        )
+        self.TrackingRequest = TrackingRequest(tracking_numbers=TRACKING_REQUEST_PAYLOAD)
 
     def test_create_tracking_request(self):
         request = gateway.mapper.create_tracking_request(self.TrackingRequest)
@@ -23,16 +23,12 @@ class TestPurolatorTracking(unittest.TestCase):
         Tracking.fetch(self.TrackingRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
-        self.assertEqual(
-            url, f"{gateway.settings.server_url}/PWS/V1/Tracking/TrackingService.asmx"
-        )
+        self.assertEqual(url, f"{gateway.settings.server_url}/PWS/V1/Tracking/TrackingService.asmx")
 
     def test_tracking_response_parsing(self):
         with patch("karrio.mappers.purolator.proxy.http") as mock:
             mock.return_value = TRACKING_RESPONSE_XML
-            parsed_response = (
-                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
+            parsed_response = Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             self.assertListEqual(DP.to_dict(parsed_response), PARSED_TRACKING_RESPONSE)
 
 
@@ -65,9 +61,7 @@ PARSED_TRACKING_RESPONSE = [
                     "timestamp": "2004-01-13T17:23:00.000Z",
                 },
             ],
-            "info": {
-                "carrier_tracking_link": "https://tools.usps.com/go/TrackConfirmAction?tLabels=M123"
-            },
+            "info": {"carrier_tracking_link": "https://tools.usps.com/go/TrackConfirmAction?tLabels=M123"},
             "status": "in_transit",
             "tracking_number": "M123",
         }

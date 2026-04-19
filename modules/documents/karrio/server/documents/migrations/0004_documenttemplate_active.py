@@ -4,15 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('documents', '0003_rename_related_objects_documenttemplate_related_object'),
+        ("documents", "0003_rename_related_objects_documenttemplate_related_object"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='documenttemplate',
-            name='active',
-            field=models.BooleanField(default=True, help_text='disable template flag. to filter out from active document downloads'),
+            model_name="documenttemplate",
+            name="active",
+            field=models.BooleanField(
+                default=True, help_text="disable template flag. to filter out from active document downloads"
+            ),
         ),
     ]

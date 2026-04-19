@@ -5,19 +5,18 @@ import karrio.server.core.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('providers', '0087_alter_carrier_capabilities'),
+        ("providers", "0087_alter_carrier_capabilities"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='servicelevel',
-            name='surcharges',
+            model_name="servicelevel",
+            name="surcharges",
             field=models.JSONField(
                 blank=True,
                 default=karrio.server.core.models.field_default([]),
-                help_text='Service-level surcharges (fuel, handling, residential, etc.)',
+                help_text="Service-level surcharges (fuel, handling, residential, etc.)",
                 null=True,
             ),
         ),

@@ -1,28 +1,27 @@
-from django.urls import path
-from rest_framework import status
-from rest_framework.request import Request
-from rest_framework.reverse import reverse
-from rest_framework.response import Response
-
+import karrio.server.core.dataunits as dataunits
 import karrio.server.openapi as openapi
 import karrio.server.serializers as serializers
-import karrio.server.core.dataunits as dataunits
-import karrio.server.providers.models as providers
-from karrio.server.core.logging import logger
-from karrio.server.core.views.api import APIView
-from karrio.server.proxy.router import router
+from django.urls import path
 from karrio.server.core.gateway import Shipments
 from karrio.server.core.serializers import (
     COUNTRIES,
-    ShippingRequest,
+    ErrorMessages,
+    ErrorResponse,
+    OperationResponse,
     ShipmentCancelRequest,
     ShipmentContent,
     ShipmentDetails,
-    OperationResponse,
-    Address as BaseAddress,
-    ErrorResponse,
-    ErrorMessages,
+    ShippingRequest,
 )
+from karrio.server.core.serializers import (
+    Address as BaseAddress,
+)
+from karrio.server.core.views.api import APIView
+from karrio.server.proxy.router import router
+from rest_framework import status
+from rest_framework.request import Request
+from rest_framework.response import Response
+from rest_framework.reverse import reverse
 
 ENDPOINT_ID = "@@@"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
@@ -30,27 +29,17 @@ ENDPOINT_ID = "@@@"  # This endpoint id is used to make operation ids unique mak
 class Address(BaseAddress):
     city = serializers.CharField(required=True, help_text="The address city")
     person_name = serializers.CharField(required=True, help_text="attention to")
-    country_code = serializers.ChoiceField(
-        required=True, choices=COUNTRIES, help_text="The address country code"
-    )
-    address_line1 = serializers.CharField(
-        required=True, help_text="The address line with street number"
-    )
+    country_code = serializers.ChoiceField(required=True, choices=COUNTRIES, help_text="The address country code")
+    address_line1 = serializers.CharField(required=True, help_text="The address line with street number")
 
 
 class ShippingRequestValidation(ShippingRequest):
-    shipper = Address(
-        required=True, help_text="The origin address of the shipment (address from)"
-    )
-    recipient = Address(
-        required=True, help_text="The shipment destination address (address to)"
-    )
+    shipper = Address(required=True, help_text="The origin address of the shipment (address from)")
+    recipient = Address(required=True, help_text="The shipment destination address (address to)")
 
 
 class ShippingResponse(serializers.EntitySerializer, ShipmentContent, ShipmentDetails):
-    object_type = serializers.CharField(
-        default="shipment", help_text="Specifies the object type"
-    )
+    object_type = serializers.CharField(default="shipment", help_text="Specifies the object type")
 
 
 class ShippingDetails(APIView):
@@ -81,9 +70,7 @@ class ShippingDetails(APIView):
             resolve_tracking_url=(
                 lambda tracking_number, carrier_name: reverse(
                     "karrio.server.proxy:shipment-tracking",
-                    kwargs=dict(
-                        tracking_number=tracking_number, carrier_name=carrier_name
-                    ),
+                    kwargs=dict(tracking_number=tracking_number, carrier_name=carrier_name),
                 )
             ),
         )
@@ -121,14 +108,10 @@ class ShippingCancel(APIView):
         payload = ShipmentCancelRequest.map(data=request.data).data
         response = Shipments.cancel(payload, context=request, carrier_name=carrier_name)
 
-        return Response(
-            OperationResponse(response).data, status=status.HTTP_202_ACCEPTED
-        )
+        return Response(OperationResponse(response).data, status=status.HTTP_202_ACCEPTED)
 
 
-router.urls.append(
-    path("proxy/shipping", ShippingDetails.as_view(), name="shipping-request")
-)
+router.urls.append(path("proxy/shipping", ShippingDetails.as_view(), name="shipping-request"))
 router.urls.append(
     path(
         "proxy/shipping/<carrier_name>/cancel",

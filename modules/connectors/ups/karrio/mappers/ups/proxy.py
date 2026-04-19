@@ -1,9 +1,10 @@
-import typing
 import datetime
+import typing
 import uuid
-import karrio.lib as lib
+
 import karrio.api.proxy as proxy
 import karrio.core.errors as errors
+import karrio.lib as lib
 import karrio.providers.ups.error as provider_error
 from karrio.mappers.ups.settings import Settings
 
@@ -39,9 +40,9 @@ class Proxy(proxy.Proxy):
             if any(messages):
                 raise errors.ParsedMessagesError(messages=messages)
 
-            expiry = datetime.datetime.fromtimestamp(
-                float(response.get("issued_at")) / 1000
-            ) + datetime.timedelta(seconds=float(response.get("expires_in", 0)))
+            expiry = datetime.datetime.fromtimestamp(float(response.get("issued_at")) / 1000) + datetime.timedelta(
+                seconds=float(response.get("expires_in", 0))
+            )
             return {**response, "expiry": lib.fdatetime(expiry)}
 
         return self.settings.connection_cache.thread_safe(
@@ -95,12 +96,12 @@ class Proxy(proxy.Proxy):
 
         return lib.Deserializable(response, lib.to_dict)
 
-    def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[typing.List[typing.Tuple[str, dict]]]:
+    def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[list[tuple[str, dict]]]:
         locale = self.settings.connection_config.locale.state or "en_US"
         token = self.get_token()
         transaction_source = "karrio-test" if self.settings.test_mode else "karrio-prod"
 
-        def fetch_tracking(tracking_number: str) -> typing.Tuple[str, typing.Any]:
+        def fetch_tracking(tracking_number: str) -> tuple[str, typing.Any]:
             trans_id = str(uuid.uuid4())
 
             return (

@@ -1,8 +1,8 @@
 """
 karrio server graph module urls
 """
-from django.urls import path, include
 
+from django.urls import include, path
 
 app_name = "karrio.server.graph"
 urlpatterns = [

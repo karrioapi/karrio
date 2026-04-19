@@ -1,12 +1,12 @@
 """Tests for return shipment interface (address auto-swap and routing)."""
 
-import unittest
-from unittest.mock import patch, MagicMock, ANY
-import karrio.lib as lib
-import karrio.core.models as models
-from karrio.api.interface import Shipment
-
 import logging
+import unittest
+from unittest.mock import MagicMock
+
+import karrio.core.models as models
+import karrio.lib as lib
+from karrio.api.interface import Shipment
 
 logging.disable(logging.CRITICAL)
 
@@ -24,12 +24,8 @@ class TestReturnShipmentAddressSwap(unittest.TestCase):
         self.gateway.check.return_value = []
 
         # Mock mapper and proxy
-        self.gateway.mapper.create_return_shipment_request.return_value = (
-            lib.Serializable({})
-        )
-        self.gateway.proxy.create_return_shipment.return_value = (
-            lib.Deserializable("{}", lib.to_dict)
-        )
+        self.gateway.mapper.create_return_shipment_request.return_value = lib.Serializable({})
+        self.gateway.proxy.create_return_shipment.return_value = lib.Deserializable("{}", lib.to_dict)
         self.gateway.mapper.parse_return_shipment_response.return_value = (
             models.ShipmentDetails(
                 carrier_id="test_carrier",
@@ -111,16 +107,12 @@ class TestReturnShipmentAddressSwap(unittest.TestCase):
 
         # return_address should be the original shipper (Merchant)
         self.assertEqual(swapped_payload.return_address.person_name, "Merchant")
-        self.assertEqual(
-            swapped_payload.return_address.address_line1, "100 Warehouse St"
-        )
+        self.assertEqual(swapped_payload.return_address.address_line1, "100 Warehouse St")
 
     def test_non_return_uses_normal_flow(self):
         """When is_return=False, normal shipment flow should be used."""
         self.gateway.mapper.create_shipment_request.return_value = lib.Serializable({})
-        self.gateway.proxy.create_shipment.return_value = lib.Deserializable(
-            "{}", lib.to_dict
-        )
+        self.gateway.proxy.create_shipment.return_value = lib.Deserializable("{}", lib.to_dict)
         self.gateway.mapper.parse_shipment_response.return_value = (
             models.ShipmentDetails(
                 carrier_id="test_carrier",
@@ -197,9 +189,7 @@ class TestReturnShipmentAddressSwap(unittest.TestCase):
     def test_is_return_default_is_false(self):
         """When is_return is not specified, it should default to False."""
         self.gateway.mapper.create_shipment_request.return_value = lib.Serializable({})
-        self.gateway.proxy.create_shipment.return_value = lib.Deserializable(
-            "{}", lib.to_dict
-        )
+        self.gateway.proxy.create_shipment.return_value = lib.Deserializable("{}", lib.to_dict)
         self.gateway.mapper.parse_shipment_response.return_value = (
             models.ShipmentDetails(
                 carrier_id="test_carrier",

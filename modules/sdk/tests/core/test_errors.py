@@ -1,15 +1,16 @@
 import unittest
+
 from karrio.core.errors import (
+    DestinationNotServicedError,
     FieldError,
     FieldErrorCode,
-    ShippingSDKError,
-    ShippingSDKDetailedError,
-    ParsedMessagesError,
-    ValidationError,
     MethodNotSupportedError,
-    OriginNotServicedError,
-    DestinationNotServicedError,
     MultiParcelNotSupportedError,
+    OriginNotServicedError,
+    ParsedMessagesError,
+    ShippingSDKDetailedError,
+    ShippingSDKError,
+    ValidationError,
     format_item_field,
 )
 
@@ -40,12 +41,8 @@ class TestFormatItemField(unittest.TestCase):
         self.assertEqual(format_item_field("description", 2), "items[2].description")
 
     def test_format_item_field_custom_list_name(self):
-        self.assertEqual(
-            format_item_field("weight", 0, "parcels"), "parcels[0].weight"
-        )
-        self.assertEqual(
-            format_item_field("sku", 1, "commodities"), "commodities[1].sku"
-        )
+        self.assertEqual(format_item_field("weight", 0, "parcels"), "parcels[0].weight")
+        self.assertEqual(format_item_field("sku", 1, "commodities"), "commodities[1].sku")
 
 
 class TestFieldError(unittest.TestCase):
@@ -59,10 +56,12 @@ class TestFieldError(unittest.TestCase):
         )
 
     def test_multiple_field_errors(self):
-        error = FieldError({
-            "weight": FieldErrorCode.required,
-            "length": FieldErrorCode.exceeds,
-        })
+        error = FieldError(
+            {
+                "weight": FieldErrorCode.required,
+                "length": FieldErrorCode.exceeds,
+            }
+        )
         self.assertDictEqual(
             error.details,
             {
@@ -73,10 +72,12 @@ class TestFieldError(unittest.TestCase):
 
     def test_indexed_field_errors(self):
         """Test field errors with items[index].field format."""
-        error = FieldError({
-            "items[0].weight": FieldErrorCode.required,
-            "items[1].description": FieldErrorCode.invalid,
-        })
+        error = FieldError(
+            {
+                "items[0].weight": FieldErrorCode.required,
+                "items[1].description": FieldErrorCode.invalid,
+            }
+        )
         self.assertDictEqual(
             error.details,
             {
@@ -87,10 +88,12 @@ class TestFieldError(unittest.TestCase):
 
     def test_parcel_indexed_field_errors(self):
         """Test field errors with parcels[index].field format (used in units.py)."""
-        error = FieldError({
-            "parcel[0].weight": FieldErrorCode.required,
-            "parcel[1].weight": FieldErrorCode.exceeds,
-        })
+        error = FieldError(
+            {
+                "parcel[0].weight": FieldErrorCode.required,
+                "parcel[1].weight": FieldErrorCode.exceeds,
+            }
+        )
         self.assertDictEqual(
             error.details,
             {

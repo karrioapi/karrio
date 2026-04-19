@@ -8,9 +8,9 @@ def forwards_func(apps, schema_editor):
     Shipment = apps.get_model("manager", "Shipment")
 
     Shipment.objects.using(db_alias).filter(status="created").update(status="draft")
-    Shipment.objects.using(db_alias).filter(
-        models.Q(status="transit") | models.Q(status="in-transit")
-    ).update(status="in_transit")
+    Shipment.objects.using(db_alias).filter(models.Q(status="transit") | models.Q(status="in-transit")).update(
+        status="in_transit"
+    )
 
 
 def reverse_func(apps, schema_editor):
@@ -18,7 +18,6 @@ def reverse_func(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("manager", "0029_auto_20220303_1249"),
     ]

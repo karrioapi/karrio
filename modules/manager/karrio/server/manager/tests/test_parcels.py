@@ -1,9 +1,10 @@
 import json
 from unittest.mock import ANY
+
 from django.urls import reverse
-from rest_framework import status
 from karrio.server.core.tests import APITestCase
 from karrio.server.manager.models import Parcel
+from rest_framework import status
 
 
 class TestParcels(APITestCase):
@@ -56,9 +57,7 @@ class TestParcelDetails(APITestCase):
         )
 
     def test_retrieve_parcel(self):
-        url = reverse(
-            "karrio.server.manager:parcel-details", kwargs=dict(pk=self.parcel.pk)
-        )
+        url = reverse("karrio.server.manager:parcel-details", kwargs=dict(pk=self.parcel.pk))
 
         response = self.client.get(url)
         response_data = json.loads(response.content)
@@ -68,9 +67,7 @@ class TestParcelDetails(APITestCase):
         self.assertEqual(response_data["object_type"], "parcel")
 
     def test_update_parcel(self):
-        url = reverse(
-            "karrio.server.manager:parcel-details", kwargs=dict(pk=self.parcel.pk)
-        )
+        url = reverse("karrio.server.manager:parcel-details", kwargs=dict(pk=self.parcel.pk))
         data = PARCEL_UPDATE_DATA
 
         response = self.client.patch(url, data)
@@ -81,11 +78,9 @@ class TestParcelDetails(APITestCase):
 
     def test_delete_parcel(self):
         parcel_pk = self.parcel.pk
-        url = reverse(
-            "karrio.server.manager:parcel-details", kwargs=dict(pk=parcel_pk)
-        )
+        url = reverse("karrio.server.manager:parcel-details", kwargs=dict(pk=parcel_pk))
 
-        response = self.client.delete(url)
+        self.client.delete(url)
 
         # Note: The API has a known issue where serializing after deletion fails
         # because the ManyToMany 'items' field requires a valid pk. The deletion

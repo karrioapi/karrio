@@ -1,25 +1,41 @@
 import ast
-import yaml
-import typing
 import functools
+import typing
 
 import karrio.lib as lib
+import yaml
 from karrio.server.core.models.base import (
+    METAFIELD_TYPE,
     ControlledAccessModel,
+    MetafieldType,
     get_access_filter,
     register_model,
     uuid,
-    MetafieldType,
-    METAFIELD_TYPE,
+)
+from karrio.server.core.models.entity import Entity, OwnedEntity
+from karrio.server.core.models.metafield import (
+    Metafield,
 )
 from karrio.server.core.models.third_party import (
     APILog,
     APILogIndex,
 )
-from karrio.server.core.models.metafield import (
-    Metafield,
-)
-from karrio.server.core.models.entity import Entity, OwnedEntity
+
+__all__ = [
+    "METAFIELD_TYPE",
+    "ControlledAccessModel",
+    "MetafieldType",
+    "get_access_filter",
+    "register_model",
+    "uuid",
+    "Entity",
+    "OwnedEntity",
+    "Metafield",
+    "APILog",
+    "APILogIndex",
+    "field_default",
+    "metafields_to_dict",
+]
 
 
 def _identity(value: typing.Any):
@@ -30,7 +46,7 @@ def field_default(value: typing.Any) -> typing.Callable:
     return functools.partial(_identity, value=value)
 
 
-def metafields_to_dict(metafields: typing.List[Metafield]) -> dict:
+def metafields_to_dict(metafields: list[Metafield]) -> dict:
     _values = {}
 
     for _ in metafields:
@@ -39,9 +55,9 @@ def metafields_to_dict(metafields: typing.List[Metafield]) -> dict:
             continue
 
         if _.type == "number":
-            _values.update({_.key: lib.failsafe(lambda: ast.literal_eval(_.value))})
+            _values.update({_.key: lib.failsafe(lambda _=_: ast.literal_eval(_.value))})
         elif _.type == "boolean":
-            _values.update({_.key: lib.failsafe(lambda: bool(yaml.safe_load(_.value)))})
+            _values.update({_.key: lib.failsafe(lambda _=_: bool(yaml.safe_load(_.value)))})
         else:
             _values.update({_.key: _.value})
 

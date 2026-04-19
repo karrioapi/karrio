@@ -1,8 +1,9 @@
 """ParcelOne REST API connection utilities and settings."""
 
 import base64
-import karrio.lib as lib
+
 import karrio.core as core
+import karrio.lib as lib
 
 
 class Settings(core.Settings):
@@ -28,19 +29,11 @@ class Settings(core.Settings):
 
     @property
     def server_url(self):
-        return (
-            "https://sandboxapi.parcel.one/v1"
-            if self.test_mode
-            else "https://api.parcel.one/v1"
-        )
+        return "https://sandboxapi.parcel.one/v1" if self.test_mode else "https://api.parcel.one/v1"
 
     @property
     def tracking_url(self):
-        return (
-            "https://sandboxapi.parcel.one/v1/tracklmc"
-            if self.test_mode
-            else "https://api.parcel.one/v1/tracklmc"
-        )
+        return "https://sandboxapi.parcel.one/v1/tracklmc" if self.test_mode else "https://api.parcel.one/v1/tracklmc"
 
     @property
     def tracking_link(self):

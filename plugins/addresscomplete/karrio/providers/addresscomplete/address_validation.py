@@ -1,18 +1,17 @@
 """Karrio AddressComplete address validation implementation."""
 
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.addresscomplete.utils as provider_utils
 
 
 def parse_address_validation_response(
     response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.AddressValidationDetails, typing.List[models.Message]]:
+) -> tuple[models.AddressValidationDetails, list[models.Message]]:
     """Parse address validation response from Canada Post AddressComplete API."""
     result = response.deserialize()
-    messages: typing.List[models.Message] = []
+    messages: list[models.Message] = []
 
     # Check for errors in the response
     if isinstance(result, dict) and result.get("Error"):
@@ -65,9 +64,7 @@ def address_validation_request(
     search_term = ", ".join(part for part in address_parts if part)
 
     if not search_term:
-        raise Exception(
-            "At least one address info must be provided (address_line1, city and/or postal_code)"
-        )
+        raise Exception("At least one address info must be provided (address_line1, city and/or postal_code)")
 
     request = dict(
         Key=settings.api_key,

@@ -1,10 +1,7 @@
 """Karrio DHL Germany pickup cancel implementation."""
 
-import karrio.schemas.dhl_parcel_de.pickup_cancel_response as pickup
-
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.dhl_parcel_de.error as error
 import karrio.providers.dhl_parcel_de.utils as provider_utils
 
@@ -12,9 +9,7 @@ import karrio.providers.dhl_parcel_de.utils as provider_utils
 def parse_pickup_cancel_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[
-    typing.Optional[models.ConfirmationDetails], typing.List[models.Message]
-]:
+) -> tuple[models.ConfirmationDetails | None, list[models.Message]]:
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
 

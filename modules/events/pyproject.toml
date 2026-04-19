@@ -17,7 +17,6 @@ classifiers = [
 ]
 dependencies = [
     "karrio_server_core",
-    "huey",
 ]
 
 [project.urls]

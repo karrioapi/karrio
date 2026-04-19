@@ -1,14 +1,14 @@
-import os
 import binascii
 import functools
-from django.db import models
-from django.conf import settings
-from django.contrib.auth import models as auth
-from rest_framework.authtoken import models as authtoken
-from django.contrib.contenttypes.models import ContentType
-from django.utils.translation import gettext_lazy as _
+import os
 
 import karrio.server.core.models as core
+from django.conf import settings
+from django.contrib.auth import models as auth
+from django.contrib.contenttypes.models import ContentType
+from django.db import models
+from django.utils.translation import gettext_lazy as _
+from rest_framework.authtoken import models as authtoken
 
 
 class UserManager(auth.UserManager):
@@ -45,9 +45,7 @@ class UserManager(auth.UserManager):
 class User(auth.AbstractUser):
     full_name = models.CharField(_("full name"), max_length=150, blank=True)
     email = models.EmailField(_("email address"), unique=True)
-    metadata = models.JSONField(
-        default=core.field_default({}), help_text="User defined metadata"
-    )
+    metadata = models.JSONField(default=core.field_default({}), help_text="User defined metadata")
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS: list = []
@@ -72,8 +70,8 @@ class User(auth.AbstractUser):
     @property
     def permissions(self):
         import karrio.server.conf as conf
-        import karrio.server.iam.models as iam
         import karrio.server.core.middleware as middleware
+        import karrio.server.iam.models as iam
         from django.utils.functional import SimpleLazyObject
 
         ctx = middleware.SessionContext.get_current_request()
@@ -81,15 +79,16 @@ class User(auth.AbstractUser):
         # Helper to evaluate org safely
         def get_org():
             return (
-                None if not all([
-                    conf.settings.MULTI_ORGANIZATIONS,
-                    ctx is not None,
-                    hasattr(ctx, "org"),
-                    ctx.org is not None,
-                ]) else (
-                    ctx.org if not isinstance(ctx.org, SimpleLazyObject)
-                    else (ctx.org if ctx.org else None)
+                None
+                if not all(
+                    [
+                        conf.settings.MULTI_ORGANIZATIONS,
+                        ctx is not None,
+                        hasattr(ctx, "org"),
+                        ctx.org is not None,
+                    ]
                 )
+                else (ctx.org if not isinstance(ctx.org, SimpleLazyObject) else (ctx.org if ctx.org else None))
             )
 
         # Helper to get context permissions
@@ -98,12 +97,18 @@ class User(auth.AbstractUser):
             org_user = org.organization_users.filter(user_id=self.pk).first() if org else None
 
             try:
-                context_permission = iam.ContextPermission.objects.get(
-                    object_pk=org_user.pk,
-                    content_type=ContentType.objects.get_for_model(org_user),
-                ) if org_user else None
+                context_permission = (
+                    iam.ContextPermission.objects.get(
+                        object_pk=org_user.pk,
+                        content_type=ContentType.objects.get_for_model(org_user),
+                    )
+                    if org_user
+                    else None
+                )
 
-                return list(context_permission.groups.all().values_list("name", flat=True)) if context_permission else []
+                return (
+                    list(context_permission.groups.all().values_list("name", flat=True)) if context_permission else []
+                )
             except iam.ContextPermission.DoesNotExist:
                 return []
 
@@ -111,8 +116,14 @@ class User(auth.AbstractUser):
         _permissions = get_context_perms() or list(self.groups.all().values_list("name", flat=True))
 
         return (
-            list(Group.objects.all().values_list("name", flat=True)) if self.is_superuser and not _permissions
-            else list(Group.objects.exclude(name__in=["manage_system", "manage_team", "manage_org_owner"]).values_list("name", flat=True)) if self.is_staff and not _permissions
+            list(Group.objects.all().values_list("name", flat=True))
+            if self.is_superuser and not _permissions
+            else list(
+                Group.objects.exclude(name__in=["manage_system", "manage_team", "manage_org_owner"]).values_list(
+                    "name", flat=True
+                )
+            )
+            if self.is_staff and not _permissions
             else _permissions
         )
 
@@ -120,9 +131,7 @@ class User(auth.AbstractUser):
 @core.register_model
 class Token(authtoken.Token, core.ControlledAccessModel):
     label = models.CharField(_("label"), max_length=50)
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="tokens"
-    )
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="tokens")
     test_mode = models.BooleanField(null=False, default=core.field_default(False))
 
     class Meta:
@@ -162,11 +171,7 @@ class Token(authtoken.Token, core.ControlledAccessModel):
                 .values_list("name", flat=True)
             )
 
-        if (
-            not any(_permissions)
-            and conf.settings.MULTI_ORGANIZATIONS
-            and self.org.exists()
-        ):
+        if not any(_permissions) and conf.settings.MULTI_ORGANIZATIONS and self.org.exists():
             org_user = self.org.first().organization_users.filter(user_id=self.user_id)
             _permissions = (
                 iam.ContextPermission.objects.get(

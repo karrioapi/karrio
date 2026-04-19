@@ -1,6 +1,6 @@
 # Add indexes on JSONFields for query optimization
 
-from django.db import migrations, connection
+from django.db import connection, migrations
 
 
 def create_gin_indexes(apps, schema_editor):

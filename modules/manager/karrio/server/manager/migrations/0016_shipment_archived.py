@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('manager', '0015_auto_20210601_0340'),
+        ("manager", "0015_auto_20210601_0340"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='shipment',
-            name='archived',
+            model_name="shipment",
+            name="archived",
             field=models.BooleanField(default=False),
         ),
     ]

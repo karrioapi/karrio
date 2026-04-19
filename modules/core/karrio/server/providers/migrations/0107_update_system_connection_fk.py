@@ -5,9 +5,8 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('providers', '0106_system_rate_sheet'),
+        ("providers", "0106_system_rate_sheet"),
     ]
 
     operations = [
@@ -16,14 +15,19 @@ class Migration(migrations.Migration):
         #  cannot ALTER TABLE while deferred trigger events from the data
         #  migration's DELETE are still pending)
         migrations.AlterField(
-            model_name='systemconnection',
-            name='rate_sheet',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='system_connections', to='providers.systemratesheet'),
+            model_name="systemconnection",
+            name="rate_sheet",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="system_connections",
+                to="providers.systemratesheet",
+            ),
         ),
-
         # Step 4: Remove is_system field from RateSheet (now AccountRateSheet only)
         migrations.RemoveField(
-            model_name='ratesheet',
-            name='is_system',
+            model_name="ratesheet",
+            name="is_system",
         ),
     ]

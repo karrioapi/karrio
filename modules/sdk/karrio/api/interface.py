@@ -1,12 +1,14 @@
 """The Fluent API Abstraction and interfaces definitions."""
 
-import attr
-import typing
 import functools
-import karrio.lib as lib
+import typing
+
+import attr
+
+import karrio.api.gateway as gateway
 import karrio.core.errors as errors
 import karrio.core.models as models
-import karrio.api.gateway as gateway
+import karrio.lib as lib
 from karrio.core.utils.logger import logger
 from karrio.universal.mappers.rating_proxy import RatingMixinProxy
 from karrio.universal.providers.rating import (
@@ -18,9 +20,7 @@ T = typing.TypeVar("T")
 S = typing.TypeVar("S")
 
 
-def abort(
-    error: errors.ShippingSDKDetailedError, gateway: gateway.Gateway
-) -> typing.Tuple[None, typing.List[models.Message]]:
+def abort(error: errors.ShippingSDKDetailedError, gateway: gateway.Gateway) -> tuple[None, list[models.Message]]:
     """Process aborting helper
 
     Args:
@@ -38,11 +38,7 @@ def abort(
         None,
         [
             models.Message(
-                code=(
-                    error.code
-                    if hasattr(error, "code")
-                    else errors.ShippingSDKDetailedError.code
-                ),
+                code=(error.code if hasattr(error, "code") else errors.ShippingSDKDetailedError.code),
                 carrier_name=gateway.settings.carrier_name,
                 carrier_id=gateway.settings.carrier_id,
                 message=f"{error}",
@@ -68,13 +64,9 @@ def fail_safe(gateway: gateway.Gateway):
             try:
                 return func(*args, **kwargs)
             except Exception as error:
-                logger.exception(
-                    "Operation failed", carrier=gateway.settings.carrier_name
-                )
+                logger.exception("Operation failed", carrier=gateway.settings.carrier_name)
 
-                return IDeserialize(
-                    functools.partial(abort, gateway=gateway, error=error)
-                )
+                return IDeserialize(functools.partial(abort, gateway=gateway, error=error))
 
         return wrapper
 
@@ -90,7 +82,7 @@ def check_operation(gateway: gateway.Gateway, request: str, **kwargs):
     return True, None
 
 
-def filter_rates(rates: typing.List[models.RateDetails], gateway: gateway.Gateway):
+def filter_rates(rates: list[models.RateDetails], gateway: gateway.Gateway):
     """Filter rates by gateway
 
     Args:
@@ -100,15 +92,9 @@ def filter_rates(rates: typing.List[models.RateDetails], gateway: gateway.Gatewa
     Returns:
         List[models.Rate]: the filtered rates
     """
-    restricted_services = (
-        gateway.settings.connection_config.shipping_services.state or []
-    )
+    restricted_services = gateway.settings.connection_config.shipping_services.state or []
 
-    return [
-        rate
-        for rate in rates
-        if (not any(restricted_services) or rate.service in restricted_services)
-    ]
+    return [rate for rate in rates if (not any(restricted_services) or rate.service in restricted_services)]
 
 
 @attr.s(auto_attribs=True)
@@ -140,7 +126,7 @@ class IRequestFrom:
 class IRequestFromMany:
     """A lazy request (from one or many) type class"""
 
-    action: typing.Callable[[typing.List[gateway.Gateway]], IDeserialize]
+    action: typing.Callable[[list[gateway.Gateway]], IDeserialize]
 
     def from_(self, *gateways: gateway.Gateway) -> IDeserialize:
         """Execute the request action(s) from the provided gateway(s)"""
@@ -156,7 +142,7 @@ def _is_rating_compatible(obj) -> bool:
 class IResolveFromMany:
     """A lazy resolve (from rate sheet settings) type class for static rate resolution."""
 
-    action: typing.Callable[[typing.List[typing.Any]], IDeserialize]
+    action: typing.Callable[[list[typing.Any]], IDeserialize]
 
     def from_(self, *carrier_settings) -> IDeserialize:
         """Resolve rates using provided carrier settings with rate sheet data.
@@ -181,7 +167,7 @@ class Address:
 
     @staticmethod
     def validate(
-        args: typing.Union[models.AddressValidationRequest, dict],
+        args: models.AddressValidationRequest | dict,
     ) -> IRequestFrom:
         """Validate an address
 
@@ -199,9 +185,7 @@ class Address:
             if not is_valid:
                 return abortion
 
-            request: lib.Serializable = (
-                gateway.mapper.create_address_validation_request(payload)
-            )
+            request: lib.Serializable = gateway.mapper.create_address_validation_request(payload)
             response: lib.Deserializable = gateway.proxy.validate_address(request)
 
             @fail_safe(gateway)
@@ -217,7 +201,7 @@ class Pickup:
     """The unified Pickup API fluent interface"""
 
     @staticmethod
-    def schedule(args: typing.Union[models.PickupRequest, dict]) -> IRequestFrom:
+    def schedule(args: models.PickupRequest | dict) -> IRequestFrom:
         """Schedule a pickup for one or many shipments
 
         Args:
@@ -246,7 +230,7 @@ class Pickup:
         return IRequestFrom(action)
 
     @staticmethod
-    def cancel(args: typing.Union[models.PickupCancelRequest, dict]) -> IRequestFrom:
+    def cancel(args: models.PickupCancelRequest | dict) -> IRequestFrom:
         """Cancel a pickup previously scheduled
 
         Args:
@@ -263,9 +247,7 @@ class Pickup:
             if not is_valid:
                 return abortion
 
-            request: lib.Serializable = gateway.mapper.create_cancel_pickup_request(
-                payload
-            )
+            request: lib.Serializable = gateway.mapper.create_cancel_pickup_request(payload)
             response: lib.Deserializable = gateway.proxy.cancel_pickup(request)
 
             @fail_safe(gateway)
@@ -277,7 +259,7 @@ class Pickup:
         return IRequestFrom(action)
 
     @staticmethod
-    def update(args: typing.Union[models.PickupUpdateRequest, dict]):
+    def update(args: models.PickupUpdateRequest | dict):
         """Update a pickup previously scheduled
 
         Args:
@@ -294,9 +276,7 @@ class Pickup:
             if not is_valid:
                 return abortion
 
-            request: lib.Serializable = gateway.mapper.create_pickup_update_request(
-                payload
-            )
+            request: lib.Serializable = gateway.mapper.create_pickup_update_request(payload)
             response: lib.Deserializable = gateway.proxy.modify_pickup(request)
 
             @fail_safe(gateway)
@@ -312,7 +292,7 @@ class Rating:
     """The unified Rating API fluent interface"""
 
     @staticmethod
-    def fetch(args: typing.Union[models.RateRequest, dict]) -> IRequestFromMany:
+    def fetch(args: models.RateRequest | dict) -> IRequestFromMany:
         """Fetch shipment rates from one or many carriers
 
         Args:
@@ -324,7 +304,7 @@ class Rating:
         logger.debug("Fetching shipment rates", payload=lib.to_dict(args))
         payload = lib.to_object(models.RateRequest, lib.to_dict(args))
 
-        def action(gateways: typing.List[gateway.Gateway]):
+        def action(gateways: list[gateway.Gateway]):
             def process(gateway: gateway.Gateway):
                 is_valid, abortion = check_operation(
                     gateway,
@@ -343,8 +323,8 @@ class Rating:
 
                 return IDeserialize(deserialize)
 
-            deserializable_collection: typing.List[IDeserialize] = (
-                lib.run_asynchronously(lambda g: fail_safe(g)(process)(g), gateways)
+            deserializable_collection: list[IDeserialize] = lib.run_asynchronously(
+                lambda g: fail_safe(g)(process)(g), gateways
             )
 
             def flatten(*args):
@@ -354,15 +334,7 @@ class Rating:
                         (
                             (lambda gateway: filter_rates(rates, gateway))(
                                 # find the gateway that matches the carrier_id of the rates
-                                next(
-                                    (
-                                        g
-                                        for g in gateways
-                                        if (
-                                            g.settings.carrier_id == rates[0].carrier_id
-                                        )
-                                    )
-                                )
+                                next((g for g in gateways if (g.settings.carrier_id == rates[0].carrier_id)))
                             )
                             if len(rates) > 0
                             else rates
@@ -380,7 +352,7 @@ class Rating:
         return IRequestFromMany(action)
 
     @staticmethod
-    def resolve(args: typing.Union[models.RateRequest, dict]) -> IResolveFromMany:
+    def resolve(args: models.RateRequest | dict) -> IResolveFromMany:
         """Resolve shipment rates from static rate sheets (no API calls).
 
         Unlike fetch(), this method uses rate sheet data directly without
@@ -396,7 +368,7 @@ class Rating:
         logger.debug("Resolving shipment rates from rate sheets", payload=lib.to_dict(args))
         payload = lib.to_object(models.RateRequest, lib.to_dict(args))
 
-        def action(settings_list: typing.List[RatingMixinSettings]):
+        def action(settings_list: list[RatingMixinSettings]):
             def process(settings: RatingMixinSettings):
                 try:
                     proxy = RatingMixinProxy(settings=settings)
@@ -404,9 +376,7 @@ class Rating:
                     response = proxy.get_rates(request)
                     return parse_rate_response(response, settings)
                 except Exception as error:
-                    logger.exception(
-                        "Rate resolution failed", carrier=settings.carrier_name
-                    )
+                    logger.exception("Rate resolution failed", carrier=settings.carrier_name)
                     return (
                         None,
                         [
@@ -419,7 +389,7 @@ class Rating:
                         ],
                     )
 
-            responses: typing.List[typing.Any] = lib.run_asynchronously(process, settings_list)
+            responses: list[typing.Any] = lib.run_asynchronously(process, settings_list)
 
             def flatten(*args):
                 flattened_rates = sum(
@@ -438,7 +408,7 @@ class Shipment:
     """The unified Shipment API fluent interface"""
 
     @staticmethod
-    def create(args: typing.Union[models.ShipmentRequest, dict]) -> IRequestFrom:
+    def create(args: models.ShipmentRequest | dict) -> IRequestFrom:
         """Submit a shipment creation to a carrier.
         This operation is often referred to as Buying a shipping label.
         When is_return is True, addresses are auto-swapped and the request
@@ -460,13 +430,9 @@ class Shipment:
                 _payload.update(
                     shipper=lib.to_dict(payload.recipient),
                     recipient=lib.to_dict(payload.shipper),
-                    return_address=lib.to_dict(
-                        payload.return_address or payload.shipper
-                    ),
+                    return_address=lib.to_dict(payload.return_address or payload.shipper),
                 )
-                swapped_payload = lib.to_object(
-                    models.ShipmentRequest, _payload
-                )
+                swapped_payload = lib.to_object(models.ShipmentRequest, _payload)
 
                 is_valid, abortion = check_operation(
                     gateway,
@@ -476,9 +442,7 @@ class Shipment:
                 if not is_valid:
                     return abortion
 
-                _request = (
-                    gateway.mapper.create_return_shipment_request(swapped_payload)
-                )
+                _request = gateway.mapper.create_return_shipment_request(swapped_payload)
                 _response = gateway.proxy.create_return_shipment(_request)
 
                 @fail_safe(gateway)
@@ -507,7 +471,7 @@ class Shipment:
         return IRequestFrom(action)
 
     @staticmethod
-    def cancel(args: typing.Union[models.ShipmentCancelRequest, dict]) -> IRequestFrom:
+    def cancel(args: models.ShipmentCancelRequest | dict) -> IRequestFrom:
         """Cancel a shipment previously created
 
         Args:
@@ -524,9 +488,7 @@ class Shipment:
             if not is_valid:
                 return abortion
 
-            request: lib.Serializable = gateway.mapper.create_cancel_shipment_request(
-                payload
-            )
+            request: lib.Serializable = gateway.mapper.create_cancel_shipment_request(payload)
             response: lib.Deserializable = gateway.proxy.cancel_shipment(request)
 
             @fail_safe(gateway)
@@ -542,7 +504,7 @@ class Tracking:
     """The unified Tracking API fluent interface"""
 
     @staticmethod
-    def fetch(args: typing.Union[models.TrackingRequest, dict]) -> IRequestFrom:
+    def fetch(args: models.TrackingRequest | dict) -> IRequestFrom:
         """Fetch tracking statuses and details from a carrier
 
         Args:
@@ -575,7 +537,7 @@ class Document:
     """The unified Document API fluent interface"""
 
     @staticmethod
-    def upload(args: typing.Union[models.DocumentUploadRequest, dict]) -> IRequestFrom:
+    def upload(args: models.DocumentUploadRequest | dict) -> IRequestFrom:
         """Submit a shipment document upload to a carrier.
         This operation is often used to upload customs documents to fast track shipment at borders
 
@@ -596,9 +558,7 @@ class Document:
             if not is_valid:
                 return abortion
 
-            request: lib.Serializable = gateway.mapper.create_document_upload_request(
-                payload
-            )
+            request: lib.Serializable = gateway.mapper.create_document_upload_request(payload)
             response: lib.Deserializable = gateway.proxy.upload_document(request)
 
             @fail_safe(gateway)
@@ -614,7 +574,7 @@ class Manifest:
     """The unified Manifest API fluent interface"""
 
     @staticmethod
-    def create(args: typing.Union[models.ManifestRequest, dict]) -> IRequestFrom:
+    def create(args: models.ManifestRequest | dict) -> IRequestFrom:
         """Submit a manifest creation to a carrier.
         This operation is often referred to as manifesting a batch of shipments
 
@@ -652,7 +612,7 @@ class Duties:
 
     @staticmethod
     def calculate(
-        args: typing.Union[models.DutiesCalculationRequest, dict],
+        args: models.DutiesCalculationRequest | dict,
     ) -> IRequestFrom:
         """Calculate duties for a shipment
 
@@ -670,9 +630,7 @@ class Duties:
             if not is_valid:
                 return abortion
 
-            request: lib.Serializable = (
-                gateway.mapper.create_duties_calculation_request(payload)
-            )
+            request: lib.Serializable = gateway.mapper.create_duties_calculation_request(payload)
             response: lib.Deserializable = gateway.proxy.calculate_duties(request)
 
             @fail_safe(gateway)
@@ -688,7 +646,7 @@ class Insurance:
     """The unified Insurance API fluent interface"""
 
     @staticmethod
-    def apply(args: typing.Union[models.InsuranceRequest, dict]) -> IRequestFrom:
+    def apply(args: models.InsuranceRequest | dict) -> IRequestFrom:
         """Apply insurance coverage to a package
 
         Args:
@@ -697,9 +655,7 @@ class Insurance:
         Returns:
             IRequestFrom: a lazy request dataclass instance
         """
-        logger.debug(
-            "Applying insurance coverage to package", payload=lib.to_dict(args)
-        )
+        logger.debug("Applying insurance coverage to package", payload=lib.to_dict(args))
         payload = lib.to_object(models.InsuranceRequest, lib.to_dict(args))
 
         def action(gateway: gateway.Gateway) -> IDeserialize:
@@ -708,9 +664,7 @@ class Insurance:
                 return abortion
 
             request: lib.Serializable = gateway.mapper.create_insurance_request(payload)
-            response: lib.Deserializable = gateway.proxy.apply_insurance_coverage(
-                request
-            )
+            response: lib.Deserializable = gateway.proxy.apply_insurance_coverage(request)
 
             @fail_safe(gateway)
             def deserialize():
@@ -726,7 +680,7 @@ class Webhook:
 
     @staticmethod
     def register(
-        args: typing.Union[models.WebhookRegistrationRequest, dict],
+        args: models.WebhookRegistrationRequest | dict,
     ) -> IRequestFrom:
         """Register a webhook for a carrier
 
@@ -744,9 +698,7 @@ class Webhook:
             if not is_valid:
                 return abortion
 
-            request: lib.Serializable = (
-                gateway.mapper.create_webhook_registration_request(payload)
-            )
+            request: lib.Serializable = gateway.mapper.create_webhook_registration_request(payload)
             response: lib.Deserializable = gateway.proxy.register_webhook(request)
 
             @fail_safe(gateway)
@@ -759,7 +711,7 @@ class Webhook:
 
     @staticmethod
     def deregister(
-        args: typing.Union[models.WebhookDeregistrationRequest, dict],
+        args: models.WebhookDeregistrationRequest | dict,
     ) -> IRequestFrom:
         """Deregister a webhook for a carrier
 
@@ -777,9 +729,7 @@ class Webhook:
             if not is_valid:
                 return abortion
 
-            request: lib.Serializable = (
-                gateway.mapper.create_webhook_deregistration_request(payload)
-            )
+            request: lib.Serializable = gateway.mapper.create_webhook_deregistration_request(payload)
             response: lib.Deserializable = gateway.proxy.deregister_webhook(request)
 
             @fail_safe(gateway)
@@ -796,7 +746,7 @@ class Hooks:
 
     @staticmethod
     def on_webhook_event(
-        args: typing.Union[models.RequestPayload, dict],
+        args: models.RequestPayload | dict,
     ) -> IRequestFrom:
         """Process a webhook event from a carrier
 
@@ -823,7 +773,7 @@ class Hooks:
 
     @staticmethod
     def on_oauth_authorize(
-        args: typing.Union[models.OAuthAuthorizePayload, dict],
+        args: models.OAuthAuthorizePayload | dict,
     ) -> IRequestFrom:
         """Create a OAuth authorize request for a carrier OAuth flow
 
@@ -850,7 +800,7 @@ class Hooks:
 
     @staticmethod
     def on_oauth_callback(
-        args: typing.Union[models.RequestPayload, dict],
+        args: models.RequestPayload | dict,
     ) -> IRequestFrom:
         """Process a OAuth callback from a carrier
 

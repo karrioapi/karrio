@@ -10,9 +10,7 @@ def forwards_func(apps, schema_editor):
     Customs.objects.using(db_alias).filter(delivered=True).update(status="delivered")
 
     for customs in Customs.objects.using(db_alias).filter(
-        models.Q(aes__isnull=False)
-        | models.Q(eel_pfc__isnull=False)
-        | models.Q(certificate_number__isnull=False)
+        models.Q(aes__isnull=False) | models.Q(eel_pfc__isnull=False) | models.Q(certificate_number__isnull=False)
     ):
         options = customs.options or dict()
 
@@ -32,7 +30,6 @@ def reverse_func(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("manager", "0021_tracking_estimated_delivery"),
     ]

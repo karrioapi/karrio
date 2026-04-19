@@ -1,7 +1,8 @@
 import base64
 import json
-import karrio.lib as lib
+
 import karrio.core as core
+import karrio.lib as lib
 
 
 def decode_jwt_payload(token: str) -> dict:

@@ -1,34 +1,30 @@
+import karrio.server.manager.models as models
+import karrio.server.openapi as openapi
 from django.urls import path
-from rest_framework import status
-from rest_framework.request import Request
-from rest_framework.response import Response
-from rest_framework.pagination import LimitOffsetPagination
 from django_filters.rest_framework import DjangoFilterBackend
-
-from karrio.server.core.logging import logger
-from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.core.filters import UploadRecordFilter
+from karrio.server.core.views.api import APIView, GenericAPIView
 from karrio.server.manager.router import router
 from karrio.server.manager.serializers import (
-    ErrorResponse,
-    ErrorMessages,
-    PaginatedResult,
     DocumentUploadData,
     DocumentUploadRecord,
     DocumentUploadSerializer,
+    ErrorMessages,
+    ErrorResponse,
+    PaginatedResult,
     can_upload_shipment_document,
 )
-import karrio.server.manager.models as models
-import karrio.server.openapi as openapi
+from rest_framework import status
+from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.request import Request
+from rest_framework.response import Response
 
 ENDPOINT_ID = "$$$$$&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 DocumentUploadRecords = PaginatedResult("DocumentUploadRecords", DocumentUploadRecord)
 
 
 class DocumentList(GenericAPIView):
-    pagination_class = type(
-        "CustomPagination", (LimitOffsetPagination,), dict(default_limit=20)
-    )
+    pagination_class = type("CustomPagination", (LimitOffsetPagination,), dict(default_limit=20))
     filter_backends = (DjangoFilterBackend,)
     filterset_class = UploadRecordFilter
     serializer_class = DocumentUploadRecords
@@ -50,9 +46,7 @@ class DocumentList(GenericAPIView):
         Retrieve all shipping document upload records.
         """
         upload_records = self.filter_queryset(self.get_queryset())
-        response = self.paginate_queryset(
-            DocumentUploadRecord(upload_records, many=True).data
-        )
+        response = self.paginate_queryset(DocumentUploadRecord(upload_records, many=True).data)
 
         return self.get_paginated_response(response)
 
@@ -91,9 +85,7 @@ class DocumentList(GenericAPIView):
             .instance
         )
 
-        return Response(
-            DocumentUploadRecord(upload_record).data, status=status.HTTP_201_CREATED
-        )
+        return Response(DocumentUploadRecord(upload_record).data, status=status.HTTP_201_CREATED)
 
 
 class DocumentDetails(APIView):

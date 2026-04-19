@@ -1,19 +1,14 @@
-import karrio.schemas.fedex.cancel_pickup_request as fedex
-import karrio.schemas.fedex.cancel_pickup_response as pickup
-
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.fedex.error as error
 import karrio.providers.fedex.utils as provider_utils
-import karrio.providers.fedex.units as provider_units
+import karrio.schemas.fedex.cancel_pickup_request as fedex
 
 
 def parse_pickup_cancel_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
+) -> tuple[models.ConfirmationDetails, list[models.Message]]:
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
     success = lib.failsafe(lambda: response["output"]["pickupConfirmationCode"]) is not None

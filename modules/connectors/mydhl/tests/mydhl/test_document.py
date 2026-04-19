@@ -2,23 +2,21 @@
 
 import unittest
 from unittest.mock import patch
-import karrio.sdk as karrio
-import karrio.lib as lib
+
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
 from .fixture import gateway
 
 
 class TestMyDHLDocument(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        self.DocumentUploadRequest = models.DocumentUploadRequest(
-            **DocumentUploadPayload
-        )
+        self.DocumentUploadRequest = models.DocumentUploadRequest(**DocumentUploadPayload)
 
     def test_create_document_request(self):
-        request = gateway.mapper.create_document_upload_request(
-            self.DocumentUploadRequest
-        )
+        request = gateway.mapper.create_document_upload_request(self.DocumentUploadRequest)
 
         self.assertEqual(request.serialize(), DocumentUploadRequest)
 
@@ -36,28 +34,16 @@ class TestMyDHLDocument(unittest.TestCase):
     def test_document_response_parsing(self):
         with patch("karrio.mappers.mydhl.proxy.lib.request") as mock:
             mock.return_value = DocumentUploadResponse
-            parsed_response = (
-                karrio.Document.upload(self.DocumentUploadRequest)
-                .from_(gateway)
-                .parse()
-            )
+            parsed_response = karrio.Document.upload(self.DocumentUploadRequest).from_(gateway).parse()
 
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedDocumentUploadResponse
-            )
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedDocumentUploadResponse)
 
     def test_document_error_response_parsing(self):
         with patch("karrio.mappers.mydhl.proxy.lib.request") as mock:
             mock.return_value = DocumentUploadErrorResponse
-            parsed_response = (
-                karrio.Document.upload(self.DocumentUploadRequest)
-                .from_(gateway)
-                .parse()
-            )
+            parsed_response = karrio.Document.upload(self.DocumentUploadRequest).from_(gateway).parse()
 
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedDocumentUploadErrorResponse
-            )
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedDocumentUploadErrorResponse)
 
 
 if __name__ == "__main__":

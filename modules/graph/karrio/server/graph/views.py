@@ -4,19 +4,20 @@ karrio server graph module urls
 
 import pydoc
 import typing
-from django.urls import path
-from django.conf import settings
-from rest_framework import exceptions
-from django.views.decorators.csrf import csrf_exempt
-import graphql.error.graphql_error as graphql
-import strawberry.django.views as views
-import strawberry.types as types
-import strawberry.http as http
 
+import graphql.error.graphql_error as graphql
 import karrio.lib as lib
 import karrio.server.conf as conf
 import karrio.server.graph.schema as schema
+import strawberry.django.views as views
+import strawberry.http as http
+import strawberry.types as types
+from django.conf import settings
+from django.urls import path
+from django.views.decorators.csrf import csrf_exempt
 from karrio.server.core.logging import logger
+from rest_framework import exceptions
+
 ACCESS_METHOD = getattr(
     settings,
     "SESSION_ACCESS_MIXIN",
@@ -27,9 +28,7 @@ AccessMixin: typing.Any = pydoc.locate(ACCESS_METHOD)
 
 class GraphQLView(AccessMixin, views.GraphQLView):
     def dispatch(self, request, *args, **kwargs):
-        should_render_graphiql = lib.failsafe(
-            lambda: self.should_render_graphiql(request)
-        )
+        should_render_graphiql = lib.failsafe(lambda: self.should_render_graphiql(request))
 
         if should_render_graphiql:
             context = dict(APP_NAME=conf.settings.APP_NAME)
@@ -38,9 +37,7 @@ class GraphQLView(AccessMixin, views.GraphQLView):
 
         return super().dispatch(request, *args, **kwargs)
 
-    def process_result(
-        self, request, result: types.ExecutionResult
-    ) -> http.GraphQLHTTPResponse:
+    def process_result(self, request, result: types.ExecutionResult) -> http.GraphQLHTTPResponse:
         data: http.GraphQLHTTPResponse = {"data": result.data}
 
         if result.errors:

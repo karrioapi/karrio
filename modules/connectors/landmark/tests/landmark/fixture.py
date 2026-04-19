@@ -2,7 +2,6 @@
 
 import karrio.sdk as karrio
 
-
 gateway = karrio.gateway["landmark"].create(
     dict(
         id="landmark_test",

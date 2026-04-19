@@ -1,10 +1,10 @@
 import pkgutil
-import strawberry
-import strawberry.schema.config as config
-from strawberry.types import Info
 
 import karrio.server.admin.schemas as schemas
+import strawberry
+import strawberry.schema.config as config
 from karrio.server.core.logging import logger
+from strawberry.types import Info
 
 QUERIES: list = []
 MUTATIONS: list = []

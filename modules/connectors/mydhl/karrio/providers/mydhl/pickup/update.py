@@ -1,11 +1,10 @@
 """Karrio MyDHL pickup update API implementation."""
 
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.mydhl.error as error
-import karrio.providers.mydhl.utils as provider_utils
 import karrio.providers.mydhl.units as provider_units
+import karrio.providers.mydhl.utils as provider_utils
 import karrio.schemas.mydhl.pickup_update_request as pickup_req
 import karrio.schemas.mydhl.pickup_update_response as pickup_res
 
@@ -13,7 +12,7 @@ import karrio.schemas.mydhl.pickup_update_response as pickup_res
 def parse_pickup_update_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.PickupDetails, typing.List[models.Message]]:
+) -> tuple[models.PickupDetails, list[models.Message]]:
     """
     Parse pickup update response from MyDHL API
 
@@ -30,8 +29,7 @@ def parse_pickup_update_response(
             lib.to_object(pickup_res.PickupUpdateResponseType, response),
             settings,
         )
-        if response.get("status") is None
-        and response.get("dispatchConfirmationNumbers") is not None
+        if response.get("status") is None and response.get("dispatchConfirmationNumbers") is not None
         else None
     )
 
@@ -50,10 +48,7 @@ def _extract_details(
 
     Returns a PickupDetails object with the pickup information
     """
-    confirmation_number = next(
-        (num for num in (pickup.dispatchConfirmationNumbers or []) if num),
-        ""
-    )
+    confirmation_number = next((num for num in (pickup.dispatchConfirmationNumbers or []) if num), "")
 
     return models.PickupDetails(
         carrier_id=settings.carrier_id,
@@ -83,9 +78,7 @@ def pickup_update_request(
     address = lib.to_address(payload.address)
     packages = lib.to_packages(payload.parcels)
     options = lib.to_shipping_options(payload.options)
-    service = provider_units.ShippingService.map(
-        payload.options.get("service") or "P"
-    ).value_or_key
+    service = provider_units.ShippingService.map(payload.options.get("service") or "P").value_or_key
 
     # Build planned pickup date time in DHL format
     pickup_datetime = lib.fdatetime(

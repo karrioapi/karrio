@@ -2,7 +2,6 @@ import karrio.core.metadata as metadata
 import karrio.mappers.bpost as mappers
 import karrio.providers.bpost.units as units
 
-
 METADATA = metadata.PluginMetadata(
     status="beta",
     id="bpost",

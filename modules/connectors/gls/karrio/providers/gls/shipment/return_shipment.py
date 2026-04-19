@@ -3,9 +3,8 @@
 Delegates to the standard shipment creation with the return option forced on.
 """
 
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.gls.shipment.create as create
 import karrio.providers.gls.utils as provider_utils
 
@@ -13,7 +12,7 @@ import karrio.providers.gls.utils as provider_utils
 def parse_return_shipment_response(
     _response: lib.Deserializable,
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+) -> tuple[models.ShipmentDetails, list[models.Message]]:
     return create.parse_shipment_response(_response, settings)
 
 

@@ -1,12 +1,11 @@
-from rest_framework import status
-
+import karrio.server.manager.models as models
 from karrio.server.core.exceptions import APIException
 from karrio.server.core.serializers import CommodityData, ShipmentStatus
 from karrio.server.serializers import (
     owned_model_serializer,
     process_dictionaries_mutations,
 )
-import karrio.server.manager.models as models
+from rest_framework import status
 
 
 @owned_model_serializer
@@ -16,13 +15,9 @@ class CommoditySerializer(CommodityData):
     def create(self, validated_data: dict, **kwargs) -> models.Commodity:
         return models.Commodity.objects.create(**validated_data)
 
-    def update(
-        self, instance: models.Commodity, validated_data: dict, **kwargs
-    ) -> models.Commodity:
+    def update(self, instance: models.Commodity, validated_data: dict, **kwargs) -> models.Commodity:
         # Handle dictionary mutations for metadata and meta fields
-        data = process_dictionaries_mutations(
-            ["metadata", "meta"], validated_data, instance
-        )
+        data = process_dictionaries_mutations(["metadata", "meta"], validated_data, instance)
         changes = []
 
         for key, val in data.items():
@@ -34,9 +29,7 @@ class CommoditySerializer(CommodityData):
         return instance
 
 
-def can_mutate_commodity(
-    commodity: models.Commodity, update: bool = False, delete: bool = False, **kwargs
-):
+def can_mutate_commodity(commodity: models.Commodity, update: bool = False, delete: bool = False, **kwargs):
     shipment = commodity.shipment
     order = commodity.order
 
@@ -52,7 +45,7 @@ def can_mutate_commodity(
 
     if delete and order and len(order.line_items or []) == 1:
         raise APIException(
-            f"Operation not permitted. The related order needs at least one line_item.",
+            "Operation not permitted. The related order needs at least one line_item.",
             status_code=status.HTTP_409_CONFLICT,
             code="state_error",
         )

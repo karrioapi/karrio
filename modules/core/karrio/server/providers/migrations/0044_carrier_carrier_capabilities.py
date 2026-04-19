@@ -18,9 +18,7 @@ def forwards_func(apps, schema_editor):
     for _carrier in Carrier.objects.using(db_alias).all().iterator():
         carrier = providers.Carrier.objects.get(id=_carrier.id)
         raw_capabilities = ref.get_carrier_capabilities(carrier.ext)
-        _carrier.carrier_capabilities = [
-            c for c in lib.to_dict(carrier.capabilities) if c in raw_capabilities
-        ]
+        _carrier.carrier_capabilities = [c for c in lib.to_dict(carrier.capabilities) if c in raw_capabilities]
         _carriers.append(_carrier)
 
     if any(_carriers):
@@ -48,9 +46,7 @@ class Migration(migrations.Migration):
                     ("tracking", "tracking"),
                     ("paperless", "paperless"),
                 ],
-                default=functools.partial(
-                    karrio.server.core.models._identity, *(), **{"value": []}
-                ),
+                default=functools.partial(karrio.server.core.models._identity, *(), **{"value": []}),
                 help_text="Select the capabilities of the carrier that you want to enable",
             ),
         ),

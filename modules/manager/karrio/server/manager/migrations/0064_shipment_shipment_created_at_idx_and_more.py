@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("manager", "0063_alter_commodity_value_currency"),
         ("providers", "0084_alter_servicelevel_currency"),

@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("providers", "0080_alter_aramexsettings_account_country_code_and_more"),
     ]

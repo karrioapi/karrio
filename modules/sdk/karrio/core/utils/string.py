@@ -1,6 +1,3 @@
-import typing
-
-
 class STRINGFORMAT:
     @staticmethod
     def concat_str(
@@ -8,7 +5,7 @@ class STRINGFORMAT:
         join: bool = False,
         separator: str = " ",
         trim: bool = False,
-    ) -> typing.Optional[typing.Union[str, typing.List[str]]]:
+    ) -> str | list[str] | None:
         """Concatenate a set of string values into a list of string or a single joined text.
 
         :param values: a set of string values.
@@ -17,9 +14,7 @@ class STRINGFORMAT:
         :param trim: indicate whether to trim the string values.
         :return: a string, list of string or None.
         """
-        strings = [
-            "".join(s.split()) if trim else s for s in values if s not in ["", None]
-        ]
+        strings = ["".join(s.split()) if trim else s for s in values if s not in ["", None]]
 
         if len(strings) == 0:
             return None
@@ -30,7 +25,7 @@ class STRINGFORMAT:
         return strings
 
     @staticmethod
-    def to_snake_case(input_string: typing.Optional[str]) -> typing.Optional[str]:
+    def to_snake_case(input_string: str | None) -> str | None:
         """Convert any string format to snake case."""
         if input_string is None:
             return None
@@ -55,7 +50,7 @@ class STRINGFORMAT:
     def to_slug(
         *values,
         separator: str = "_",
-    ) -> typing.Optional[str]:
+    ) -> str | None:
         """Convert a set of string values into a slug string."""
 
         processed_values = []
@@ -64,9 +59,7 @@ class STRINGFORMAT:
                 # Convert to lowercase and replace spaces with separator
                 processed = value.lower().replace(" ", separator)
                 # Replace other non-alphanumeric characters with separator
-                processed = "".join(
-                    c if c.isalnum() or c == separator else separator for c in processed
-                )
+                processed = "".join(c if c.isalnum() or c == separator else separator for c in processed)
                 # Remove consecutive separators
                 while separator * 2 in processed:
                     processed = processed.replace(separator * 2, separator)

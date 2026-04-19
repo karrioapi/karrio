@@ -1,26 +1,21 @@
+import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
+import karrio.providers.dhl_parcel_de.error as error
+import karrio.providers.dhl_parcel_de.units as provider_units
+import karrio.providers.dhl_parcel_de.utils as provider_utils
 import karrio.schemas.dhl_parcel_de.returns_request as dhl_returns
 import karrio.schemas.dhl_parcel_de.returns_response as returns
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
-import karrio.core.models as models
-import karrio.providers.dhl_parcel_de.error as error
-import karrio.providers.dhl_parcel_de.utils as provider_utils
-import karrio.providers.dhl_parcel_de.units as provider_units
 
 
 def parse_return_shipment_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+) -> tuple[models.ShipmentDetails, list[models.Message]]:
     response = _response.deserialize()
 
     messages = error.parse_error_response(response, settings)
-    shipment = (
-        _extract_details(response, settings)
-        if response.get("shipmentNo")
-        else None
-    )
+    shipment = _extract_details(response, settings) if response.get("shipmentNo") else None
 
     return shipment, messages
 
@@ -48,7 +43,9 @@ def _extract_details(
                     format="PDF",
                     base64=qr_label,
                 )
-            ] if qr_label else [],
+            ]
+            if qr_label
+            else [],
         ),
         meta=dict(
             carrier_tracking_link=settings.tracking_url.format(tracking_number),
@@ -96,17 +93,9 @@ def return_shipment_request(
             name1=shipper.company_name or shipper.person_name,
             name2=(shipper.person_name if shipper.company_name else None),
             name3=None,
-            addressStreet=lib.identity(
-                shipper.street_name
-                if shipper.street_number
-                else shipper.address_line1
-            ),
+            addressStreet=lib.identity(shipper.street_name if shipper.street_number else shipper.address_line1),
             addressHouse=lib.text(
-                (
-                    shipper.street_number
-                    if shipper.street_number
-                    else shipper.address_line2
-                ),
+                (shipper.street_number if shipper.street_number else shipper.address_line2),
                 max=10,
             ),
             postalCode=shipper.postal_code,
@@ -133,20 +122,14 @@ def return_shipment_request(
                     dhl_returns.CommodityType(
                         itemDescription=item.description or item.title,
                         packagedQuantity=item.quantity,
-                        countryOfOrigin=units.CountryCode.map(
-                            item.origin_country or ""
-                        ).value_or_key,
+                        countryOfOrigin=units.CountryCode.map(item.origin_country or "").value_or_key,
                         hsCode=item.hs_code,
                         itemWeight=dhl_returns.WeightType(
                             uom=units.WeightUnit.KG.name.lower(),
                             value=item.weight,
                         ),
                         itemValue=dhl_returns.ValueType(
-                            currency=lib.identity(
-                                item.value_currency
-                                or options.currency.state
-                                or "EUR"
-                            ),
+                            currency=lib.identity(item.value_currency or options.currency.state or "EUR"),
                             value=item.value_amount or 0.0,
                         ),
                     )
@@ -162,10 +145,6 @@ def return_shipment_request(
         request,
         lib.to_dict,
         dict(
-            labelType=lib.identity(
-                "BOTH"
-                if not payload.label_type
-                else "SHIPMENT_LABEL"
-            ),
+            labelType=lib.identity("BOTH" if not payload.label_type else "SHIPMENT_LABEL"),
         ),
     )

@@ -1,7 +1,7 @@
-import hashlib
 import base64
+import hashlib
+
 from oauth2_provider.oauth2_validators import OAuth2Validator
-from django.contrib.auth import get_user_model
 
 
 class CustomOAuth2Validator(OAuth2Validator):
@@ -9,8 +9,8 @@ class CustomOAuth2Validator(OAuth2Validator):
 
     def get_additional_claims(self):
         return {
-            "name": lambda request: getattr(request.user, 'full_name', '') if request.user else '',
-            "email": lambda request: getattr(request.user, 'email', '') if request.user else '',
+            "name": lambda request: getattr(request.user, "full_name", "") if request.user else "",
+            "email": lambda request: getattr(request.user, "email", "") if request.user else "",
         }
 
     def validate_grant_type(self, client_id, grant_type, client, request, *args, **kwargs):
@@ -23,17 +23,17 @@ class CustomOAuth2Validator(OAuth2Validator):
         """
         # Convert OAuth2 spec format to django-oauth-toolkit format
         grant_type_mapping = {
-            'authorization_code': 'authorization-code',
-            'client_credentials': 'client-credentials',
-            'refresh_token': 'refresh-token',
-            'password': 'password',
+            "authorization_code": "authorization-code",
+            "client_credentials": "client-credentials",
+            "refresh_token": "refresh-token",
+            "password": "password",
         }
 
         # Get the stored grant type format
         stored_grant_type = grant_type_mapping.get(grant_type, grant_type)
 
         # Check if the client supports this grant type
-        if client and hasattr(client, 'authorization_grant_type'):
+        if client and hasattr(client, "authorization_grant_type"):
             is_valid = client.authorization_grant_type == stored_grant_type
             if is_valid:
                 return True
@@ -48,11 +48,10 @@ class CustomOAuth2Validator(OAuth2Validator):
         # First validate the code using parent implementation
         is_valid = super().validate_code(client_id, code, client, request, *args, **kwargs)
 
-        if is_valid and client:
+        if is_valid and client and request.grant_type == "authorization_code":
             # Ensure the client supports authorization code flow
             # Convert the request grant type to stored format for comparison
-            if request.grant_type == 'authorization_code':
-                return client.authorization_grant_type == 'authorization-code'
+            return client.authorization_grant_type == "authorization-code"
 
         return is_valid
 
@@ -65,13 +64,14 @@ class CustomOAuth2Validator(OAuth2Validator):
         if is_valid:
             try:
                 from oauth2_provider.models import Application
+
                 application = Application.objects.get(client_id=client_id)
 
                 # Set application on request for later use
                 request.oauth_application = application
 
                 # For client credentials flow, set the user from the OAuth application owner
-                if request.grant_type == 'client_credentials' and application.user:
+                if request.grant_type == "client_credentials" and application.user:
                     request.user = application.user
 
             except Application.DoesNotExist:
@@ -88,7 +88,8 @@ class CustomOAuth2Validator(OAuth2Validator):
         if is_valid and redirect_uri:
             # Additional security: ensure HTTPS in production
             from django.conf import settings
-            if not settings.DEBUG and not redirect_uri.startswith('https://'):
+
+            if not settings.DEBUG and not redirect_uri.startswith("https://"):
                 return False
 
         return is_valid
@@ -101,29 +102,27 @@ class CustomOAuth2Validator(OAuth2Validator):
         if challenge:
             # Validate that the challenge is base64url encoded and has proper length
             try:
-                decoded = base64.urlsafe_b64decode(challenge + '==')  # Add padding
+                decoded = base64.urlsafe_b64decode(challenge + "==")  # Add padding
                 return len(decoded) >= 32  # At least 256 bits
             except Exception:
                 return False
 
         # If PKCE is required but no challenge provided, reject
         from django.conf import settings
-        oauth_settings = getattr(settings, 'OAUTH2_PROVIDER', {})
-        if oauth_settings.get('PKCE_REQUIRED', False):
-            return False
 
-        return True
+        oauth_settings = getattr(settings, "OAUTH2_PROVIDER", {})
+        return not oauth_settings.get("PKCE_REQUIRED", False)
 
     def validate_code_verifier(self, verifier, challenge, challenge_method, request, *args, **kwargs):
         """
         Validate PKCE code verifier against the challenge.
         """
-        if challenge_method == 'S256':
+        if challenge_method == "S256":
             # SHA256 challenge method
-            verifier_hash = hashlib.sha256(verifier.encode('ascii')).digest()
-            verifier_challenge = base64.urlsafe_b64encode(verifier_hash).decode('ascii').rstrip('=')
+            verifier_hash = hashlib.sha256(verifier.encode("ascii")).digest()
+            verifier_challenge = base64.urlsafe_b64encode(verifier_hash).decode("ascii").rstrip("=")
             return verifier_challenge == challenge
-        elif challenge_method == 'plain':
+        elif challenge_method == "plain":
             # Plain text challenge method (less secure, but allowed)
             return verifier == challenge
 
@@ -135,11 +134,12 @@ class CustomOAuth2Validator(OAuth2Validator):
         """
         try:
             from oauth2_provider.models import Application
+
             application = Application.objects.get(client_id=client_id)
 
             # For Karrio apps, default to read scope
-            if hasattr(application, 'oauth_app'):
-                return ['read']
+            if hasattr(application, "oauth_app"):
+                return ["read"]
 
         except Application.DoesNotExist:
             pass
@@ -155,6 +155,7 @@ class CustomOAuth2Validator(OAuth2Validator):
 
         # Log OAuth events for audit purposes
         from karrio.server.core.logging import logger
+
         logger.info("Authorization code granted", client_id=client_id)
 
     def authenticate_user(self, request):

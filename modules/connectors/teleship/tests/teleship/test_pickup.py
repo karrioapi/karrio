@@ -2,11 +2,12 @@
 
 import unittest
 from unittest.mock import patch
-from .fixture import gateway
 
-import karrio.sdk as karrio
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 
 class TestTeleshipPickup(unittest.TestCase):
@@ -33,9 +34,7 @@ class TestTeleshipPickup(unittest.TestCase):
     def test_parse_pickup_response(self):
         with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
             mock.return_value = PickupResponse
-            parsed_response = (
-                karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedPickupResponse)
 
@@ -57,18 +56,14 @@ class TestTeleshipPickup(unittest.TestCase):
     def test_parse_pickup_cancel_response(self):
         with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
             mock.return_value = PickupCancelResponse
-            parsed_response = (
-                karrio.Pickup.cancel(self.PickupCancelRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Pickup.cancel(self.PickupCancelRequest).from_(gateway).parse()
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedPickupCancelResponse)
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
             mock.return_value = ErrorResponse
-            parsed_response = (
-                karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 

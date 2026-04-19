@@ -1,5 +1,6 @@
-import attr
 import typing
+
+import attr
 
 from karrio.core.utils.helpers import identity
 from karrio.core.utils.logger import logger

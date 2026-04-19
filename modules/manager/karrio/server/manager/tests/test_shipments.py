@@ -1,20 +1,20 @@
 import json
 from unittest.mock import ANY, patch
+
+import karrio.server.manager.models as models
+import karrio.server.providers.models as providers
 from django.urls import reverse
-from rest_framework import status
 from karrio.core.models import (
-    RateDetails,
     ChargeDetails,
-    ShipmentDetails,
     ConfirmationDetails,
-    ReturnShipment,
     Documents,
+    RateDetails,
+    ShipmentDetails,
     ShippingDocument,
 )
 from karrio.server.core.tests import APITestCase
 from karrio.server.core.utils import create_carrier_snapshot
-import karrio.server.manager.models as models
-import karrio.server.providers.models as providers
+from rest_framework import status
 
 
 class TestShipmentFixture(APITestCase):
@@ -115,14 +115,10 @@ class TestShipmentDetails(TestShipmentFixture):
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertDictEqual(
-            response_data.get("options"), SHIPMENT_OPTIONS.get("options")
-        )
+        self.assertDictEqual(response_data.get("options"), SHIPMENT_OPTIONS.get("options"))
 
     def test_shipment_rates(self):
-        url = reverse(
-            "karrio.server.manager:shipment-rates", kwargs=dict(pk=self.shipment.pk)
-        )
+        url = reverse("karrio.server.manager:shipment-rates", kwargs=dict(pk=self.shipment.pk))
 
         with patch("karrio.server.core.gateway.utils.identity") as mock:
             mock.return_value = RETURNED_RATES_VALUE
@@ -180,11 +176,7 @@ class TestShipmentPurchase(TestShipmentFixture):
             self.assertDictEqual(response_data, PURCHASED_SHIPMENT)
 
         # Assert a tracker is created for the newly purchased shipment
-        self.assertTrue(
-            models.Tracking.objects.filter(
-                tracking_number=PURCHASED_SHIPMENT["tracking_number"]
-            ).exists()
-        )
+        self.assertTrue(models.Tracking.objects.filter(tracking_number=PURCHASED_SHIPMENT["tracking_number"]).exists())
 
     def test_cancel_shipment(self):
         url = reverse(
@@ -317,9 +309,7 @@ class TestSingleCallWithAlternativeServices(APITestCase):
                 "carrier_name": response_data["carrier_name"],
                 "service": response_data["service"],
                 "tracking_number": response_data["tracking_number"],
-                "has_alternative_services": response_data["selected_rate"]["meta"].get(
-                    "has_alternative_services"
-                ),
+                "has_alternative_services": response_data["selected_rate"]["meta"].get("has_alternative_services"),
             },
             {
                 "status": "created",
@@ -353,9 +343,7 @@ class TestSingleCallWithAlternativeServices(APITestCase):
                 "carrier_name": response_data["carrier_name"],
                 "service": response_data["service"],
                 "tracking_number": response_data["tracking_number"],
-                "has_alternative_services": response_data["selected_rate"]["meta"].get(
-                    "has_alternative_services"
-                ),
+                "has_alternative_services": response_data["selected_rate"]["meta"].get("has_alternative_services"),
             },
             {
                 "status": "created",
@@ -541,7 +529,6 @@ SHIPMENT_RESPONSE = {
     "archived_at": None,
     "messages": [],
     "shipping_documents": [],
-    "is_return": False,
     "return_shipment": None,
 }
 
@@ -1364,9 +1351,7 @@ class TestComputeEstimatedDelivery(APITestCase):
         selected_rate = {"estimated_delivery": "2024-01-20", "transit_days": 5}
         options = {"shipping_date": "2024-01-15"}
 
-        estimated_delivery, shipping_date_str = compute_estimated_delivery(
-            selected_rate, options
-        )
+        estimated_delivery, shipping_date_str = compute_estimated_delivery(selected_rate, options)
 
         self.assertEqual(estimated_delivery, "2024-01-20")
         self.assertEqual(shipping_date_str, "2024-01-15")
@@ -1378,9 +1363,7 @@ class TestComputeEstimatedDelivery(APITestCase):
         selected_rate = {"transit_days": 5}
         options = {"shipping_date": "2024-01-15"}
 
-        estimated_delivery, shipping_date_str = compute_estimated_delivery(
-            selected_rate, options
-        )
+        estimated_delivery, shipping_date_str = compute_estimated_delivery(selected_rate, options)
 
         self.assertEqual(estimated_delivery, "2024-01-20")
         self.assertEqual(shipping_date_str, "2024-01-15")
@@ -1392,9 +1375,7 @@ class TestComputeEstimatedDelivery(APITestCase):
         selected_rate = {"transit_days": 3}
         options = {"shipment_date": "2024-01-10"}
 
-        estimated_delivery, shipping_date_str = compute_estimated_delivery(
-            selected_rate, options
-        )
+        estimated_delivery, shipping_date_str = compute_estimated_delivery(selected_rate, options)
 
         self.assertEqual(estimated_delivery, "2024-01-13")
         self.assertEqual(shipping_date_str, "2024-01-10")
@@ -1406,9 +1387,7 @@ class TestComputeEstimatedDelivery(APITestCase):
         selected_rate = {}
         options = {"shipping_date": "2024-01-15"}
 
-        estimated_delivery, shipping_date_str = compute_estimated_delivery(
-            selected_rate, options
-        )
+        estimated_delivery, shipping_date_str = compute_estimated_delivery(selected_rate, options)
 
         self.assertIsNone(estimated_delivery)
         self.assertEqual(shipping_date_str, "2024-01-15")
@@ -1420,9 +1399,7 @@ class TestComputeEstimatedDelivery(APITestCase):
         selected_rate = {"transit_days": 5}
         options = {}
 
-        estimated_delivery, shipping_date_str = compute_estimated_delivery(
-            selected_rate, options
-        )
+        estimated_delivery, shipping_date_str = compute_estimated_delivery(selected_rate, options)
 
         self.assertIsNone(estimated_delivery)
         self.assertIsNone(shipping_date_str)
@@ -1443,9 +1420,7 @@ class TestComputeEstimatedDelivery(APITestCase):
         selected_rate = {"transit_days": 2}
         options = {"shipping_date": "2024-01-15T10:30"}
 
-        estimated_delivery, shipping_date_str = compute_estimated_delivery(
-            selected_rate, options
-        )
+        estimated_delivery, shipping_date_str = compute_estimated_delivery(selected_rate, options)
 
         self.assertEqual(estimated_delivery, "2024-01-17")
         self.assertEqual(shipping_date_str, "2024-01-15T10:30")
@@ -1533,7 +1508,6 @@ class TestShipmentReturnShipment(TestShipmentFixture):
             response = self.client.post(url, data)
             response_data = json.loads(response.content)
 
-
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertDictEqual(response_data["return_shipment"], RETURN_SHIPMENT_DATA)
 
@@ -1549,7 +1523,6 @@ class TestShipmentReturnShipment(TestShipmentFixture):
             mock.return_value = CREATED_SHIPMENT_RESPONSE
             response = self.client.post(url, data)
             response_data = json.loads(response.content)
-
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIsNone(response_data["return_shipment"])
@@ -1571,9 +1544,7 @@ class TestShipmentReturnShipment(TestShipmentFixture):
         # Reload from DB and verify
         shipment = models.Shipment.objects.get(pk=self.shipment.pk)
         self.assertIsNotNone(shipment.return_shipment)
-        self.assertEqual(
-            shipment.return_shipment["tracking_number"], "987654321098"
-        )
+        self.assertEqual(shipment.return_shipment["tracking_number"], "987654321098")
         self.assertEqual(
             shipment.return_shipment["tracking_url"],
             "https://tracking.example.com/987654321098",
@@ -1634,7 +1605,6 @@ class TestReturnShipmentCreate(APITestCase):
             response = self.client.post(url, data)
             response_data = json.loads(response.content)
 
-
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(response_data["is_return"])
 
@@ -1648,7 +1618,6 @@ class TestReturnShipmentCreate(APITestCase):
             response = self.client.post(url, data)
             response_data = json.loads(response.content)
 
-
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertFalse(response_data["is_return"])
 
@@ -1661,7 +1630,6 @@ class TestReturnShipmentCreate(APITestCase):
             mock.return_value = RETURNED_RATES_VALUE
             response = self.client.post(url, data)
             response_data = json.loads(response.content)
-
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -1692,7 +1660,6 @@ class TestReturnShipmentFilter(TestShipmentFixture):
         response = self.client.get(f"{url}?is_return=true")
         response_data = json.loads(response.content)
 
-
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         results = response_data.get("results", response_data.get("shipments", []))
         self.assertTrue(all(s["is_return"] for s in results))
@@ -1704,7 +1671,6 @@ class TestReturnShipmentFilter(TestShipmentFixture):
         response = self.client.get(f"{url}?is_return=false")
         response_data = json.loads(response.content)
 
-
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         results = response_data.get("results", response_data.get("shipments", []))
         self.assertTrue(all(not s["is_return"] for s in results))
@@ -1715,7 +1681,6 @@ class TestReturnShipmentFilter(TestShipmentFixture):
         url = reverse("karrio.server.manager:shipment-list")
         response = self.client.get(url)
         response_data = json.loads(response.content)
-
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         results = response_data.get("results", response_data.get("shipments", []))

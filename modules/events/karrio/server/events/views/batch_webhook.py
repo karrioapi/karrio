@@ -1,24 +1,22 @@
 import logging
 
-from django.urls import path
-from django.utils import timezone
-from rest_framework.request import Request
-from rest_framework.response import Response
-from rest_framework import status, serializers
-
-import karrio.server.openapi as openapi
-from karrio.server.core.views.api import APIView
-from karrio.server.core.serializers import ErrorResponse
-from karrio.server.core import utils
-from karrio.server.conf import settings
-from karrio.server.events.router import router
 import karrio.server.core.serializers as core_serializers
-import karrio.server.manager.models as manager_models
-import karrio.server.events.tasks as tasks
 import karrio.server.events.models as event_models
 import karrio.server.events.serializers.event as event_serializers
+import karrio.server.events.tasks as tasks
+import karrio.server.manager.models as manager_models
+import karrio.server.openapi as openapi
+from django.urls import path
+from django.utils import timezone
+from karrio.server.conf import settings
+from karrio.server.core import utils
+from karrio.server.core.serializers import ErrorResponse
+from karrio.server.core.views.api import APIView
+from karrio.server.events.router import router
 from karrio.server.events.task_definitions.base.webhook import notify_subscribers
-
+from rest_framework import serializers, status
+from rest_framework.request import Request
+from rest_framework.response import Response
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$$$$$$$$"  # Unique endpoint id for operation ids
@@ -39,9 +37,7 @@ OBJECT_TYPE_MAP = {
 
 
 class BatchWebhookResendRequest(serializers.Serializer):
-    entity_ids = serializers.ListField(
-        child=serializers.CharField(), required=True
-    )
+    entity_ids = serializers.ListField(child=serializers.CharField(), required=True)
     object_type = serializers.ChoiceField(
         choices=["tracker", "shipment"],
         default="tracker",
@@ -65,7 +61,6 @@ class BatchWebhookResendResponse(serializers.Serializer):
 
 
 class BatchWebhookResend(APIView):
-
     @openapi.extend_schema(
         tags=["Batches"],
         operation_id=f"{ENDPOINT_ID}resend_webhooks",
@@ -92,9 +87,7 @@ class BatchWebhookResend(APIView):
         type_config = OBJECT_TYPE_MAP.get(object_type)
         if type_config is None:
             return Response(
-                ErrorResponse(
-                    dict(errors=[dict(message=f"Unsupported object type: {object_type}")])
-                ).data,
+                ErrorResponse(dict(errors=[dict(message=f"Unsupported object type: {object_type}")])).data,
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -113,12 +106,10 @@ class BatchWebhookResend(APIView):
                 event = type_config["event_type"]
                 event_at = instance.updated_at
                 context = dict(
-                    user_id=utils.failsafe(lambda: instance.created_by.id),
+                    user_id=utils.failsafe(lambda instance=instance: instance.created_by.id),
                     test_mode=instance.test_mode,
                     org_id=utils.failsafe(
-                        lambda: instance.org.first().id
-                        if hasattr(instance, "org")
-                        else None
+                        lambda instance=instance: instance.org.first().id if hasattr(instance, "org") else None
                     ),
                 )
 
@@ -135,9 +126,7 @@ class BatchWebhookResend(APIView):
                     payload = dict(event=event, data=data)
                     notify_subscribers([webhook], payload)
                 else:
-                    tasks.notify_webhooks(
-                        event, data, event_at, context, schema=settings.schema
-                    )
+                    tasks.notify_webhooks(event, data, event_at, context, schema=settings.schema)
 
                 resources.append(dict(id=instance.pk, status="queued", error=None))
             except (serializers.ValidationError, ValueError, KeyError) as e:
@@ -150,11 +139,9 @@ class BatchWebhookResend(APIView):
 
         # Mark any entity_ids not found in the queryset
         found_ids = {str(r["id"]) for r in resources}
-        resources.extend([
-            dict(id=eid, status="failed", error="Not found")
-            for eid in entity_ids
-            if eid not in found_ids
-        ])
+        resources.extend(
+            [dict(id=eid, status="failed", error="Not found") for eid in entity_ids if eid not in found_ids]
+        )
 
         response_data = dict(
             object_type=object_type,

@@ -1,9 +1,9 @@
 """Karrio Canada post client settings."""
 
 import base64
-import karrio.lib as lib
-import karrio.core.settings as settings
 
+import karrio.core.settings as settings
+import karrio.lib as lib
 
 LanguageEnum = lib.units.create_enum("LanguageEnum", ["en", "fr"])
 
@@ -23,23 +23,15 @@ class Settings(settings.Settings):
 
     @property
     def server_url(self):
-        return (
-            "https://ct.soa-gw.canadapost.ca"
-            if self.test_mode
-            else "https://soa-gw.canadapost.ca"
-        )
+        return "https://ct.soa-gw.canadapost.ca" if self.test_mode else "https://soa-gw.canadapost.ca"
 
     @property
     def tracking_url(self):
-        return (
-            "https://www.canadapost-postescanada.ca/track-reperage/"
-            + self.language
-            + "#/resultList?searchFor={}"
-        )
+        return "https://www.canadapost-postescanada.ca/track-reperage/" + self.language + "#/resultList?searchFor={}"
 
     @property
     def authorization(self):
-        pair = "%s:%s" % (self.username, self.password)
+        pair = f"{self.username}:{self.password}"
         return base64.b64encode(pair.encode("utf-8")).decode("ascii")
 
     @property
@@ -77,9 +69,7 @@ def parse_label_references(shipement_response: str) -> dict:
 def parse_submitted_shipment(shipment_response: str, ctx) -> str:
     import karrio.schemas.canadapost.shipment as canadapost
 
-    shipment = lib.to_object(
-        canadapost.ShipmentInfoType, lib.to_element(shipment_response)
-    )
+    shipment = lib.to_object(canadapost.ShipmentInfoType, lib.to_element(shipment_response))
 
     return (
         lib.to_xml(

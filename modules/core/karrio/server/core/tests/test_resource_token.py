@@ -1,22 +1,18 @@
 """Tests for ResourceAccessToken and /api/tokens endpoint."""
 
-from unittest import mock
-from django.test import TestCase
 from django.contrib.auth import get_user_model
-from rest_framework.test import APITestCase, APIClient
-
-from karrio.server.user.models import Token
-from karrio.server.core.utils import ResourceAccessToken
+from django.test import TestCase
 from karrio.server.core.tests.base import APITestCase as KarrioAPITestCase
+from karrio.server.core.utils import ResourceAccessToken
+from karrio.server.user.models import Token
+from rest_framework.test import APIClient, APITestCase
 
 
 class TestResourceAccessTokenUnit(TestCase):
     """Unit tests for ResourceAccessToken class."""
 
     def setUp(self):
-        self.user = get_user_model().objects.create_user(
-            email="test@example.com", password="testpass123"
-        )
+        self.user = get_user_model().objects.create_user(email="test@example.com", password="testpass123")
 
     def test_create_token_for_single_resource(self):
         """Test creating a token for a single resource."""
@@ -233,9 +229,7 @@ class TestResourceTokenAPI(APITestCase):
     """API tests for /api/tokens endpoint."""
 
     def setUp(self):
-        self.user = get_user_model().objects.create_user(
-            email="api_test@example.com", password="testpass123"
-        )
+        self.user = get_user_model().objects.create_user(email="api_test@example.com", password="testpass123")
         self.token = Token.objects.create(user=self.user, test_mode=True)
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION=f"Token {self.token.key}")
@@ -421,8 +415,8 @@ class TestDocumentDownloadWithAPIToken(KarrioAPITestCase):
 
     def setUp(self):
         super().setUp()
-        from karrio.server.manager.models import Shipment, Manifest
         from karrio.server.core.utils import create_carrier_snapshot
+        from karrio.server.manager.models import Manifest, Shipment
 
         # Create test addresses (JSON data for embedded fields)
         self.shipper_data = {

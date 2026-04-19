@@ -1,12 +1,12 @@
 """Teleship carrier hooks tests (OAuth and webhook events)."""
 
 import unittest
-from .fixture import gateway
 
-import karrio.lib as lib
 import karrio.core.models as models
-import karrio.providers.teleship.hooks.oauth as oauth_hooks
 import karrio.providers.teleship.hooks.event as event_hooks
+import karrio.providers.teleship.hooks.oauth as oauth_hooks
+
+from .fixture import gateway
 
 
 class TestTeleshipOAuthHooks(unittest.TestCase):
@@ -68,10 +68,13 @@ class TestTeleshipOAuthHooks(unittest.TestCase):
 
         credentials, messages = oauth_hooks.on_oauth_callback(payload, gateway.settings)
 
-        self.assertEqual(credentials, {
-            "client_id": "user_client_id_abc",
-            "client_secret": "user_client_secret_xyz",
-        })
+        self.assertEqual(
+            credentials,
+            {
+                "client_id": "user_client_id_abc",
+                "client_secret": "user_client_secret_xyz",
+            },
+        )
         self.assertEqual(messages, [])
 
     def test_on_oauth_callback_missing_code(self):

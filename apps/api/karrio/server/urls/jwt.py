@@ -1,14 +1,16 @@
-from django.urls import path
-from django.contrib.auth import get_user_model
-from django.utils.translation import gettext_lazy as _
-from django.conf import settings
-from rest_framework import serializers, exceptions, status
-from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
-from rest_framework_simplejwt import views as jwt_views, serializers as jwt
-from two_factor.utils import default_device
+from contextlib import suppress
 
 import karrio.server.openapi as openapi
+from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.urls import path
+from django.utils.translation import gettext_lazy as _
+from rest_framework import exceptions, serializers, status
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework_simplejwt import serializers as jwt
+from rest_framework_simplejwt import views as jwt_views
+from two_factor.utils import default_device
 
 ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 User = get_user_model()
@@ -16,14 +18,24 @@ User = get_user_model()
 
 # --- Cookie helpers (shared by all JWT views) ---
 
+
 def get_cookie_config(include_max_age=True):
     """Build cookie configuration from Django settings."""
-    config = dict(
-        access_cookie_name=getattr(settings, "JWT_AUTH_COOKIE", "karrio_access_token"),
-        refresh_cookie_name=getattr(settings, "JWT_REFRESH_COOKIE", "karrio_refresh_token"),
+    domain = getattr(settings, "JWT_AUTH_COOKIE_DOMAIN", None)
+
+    cookie_kwargs = dict(
+        httponly=True,
         secure=getattr(settings, "JWT_AUTH_COOKIE_SECURE", getattr(settings, "USE_HTTPS", False)),
         samesite=getattr(settings, "JWT_AUTH_COOKIE_SAMESITE", "Lax"),
         path=getattr(settings, "JWT_AUTH_COOKIE_PATH", "/"),
+    )
+    if domain:
+        cookie_kwargs["domain"] = domain
+
+    config = dict(
+        access_cookie_name=getattr(settings, "JWT_AUTH_COOKIE", "karrio_access_token"),
+        refresh_cookie_name=getattr(settings, "JWT_REFRESH_COOKIE", "karrio_refresh_token"),
+        cookie_kwargs=cookie_kwargs,
     )
 
     if include_max_age:
@@ -46,19 +58,13 @@ def set_auth_cookies(response, access_token, refresh_token):
         config["access_cookie_name"],
         access_token,
         max_age=config["access_max_age"],
-        httponly=True,
-        secure=config["secure"],
-        samesite=config["samesite"],
-        path=config["path"],
+        **config["cookie_kwargs"],
     )
     response.set_cookie(
         config["refresh_cookie_name"],
         refresh_token,
         max_age=config["refresh_max_age"],
-        httponly=True,
-        secure=config["secure"],
-        samesite=config["samesite"],
-        path=config["path"],
+        **config["cookie_kwargs"],
     )
 
 
@@ -71,25 +77,17 @@ def clear_auth_cookies(response):
             cookie_name,
             "",
             max_age=0,
-            httponly=True,
-            secure=config["secure"],
-            samesite=config["samesite"],
-            path=config["path"],
+            **config["cookie_kwargs"],
         )
 
 
 def get_refresh_token(request):
     """Get refresh token from cookie, falling back to request body."""
     cookie_name = getattr(settings, "JWT_REFRESH_COOKIE", "karrio_refresh_token")
-    refresh_token = (
-        request.COOKIES.get(cookie_name)
-        or request.data.get("refresh")
-    )
+    refresh_token = request.COOKIES.get(cookie_name) or request.data.get("refresh")
 
     if not refresh_token:
-        raise exceptions.ValidationError(
-            {"refresh": _("Refresh token is required.")}
-        )
+        raise exceptions.ValidationError({"refresh": _("Refresh token is required.")})
 
     return refresh_token
 
@@ -107,6 +105,7 @@ def _build_token_response(access_token, refresh_token):
 
 # --- Serializers ---
 
+
 class AccessToken(serializers.Serializer):
     access = serializers.CharField()
 
@@ -121,7 +120,7 @@ class TokenObtainPairSerializer(jwt.TokenObtainPairSerializer):
         token = super().get_token(user)
 
         # Set is_verified to False if the user has Two Factor enabled and confirmed
-        token["is_verified"] = False if default_device(user) else True
+        token["is_verified"] = not default_device(user)
 
         return token
 
@@ -145,13 +144,17 @@ class TokenObtainPairSerializer(jwt.TokenObtainPairSerializer):
 
 class TokenRefreshSerializer(jwt.TokenRefreshSerializer):
     def validate(self, attrs: dict):
+        from rest_framework_simplejwt.exceptions import TokenError
+
         refresh_token = attrs.get("refresh")
         if not refresh_token:
-            raise exceptions.ValidationError(
-                {"refresh": _("Refresh token is required.")}
-            )
+            raise exceptions.ValidationError({"refresh": _("Refresh token is required.")})
 
-        refresh = jwt.RefreshToken(refresh_token)
+        try:
+            refresh = jwt.RefreshToken(refresh_token)
+        except TokenError as e:
+            # Blacklisted / expired / malformed → 401, not 500.
+            raise exceptions.AuthenticationFailed(str(e), code="token_not_valid") from e
 
         if not refresh["is_verified"]:
             raise exceptions.AuthenticationFailed(
@@ -163,13 +166,9 @@ class TokenRefreshSerializer(jwt.TokenRefreshSerializer):
 
         if jwt.api_settings.ROTATE_REFRESH_TOKENS:
             if jwt.api_settings.BLACKLIST_AFTER_ROTATION:
-                try:
+                with suppress(AttributeError):
                     # Attempt to blacklist the given refresh token
                     refresh.blacklist()
-                except AttributeError:
-                    # If blacklist app not installed, `blacklist` method will
-                    # not be present
-                    pass
 
             refresh.set_jti()
             refresh.set_exp()
@@ -190,9 +189,7 @@ class VerifiedTokenObtainPairSerializer(jwt.TokenRefreshSerializer):
     def validate(self, attrs):
         refresh_token = attrs.get("refresh")
         if not refresh_token:
-            raise exceptions.ValidationError(
-                {"refresh": _("Refresh token is required.")}
-            )
+            raise exceptions.ValidationError({"refresh": _("Refresh token is required.")})
 
         refresh = self.token_class(refresh_token)
         user = User.objects.get(id=refresh["user_id"])
@@ -202,13 +199,9 @@ class VerifiedTokenObtainPairSerializer(jwt.TokenRefreshSerializer):
 
         if jwt.api_settings.ROTATE_REFRESH_TOKENS:
             if jwt.api_settings.BLACKLIST_AFTER_ROTATION:
-                try:
+                with suppress(AttributeError):
                     # Attempt to blacklist the given refresh token
                     refresh.blacklist()
-                except AttributeError:
-                    # If blacklist app not installed, `blacklist` method will
-                    # not be present
-                    pass
 
             refresh.set_jti()
             refresh.set_exp()
@@ -229,12 +222,11 @@ class VerifiedTokenObtainPairSerializer(jwt.TokenRefreshSerializer):
         if device.verify_token(otp_token):
             return True
 
-        raise exceptions.ValidationError(
-            {"otp_token": _("Invalid or Expired OTP token")}, code="otp_invalid"
-        )
+        raise exceptions.ValidationError({"otp_token": _("Invalid or Expired OTP token")}, code="otp_invalid")
 
 
 # --- Views ---
+
 
 class TokenObtainPair(jwt_views.TokenObtainPairView):
     serializer_class = TokenObtainPairSerializer
@@ -287,7 +279,6 @@ class TokenRefresh(jwt_views.TokenRefreshView):
 
 
 class TokenVerify(jwt_views.TokenVerifyView):
-
     @openapi.extend_schema(
         auth=[],
         tags=["Auth"],
@@ -317,10 +308,12 @@ class VerifiedTokenPair(jwt_views.TokenVerifyView):
     def post(self, *args, **kwargs):
         refresh_token = get_refresh_token(self.request)
 
-        serializer = self.get_serializer(data={
-            "refresh": refresh_token,
-            "otp_token": self.request.data.get("otp_token"),
-        })
+        serializer = self.get_serializer(
+            data={
+                "refresh": refresh_token,
+                "otp_token": self.request.data.get("otp_token"),
+            }
+        )
         serializer.is_valid(raise_exception=True)
 
         data = serializer.validated_data
@@ -336,6 +329,7 @@ class VerifiedTokenPair(jwt_views.TokenVerifyView):
 
 class LogoutView(jwt_views.TokenVerifyView):
     """Logout view that clears HTTP-only auth cookies."""
+
     permission_classes = [AllowAny]
 
     @openapi.extend_schema(
@@ -346,7 +340,20 @@ class LogoutView(jwt_views.TokenVerifyView):
         description="Clear authentication cookies and logout the user. Accessible without authentication.",
         responses={200: openapi.OpenApiTypes.OBJECT},
     )
-    def post(self, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
+        # Blacklist the refresh token server-side so a stale cookie or replay
+        # cannot mint new access tokens. Accept token from body (API clients)
+        # or cookie (browser). Fail open on token errors — logout should always
+        # succeed from the user's perspective.
+        from rest_framework_simplejwt.exceptions import TokenError
+        from rest_framework_simplejwt.tokens import RefreshToken
+
+        refresh_cookie = getattr(settings, "JWT_REFRESH_COOKIE", "karrio_refresh_token")
+        raw = (request.data.get("refresh") if hasattr(request, "data") else None) or request.COOKIES.get(refresh_cookie)
+        if raw:
+            with suppress(TokenError, Exception):
+                RefreshToken(raw).blacklist()
+
         response = Response(
             {"detail": "Successfully logged out."},
             status=status.HTTP_200_OK,

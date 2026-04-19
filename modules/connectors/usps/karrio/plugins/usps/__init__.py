@@ -3,7 +3,6 @@ import karrio.mappers.usps as mappers
 import karrio.providers.usps.units as units
 import karrio.providers.usps.utils as utils
 
-
 METADATA = metadata.PluginMetadata(
     status="production-ready",
     id="usps",

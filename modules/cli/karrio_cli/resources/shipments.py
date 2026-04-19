@@ -1,41 +1,36 @@
-import typer
-import karrio_cli.common.utils as utils
-import typing
 import datetime
+
+import typer
+
+import karrio_cli.common.utils as utils
 
 app = typer.Typer()
 
 
 @app.command("list")
 def list_shipments(
-    address: typing.Optional[str] = None,
-    carrier_name: typing.Optional[str] = None,
-    created_after: typing.Optional[datetime.datetime] = None,
-    created_before: typing.Optional[datetime.datetime] = None,
-    has_manifest: typing.Optional[bool] = None,
-    has_tracker: typing.Optional[bool] = None,
-    id: typing.Optional[str] = None,
-    keyword: typing.Optional[str] = None,
-    meta_key: typing.Optional[str] = None,
-    meta_value: typing.Optional[str] = None,
-    metadata_key: typing.Optional[str] = None,
-    metadata_value: typing.Optional[str] = None,
-    option_key: typing.Optional[str] = None,
-    option_value: typing.Optional[str] = None,
-    reference: typing.Optional[str] = None,
-    service: typing.Optional[str] = None,
-    status: typing.Optional[str] = None,
-    tracking_number: typing.Optional[str] = None,
+    address: str | None = None,
+    carrier_name: str | None = None,
+    created_after: datetime.datetime | None = None,
+    created_before: datetime.datetime | None = None,
+    has_manifest: bool | None = None,
+    has_tracker: bool | None = None,
+    id: str | None = None,
+    keyword: str | None = None,
+    meta_key: str | None = None,
+    meta_value: str | None = None,
+    metadata_key: str | None = None,
+    metadata_value: str | None = None,
+    option_key: str | None = None,
+    option_value: str | None = None,
+    reference: str | None = None,
+    service: str | None = None,
+    status: str | None = None,
+    tracking_number: str | None = None,
     limit: int = typer.Option(20, help="Number of results to return per page"),
-    offset: int = typer.Option(
-        0, help="The initial index from which to return the results"
-    ),
-    pretty: bool = typer.Option(
-        False, "--pretty", "-p", help="Pretty print the output"
-    ),
-    line_numbers: bool = typer.Option(
-        False, "--line-numbers", "-n", help="Show line numbers in pretty print"
-    ),
+    offset: int = typer.Option(0, help="The initial index from which to return the results"),
+    pretty: bool = typer.Option(False, "--pretty", "-p", help="Pretty print the output"),
+    line_numbers: bool = typer.Option(False, "--line-numbers", "-n", help="Show line numbers in pretty print"),
 ):
     """
     List all shipments with optional filters and pagination.
@@ -77,20 +72,14 @@ def list_shipments(
     # Remove None values from params
     params = {k: v for k, v in params.items() if v is not None}
 
-    utils.make_get_request(
-        "v1/shipments", params=params, pretty_print=pretty, line_numbers=line_numbers
-    )
+    utils.make_get_request("v1/shipments", params=params, pretty_print=pretty, line_numbers=line_numbers)
 
 
 @app.command("retrieve")
 def retrieve_shipment(
     shipment_id: str,
-    pretty: bool = typer.Option(
-        False, "--pretty", "-p", help="Pretty print the output"
-    ),
-    line_numbers: bool = typer.Option(
-        False, "--line-numbers", "-n", help="Show line numbers in pretty print"
-    ),
+    pretty: bool = typer.Option(False, "--pretty", "-p", help="Pretty print the output"),
+    line_numbers: bool = typer.Option(False, "--line-numbers", "-n", help="Show line numbers in pretty print"),
 ):
     """
     Retrieve a shipment by ID.
@@ -100,9 +89,7 @@ def retrieve_shipment(
     kcli shipments retrieve shp_123456789 | jq '{id, status, carrier: .carrier_name, tracking: .tracking_number, created: .created_at}'
     ```
     """
-    utils.make_get_request(
-        f"v1/shipments/{shipment_id}", pretty_print=pretty, line_numbers=line_numbers
-    )
+    utils.make_get_request(f"v1/shipments/{shipment_id}", pretty_print=pretty, line_numbers=line_numbers)
 
 
 @app.command("buy-label")
@@ -110,18 +97,14 @@ def buy_label(
     shipment_id: str,
     selected_rate_id: str = typer.Option(..., help="The ID of the selected rate"),
     label_type: str = typer.Option("PDF", help="The type of label to generate"),
-    property: typing.List[str] = typer.Option(
+    property: list[str] = typer.Option(
         [],
         "--property",
         "-d",
         help="Set nested properties (e.g. -d payment[paid_by]=sender)",
     ),
-    pretty: bool = typer.Option(
-        False, "--pretty", "-p", help="Pretty print the output"
-    ),
-    line_numbers: bool = typer.Option(
-        False, "--line-numbers", "-n", help="Show line numbers in pretty print"
-    ),
+    pretty: bool = typer.Option(False, "--pretty", "-p", help="Pretty print the output"),
+    line_numbers: bool = typer.Option(False, "--line-numbers", "-n", help="Show line numbers in pretty print"),
 ):
     """
     Purchase a label for a shipment.
@@ -160,12 +143,8 @@ def buy_label(
 @app.command("cancel")
 def cancel_shipment(
     shipment_id: str,
-    pretty: bool = typer.Option(
-        False, "--pretty", "-p", help="Pretty print the output"
-    ),
-    line_numbers: bool = typer.Option(
-        False, "--line-numbers", "-n", help="Show line numbers in pretty print"
-    ),
+    pretty: bool = typer.Option(False, "--pretty", "-p", help="Pretty print the output"),
+    line_numbers: bool = typer.Option(False, "--line-numbers", "-n", help="Show line numbers in pretty print"),
 ):
     """
     Cancel a shipment.
@@ -186,12 +165,8 @@ def cancel_shipment(
 @app.command("fetch-rates")
 def fetch_rates(
     shipment_id: str,
-    pretty: bool = typer.Option(
-        False, "--pretty", "-p", help="Pretty print the output"
-    ),
-    line_numbers: bool = typer.Option(
-        False, "--line-numbers", "-n", help="Show line numbers in pretty print"
-    ),
+    pretty: bool = typer.Option(False, "--pretty", "-p", help="Pretty print the output"),
+    line_numbers: bool = typer.Option(False, "--line-numbers", "-n", help="Show line numbers in pretty print"),
 ):
     """
     Fetch rates for a shipment.

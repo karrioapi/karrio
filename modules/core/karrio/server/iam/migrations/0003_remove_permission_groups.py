@@ -80,7 +80,6 @@ def reverse_migration(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("iam", "0002_setup_carrier_permission_groups"),
         ("user", "0004_group"),

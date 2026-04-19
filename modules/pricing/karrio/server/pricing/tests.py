@@ -9,14 +9,15 @@ These tests cover:
 
 import json
 import logging
-from unittest.mock import patch, ANY
-from django.test import TestCase
-from django.urls import reverse
-from rest_framework import status
-from karrio.core.models import RateDetails, ChargeDetails
-from karrio.server.core.tests import APITestCase
+from unittest.mock import ANY, patch
+
 import karrio.server.pricing.models as models
 import karrio.server.pricing.signals as signals
+from django.test import TestCase
+from django.urls import reverse
+from karrio.core.models import ChargeDetails, RateDetails
+from karrio.server.core.tests import APITestCase
+from rest_framework import status
 
 logging.disable(logging.CRITICAL)
 
@@ -208,17 +209,11 @@ class TestMarkupFilters(TestCase):
         result = markup.apply_charge(response)
 
         # Rate with special connection should have markup
-        special_result = next(
-            r for r in result.rates
-            if r.meta.get("carrier_connection_id") == "car_special_123"
-        )
+        special_result = next(r for r in result.rates if r.meta.get("carrier_connection_id") == "car_special_123")
         self.assertEqual(special_result.total_charge, 28.0)  # 25 + 3
 
         # Rate with regular connection should NOT have markup
-        regular_result = next(
-            r for r in result.rates
-            if r.meta.get("carrier_connection_id") == "car_regular_456"
-        )
+        regular_result = next(r for r in result.rates if r.meta.get("carrier_connection_id") == "car_regular_456")
         self.assertEqual(regular_result.total_charge, 25.0)  # unchanged
 
     def test_empty_filters_apply_to_all(self):
@@ -271,6 +266,107 @@ class TestMarkupFilters(TestCase):
                 self.assertEqual(rate.total_charge, 13.0)  # 12 + 1
 
 
+"""Pricing module tests."""
+
+# ruff: noqa: S106
+
+
+class TestPlanMarginEmbedding(TestCase):
+    """Invisible plan markups (is_visible=False) embed their margin INTO the
+    existing 'Base Charge' line and update rate.base_charge, rather than
+    appending as a separate line. Keeps the customer breakdown consistent
+    (no hidden delta between total and sum of visible items) and matches
+    the pricing model documented in PRDs/RATE_SHEET_STABILITY_ASSESSMENT."""
+
+    def _rate(self, **overrides):
+        from karrio.server.core import datatypes
+
+        return datatypes.Rate(
+            **{
+                "id": "rate_1",
+                "carrier_id": "dhl_parcel_de",
+                "carrier_name": "dhl_parcel_de",
+                "service": "dhl_parcel_de_kleinpaket",
+                "total_charge": 3.43,
+                "currency": "EUR",
+                "extra_charges": [
+                    ChargeDetails(name="Base Charge", amount=3.39, currency="EUR"),
+                    ChargeDetails(name="Energy Surcharge", amount=0.04, currency="EUR"),
+                ],
+                "meta": {},
+                **overrides,
+            }
+        )
+
+    def test_invisible_markup_embeds_into_base_charge(self):
+        from karrio.server.core import datatypes
+
+        markup = models.Markup(
+            amount=0.69,
+            markup_type="AMOUNT",
+            name="Shipping Start - Platform Fee",
+            is_visible=False,
+            active=True,
+            meta={"plan": "start"},
+        )
+        markup.save()
+
+        result = markup.apply_charge(datatypes.RateResponse(rates=[self._rate()], messages=[]))
+        out = result.rates[0]
+
+        # Total = prior total + margin (3.43 + 0.69 = 4.12)
+        self.assertAlmostEqual(float(out.total_charge), 4.12, places=2)
+        # Breakdown still shows Base Charge + Energy Surcharge; NO "Platform Fee" row.
+        # The margin is embedded into the Base Charge amount (3.39 + 0.69 = 4.08).
+        names = [c.name for c in out.extra_charges]
+        self.assertEqual(names, ["Base Charge", "Energy Surcharge"])
+        amounts = {c.name: float(c.amount) for c in out.extra_charges}
+        self.assertAlmostEqual(amounts["Base Charge"], 4.08, places=2)
+        self.assertAlmostEqual(amounts["Energy Surcharge"], 0.04, places=2)
+
+    def test_visible_markup_appends_as_separate_line(self):
+        from karrio.server.core import datatypes
+
+        markup = models.Markup(
+            amount=0.50,
+            markup_type="AMOUNT",
+            name="Coverage - 100",
+            is_visible=True,
+            active=True,
+        )
+        markup.save()
+        result = markup.apply_charge(datatypes.RateResponse(rates=[self._rate(total_charge=5.04)], messages=[]))
+        out = result.rates[0]
+        names = [c.name for c in out.extra_charges]
+        self.assertEqual(names, ["Base Charge", "Energy Surcharge", "Coverage - 100"])
+        self.assertAlmostEqual(float(out.total_charge), 5.54, places=2)
+
+    def test_excluded_markup_id_skips_entirely(self):
+        from karrio.server.core import datatypes
+
+        markup = models.Markup(
+            amount=0.69,
+            markup_type="AMOUNT",
+            name="Shipping Start - Platform Fee",
+            is_visible=False,
+            active=True,
+            meta={"plan": "start"},
+        )
+        markup.save()
+
+        result = markup.apply_charge(
+            datatypes.RateResponse(
+                rates=[self._rate(meta={"excluded_markup_ids": [markup.id]})],
+                messages=[],
+            )
+        )
+        out = result.rates[0]
+        # No change — markup was excluded for this specific rate.
+        self.assertAlmostEqual(float(out.total_charge), 3.43, places=2)
+        amounts = {c.name: float(c.amount) for c in out.extra_charges}
+        self.assertAlmostEqual(amounts["Base Charge"], 3.39, places=2)
+
+
 class TestFeeCapture(TestCase):
     """Test fee capture after shipment creation."""
 
@@ -289,8 +385,8 @@ class TestFeeCapture(TestCase):
         When a shipment is saved with status='purchased' and a selected_rate,
         the fee capture signal should automatically capture fees.
         """
-        from django.contrib.auth import get_user_model
         import karrio.server.manager.models as manager
+        from django.contrib.auth import get_user_model
 
         User = get_user_model()
         user = User.objects.create_user(
@@ -343,8 +439,8 @@ class TestFeeCapture(TestCase):
         Create shipment with status='created' (so signal won't fire),
         then manually call capture function.
         """
-        from django.contrib.auth import get_user_model
         import karrio.server.manager.models as manager
+        from django.contrib.auth import get_user_model
 
         User = get_user_model()
         user = User.objects.create_user(
@@ -395,8 +491,8 @@ class TestFeeCapture(TestCase):
 
         Signal should check if fees exist before capturing.
         """
-        from django.contrib.auth import get_user_model
         import karrio.server.manager.models as manager
+        from django.contrib.auth import get_user_model
 
         User = get_user_model()
         user = User.objects.create_user(

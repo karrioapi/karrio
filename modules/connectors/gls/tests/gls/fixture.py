@@ -1,8 +1,9 @@
 """Test fixtures for GLS Group integration."""
 
-import karrio.sdk as karrio
-import karrio.lib as lib
 import datetime
+
+import karrio.lib as lib
+import karrio.sdk as karrio
 from karrio.core.models import Address
 
 # Pre-populate OAuth cache to avoid real API calls during tests

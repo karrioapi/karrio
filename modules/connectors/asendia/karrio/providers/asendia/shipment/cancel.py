@@ -1,8 +1,7 @@
 """Karrio Asendia shipment cancellation API implementation."""
 
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.asendia.error as error
 import karrio.providers.asendia.utils as provider_utils
 
@@ -10,7 +9,7 @@ import karrio.providers.asendia.utils as provider_utils
 def parse_shipment_cancel_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.Optional[models.ConfirmationDetails], typing.List[models.Message]]:
+) -> tuple[models.ConfirmationDetails | None, list[models.Message]]:
     """Parse shipment cancellation response from Asendia API."""
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)

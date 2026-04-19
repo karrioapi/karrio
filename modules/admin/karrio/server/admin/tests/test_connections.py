@@ -1,9 +1,7 @@
-from unittest.mock import ANY
-from django.contrib.auth import get_user_model
-from rest_framework.test import APIClient
-from karrio.server.admin.tests.base import AdminGraphTestCase
-from karrio.server.user.models import Token
 import karrio.server.providers.models as providers
+from django.contrib.auth import get_user_model
+from karrio.server.admin.tests.base import AdminGraphTestCase
+
 
 class TestAdminCarrierConnections(AdminGraphTestCase):
     """Tests for Admin Carrier Connection queries and mutations.
@@ -26,13 +24,22 @@ class TestAdminCarrierConnections(AdminGraphTestCase):
             created_by=self.user,
         )
 
-        # Create a system connection (SystemConnection)
+        # Create a system connection (SystemConnection) with a realistic
+        # admin-set config so we can assert the config resolver exposes it
+        # on the admin graph (it's stripped on the tenant graph).
         self.system_connection = providers.SystemConnection.objects.create(
             carrier_code="ups",
             carrier_id="ups_system_account",
             credentials={"api_key": "system_key"},
             test_mode=False,
             active=True,
+            config={
+                "label_type": "PDF",
+                "default_billing_number": "11111111110000",
+                "service_billing_numbers": [
+                    {"id": "sbn_a", "service": "dhl_parcel_de_paket", "billing_number": "22222222220101"},
+                ],
+            },
         )
 
     def test_query_system_carrier_connections(self):
@@ -82,6 +89,27 @@ class TestAdminCarrierConnections(AdminGraphTestCase):
         self.assertEqual(connection["carrier_id"], "ups_system_account")
         self.assertEqual(connection["carrier_name"], "ups")
 
+    def test_admin_graph_returns_system_connection_config(self):
+        """Admin graph must expose the raw SystemConnection config so staff can
+        manage billing numbers. (The tenant graph strips it — see base types.)"""
+        response = self.query(
+            """
+            query q($id: String!) {
+              system_carrier_connection(id: $id) { config credentials }
+            }
+            """,
+            operation_name="q",
+            variables={"id": self.system_connection.id},
+        )
+        self.assertResponseNoErrors(response)
+        conn = response.data["data"]["system_carrier_connection"]
+        self.assertIsNotNone(conn["config"])
+        self.assertEqual(conn["config"]["default_billing_number"], "11111111110000")
+        self.assertEqual(
+            conn["config"]["service_billing_numbers"][0]["billing_number"],
+            "22222222220101",
+        )
+
     def test_create_system_carrier_connection(self):
         """Test creating a system carrier connection through admin API."""
         response = self.query(
@@ -112,9 +140,7 @@ class TestAdminCarrierConnections(AdminGraphTestCase):
         )
 
         self.assertResponseNoErrors(response)
-        connection = response.data["data"]["create_system_carrier_connection"][
-            "connection"
-        ]
+        connection = response.data["data"]["create_system_carrier_connection"]["connection"]
         self.assertEqual(connection["carrier_id"], "usps_system_account")
         self.assertEqual(connection["carrier_name"], "usps")
         self.assertTrue(connection["active"])
@@ -142,9 +168,7 @@ class TestAdminCarrierConnections(AdminGraphTestCase):
         )
 
         self.assertResponseNoErrors(response)
-        connection = response.data["data"]["update_system_carrier_connection"][
-            "connection"
-        ]
+        connection = response.data["data"]["update_system_carrier_connection"]["connection"]
         self.assertEqual(connection["carrier_id"], "ups_system_updated")
 
     def test_delete_system_connection(self):
@@ -175,9 +199,8 @@ class TestAdminCarrierConnections(AdminGraphTestCase):
             response.data["data"]["delete_system_carrier_connection"]["id"],
             to_delete.id,
         )
-        self.assertFalse(
-            providers.SystemConnection.objects.filter(id=to_delete.id).exists()
-        )
+        self.assertFalse(providers.SystemConnection.objects.filter(id=to_delete.id).exists())
+
 
 class TestAdminBrokeredConnections(AdminGraphTestCase):
     """Tests for BrokeredConnection edge cases.
@@ -223,9 +246,7 @@ class TestAdminBrokeredConnections(AdminGraphTestCase):
         )
 
         # The brokered connection should inherit system credentials
-        self.assertEqual(
-            brokered.system_connection.credentials.get("api_key"), "system_key"
-        )
+        self.assertEqual(brokered.system_connection.credentials.get("api_key"), "system_key")
 
     def test_brokered_connection_with_config_overrides(self):
         """Test brokered connection config overrides merge with system config."""
@@ -239,12 +260,8 @@ class TestAdminBrokeredConnections(AdminGraphTestCase):
             created_by=self.user,
         )
 
-        self.assertEqual(
-            brokered.config_overrides.get("account_number"), "override_account"
-        )
-        self.assertEqual(
-            brokered.config_overrides.get("meter_number"), "override_meter"
-        )
+        self.assertEqual(brokered.config_overrides.get("account_number"), "override_account")
+        self.assertEqual(brokered.config_overrides.get("meter_number"), "override_meter")
 
     def test_brokered_connection_deletion_preserves_system(self):
         """Test that deleting brokered connection does not delete system connection."""
@@ -259,13 +276,9 @@ class TestAdminBrokeredConnections(AdminGraphTestCase):
         brokered.delete()
 
         # Brokered connection should be deleted
-        self.assertFalse(
-            providers.BrokeredConnection.objects.filter(id=brokered_id).exists()
-        )
+        self.assertFalse(providers.BrokeredConnection.objects.filter(id=brokered_id).exists())
         # System connection should still exist
-        self.assertTrue(
-            providers.SystemConnection.objects.filter(id=system_id).exists()
-        )
+        self.assertTrue(providers.SystemConnection.objects.filter(id=system_id).exists())
 
     def test_system_connection_deletion_cascades_to_brokered(self):
         """Test that deleting system connection cascades to brokered connections."""
@@ -279,16 +292,12 @@ class TestAdminBrokeredConnections(AdminGraphTestCase):
         self.system_connection.delete()
 
         # Brokered connection should also be deleted (cascade)
-        self.assertFalse(
-            providers.BrokeredConnection.objects.filter(id=brokered_id).exists()
-        )
+        self.assertFalse(providers.BrokeredConnection.objects.filter(id=brokered_id).exists())
 
     def test_multiple_users_can_have_brokered_connections_to_same_system(self):
         """Test that multiple users can create brokered connections to same system."""
         # Create another user
-        other_user = get_user_model().objects.create_user(
-            email="other@example.com", password="test"
-        )
+        other_user = get_user_model().objects.create_user(email="other@example.com", password="test")
 
         # Both users create brokered connections to same system
         brokered1 = providers.BrokeredConnection.objects.create(
@@ -306,12 +315,8 @@ class TestAdminBrokeredConnections(AdminGraphTestCase):
 
         # Both should exist with different overrides
         self.assertNotEqual(brokered1.id, brokered2.id)
-        self.assertEqual(
-            brokered1.config_overrides.get("account_number"), "user1_account"
-        )
-        self.assertEqual(
-            brokered2.config_overrides.get("account_number"), "user2_account"
-        )
+        self.assertEqual(brokered1.config_overrides.get("account_number"), "user1_account")
+        self.assertEqual(brokered2.config_overrides.get("account_number"), "user2_account")
 
     def test_brokered_connection_inherits_test_mode(self):
         """Test that brokered connection inherits test_mode from system connection."""
@@ -328,5 +333,3 @@ class TestAdminBrokeredConnections(AdminGraphTestCase):
         # test_mode is inherited from system connection
         self.assertEqual(brokered.test_mode, self.system_connection.test_mode)
         self.assertFalse(brokered.test_mode)
-
-

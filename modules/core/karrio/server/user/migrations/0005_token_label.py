@@ -13,9 +13,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="token",
             name="label",
-            field=models.CharField(
-                default=django.utils.timezone.now, max_length=50, verbose_name="label"
-            ),
+            field=models.CharField(default=django.utils.timezone.now, max_length=50, verbose_name="label"),
             preserve_default=False,
         ),
     ]

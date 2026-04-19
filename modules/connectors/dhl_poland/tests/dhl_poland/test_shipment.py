@@ -1,9 +1,11 @@
 import time
 import unittest
-from unittest.mock import patch, ANY
+from unittest.mock import ANY, patch
+
 import karrio.sdk as karrio
+from karrio.core.models import ShipmentCancelRequest, ShipmentRequest
 from karrio.core.utils import DP
-from karrio.core.models import ShipmentRequest, ShipmentCancelRequest
+
 from .fixture import gateway
 
 
@@ -11,9 +13,7 @@ class TestDHLPolandShipment(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.ShipmentRequest = ShipmentRequest(**shipment_data)
-        self.InternationalShipmentRequest = ShipmentRequest(
-            **interantional_shipment_data
-        )
+        self.InternationalShipmentRequest = ShipmentRequest(**interantional_shipment_data)
         self.VoidShipmentRequest = ShipmentCancelRequest(**void_shipment_data)
 
     def test_create_shipment_request(self):
@@ -22,16 +22,12 @@ class TestDHLPolandShipment(unittest.TestCase):
         self.assertEqual(request.serialize(), ShipmentRequestXML)
 
     def test_create_international_shipment_request(self):
-        request = gateway.mapper.create_shipment_request(
-            self.InternationalShipmentRequest
-        )
+        request = gateway.mapper.create_shipment_request(self.InternationalShipmentRequest)
 
         self.assertEqual(request.serialize(), InternationalShipmentRequestXML)
 
     def test_create_void_shipment_request(self):
-        request = gateway.mapper.create_cancel_shipment_request(
-            self.VoidShipmentRequest
-        )
+        request = gateway.mapper.create_cancel_shipment_request(self.VoidShipmentRequest)
 
         self.assertEqual(request.serialize(), VoidShipmentRequestXML)
 
@@ -66,22 +62,16 @@ class TestDHLPolandShipment(unittest.TestCase):
     def test_parse_shipment_response(self):
         with patch("karrio.mappers.dhl_poland.proxy.lib.request") as mock:
             mock.return_value = ShipmentResponseXML
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
 
             self.assertListEqual(DP.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_parse_void_shipment_response(self):
         with patch("karrio.mappers.dhl_poland.proxy.lib.request") as mock:
             mock.return_value = VoidShipmentResponseXML
-            parsed_response = (
-                karrio.Shipment.cancel(self.VoidShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.cancel(self.VoidShipmentRequest).from_(gateway).parse()
 
-            self.assertListEqual(
-                DP.to_dict(parsed_response), ParsedVoidShipmentResponse
-            )
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedVoidShipmentResponse)
 
 
 if __name__ == "__main__":

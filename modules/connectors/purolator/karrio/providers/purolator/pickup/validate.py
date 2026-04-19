@@ -1,26 +1,24 @@
 from functools import partial
-from typing import Union
+
+import karrio.lib as lib
+from karrio.core.models import PickupRequest, PickupUpdateRequest
+from karrio.core.units import Packages, Phone
+from karrio.core.utils import Serializable, create_envelope
+from karrio.providers.purolator.units import PackagePresets
+from karrio.providers.purolator.utils import Settings, standard_request_serializer
 from karrio.schemas.purolator.pickup_service_1_2_1 import (
-    ValidatePickUpRequest,
-    RequestContext,
     Address,
+    NotificationEmails,
     PhoneNumber,
     PickupInstruction,
+    RequestContext,
+    ValidatePickUpRequest,
     Weight,
     WeightUnit,
-    NotificationEmails,
 )
-import karrio.lib as lib
-from karrio.core.units import Phone, Packages
-from karrio.core.models import PickupUpdateRequest, PickupRequest
-from karrio.core.utils import Serializable, create_envelope, Envelope, SF
-from karrio.providers.purolator.utils import Settings, standard_request_serializer
-from karrio.providers.purolator.units import PackagePresets
 
 
-def validate_pickup_request(
-    payload: Union[PickupRequest, PickupUpdateRequest], settings: Settings
-) -> Serializable:
+def validate_pickup_request(payload: PickupRequest | PickupUpdateRequest, settings: Settings) -> Serializable:
     """
     Create a serializable typed Envelope containing a ValidatePickUpRequest
 
@@ -50,9 +48,7 @@ def validate_pickup_request(
                 Date=payload.pickup_date,
                 AnyTimeAfter="".join(payload.ready_time.split(":")),
                 UntilTime="".join(payload.closing_time.split(":")),
-                TotalWeight=Weight(
-                    Value=packages.weight.LB, WeightUnit=WeightUnit.LB.value
-                ),
+                TotalWeight=Weight(Value=packages.weight.LB, WeightUnit=WeightUnit.LB.value),
                 TotalPieces=len(packages) or 1,
                 BoxesIndicator=None,
                 PickUpLocation=payload.package_location,

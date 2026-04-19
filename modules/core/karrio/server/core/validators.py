@@ -1,11 +1,11 @@
 import re
-import phonenumbers
 from datetime import datetime
-from karrio.server.core.logging import logger
 
-import karrio.lib as lib
 import karrio.core.units as units
+import karrio.lib as lib
 import karrio.server.serializers as serializers
+import phonenumbers
+from karrio.server.core.logging import logger
 
 DIMENSIONS = ["width", "height", "length"]
 
@@ -17,20 +17,12 @@ def dimensions_required_together(value):
 
     if any_dimension_specified and has_any_dimension_undefined:
         raise serializers.ValidationError(
-            {
-                "dimensions": "When one dimension is specified, all must be specified with a dimension_unit"
-            }
+            {"dimensions": "When one dimension is specified, all must be specified with a dimension_unit"}
         )
 
-    if (
-        any_dimension_specified
-        and not has_any_dimension_undefined
-        and dimension_unit_is_undefined
-    ):
+    if any_dimension_specified and not has_any_dimension_undefined and dimension_unit_is_undefined:
         raise serializers.ValidationError(
-            {
-                "dimension_unit": "dimension_unit is required when dimensions are specified"
-            }
+            {"dimension_unit": "dimension_unit is required when dimensions are specified"}
         )
 
 
@@ -43,11 +35,11 @@ class TimeFormatValidator:
     def __call__(self, value):
         try:
             datetime.strptime(value, "%H:%M")
-        except Exception:
+        except Exception as err:
             raise serializers.ValidationError(
                 "The time format must match HH:HM",
                 code="invalid",
-            )
+            ) from err
 
 
 class DateFormatValidator:
@@ -59,11 +51,11 @@ class DateFormatValidator:
     def __call__(self, value):
         try:
             datetime.strptime(value, "%Y-%m-%d")
-        except Exception:
+        except Exception as err:
             raise serializers.ValidationError(
                 "The date format must match YYYY-MM-DD",
                 code="invalid",
-            )
+            ) from err
 
 
 class DateTimeFormatValidator:
@@ -75,11 +67,11 @@ class DateTimeFormatValidator:
     def __call__(self, value):
         try:
             datetime.strptime(value, "%Y-%m-%d %H:%M")
-        except Exception:
+        except Exception as err:
             raise serializers.ValidationError(
                 "The datetime format must match YYYY-MM-DD HH:HM",
                 code="invalid",
-            )
+            ) from err
 
 
 def valid_time_format(prop: str):
@@ -119,7 +111,7 @@ class Base64Validator:
             raise serializers.ValidationError(
                 error,
                 code="invalid",
-            )
+            ) from e
 
         if error is not None:
             raise serializers.ValidationError(error, code="invalid")
@@ -136,9 +128,7 @@ class OptionDefaultSerializer(serializers.Serializer):
         if data:
             # Get existing options from data and instance
             options = {
-                **(
-                    getattr(instance, "options", None) or {}
-                ),  # Start with instance options
+                **(getattr(instance, "options", None) or {}),  # Start with instance options
                 **(data.get("options") or {}),  # Override with new options
             }
 
@@ -148,21 +138,15 @@ class OptionDefaultSerializer(serializers.Serializer):
 
             if not shipping_date:
                 shipping_date = lib.fdatetime(
-                    lib.to_next_business_datetime(
-                        lib.to_date(shipment_date) or datetime.now()
-                    ),
+                    lib.to_next_business_datetime(lib.to_date(shipment_date) or datetime.now()),
                     output_format="%Y-%m-%dT%H:%M",
                 )
 
             if not shipment_date:
-                shipment_date = lib.fdate(
-                    shipping_date, current_format="%Y-%m-%dT%H:%M"
-                )
+                shipment_date = lib.fdate(shipping_date, current_format="%Y-%m-%dT%H:%M")
 
             # Update only the date fields in options
-            options.update(
-                {"shipping_date": shipping_date, "shipment_date": shipment_date}
-            )
+            options.update({"shipping_date": shipping_date, "shipment_date": shipment_date})
 
             # Update the data with merged options
             kwargs["data"]["options"] = options
@@ -183,11 +167,7 @@ class PresetSerializer(serializers.Serializer):
             # Find the preset across all carriers
             preset = lib.identity(
                 next(
-                    (
-                        presets[preset_name]
-                        for carrier_id, presets in package_presets.items()
-                        if preset_name in presets
-                    ),
+                    (presets[preset_name] for carrier_id, presets in package_presets.items() if preset_name in presets),
                     None,
                 )
                 or {}
@@ -199,8 +179,7 @@ class PresetSerializer(serializers.Serializer):
                     "width": data.get("width") or preset.get("width"),
                     "length": data.get("length") or preset.get("length"),
                     "height": data.get("height") or preset.get("height"),
-                    "dimension_unit": data.get("dimension_unit")
-                    or preset.get("dimension_unit"),
+                    "dimension_unit": data.get("dimension_unit") or preset.get("dimension_unit"),
                 }
             )
 
@@ -306,21 +285,15 @@ class AugmentedAddressSerializer(serializers.Serializer):
             country_code = data["country_code"]
 
             if country_code == units.Country.CA.name:
-                formatted = "".join(
-                    [c for c in postal_code.split() if c not in ["-", "_"]]
-                ).upper()
+                formatted = "".join([c for c in postal_code.split() if c not in ["-", "_"]]).upper()
                 if not re.match(r"^([A-Za-z]\d[A-Za-z][-]?\d[A-Za-z]\d)", formatted):
-                    raise serializers.ValidationError(
-                        {"postal_code": "The Canadian postal code must match Z9Z9Z9"}
-                    )
+                    raise serializers.ValidationError({"postal_code": "The Canadian postal code must match Z9Z9Z9"})
 
             elif country_code == units.Country.US.name:
                 formatted = "".join(postal_code.split())
                 if not re.match(r"^\d{5}(-\d{4})?$", formatted):
                     raise serializers.ValidationError(
-                        {
-                            "postal_code": "The American postal code must match 12345 or 12345-6789"
-                        }
+                        {"postal_code": "The American postal code must match 12345 or 12345-6789"}
                     )
 
             else:
@@ -329,10 +302,7 @@ class AugmentedAddressSerializer(serializers.Serializer):
             data.update({**data, "postal_code": formatted})
 
         # Format and validate Phone Number
-        if all(
-            data.get(key) is not None and data.get(key) != ""
-            for key in ["country_code", "phone_number"]
-        ):
+        if all(data.get(key) is not None and data.get(key) != "" for key in ["country_code", "phone_number"]):
             phone_number = data["phone_number"]
             country_code = data["country_code"]
 
@@ -348,8 +318,6 @@ class AugmentedAddressSerializer(serializers.Serializer):
                 )
             except Exception as e:
                 logger.warning("Invalid phone number format", error=str(e))
-                raise serializers.ValidationError(
-                    {"phone_number": "Invalid phone number format"}
-                )
+                raise serializers.ValidationError({"phone_number": "Invalid phone number format"}) from e
 
         return data

@@ -5,7 +5,6 @@ import karrio.server.core.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("providers", "0095_rename_carrier_to_carrierconnection"),
     ]

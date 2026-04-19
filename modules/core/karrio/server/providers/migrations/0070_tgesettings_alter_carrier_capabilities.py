@@ -8,7 +8,6 @@ import karrio.server.core.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("providers", "0069_alter_canadapostsettings_contract_id_and_more"),
     ]
@@ -56,9 +55,7 @@ class Migration(migrations.Migration):
                     ("paperless", "paperless"),
                     ("manifest", "manifest"),
                 ],
-                default=functools.partial(
-                    karrio.server.core.models._identity, *(), **{"value": []}
-                ),
+                default=functools.partial(karrio.server.core.models._identity, *(), **{"value": []}),
                 help_text="Select the capabilities of the carrier that you want to enable",
             ),
         ),

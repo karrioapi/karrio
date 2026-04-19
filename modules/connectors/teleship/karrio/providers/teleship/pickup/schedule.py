@@ -1,18 +1,17 @@
 """Karrio Teleship pickup scheduling implementation."""
 
-import typing
-import karrio.schemas.teleship.pickup_request as teleship
-import karrio.schemas.teleship.pickup_response as pickup
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.teleship.error as error
 import karrio.providers.teleship.utils as provider_utils
+import karrio.schemas.teleship.pickup_request as teleship
+import karrio.schemas.teleship.pickup_response as pickup
 
 
 def parse_pickup_response(
     _response: lib.Deserializable[str],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.PickupDetails, typing.List[models.Message]]:
+) -> tuple[models.PickupDetails, list[models.Message]]:
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
     details = lib.to_object(pickup.PickupResponseType, response)

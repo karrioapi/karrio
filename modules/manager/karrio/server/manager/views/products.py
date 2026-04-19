@@ -11,26 +11,26 @@ Endpoints:
     PATCH  /v1/products/<pk>     - Update a product
     DELETE /v1/products/<pk>     - Delete a product
 """
+
 import logging
 
-from django.urls import path
-from rest_framework import status
-from rest_framework.request import Request
-from rest_framework.response import Response
-from rest_framework.pagination import LimitOffsetPagination
-
-from karrio.server.manager.router import router
-from karrio.server.core.views.api import GenericAPIView, APIView
-from karrio.server.manager.serializers import (
-    PaginatedResult,
-    ErrorResponse,
-    CommodityData,
-    Commodity,
-    CommoditySerializer,
-    can_mutate_commodity,
-)
 import karrio.server.manager.models as models
 import karrio.server.openapi as openapi
+from django.urls import path
+from karrio.server.core.views.api import APIView, GenericAPIView
+from karrio.server.manager.router import router
+from karrio.server.manager.serializers import (
+    Commodity,
+    CommodityData,
+    CommoditySerializer,
+    ErrorResponse,
+    PaginatedResult,
+    can_mutate_commodity,
+)
+from rest_framework import status
+from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.request import Request
+from rest_framework.response import Response
 
 logger = logging.getLogger(__name__)
 
@@ -50,9 +50,7 @@ class ProductList(GenericAPIView):
     """
 
     queryset = models.Commodity.objects
-    pagination_class = type(
-        "CustomPagination", (LimitOffsetPagination,), dict(default_limit=20)
-    )
+    pagination_class = type("CustomPagination", (LimitOffsetPagination,), dict(default_limit=20))
     serializer_class = Products
 
     @openapi.extend_schema(
@@ -87,11 +85,7 @@ class ProductList(GenericAPIView):
         # Also exclude products linked to other entities (parcels, customs)
         queryset = models.Commodity.access_by(request).filter(
             meta__label__isnull=False,  # Only templates with labels
-            **{
-                f"{prop}__isnull": True
-                for prop in models.Commodity.HIDDEN_PROPS
-                if prop != "org"
-            }
+            **{f"{prop}__isnull": True for prop in models.Commodity.HIDDEN_PROPS if prop != "org"},
         )
 
         # Apply query parameter filters
@@ -141,19 +135,16 @@ class ProductList(GenericAPIView):
         Create a new product template.
         """
         # Ensure meta.label is set for product templates
-        data = request.data.copy() if hasattr(request.data, 'copy') else dict(request.data)
+        data = request.data.copy() if hasattr(request.data, "copy") else dict(request.data)
 
         # Validate that meta.label is provided
         meta = data.get("meta", {}) or {}
         if not meta.get("label"):
             return Response(
-                {"error": "Product templates require a meta.label field"},
-                status=status.HTTP_400_BAD_REQUEST
+                {"error": "Product templates require a meta.label field"}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        product = (
-            CommoditySerializer.map(data=data, context=request).save().instance
-        )
+        product = CommoditySerializer.map(data=data, context=request).save().instance
         return Response(Commodity(product).data, status=status.HTTP_201_CREATED)
 
 
@@ -234,6 +225,4 @@ class ProductDetail(APIView):
 
 # Register routes with the router
 router.urls.append(path("products", ProductList.as_view(), name="product-list"))
-router.urls.append(
-    path("products/<str:pk>", ProductDetail.as_view(), name="product-details")
-)
+router.urls.append(path("products/<str:pk>", ProductDetail.as_view(), name="product-details"))

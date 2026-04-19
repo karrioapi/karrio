@@ -1,17 +1,18 @@
 """Karrio DPD Global error parser."""
 
 import typing
-import karrio.lib as lib
+
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.dpd_meta.utils as provider_utils
 import karrio.schemas.dpd_meta.error_response as dpd_error
 
 
 def parse_error_response(
-    response: typing.Union[dict, list, typing.Any],
+    response: dict | list | typing.Any,
     settings: provider_utils.Settings,
     **kwargs,
-) -> typing.List[models.Message]:
+) -> list[models.Message]:
     """Parse DPD META-API error response.
 
     Handles dict, list, and unexpected response formats.
@@ -48,11 +49,7 @@ def parse_error_response(
 
             error_code = error.errorCode or "ERROR"
             error_message = error.errorMessage or "Unknown error"
-            display_message = (
-                f"Error Code {error_code}: {error_message}"
-                if error.errorCode
-                else error_message
-            )
+            display_message = f"Error Code {error_code}: {error_message}" if error.errorCode else error_message
 
             errors.append(
                 models.Message(
@@ -81,11 +78,7 @@ def parse_error_response(
         elif result.get("errors") or result.get("message"):
             msg = result.get("message") or result.get("errors") or str(result)
             error_code = result.get("code") or "VALIDATION_ERROR"
-            display_message = (
-                f"Error Code {error_code}: {msg}"
-                if result.get("code")
-                else str(msg)
-            )
+            display_message = f"Error Code {error_code}: {msg}" if result.get("code") else str(msg)
 
             errors.append(
                 models.Message(

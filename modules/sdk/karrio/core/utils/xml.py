@@ -2,17 +2,18 @@
 
 import io
 import warnings
+from typing import Any, TypeVar, cast
+
 from lxml import etree, html
-from xmltodict import parse
-from typing import Any, List, TypeVar, Type, Optional, cast, Union
-from pysoap.envelope import Envelope
 from lxml.etree import _Element
+from pysoap.envelope import Envelope
+from xmltodict import parse
 
 T = TypeVar("T")
 
 
 class Element(_Element):
-    def xpath(self, *args, **kwargs) -> List["Element"]:  # type: ignore
+    def xpath(self, *args, **kwargs) -> list["Element"]:  # type: ignore
         pass
 
 
@@ -27,7 +28,7 @@ class XMLPARSER:
         return isinstance(element, _Element)
 
     @staticmethod
-    def isxmlelementtype(element_type: Type[T]):
+    def isxmlelementtype(element_type: type[T]):
         """Return True if *element_type* appears to be an GenerateDS generated Type."""
 
         return hasattr(element_type, "build") and hasattr(element_type, "export")
@@ -38,14 +39,16 @@ class XMLPARSER:
         return XMLPARSER.isxmlelementtype(xml_typed_object.__class__)
 
     @staticmethod
-    def build(element_type: Type[T], xml_node: Element = None) -> Optional[T]:
+    def build(element_type: type[T], xml_node: Element = None) -> T | None:
         warnings.warn(
-            "build is deprecated. Use to_object instead", category=DeprecationWarning
+            "build is deprecated. Use to_object instead",
+            category=DeprecationWarning,
+            stacklevel=2,
         )
         return XMLPARSER.to_object(element_type, xml_node)
 
     @staticmethod
-    def to_object(element_type: Type[T], xml_node: Element = None) -> Optional[T]:
+    def to_object(element_type: type[T], xml_node: Element = None) -> T | None:
         """Build xml element node into type class
 
         :param element_type: The xml node corresponding type (class)
@@ -63,18 +66,11 @@ class XMLPARSER:
     def find(
         tag: str,
         in_element: Element,
-        element_type: Type[Union[T, Element]] = None,
+        element_type: type[T | Element] = None,
         first: bool = None,
     ):
         nodes = [*in_element.xpath(".//*[local-name() = $name]", name=tag)]
-        children = [
-            (
-                child
-                if element_type is None
-                else XMLPARSER.to_object(element_type, child)
-            )
-            for child in nodes
-        ]
+        children = [(child if element_type is None else XMLPARSER.to_object(element_type, child)) for child in nodes]
 
         if first is True:
             return next((c for c in children), None)
@@ -82,7 +78,7 @@ class XMLPARSER:
         return children
 
     @staticmethod
-    def export(typed_xml_element: Union[Type[GenerateDSAbstract], Any], **kwds) -> str:
+    def export(typed_xml_element: type[GenerateDSAbstract] | Any, **kwds) -> str:
         """Serialize a class instance into XML string.
         => Invoke the export method of generated type to return the subsequent XML represented
 
@@ -95,21 +91,16 @@ class XMLPARSER:
         return output.getvalue()
 
     @staticmethod
-    def bundle_xml(xml_strings: List[str]) -> str:
+    def bundle_xml(xml_strings: list[str]) -> str:
         """Bundle a list of XML string into a single one.
         => <wrapper>{all the XML trees concatenated}</wrapper>
 
         :param xml_strings:
         :return: a bundled XML text containing all the micro XML string
         """
-        from karrio.core.utils.string import STRINGFORMAT
 
         bundle = "".join(
-            [
-                XMLPARSER.xml_tostring(XMLPARSER.to_xml(x))
-                for x in xml_strings
-                if x is not None and x != ""
-            ]
+            [XMLPARSER.xml_tostring(XMLPARSER.to_xml(x)) for x in xml_strings if x is not None and x != ""]
         )
         return f"<wrapper>{bundle}</wrapper>"
 
@@ -123,7 +114,7 @@ class XMLPARSER:
         return parse(xml_str)
 
     @staticmethod
-    def to_xml(xml_str: Union[str, bytes], encoding: str = "utf-8") -> Element:
+    def to_xml(xml_str: str | bytes, encoding: str = "utf-8") -> Element:
         """Turn a XML text into an (lxml) XML Element.
 
         :param xml_str:
@@ -135,7 +126,7 @@ class XMLPARSER:
         return cast(Element, element)
 
     @staticmethod
-    def to_hml_element(html_str: Union[str, bytes], encoding: str = "utf-8") -> Element:
+    def to_hml_element(html_str: str | bytes, encoding: str = "utf-8") -> Element:
         """Turn a HTML text into an (lxml) HTML Element.
 
         :param html_str:
@@ -147,9 +138,7 @@ class XMLPARSER:
         return cast(Element, element)
 
     @staticmethod
-    def to_xml_or_html_element(
-        xml_str: Union[str, bytes], encoding: str = "utf-8"
-    ) -> Element:
+    def to_xml_or_html_element(xml_str: str | bytes, encoding: str = "utf-8") -> Element:
         """Turn a XML/HTML text into an (lxml) XML/HTML Element.
 
         :param xml_str:
@@ -157,7 +146,7 @@ class XMLPARSER:
         """
         try:
             return XMLPARSER.to_xml(xml_str, encoding)
-        except:
+        except Exception:
             return XMLPARSER.to_hml_element(xml_str, encoding)
 
     @staticmethod

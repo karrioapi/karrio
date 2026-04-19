@@ -1,55 +1,55 @@
-import uuid
-import typing
 import datetime
-import rest_framework.status as status
-import django.db.transaction as transaction
-from rest_framework.reverse import reverse
+import typing
+import uuid
 
-import karrio.lib as lib
+import django.db.transaction as transaction
 import karrio.core.units as units
+import karrio.lib as lib
 import karrio.server.conf as conf
-import karrio.server.core.utils as utils
-import karrio.server.core.gateway as gateway
-from karrio.server.core.utils import create_carrier_snapshot, resolve_carrier
-import karrio.server.core.dataunits as dataunits
 import karrio.server.core.datatypes as datatypes
+import karrio.server.core.dataunits as dataunits
 import karrio.server.core.exceptions as exceptions
-import karrio.server.providers.models as providers
+import karrio.server.core.gateway as gateway
+import karrio.server.core.utils as utils
 import karrio.server.core.validators as validators
+import karrio.server.manager.models as models
+import karrio.server.providers.models as providers
+import rest_framework.status as status
 from karrio.server.core.logging import logger
-from karrio.server.serializers import (
-    Serializer,
-    CharField,
-    ChoiceField,
-    BooleanField,
-    owned_model_serializer,
-    link_org,
-    Context,
-    PlainDictField,
-    StringListField,
-    process_json_object_mutation,
-    process_json_array_mutation,
-    process_customs_mutation,
-)
 from karrio.server.core.serializers import (
-    SHIPMENT_STATUS,
     LABEL_TYPES,
+    SHIPMENT_STATUS,
+    Documents,
+    Message,
+    Parcel,
+    Payment,
+    Rate,
+    Shipment,
     ShipmentCancelRequest,
-    ShippingDocument,
+    ShipmentData,
     ShipmentDetails,
     ShipmentStatus,
+    ShippingDocument,
     TrackerStatus,
-    ShipmentData,
-    Documents,
-    Shipment,
-    Payment,
-    Message,
-    Rate,
-    Parcel,
 )
+from karrio.server.core.utils import create_carrier_snapshot, resolve_carrier
 from karrio.server.manager.serializers.document import DocumentUploadSerializer
 from karrio.server.manager.serializers.rate import RateSerializer
-import karrio.server.manager.models as models
+from karrio.server.serializers import (
+    BooleanField,
+    CharField,
+    ChoiceField,
+    Context,
+    PlainDictField,
+    Serializer,
+    StringListField,
+    link_org,
+    owned_model_serializer,
+    process_customs_mutation,
+    process_json_array_mutation,
+    process_json_object_mutation,
+)
+from rest_framework.reverse import reverse
 
 DEFAULT_CARRIER_FILTER: typing.Any = dict(active=True, capability="shipping")
 
@@ -73,9 +73,7 @@ class ShipmentSerializer(ShipmentData):
     parcels = Parcel(many=True, allow_empty=False, help_text="The shipment's parcels")
 
     @transaction.atomic
-    def create(
-        self, validated_data: dict, context: Context, **kwargs
-    ) -> models.Shipment:
+    def create(self, validated_data: dict, context: Context, **kwargs) -> models.Shipment:
         # fmt: off
         # Apply shipping method if specified (HIGHEST PRIORITY - supersedes service)
         apply_shipping_method_flag, validated_data = resolve_shipping_method(
@@ -220,12 +218,9 @@ class ShipmentSerializer(ShipmentData):
         return shipment
 
     @transaction.atomic
-    def update(
-        self, instance: models.Shipment, validated_data: dict, context: Context
-    ) -> models.Shipment:
+    def update(self, instance: models.Shipment, validated_data: dict, context: Context) -> models.Shipment:
         changes = []
         data = validated_data.copy()
-        carriers = validated_data.get("carriers") or []
 
         for key, val in data.items():
             if key in models.Shipment.DIRECT_PROPS and getattr(instance, key) != val:
@@ -307,11 +302,7 @@ class ShipmentSerializer(ShipmentData):
             changes.append("extra_documents")
             instance.label = validated_data["docs"].get("label") or instance.label
             instance.invoice = validated_data["docs"].get("invoice") or instance.invoice
-            instance.extra_documents = (
-                validated_data["docs"].get("extra_documents")
-                or instance.extra_documents
-                or []
-            )
+            instance.extra_documents = validated_data["docs"].get("extra_documents") or instance.extra_documents or []
 
         if "return_shipment" in validated_data:
             instance.return_shipment = validated_data.get("return_shipment")
@@ -320,9 +311,7 @@ class ShipmentSerializer(ShipmentData):
         if "selected_rate" in validated_data:
             selected_rate = validated_data.get("selected_rate", {})
             # Try to find carrier for connection metadata
-            carrier = providers.CarrierConnection.objects.filter(
-                carrier_id=selected_rate.get("carrier_id")
-            ).first()
+            carrier = providers.CarrierConnection.objects.filter(carrier_id=selected_rate.get("carrier_id")).first()
             instance.test_mode = selected_rate.get("test_mode", instance.test_mode)
 
             # Store carrier snapshot in dedicated field (consistent with Tracking, Pickup, etc.)
@@ -365,9 +354,7 @@ class ShipmentPurchaseData(Serializer):
         allow_null=True,
         help_text="The shipment reference",
     )
-    metadata = PlainDictField(
-        required=False, help_text="User metadata for the shipment"
-    )
+    metadata = PlainDictField(required=False, help_text="User metadata for the shipment")
 
     def validate(self, data):
         if not data.get("selected_rate_id") and not data.get("service"):
@@ -442,9 +429,7 @@ class ShipmentUpdateData(validators.OptionDefaultSerializer):
         max_length=50,
         help_text="The order identifier associated with this shipment",
     )
-    metadata = PlainDictField(
-        required=False, help_text="User metadata for the shipment"
-    )
+    metadata = PlainDictField(required=False, help_text="User metadata for the shipment")
 
 
 class ShipmentRateData(validators.OptionDefaultSerializer):
@@ -514,9 +499,7 @@ class ShipmentRateData(validators.OptionDefaultSerializer):
         allow_null=True,
         help_text="The shipment reference",
     )
-    metadata = PlainDictField(
-        required=False, help_text="User metadata for the shipment"
-    )
+    metadata = PlainDictField(required=False, help_text="User metadata for the shipment")
 
 
 @owned_model_serializer
@@ -577,9 +560,7 @@ class ShipmentPurchaseSerializer(Shipment):
             resolve_tracking_url=lib.identity(
                 lambda tracking_number, carrier_name: reverse(
                     "karrio.server.manager:shipment-tracker",
-                    kwargs=dict(
-                        tracking_number=tracking_number, carrier_name=carrier_name
-                    ),
+                    kwargs=dict(tracking_number=tracking_number, carrier_name=carrier_name),
                 )
             ),
             **kwargs,
@@ -625,8 +606,9 @@ class PurchasedShipment(Shipment):
 def fetch_shipment_rates(
     shipment: models.Shipment,
     context: typing.Any,
-    data: dict = dict(),
+    data: dict | None = None,
 ) -> models.Shipment:
+    data = data or {}
     # carrier_ids can be passed in data, or default to empty list (query all carriers)
     carrier_ids = data.get("carrier_ids", [])
 
@@ -638,9 +620,7 @@ def fetch_shipment_rates(
     )
 
     rate_response: datatypes.RateResponse = (
-        RateSerializer.map(
-            context=context, data={**ShipmentData(shipment).data, **data}
-        )
+        RateSerializer.map(context=context, data={**ShipmentData(shipment).data, **data})
         .save(carriers=carriers)
         .instance
     )
@@ -666,11 +646,12 @@ def fetch_shipment_rates(
 def buy_shipment_label(
     shipment: models.Shipment,
     context: typing.Any = None,
-    data: dict = dict(),
-    selected_rate: typing.Union[dict, datatypes.Rate] = None,
-    carriers: typing.List = None,
+    data: dict | None = None,
+    selected_rate: dict | datatypes.Rate = None,
+    carriers: list = None,
     **kwargs,
 ) -> models.Shipment:
+    data = data or {}
     extra: dict = {}
     invoice: dict = {}
     selected_rate = lib.to_dict(selected_rate or {})
@@ -689,10 +670,7 @@ def buy_shipment_label(
         context=context,
     )
 
-    is_paperless_trade = lib.identity(
-        "paperless" in carrier.capabilities
-        and shipment.options.get("paperless_trade") == True
-    )
+    is_paperless_trade = lib.identity("paperless" in carrier.capabilities and shipment.options.get("paperless_trade"))
     pre_purchase_generation = invoice_template is not None and is_paperless_trade
 
     # Generate invoice in advance if is_paperless_trade
@@ -735,8 +713,7 @@ def buy_shipment_label(
             {
                 **existing_parcel,  # Keep existing data (weight, weight_unit, etc.)
                 "id": response_parcel.id or existing_parcel.get("id"),
-                "reference_number": response_parcel.reference_number
-                or existing_parcel.get("reference_number"),
+                "reference_number": response_parcel.reference_number or existing_parcel.get("reference_number"),
             }
         )
 
@@ -747,16 +724,13 @@ def buy_shipment_label(
 
     # Update shipment state - preserve original meta and merge with response meta
     from karrio.server.core.middleware import get_request_id
+
     response_details = ShipmentDetails(response).data
     _request_id = get_request_id()
     merged_meta = {
         **(shipment.meta or {}),
         **(response_details.get("meta") or {}),
-        **(
-            {"rule_activity": kwargs.get("rule_activity")}
-            if kwargs.get("rule_activity")
-            else {}
-        ),
+        **({"rule_activity": kwargs.get("rule_activity")} if kwargs.get("rule_activity") else {}),
         **({"request_id": _request_id} if _request_id else {}),
     }
 
@@ -785,18 +759,14 @@ def buy_shipment_label(
     utils.failsafe(
         lambda: (
             create_shipment_tracker(purchased_shipment, context=context),
-            (
-                None
-                if pre_purchase_generation
-                else generate_custom_invoice(invoice_template, purchased_shipment)
-            ),
+            (None if pre_purchase_generation else generate_custom_invoice(invoice_template, purchased_shipment)),
         )
     )
 
     return purchased_shipment
 
 
-def reset_related_shipment_rates(shipment: typing.Optional[models.Shipment]):
+def reset_related_shipment_rates(shipment: models.Shipment | None):
     if shipment is not None:
         changes = []
 
@@ -853,19 +823,16 @@ def can_mutate_shipment(
     active_pickup = shipment.shipment_pickup.exclude(status__in=["cancelled", "closed"]).first()
     if delete and active_pickup is not None:
         raise exceptions.APIException(
-            (
-                f"This shipment is scheduled for pickup '{active_pickup.pk}' "
-                "Please cancel this shipment pickup before."
-            ),
+            (f"This shipment is scheduled for pickup '{active_pickup.pk}' Please cancel this shipment pickup before."),
             code="state_error",
             status_code=status.HTTP_409_CONFLICT,
         )
 
 
 def compute_estimated_delivery(
-    selected_rate: typing.Optional[dict],
-    options: typing.Optional[dict],
-) -> typing.Tuple[typing.Optional[str], typing.Optional[str]]:
+    selected_rate: dict | None,
+    options: dict | None,
+) -> tuple[str | None, str | None]:
     """Compute estimated delivery date from rate and shipment options.
 
     This function extracts the estimated delivery date from the selected rate,
@@ -905,21 +872,15 @@ def remove_shipment_tracker(shipment: models.Shipment):
         shipment.shipment_tracker.delete()
 
 
-def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context):
+def create_shipment_tracker(shipment: models.Shipment | None, context):
     rate_provider = (shipment.meta or {}).get("rate_provider") or shipment.carrier_name
     # Resolve carrier from carrier snapshot
     carrier_snapshot = shipment.carrier or {}
     carrier = resolve_carrier(carrier_snapshot, context)
 
     # Get rate provider carrier if supported instead of carrier account
-    if (
-        rate_provider != shipment.carrier_name
-    ) and rate_provider in dataunits.CARRIER_NAMES:
-        carrier = (
-            providers.CarrierConnection.access_by(context)
-            .filter(carrier_code=rate_provider)
-            .first()
-        )
+    if (rate_provider != shipment.carrier_name) and rate_provider in dataunits.CARRIER_NAMES:
+        carrier = providers.CarrierConnection.access_by(context).filter(carrier_code=rate_provider).first()
 
     # Handle hub extension tracking - resolve from snapshot if carrier is None
     if carrier and carrier.gateway.is_hub:
@@ -930,11 +891,7 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
         carrier = resolve_carrier(carrier_snapshot, context)
 
     # Get dhl universal account if a dhl integration doesn't support tracking API
-    if (
-        carrier
-        and "dhl" in carrier.carrier_name
-        and "get_tracking" not in carrier.gateway.proxy_methods
-    ):
+    if carrier and "dhl" in carrier.carrier_name and "get_tracking" not in carrier.gateway.proxy_methods:
         carrier = gateway.Connections.first(
             carrier_name="dhl_universal",
             context=context,
@@ -949,16 +906,16 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
             recipient = shipment.recipient or {}
 
             pkg_weight = sum([p.get("weight") or 0.0 for p in parcels], 0.0)
-            estimated_delivery, shipping_date_str = compute_estimated_delivery(
-                shipment.selected_rate, shipment.options
-            )
+            estimated_delivery, shipping_date_str = compute_estimated_delivery(shipment.selected_rate, shipment.options)
 
             # Include request_id from shipment meta in tracker meta
             _tracker_meta = dict(
                 carrier=rate_provider,
-                **({
-                    "request_id": (shipment.meta or {}).get("request_id")
-                } if (shipment.meta or {}).get("request_id") else {}),
+                **(
+                    {"request_id": (shipment.meta or {}).get("request_id")}
+                    if (shipment.meta or {}).get("request_id")
+                    else {}
+                ),
             )
 
             tracker = models.Tracking.objects.create(
@@ -985,16 +942,12 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
                     shipment_service=shipment.meta.get("service_name"),
                     shipping_date=shipping_date_str,
                     expected_delivery=estimated_delivery,
-                    carrier_tracking_link=utils.get_carrier_tracking_link(
-                        carrier, shipment.tracking_number
-                    ),
+                    carrier_tracking_link=utils.get_carrier_tracking_link(carrier, shipment.tracking_number),
                 ),
             )
             tracker.save()
             link_org(tracker, context)
-            logger.info(
-                "Successfully added a tracker to the shipment", shipment_id=shipment.id
-            )
+            logger.info("Successfully added a tracker to the shipment", shipment_id=shipment.id)
         except Exception as e:
             logger.exception(
                 "Failed to create new label tracker",
@@ -1008,11 +961,7 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
                 "karrio.server.manager:shipment-tracker",
                 kwargs=dict(
                     tracking_number=shipment.tracking_number,
-                    carrier_name=(
-                        rate_provider
-                        if carrier.gateway.is_hub
-                        else carrier.carrier_name
-                    ),
+                    carrier_name=(rate_provider if carrier.gateway.is_hub else carrier.carrier_name),
                 ),
             )
             tracking_url = utils.app_tracking_query_params(url, carrier)
@@ -1046,9 +995,7 @@ def generate_custom_invoice(template: str, shipment: models.Shipment, **kwargs):
     # generate invoice document
     import karrio.server.documents.generator as generator
 
-    document = generator.Documents.generate_shipment_document(
-        template, shipment, **kwargs
-    )
+    document = generator.Documents.generate_shipment_document(template, shipment, **kwargs)
 
     if getattr(shipment, "tracking_number", None) is not None:
         shipment.invoice = document["doc_file"]
@@ -1085,7 +1032,7 @@ def resolve_alternative_service_carrier(
     carriers: list,
     options: dict,
     context: Context,
-) -> typing.Tuple[bool, typing.Optional[str], typing.List[dict]]:
+) -> tuple[bool, str | None, list[dict]]:
     """
     Resolve carrier and create synthetic rate for has_alternative_services flow.
 
@@ -1118,9 +1065,7 @@ def resolve_alternative_service_carrier(
         return skip_rate_fetching, resolved_carrier_name, []
 
     # Find carrier connection matching the service's carrier
-    carrier_name = resolved_carrier_name or utils._get_carrier_for_service(
-        service, context=context
-    )
+    carrier_name = resolved_carrier_name or utils._get_carrier_for_service(service, context=context)
     carrier = lib.identity(
         next(
             (c for c in carriers if c.carrier_name == carrier_name),
@@ -1160,7 +1105,7 @@ def resolve_alternative_service_carrier(
 def resolve_shipping_method(
     validated_data: dict,
     context: Context,
-) -> typing.Tuple[bool, dict]:
+) -> tuple[bool, dict]:
     """
     Resolve and apply shipping method configuration if specified.
 
@@ -1190,8 +1135,6 @@ def resolve_shipping_method(
     if shipping_method_id is None:
         return False, validated_data
 
-    modified_data = utils.load_and_apply_shipping_method(
-        validated_data, shipping_method_id, context
-    )
+    modified_data = utils.load_and_apply_shipping_method(validated_data, shipping_method_id, context)
 
     return True, modified_data

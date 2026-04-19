@@ -1,18 +1,17 @@
-from typing import Tuple, List
+import karrio.lib as lib
 from karrio.core.models import (
-    PickupCancelRequest,
-    Message,
     ConfirmationDetails,
+    Message,
+    PickupCancelRequest,
 )
-from karrio.core.utils import Serializable, Element
+from karrio.core.utils import Element, Serializable
 from karrio.providers.canadapost.error import parse_error_response
 from karrio.providers.canadapost.utils import Settings
-import karrio.lib as lib
 
 
 def parse_pickup_cancel_response(
     _response: lib.Deserializable[Element], settings: Settings
-) -> Tuple[ConfirmationDetails, List[Message]]:
+) -> tuple[ConfirmationDetails, list[Message]]:
     response = _response.deserialize()
     errors = parse_error_response(response, settings)
     cancellation = (

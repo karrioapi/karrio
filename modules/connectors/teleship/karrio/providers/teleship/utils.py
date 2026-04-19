@@ -1,7 +1,8 @@
-import os
 import logging
-import karrio.lib as lib
+import os
+
 import karrio.core as core
+import karrio.lib as lib
 
 logger = logging.getLogger(__name__)
 
@@ -20,9 +21,7 @@ class Settings(core.Settings):
     @property
     def server_url(self):
         return os.getenv("TELESHIP_SERVER_URL") or (
-            "https://sandbox.teleship.com"
-            if self.test_mode
-            else "https://api.teleship.com"
+            "https://sandbox.teleship.com" if self.test_mode else "https://api.teleship.com"
         )
 
     @property
@@ -51,7 +50,5 @@ class Settings(core.Settings):
         return (
             self.connection_system_config.get("TELESHIP_OAUTH_CLIENT_SECRET")
             if self.test_mode
-            else self.connection_system_config.get(
-                "TELESHIP_SANDBOX_OAUTH_CLIENT_SECRET"
-            )
+            else self.connection_system_config.get("TELESHIP_SANDBOX_OAUTH_CLIENT_SECRET")
         )
