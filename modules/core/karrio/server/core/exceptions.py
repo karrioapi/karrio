@@ -1,15 +1,15 @@
 import re
 import typing
-from rest_framework.response import Response
-from rest_framework import status, exceptions
-from rest_framework.views import exception_handler
+
+import karrio.core.errors as sdk
+import karrio.lib as lib
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import gettext_lazy as _
-from karrio.server.core.logging import logger
-
-import karrio.lib as lib
-import karrio.core.errors as sdk
 from karrio.server.core.datatypes import Error, Message
+from karrio.server.core.logging import logger
+from rest_framework import exceptions, status
+from rest_framework.response import Response
+from rest_framework.views import exception_handler
 
 
 class ValidationError(exceptions.ValidationError, sdk.ValidationError):
@@ -20,23 +20,23 @@ class ValidationError(exceptions.ValidationError, sdk.ValidationError):
 # These can be overridden by setting the `level` attribute on exceptions
 ERROR_LEVEL_DEFAULTS = {
     # 4xx Client Errors
-    400: "error",      # Bad Request
-    401: "error",      # Unauthorized
-    403: "error",      # Forbidden
-    404: "warning",    # Not Found - often informational
-    405: "error",      # Method Not Allowed
-    409: "error",      # Conflict
-    422: "error",      # Unprocessable Entity
-    429: "warning",    # Too Many Requests - rate limiting
+    400: "error",  # Bad Request
+    401: "error",  # Unauthorized
+    403: "error",  # Forbidden
+    404: "warning",  # Not Found - often informational
+    405: "error",  # Method Not Allowed
+    409: "error",  # Conflict
+    422: "error",  # Unprocessable Entity
+    429: "warning",  # Too Many Requests - rate limiting
     # 5xx Server Errors
-    500: "error",      # Internal Server Error
-    502: "error",      # Bad Gateway
-    503: "warning",    # Service Unavailable - temporary
-    504: "error",      # Gateway Timeout
+    500: "error",  # Internal Server Error
+    502: "error",  # Bad Gateway
+    503: "warning",  # Service Unavailable - temporary
+    504: "error",  # Gateway Timeout
 }
 
 
-def get_default_level(status_code: int, exc: typing.Optional[Exception] = None) -> str:
+def get_default_level(status_code: int, exc: Exception | None = None) -> str:
     """Get the default error level based on status code.
 
     Priority:
@@ -53,9 +53,7 @@ def get_default_level(status_code: int, exc: typing.Optional[Exception] = None) 
         return ERROR_LEVEL_DEFAULTS[status_code]
 
     # Default based on status code range
-    if 400 <= status_code < 500:
-        return "error"
-    elif status_code >= 500:
+    if 400 <= status_code < 500 or status_code >= 500:
         return "error"
 
     return "info"
@@ -109,9 +107,7 @@ def custom_exception_handler(exc, context):
     messages = message_handler(exc)
     code = get_code(exc)
 
-    if isinstance(exc, exceptions.ValidationError) or isinstance(
-        exc, sdk.ValidationError
-    ):
+    if isinstance(exc, (exceptions.ValidationError, sdk.ValidationError)):
         response_status = status.HTTP_400_BAD_REQUEST
         level = get_default_level(response_status, exc)
         formatted_errors = _format_validation_errors(detail, level=level) if detail else None
@@ -138,8 +134,10 @@ def custom_exception_handler(exc, context):
         response_status = status.HTTP_404_NOT_FOUND
         level = get_default_level(response_status, exc)
         resource_name = _get_resource_name(exc)
-        message = f"{resource_name} not found" if resource_name else (
-            detail if isinstance(detail, str) else "Resource not found"
+        message = (
+            f"{resource_name} not found"
+            if resource_name
+            else (detail if isinstance(detail, str) else "Resource not found")
         )
         return Response(
             dict(
@@ -169,7 +167,7 @@ def custom_exception_handler(exc, context):
                 headers=getattr(response, "headers", None),
             )
 
-    if isinstance(exc, APIException) or isinstance(exc, exceptions.APIException):
+    if isinstance(exc, (APIException, exceptions.APIException)):
         response_status = getattr(exc, "status_code", status.HTTP_500_INTERNAL_SERVER_ERROR)
         level = get_default_level(response_status, exc)
         return Response(
@@ -193,7 +191,8 @@ def custom_exception_handler(exc, context):
     elif isinstance(exc, Exception):
         response_status = getattr(exc, "status_code", status.HTTP_500_INTERNAL_SERVER_ERROR)
         level = get_default_level(response_status, exc)
-        message, *_ = list(exc.args)
+        raw_message = exc.args[0] if exc.args else str(exc)
+        message = raw_message if isinstance(raw_message, str) else str(raw_message)
         return Response(
             dict(errors=lib.to_dict([Error(code=code, message=message, level=level)])),
             status=response_status,
@@ -203,7 +202,7 @@ def custom_exception_handler(exc, context):
     return response
 
 
-def message_handler(exc) -> typing.Optional[dict]:
+def message_handler(exc) -> dict | None:
     if (
         hasattr(exc, "detail")
         and isinstance(exc.detail, list)
@@ -221,7 +220,7 @@ def message_handler(exc) -> typing.Optional[dict]:
                         carrier_id=msg.carrier_id,
                         carrier_name=msg.carrier_name,
                     )
-                    for msg in typing.cast(typing.List[Message], exc.detail)
+                    for msg in typing.cast(list[Message], exc.detail)
                 ]
             )
         )
@@ -229,14 +228,14 @@ def message_handler(exc) -> typing.Optional[dict]:
     return None
 
 
-def error_handler(exc, level: str = "error") -> typing.Optional[dict]:
+def error_handler(exc, level: str = "error") -> dict | None:
     if (
         hasattr(exc, "detail")
         and isinstance(exc.detail, list)
         and len(exc.detail) > 0
         and isinstance(exc.detail[0], Exception)
     ):
-        errors: typing.List[dict] = []
+        errors: list[dict] = []
 
         for error in exc.detail:
             message, *_ = list(exc.args)
@@ -249,11 +248,7 @@ def error_handler(exc, level: str = "error") -> typing.Optional[dict]:
                 dict(
                     index=index,
                     code=code,
-                    message=(
-                        (detail if isinstance(detail, str) else None)
-                        if detail
-                        else message
-                    ),
+                    message=((detail if isinstance(detail, str) else None) if detail else message),
                     level=error_level,
                     details=(detail if not isinstance(detail, str) else None),
                 )
@@ -268,18 +263,14 @@ def get_code(exc):
     from karrio.server.core.utils import failsafe
 
     if hasattr(exc, "get_codes"):
-        return (
-            failsafe(lambda: exc.get_codes())
-            or getattr(exc, "code", None)
-            or getattr(exc, "default_code", None)
-        )
+        return failsafe(lambda: exc.get_codes()) or getattr(exc, "code", None) or getattr(exc, "default_code", None)
 
     return getattr(exc, "default_code", None)
 
 
 def _get_request_details(context: dict) -> dict:
     """Extract request details from context for logging."""
-    request = context.get("view", None) and context.get("view").request
+    request = context.get("view") and context.get("view").request
 
     if not request:
         return {}
@@ -386,7 +377,7 @@ def _log_exception(exc: Exception, request_details: dict, debug: bool = False):
         )
 
 
-def _get_resource_name(exc: ObjectDoesNotExist) -> typing.Optional[str]:
+def _get_resource_name(exc: ObjectDoesNotExist) -> str | None:
     """Extract resource name from ObjectDoesNotExist exception."""
     exc_class_name = type(exc).__name__
 
@@ -408,7 +399,7 @@ def _format_validation_errors(
     detail: typing.Any,
     prefix: str = "",
     level: str = "error",
-) -> typing.Optional[typing.List[Error]]:
+) -> list[Error] | None:
     """Format validation errors with items[index].field pattern for list errors."""
     if detail is None:
         return None
@@ -423,7 +414,7 @@ def _format_validation_errors(
         index_part = f"{base}[{index}]" if base else f"items[{index}]"
         return f"{index_part}.{field}" if field else index_part
 
-    def _flatten_errors(data: typing.Any, path: str = "") -> typing.List[Error]:
+    def _flatten_errors(data: typing.Any, path: str = "") -> list[Error]:
         if data is None:
             return []
 
@@ -432,11 +423,7 @@ def _format_validation_errors(
             return [Error(code="validation", message=message, level=level)]
 
         if isinstance(data, dict):
-            return [
-                err
-                for key, value in data.items()
-                for err in _flatten_errors(value, _build_path(path, key))
-            ]
+            return [err for key, value in data.items() for err in _flatten_errors(value, _build_path(path, key))]
 
         if isinstance(data, list):
             has_indexed_items = any(isinstance(item, dict) for item in data)
@@ -449,9 +436,7 @@ def _format_validation_errors(
                         [
                             nested_err
                             for field, field_errors in item.items()
-                            for nested_err in _flatten_errors(
-                                field_errors, _build_index_path(path, index, field)
-                            )
+                            for nested_err in _flatten_errors(field_errors, _build_index_path(path, index, field))
                         ]
                         if isinstance(item, dict)
                         else _flatten_errors(item, _build_index_path(path, index))

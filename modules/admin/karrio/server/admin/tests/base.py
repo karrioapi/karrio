@@ -1,12 +1,12 @@
-import json
 import dataclasses
+import json
+
 from django.contrib.auth import get_user_model
 from django.urls import reverse
-from rest_framework import status
-from rest_framework.test import APITestCase as BaseAPITestCase, APIClient
-
 from karrio.server.user.models import Token
-import karrio.server.providers.models as providers
+from rest_framework import status
+from rest_framework.test import APIClient
+from rest_framework.test import APITestCase as BaseAPITestCase
 
 
 @dataclasses.dataclass
@@ -25,20 +25,18 @@ class AdminGraphTestCase(BaseAPITestCase):
 
     @classmethod
     def setUpTestData(cls) -> None:
-        cls.user = get_user_model().objects.create_superuser(
-            "admin@example.com", "test"
-        )
+        cls.user = get_user_model().objects.create_superuser("admin@example.com", "test")
         cls.user.is_staff = True
         cls.user.save()
 
         cls.token = Token.objects.create(user=cls.user, test_mode=False)
 
         from django.conf import settings
+
         if settings.MULTI_ORGANIZATIONS:
             from karrio.server.orgs.models import Organization, TokenLink
-            cls.organization = Organization.objects.create(
-                name="Test Organization", slug="test-org"
-            )
+
+            cls.organization = Organization.objects.create(name="Test Organization", slug="test-org")
             owner = cls.organization.add_user(cls.user, is_admin=True)
             cls.organization.change_owner(owner)
             cls.organization.save()

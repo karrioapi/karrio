@@ -1,14 +1,14 @@
+import logging
 import unittest
 from unittest.mock import ANY
-from karrio.core.utils import DP, Serializable
+
 from karrio.core.models import ShipmentRequest
+from karrio.core.utils import DP, Serializable
 from karrio.universal.mappers.shipping_proxy import (
-    ShippingMixinSettings,
     ShippingMixinProxy,
+    ShippingMixinSettings,
 )
 from karrio.universal.providers.shipping.shipment import parse_shipment_response
-
-import logging
 
 logging.disable(logging.CRITICAL)
 

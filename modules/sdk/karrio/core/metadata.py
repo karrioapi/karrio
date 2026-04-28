@@ -5,15 +5,13 @@ This module provides the PluginMetadata class and related functionality
 for defining and working with Karrio plugin metadata.
 """
 
-import attr
-from typing import Optional, List, Dict, Any, Literal
+from typing import Any, Literal
 
+import attr
 
 # Service type constants
 SERVICE_TYPE_CARRIER: Literal["carrier", "LSP"] = "carrier"  # Shipping carrier with full shipping capabilities
-SERVICE_TYPE_LSP: Literal["carrier", "LSP"] = (
-    "LSP"  # Logistics Service Provider (address validation, geocoding, etc.)
-)
+SERVICE_TYPE_LSP: Literal["carrier", "LSP"] = "LSP"  # Logistics Service Provider (address validation, geocoding, etc.)
 
 
 @attr.s(auto_attribs=True)
@@ -31,8 +29,8 @@ class PluginMetadata:
 
     id: str
     label: str
-    description: Optional[str] = ""
-    status: Optional[str] = "beta"
+    description: str | None = ""
+    status: str | None = "beta"
 
     # Service type: "carrier" (default) or "LSP"
     service_type: Literal["carrier", "LSP"] = SERVICE_TYPE_CARRIER
@@ -53,17 +51,17 @@ class PluginMetadata:
     connection_configs: Any = None
 
     # Extra metadata
-    website: Optional[str] = None
-    documentation: Optional[str] = None
-    readme: Optional[str] = None
+    website: str | None = None
+    documentation: str | None = None
+    readme: str | None = None
     is_hub: bool = False
-    hub_carriers: Optional[Dict[str, str]] = None
-    has_intl_accounts: Optional[bool] = False
+    hub_carriers: dict[str, str] | None = None
+    has_intl_accounts: bool | None = False
 
     # System configuration for runtime settings (e.g., OAuth credentials)
     # Format: Dict[str, Tuple[default_value, description, type]]
     # Example: {"CARRIER_OAUTH_CLIENT_ID": ("", "OAuth client ID", str)}
-    system_config: Optional[Dict[str, Any]] = None
+    system_config: dict[str, Any] | None = None
 
     def is_carrier(self) -> bool:
         """Check if this plugin is a shipping carrier."""
@@ -92,13 +90,11 @@ class PluginMetadata:
             return False
         # Check if proxy has validate_address method
         if self.Proxy:
-            return hasattr(self.Proxy, "validate_address") and callable(
-                getattr(self.Proxy, "validate_address", None)
-            )
+            return hasattr(self.Proxy, "validate_address") and callable(getattr(self.Proxy, "validate_address", None))
         return False
 
     @property
-    def plugin_types(self) -> List[str]:
+    def plugin_types(self) -> list[str]:
         """
         Get a list of all functionality types provided by this plugin.
 

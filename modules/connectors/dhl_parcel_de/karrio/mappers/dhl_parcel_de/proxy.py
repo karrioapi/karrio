@@ -1,14 +1,14 @@
 """Karrio DHL Germany client proxy."""
 
-import typing
-import datetime
 import base64
+import datetime
 import urllib.parse
-import karrio.lib as lib
+
 import karrio.api.proxy as proxy
 import karrio.core.errors as errors
-import karrio.providers.dhl_parcel_de.error as provider_error
+import karrio.lib as lib
 import karrio.mappers.dhl_parcel_de.settings as provider_settings
+import karrio.providers.dhl_parcel_de.error as provider_error
 import karrio.universal.mappers.rating_proxy as rating_proxy
 
 
@@ -47,9 +47,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
             if any(messages):
                 raise errors.ParsedMessagesError(messages=messages)
 
-            expiry = datetime.datetime.now() + datetime.timedelta(
-                seconds=int(response.get("expires_in", 0))
-            )
+            expiry = datetime.datetime.now() + datetime.timedelta(seconds=int(response.get("expires_in", 0)))
             return {**response, "expiry": lib.fdatetime(expiry)}
 
         token = self.settings.connection_cache.thread_safe(
@@ -127,7 +125,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
         auth_string = f"{self.settings.connection_client_id}:{self.settings.connection_client_secret}"
         basic_auth = base64.b64encode(auth_string.encode()).decode()
 
-        responses: typing.List[str] = lib.run_asynchronously(
+        responses: list[str] = lib.run_asynchronously(
             lambda xml_request: lib.request(
                 url=f"{self.settings.tracking_server_url}?{urllib.parse.urlencode({'xml': xml_request})}",
                 trace=self.trace_as("xml"),

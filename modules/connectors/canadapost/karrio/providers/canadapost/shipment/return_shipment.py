@@ -11,28 +11,24 @@ API Endpoint:
     Accept: application/vnd.cpc.authreturn-v2+xml
 """
 
-import karrio.schemas.canadapost.authreturn as authreturn
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.canadapost.error as provider_error
 import karrio.providers.canadapost.units as provider_units
 import karrio.providers.canadapost.utils as provider_utils
+import karrio.schemas.canadapost.authreturn as authreturn
 
 
 def parse_return_shipment_response(
-    _response: lib.Deserializable[typing.Tuple[lib.Element, str]],
+    _response: lib.Deserializable[tuple[lib.Element, str]],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+) -> tuple[models.ShipmentDetails, list[models.Message]]:
     response = _response.deserialize()
     element, label = response
     messages = provider_error.parse_error_response(element, settings)
 
     shipment = (
-        _extract_details(element, label, settings)
-        if len(lib.find_element("tracking-pin", element)) > 0
-        else None
+        _extract_details(element, label, settings) if len(lib.find_element("tracking-pin", element)) > 0 else None
     )
 
     return shipment, messages
@@ -74,9 +70,7 @@ def return_shipment_request(
         required=["weight"],
     )
     package = packages[0]
-    label_encoding, label_format = provider_units.LabelType.map(
-        payload.label_type or "PDF_4x6"
-    ).value
+    label_encoding, label_format = provider_units.LabelType.map(payload.label_type or "PDF_4x6").value
 
     request = authreturn.AuthorizedReturnType(
         service_code=service,
@@ -88,9 +82,7 @@ def return_shipment_request(
                 address_line_2=lib.text(shipper.address_line2),
                 city=shipper.city,
                 province=shipper.state_code,
-                postal_code=provider_utils.format_ca_postal_code(
-                    shipper.postal_code
-                ),
+                postal_code=provider_utils.format_ca_postal_code(shipper.postal_code),
             ),
         ),
         receiver=authreturn.ReceiverType(
@@ -102,9 +94,7 @@ def return_shipment_request(
                 address_line_2=lib.text(recipient.address_line2),
                 city=recipient.city,
                 province=recipient.state_code,
-                postal_code=provider_utils.format_ca_postal_code(
-                    recipient.postal_code
-                ),
+                postal_code=provider_utils.format_ca_postal_code(recipient.postal_code),
             ),
         ),
         parcel_characteristics=authreturn.ParcelCharacteristicsType(
@@ -124,9 +114,7 @@ def return_shipment_request(
             encoding=label_encoding,
         ),
         settlement_info=authreturn.AuthSettlementInfoType(
-            paid_by_customer=getattr(
-                payload.payment, "account_number", settings.customer_number
-            ),
+            paid_by_customer=getattr(payload.payment, "account_number", settings.customer_number),
             contract_id=settings.contract_id,
         ),
         references=(

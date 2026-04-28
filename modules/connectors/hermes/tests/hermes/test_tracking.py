@@ -1,12 +1,14 @@
 """Hermes carrier tracking tests."""
 
-import unittest
-from unittest.mock import patch, PropertyMock
-from .fixture import gateway
 import logging
-import karrio.sdk as karrio
-import karrio.lib as lib
+import unittest
+from unittest.mock import PropertyMock, patch
+
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 logger = logging.getLogger(__name__)
 
@@ -42,12 +44,8 @@ class TestHermesTracking(unittest.TestCase):
             mock_token.return_value = {"access_token": "test_token"}
             with patch("karrio.mappers.hermes.proxy.lib.request") as mock:
                 mock.return_value = TrackingResponse
-                parsed_response = (
-                    karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-                )
-                self.assertListEqual(
-                    lib.to_dict(parsed_response), ParsedTrackingResponse
-                )
+                parsed_response = karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+                self.assertListEqual(lib.to_dict(parsed_response), ParsedTrackingResponse)
 
     def test_parse_tracking_error_response(self):
         with patch(
@@ -57,12 +55,8 @@ class TestHermesTracking(unittest.TestCase):
             mock_token.return_value = {"access_token": "test_token"}
             with patch("karrio.mappers.hermes.proxy.lib.request") as mock:
                 mock.return_value = TrackingErrorResponse
-                parsed_response = (
-                    karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-                )
-                self.assertListEqual(
-                    lib.to_dict(parsed_response), ParsedTrackingErrorResponse
-                )
+                parsed_response = karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+                self.assertListEqual(lib.to_dict(parsed_response), ParsedTrackingErrorResponse)
 
 
 if __name__ == "__main__":

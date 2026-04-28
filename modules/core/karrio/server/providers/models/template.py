@@ -1,8 +1,8 @@
 import functools
-import django.db.models as models
-import django.core.validators as validators
-import karrio.server.core.models as core
 
+import django.core.validators as validators
+import django.db.models as models
+import karrio.server.core.models as core
 
 LABEL_TEMPLATE_TYPES = [
     ("SVG", "SVG"),

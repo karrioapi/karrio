@@ -1,16 +1,14 @@
 """Karrio SEKO Logistics error parser."""
 
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.seko.utils as provider_utils
 
 
 def parse_error_response(
-    response: typing.Union[typing.List[dict], dict],
+    response: list[dict] | dict,
     settings: provider_utils.Settings,
     **kwargs,
-) -> typing.List[models.Message]:
+) -> list[models.Message]:
     responses = response if isinstance(response, list) else [response]
     errors: list = []
 
@@ -20,13 +18,9 @@ def parse_error_response(
                 errors.append(
                     {
                         "code": "ValidationError",
-                        "message": validation_errors.get(
-                            "Message", next(iter(validation_errors.values()))
-                        ),
+                        "message": validation_errors.get("Message", next(iter(validation_errors.values()))),
                         "level": (validation_errors.get("Severity") or "error").lower(),
-                        **{
-                            k: v for k, v in validation_errors.items() if k not in ["Message", "Severity"]
-                        },
+                        **{k: v for k, v in validation_errors.items() if k not in ["Message", "Severity"]},
                     }
                 )
             elif isinstance(validation_errors, list):
@@ -36,15 +30,11 @@ def parse_error_response(
                             "code": ve.get("ErrorCode") or "ValidationError",
                             "message": ve.get("Message"),
                             "level": (ve.get("Severity") or "error").lower(),
-                            **{
-                                k: v for k, v in ve.items() if k not in ["Message", "Severity", "ErrorCode"]
-                            },
+                            **{k: v for k, v in ve.items() if k not in ["Message", "Severity", "ErrorCode"]},
                         }
                     )
             else:
-                errors.append(
-                    {"code": "ValidationError", "message": str(validation_errors), "level": "error"}
-                )
+                errors.append({"code": "ValidationError", "message": str(validation_errors), "level": "error"})
             break
 
         if rejected := response_item.get("Rejected", []):
@@ -59,9 +49,7 @@ def parse_error_response(
             )
             break
 
-        if general_errors := (
-            response_item.get("Errors", []) or response_item.get("Error", [])
-        ):
+        if general_errors := (response_item.get("Errors", []) or response_item.get("Error", [])):
             error = general_errors[0]
             errors.append(
                 {
@@ -82,7 +70,9 @@ def parse_error_response(
                         "message": warning.get("Message"),
                         "level": (warning.get("Severity") or "warning").lower(),
                         **{
-                            k: v for k, v in warning.items() if k not in ["Message", "Severity", "WarningCode", "ErrorCode"]
+                            k: v
+                            for k, v in warning.items()
+                            if k not in ["Message", "Severity", "WarningCode", "ErrorCode"]
                         },
                     }
                 )

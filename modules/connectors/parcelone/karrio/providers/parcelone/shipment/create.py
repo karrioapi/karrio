@@ -1,18 +1,17 @@
 """Karrio ParcelOne shipment creation implementation."""
 
-import typing
-import karrio.schemas.parcelone as parcelone
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.parcelone.error as error
-import karrio.providers.parcelone.utils as provider_utils
 import karrio.providers.parcelone.units as provider_units
+import karrio.providers.parcelone.utils as provider_utils
+import karrio.schemas.parcelone as parcelone
 
 
 def parse_shipment_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.Optional[models.ShipmentDetails], typing.List[models.Message]]:
+) -> tuple[models.ShipmentDetails | None, list[models.Message]]:
     """Parse shipment creation response from ParcelOne REST API."""
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
@@ -29,7 +28,7 @@ def _extract_details(
     data: dict,
     settings: provider_utils.Settings,
     ctx: dict = None,
-) -> typing.Optional[models.ShipmentDetails]:
+) -> models.ShipmentDetails | None:
     """Extract shipment details from API response."""
     result = lib.to_object(parcelone.ShipmentResultType, data.get("results") or {})
 
@@ -99,9 +98,10 @@ def shipment_request(
     product_id = product_id or settings.connection_config.product_id.state
 
     # Determine label format
-    label_format = provider_units.LabelFormat.map(
-        payload.label_type or settings.connection_config.label_format.state
-    ).value or "PDF"
+    label_format = (
+        provider_units.LabelFormat.map(payload.label_type or settings.connection_config.label_format.state).value
+        or "PDF"
+    )
     label_size = settings.connection_config.label_size.state or "A6"
 
     request = parcelone.ShippingDataRequestType(
@@ -182,7 +182,9 @@ def shipment_request(
                                     TariffNumber=item.hs_code,
                                 )
                                 for item in (customs.commodities or [])
-                            ] if customs.commodities else None,
+                            ]
+                            if customs.commodities
+                            else None,
                         )
                         if is_international and customs
                         else None

@@ -1,18 +1,17 @@
 """Karrio Teleship manifest creation implementation."""
 
-import typing
-import karrio.schemas.teleship.manifest_request as teleship
-import karrio.schemas.teleship.manifest_response as manifest
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.teleship.error as error
 import karrio.providers.teleship.utils as provider_utils
+import karrio.schemas.teleship.manifest_request as teleship
+import karrio.schemas.teleship.manifest_response as manifest
 
 
 def parse_manifest_response(
     _response: lib.Deserializable[str],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.ManifestDetails, typing.List[models.Message]]:
+) -> tuple[models.ManifestDetails, list[models.Message]]:
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
     details = lib.to_object(manifest.ManifestResponseType, response)

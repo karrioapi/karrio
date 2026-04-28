@@ -1,8 +1,10 @@
 import unittest
+
 import karrio.sdk as karrio
-from karrio.core.utils import DP
 from karrio.core.models import RateRequest
+from karrio.core.utils import DP
 from karrio.providers.dhl_poland import units
+
 from .fixture import gateway
 
 
@@ -38,14 +40,10 @@ class TestDHLPolandServiceFiltering(unittest.TestCase):
 
     def test_domestic_services_marked_correctly(self):
         """Test that domestic services have domicile=True."""
-        domestic_services = [
-            s for s in self.services if s.service_code == "dhl_poland_premium"
-        ]
+        domestic_services = [s for s in self.services if s.service_code == "dhl_poland_premium"]
 
         self.assertEqual(len(domestic_services), 1)
-        self.assertTrue(
-            domestic_services[0].domicile, "Domestic service should have domicile=True"
-        )
+        self.assertTrue(domestic_services[0].domicile, "Domestic service should have domicile=True")
         self.assertIsNone(
             domestic_services[0].international,
             "Domestic service should not have international flag set",
@@ -53,9 +51,7 @@ class TestDHLPolandServiceFiltering(unittest.TestCase):
 
     def test_international_services_marked_correctly(self):
         """Test that international services have international=True."""
-        international_services = [
-            s for s in self.services if s.service_code == "dhl_poland_international"
-        ]
+        international_services = [s for s in self.services if s.service_code == "dhl_poland_international"]
 
         self.assertEqual(len(international_services), 1)
         self.assertTrue(
@@ -111,9 +107,7 @@ class TestDHLPolandServiceFiltering(unittest.TestCase):
             }
         )
 
-        parsed_response = (
-            karrio.Rating.fetch(international_request).from_(gateway).parse()
-        )
+        parsed_response = karrio.Rating.fetch(international_request).from_(gateway).parse()
         rates = parsed_response[0]
 
         # All returned services should be international

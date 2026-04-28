@@ -1,22 +1,19 @@
-import karrio.schemas.canadapost.messages as canadapost
-
 import typing
-import karrio.lib as lib
-import karrio.core.models as models
-from karrio.providers.canadapost import Settings
 from urllib.error import HTTPError
+
+import karrio.core.models as models
+import karrio.lib as lib
+import karrio.schemas.canadapost.messages as canadapost
+from karrio.providers.canadapost.utils import Settings
 
 
 def parse_error_response(
-    responses: typing.Union[lib.Element, typing.List[lib.Element]],
+    responses: lib.Element | list[lib.Element],
     settings: Settings,
     **kwargs,
-) -> typing.List[models.Message]:
-    messages: typing.List[canadapost.messageType] = sum(
-        [
-            lib.find_element("message", response, canadapost.messageType)
-            for response in lib.to_list(responses)
-        ],
+) -> list[models.Message]:
+    messages: list[canadapost.messageType] = sum(
+        [lib.find_element("message", response, canadapost.messageType) for response in lib.to_list(responses)],
         start=[],
     )
 

@@ -1,9 +1,7 @@
 import unittest
-from unittest.mock import patch, ANY
-from .fixture import gateway
+from unittest.mock import patch
 
-import datetime
-import karrio.lib as lib
+import karrio.core.errors as errors
 
 
 class TestDPDAuthentication(unittest.TestCase):
@@ -57,7 +55,7 @@ class TestDPDAuthentication(unittest.TestCase):
         with patch("karrio.mappers.dpd.proxy.lib.request") as mock:
             mock.return_value = ErrorResponse
 
-            with self.assertRaises(Exception):
+            with self.assertRaises(errors.ParsedMessagesError):
                 fresh_gateway.proxy.authenticate()
 
 

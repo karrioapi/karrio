@@ -1,19 +1,18 @@
 """Karrio PostAT error parser."""
 
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
-from karrio.core.utils.soap import extract_fault
+import karrio.lib as lib
 import karrio.providers.postat.utils as provider_utils
+from karrio.core.utils.soap import extract_fault
 
 
 def parse_error_response(
     response: lib.Element,
     settings: provider_utils.Settings,
     **kwargs,
-) -> typing.List[models.Message]:
+) -> list[models.Message]:
     """Parse error response from PostAT SOAP API."""
-    messages: typing.List[models.Message] = []
+    messages: list[models.Message] = []
 
     # Extract SOAP faults (standard SOAP error handling)
     messages.extend(extract_fault(response, settings))

@@ -1,8 +1,8 @@
 import unittest
 from unittest.mock import patch
 
-import karrio.sdk as karrio
 import karrio.lib as lib
+import karrio.sdk as karrio
 
 
 class TestUSPSInternationalAuthentication(unittest.TestCase):

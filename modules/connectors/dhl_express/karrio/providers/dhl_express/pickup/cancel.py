@@ -1,17 +1,17 @@
-import karrio.schemas.dhl_express.cancel_pickup_global_req_3_0 as dhl
 import time
-import typing
-import karrio.lib as lib
+
 import karrio.core.models as models
-import karrio.providers.dhl_express.units as provider_units
+import karrio.lib as lib
 import karrio.providers.dhl_express.error as provider_error
+import karrio.providers.dhl_express.units as provider_units
 import karrio.providers.dhl_express.utils as provider_utils
+import karrio.schemas.dhl_express.cancel_pickup_global_req_3_0 as dhl
 
 
 def parse_pickup_cancel_response(
     _response: lib.Deserializable[lib.Element],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
+) -> tuple[models.ConfirmationDetails, list[models.Message]]:
     response = _response.deserialize()
     successful = len(lib.find_element("ConfirmationNumber", response)) > 0
     cancellation = (
@@ -33,9 +33,7 @@ def pickup_cancel_request(
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
     request = dhl.CancelPURequest(
-        Request=settings.Request(
-            MetaData=dhl.MetaData(SoftwareName="XMLPI", SoftwareVersion=1.0)
-        ),
+        Request=settings.Request(MetaData=dhl.MetaData(SoftwareName="XMLPI", SoftwareVersion=1.0)),
         schemaVersion=3.0,
         RegionCode=(
             provider_units.CountryRegion[payload.address.country_code].value

@@ -1,16 +1,13 @@
 import datetime
+from contextlib import contextmanager, suppress
 from functools import partial
-from contextlib import contextmanager
+
 from django.conf import settings
-from django.db import models
-
 from django.contrib.contenttypes.fields import GenericRelation
-
+from django.db import models
+from karrio.server.core.models import OwnedEntity, register_model, uuid
 from karrio.server.core.utils import identity
-from karrio.server.core.models import OwnedEntity, uuid, register_model
 from karrio.server.manager import models as manager
-import karrio.server.providers.models as providers
-
 from karrio.server.orders.serializers.base import ORDER_STATUS
 
 
@@ -27,11 +24,10 @@ class OrderManager(NotArchivedManager):
 
         # Get the current context if available to optimize shipment queries
         context = None
-        try:
+        with suppress(Exception):
             from karrio.server.core.middleware import SessionContext
+
             context = SessionContext.get_current_request()
-        except:
-            pass
 
         queryset = (
             super()
@@ -46,9 +42,7 @@ class OrderManager(NotArchivedManager):
         # This prevents issues during deletion and other edge cases
         if context is not None:
             shipment_qs = manager.Shipment.access_by(context)
-            queryset = queryset.prefetch_related(
-                Prefetch("shipments", queryset=shipment_qs)
-            )
+            queryset = queryset.prefetch_related(Prefetch("shipments", queryset=shipment_qs))
         else:
             queryset = queryset.prefetch_related("shipments")
 
@@ -98,9 +92,7 @@ class Order(OwnedEntity):
     order_id = models.CharField(max_length=50, db_index=True)
     order_date = models.DateField(default=datetime.date.today)
     source = models.CharField(max_length=50, null=True, blank=True, db_index=True)
-    status = models.CharField(
-        max_length=25, choices=ORDER_STATUS, default=ORDER_STATUS[0][0], db_index=True
-    )
+    status = models.CharField(max_length=25, choices=ORDER_STATUS, default=ORDER_STATUS[0][0], db_index=True)
     test_mode = models.BooleanField()
 
     # ─────────────────────────────────────────────────────────────────
@@ -131,12 +123,8 @@ class Order(OwnedEntity):
     # ─────────────────────────────────────────────────────────────────
     # OPERATIONAL JSON FIELDS
     # ─────────────────────────────────────────────────────────────────
-    options = models.JSONField(
-        blank=True, null=True, default=partial(identity, value={})
-    )
-    metadata = models.JSONField(
-        blank=True, null=True, default=partial(identity, value={})
-    )
+    options = models.JSONField(blank=True, null=True, default=partial(identity, value={}))
+    metadata = models.JSONField(blank=True, null=True, default=partial(identity, value={}))
     meta = models.JSONField(blank=True, null=True, default=partial(identity, value={}))
 
     # ─────────────────────────────────────────────────────────────────
@@ -157,9 +145,7 @@ class Order(OwnedEntity):
     # ─────────────────────────────────────────────────────────────────
     # SHIPMENT RELATION (kept as M2M - operational necessity)
     # ─────────────────────────────────────────────────────────────────
-    shipments = models.ManyToManyField(
-        "manager.Shipment", related_name="shipment_order"
-    )
+    shipments = models.ManyToManyField("manager.Shipment", related_name="shipment_order")
 
     # Metafields via GenericRelation
     metafields = GenericRelation(
@@ -207,9 +193,7 @@ class OrderKeyManager(models.Manager):
     """Manager for OrderKey with deduplication lock management."""
 
     @contextmanager
-    def acquire_lock(
-        self, scope: str, source: str, order_reference: str, test_mode: bool
-    ):
+    def acquire_lock(self, scope: str, source: str, order_reference: str, test_mode: bool):
         """Context manager for acquiring order deduplication lock.
 
         Provides automatic cleanup on failure and prevents duplicate orders
@@ -232,9 +216,9 @@ class OrderKeyManager(models.Manager):
                 order = Order.objects.create(...)
                 lock.bind_order(order)
         """
+        from django.db import IntegrityError
         from karrio.server.core.exceptions import APIException
         from rest_framework import status
-        from django.db import IntegrityError
 
         lock = None
         lock_created = False
@@ -258,12 +242,12 @@ class OrderKeyManager(models.Manager):
 
             yield lock
 
-        except IntegrityError:
+        except IntegrityError as err:
             raise APIException(
                 detail=f"An order with 'order_id' {order_reference} from {source} already exists.",
                 code="duplicate_order_id",
                 status_code=status.HTTP_409_CONFLICT,
-            )
+            ) from err
         except Exception:
             # Rollback: delete lock if we created it
             if lock_created and lock:

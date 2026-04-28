@@ -1,11 +1,11 @@
-import io
-import PIL
-import pyzint
 import base64
-from barcode import Code128
+import io
 from datetime import datetime
-from barcode.writer import ImageWriter
+
 import karrio.lib as lib
+import pyzint
+from barcode import Code128
+from barcode.writer import ImageWriter
 
 datetime = datetime
 date_format = lib.fdatetime
@@ -2402,9 +2402,10 @@ SHIPMENT_SAMPLE = {
 
 def create_barcode(
     value,
-    options: dict = {},
+    options: dict | None = None,
     format: str = "JPEG",
 ) -> str:
+    options = options or {}
     default_options = {
         "quiet_zone": 1.0,
         "module_width": 0.5,
@@ -2415,9 +2416,7 @@ def create_barcode(
     }
     default_options.update(options)
 
-    barcode = Code128(value, writer=ImageWriter()).render(
-        writer_options=default_options, text=""
-    )
+    barcode = Code128(value, writer=ImageWriter()).render(writer_options=default_options, text="")
 
     with io.BytesIO() as buffer:
         barcode.save(buffer, format)

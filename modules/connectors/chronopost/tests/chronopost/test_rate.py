@@ -1,10 +1,11 @@
 import unittest
-from unittest.mock import patch, ANY
-from .fixture import gateway
+from unittest.mock import patch
 
-import karrio.sdk as karrio
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 
 class TestChronopostRating(unittest.TestCase):
@@ -30,17 +31,13 @@ class TestChronopostRating(unittest.TestCase):
     def test_parse_rate_response(self):
         with patch("karrio.mappers.chronopost.proxy.lib.request") as mock:
             mock.return_value = RateResponse
-            parsed_response = (
-                karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertListEqual(lib.to_dict(parsed_response), ParsedRateResponse)
 
     def test_parse_rate_error_response(self):
         with patch("karrio.mappers.chronopost.proxy.lib.request") as mock:
             mock.return_value = RateErrorResponse
-            parsed_response = (
-                karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertListEqual(lib.to_dict(parsed_response), ParsedRateErrorResponse)
 
 

@@ -4,15 +4,14 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('documents', '0002_alter_documenttemplate_related_objects'),
+        ("documents", "0002_alter_documenttemplate_related_objects"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='documenttemplate',
-            old_name='related_objects',
-            new_name='related_object',
+            model_name="documenttemplate",
+            old_name="related_objects",
+            new_name="related_object",
         ),
     ]

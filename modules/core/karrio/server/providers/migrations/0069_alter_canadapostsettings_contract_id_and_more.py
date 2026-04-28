@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("providers", "0068_fedexsettings_track_api_key_and_more"),
     ]

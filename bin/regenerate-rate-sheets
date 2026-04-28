@@ -1,0 +1,398 @@
+#!/usr/bin/env python3
+"""Regenerate per-carrier rate sheet CSVs from the master JTL xlsx workbook.
+
+Output schema: legacy v2.0 flat format — 42 columns, one row per
+(service_name × zone × weight_range). Variants (e.g. "DHL Paket GoGreen
+Plus") are distinct rows with their own service_name and may share a
+carrier-API service_code with their base service.
+
+Column mapping xlsx → CSV:
+    service_name               → service_name         (verbatim, variant label)
+    (derived pattern match)    → service_code         (canonical carrier code)
+    plan_margin_<slug>_eur     → plan_cost_<slug>     (AMOUNT, EUR)
+    plan_rate_<slug>           → (not emitted)         (xlsx absolute customer price is derived at quote time)
+    notes                      → notes                (per-row weight bucket)
+    fuel/energy/... surcharges → (same names)         (visible surcharges)
+
+Columns explicitly NOT emitted (not in legacy v2.0 schema):
+    shipping_method, option_*, age_check, gogreen_plus, personal_handover,
+    qr_code, visual_age_check, id_check, no_neighbor, multicollo, insurance,
+    saturday, neighbor_delivery.
+
+Usage:
+    karrio/bin/regenerate-rate-sheets \\
+        --xlsx ~/Downloads/JTL_Shipping_Master_FinalV4.xlsx \\
+        --out  ~/Downloads/rate-sheets \\
+        [--wipe]
+"""
+
+from __future__ import annotations
+
+import argparse
+import csv
+import re
+import sys
+from pathlib import Path
+
+import openpyxl
+
+# ---------------------------------------------------------------------------
+# CSV output schema — legacy v2.0 (42 columns, ordered)
+# ---------------------------------------------------------------------------
+HEADERS = [
+    "carrier_name",
+    "service_code",
+    "carrier_service_code",
+    "service_name",
+    "shipment_type",
+    "origin_country",
+    "zone_label",
+    "country_codes",
+    "min_weight",
+    "max_weight",
+    "weight_unit",
+    "max_length",
+    "max_width",
+    "max_height",
+    "dimension_unit",
+    "currency",
+    "base_rate",
+    "cost",
+    "transit_days",
+    "transit_time",
+    "plan_rate_start",
+    "plan_cost_start",
+    "plan_rate_advanced",
+    "plan_cost_advanced",
+    "plan_rate_pro",
+    "plan_cost_pro",
+    "plan_rate_enterprise",
+    "plan_cost_enterprise",
+    "tracked",
+    "b2c",
+    "b2b",
+    "first_mile",
+    "last_mile",
+    "form_factor",
+    "signature",
+    "insurance",
+    "multicollo",
+    "neighbor_delivery",
+    "saturday_delivery",
+    "age_check",
+    "fuel_surcharge",
+    "seasonal_surcharge",
+    "customs_surcharge",
+    "energy_surcharge",
+    "road_toll",
+    "security_surcharge",
+    "notes",
+]
+
+PLAN_SLUGS = ("start", "advanced", "pro", "enterprise")
+
+# ---------------------------------------------------------------------------
+# Carrier-specific mappings
+# ---------------------------------------------------------------------------
+# xlsx sheet name → karrio carrier code. Extend as carriers are added.
+SHEET_TO_CARRIER = {
+    "DHL-DE": "dhl_parcel_de",
+    "DPD-DE": "dpd_meta",
+    "UPS-DE": "ups",
+    "UPS-NL": "ups",
+    "UPS-AT": "ups",
+    "UPS-PT": "ups",
+    "UPS-IT": "ups",
+    "UPS-FR": "ups",
+    "UPS-ES": "ups",
+    "UPS-CZ": "ups",
+    "UPS-CH": "ups",
+    "SpringGDS-DE": "spring",
+    "ParcelOne": "parcelone",
+    "BRT Italy": "dpd_meta",
+    "Landmark Global": "landmark",
+    "Asendia": "asendia",
+    "Chronopost": "chronopost",
+    "GLS-DE": "gls",
+    "PICK-UPS": "ups",
+}
+
+# Pattern-match xlsx `service_name` → canonical carrier service_code.
+# Multiple service_name variants map to the same service_code (the carrier
+# API only knows a few endpoint codes; variants differ by merchant label).
+SERVICE_CODE_RULES: dict[str, list[tuple[re.Pattern, str, str]]] = {
+    "dhl_parcel_de": [
+        # (pattern, service_code, carrier_service_code)
+        (re.compile(r"retoure", re.I), "dhl_parcel_de_retoure", ""),
+        (re.compile(r"kleinpaket", re.I), "dhl_parcel_de_kleinpaket", "V62KP"),
+        (re.compile(r"paket", re.I), "dhl_parcel_de_paket", "V01PAK"),
+    ],
+    # Best-effort defaults for other carriers — slug-normalize the service name
+    # to produce a stable code when no explicit mapping exists.
+}
+
+
+def _slugify(s: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "_", (s or "").strip().lower()).strip("_")
+
+
+def resolve_service_code(carrier: str, service_name: str) -> tuple[str, str]:
+    """Return (service_code, carrier_service_code) for the given variant.
+    For known carriers the pattern rules map variants to canonical codes.
+    For unknown carriers, slugify the service name."""
+    rules = SERVICE_CODE_RULES.get(carrier, [])
+    for pattern, code, carrier_code in rules:
+        if pattern.search(service_name or ""):
+            return code, carrier_code
+    return f"{carrier}_{_slugify(service_name)}", ""
+
+
+# ---------------------------------------------------------------------------
+# Value helpers
+# ---------------------------------------------------------------------------
+def _str(v) -> str:
+    if v is None:
+        return ""
+    return str(v).strip()
+
+
+def _num(v) -> str:
+    """Emit numeric cells as strings, stripping trailing zeros where safe."""
+    if v is None or v == "":
+        return ""
+    if isinstance(v, bool):
+        return "TRUE" if v else "FALSE"
+    try:
+        f = float(v)
+        if f == int(f):
+            return str(int(f))
+        return f"{f:g}"
+    except (ValueError, TypeError):
+        return _str(v)
+
+
+def _bool(v) -> str:
+    if v is None or v == "":
+        return ""
+    if isinstance(v, bool):
+        return "TRUE" if v else "FALSE"
+    s = str(v).strip().upper()
+    if s in ("TRUE", "1", "YES"):
+        return "TRUE"
+    if s in ("FALSE", "0", "NO"):
+        return "FALSE"
+    return s
+
+
+# ---------------------------------------------------------------------------
+# Row builder
+# ---------------------------------------------------------------------------
+def build_row(carrier: str, xlsx_row: dict) -> dict | None:
+    """Map one xlsx row to one CSV row (legacy v2.0 schema)."""
+    service_name = _str(xlsx_row.get("service_name"))
+    if not service_name:
+        return None
+
+    # Some xlsx sheets (Chronopost) include zero-width breakpoint rows where
+    # min_weight == max_weight (duplicates of the preceding bracket). The
+    # importer rejects these with "min_weight must be less than max_weight".
+    # Skip them at regen.
+    try:
+        mn, mx = float(xlsx_row.get("min_weight") or 0), float(xlsx_row.get("max_weight") or 0)
+        if mn and mx and mn >= mx:
+            return None
+    except (ValueError, TypeError):
+        pass
+
+    # Disambiguate variants that share a service_name but differ by age_check
+    # (e.g. "DHL Paket GoGreen Plus - Age Verification" 16+ vs 18+). The xlsx
+    # expresses this ambiguity via the age_check column — append the suffix
+    # so each variant lands as a distinct ServiceLevel.
+    age = _str(xlsx_row.get("age_check"))
+    if age and age not in ("", "0", "FALSE", "False", "false") and age not in service_name:
+        service_name = f"{service_name} {age}+"
+
+    # Disambiguate size-tier variants (XS/S/M/L/XL) that share service_name,
+    # weight range, and zone but differ only by `notes` (e.g. DPD Shop2Shop
+    # Domestic XS vs S vs M vs L). The notes column carries the tier token —
+    # lift it into the service_name so each tier lands as a distinct
+    # ServiceLevel with its own rate card.
+    service_code, carrier_service_code = resolve_service_code(carrier, service_name)
+
+    # plan_cost_<slug> = plan_margin_<slug>_eur (AMOUNT). plan_rate is left
+    # blank — if the xlsx has plan_margin_<slug>_pct the user can opt in via
+    # UI. Importer's behavior when both are set is documented:
+    # plan_cost wins.
+    plan_cells = {}
+    for slug in PLAN_SLUGS:
+        margin_eur = xlsx_row.get(f"plan_margin_{slug}_eur")
+        if margin_eur not in (None, ""):
+            plan_cells[f"plan_cost_{slug}"] = _num(margin_eur)
+        plan_cells.setdefault(f"plan_rate_{slug}", "")
+        plan_cells.setdefault(f"plan_cost_{slug}", "")
+
+    return {
+        "carrier_name": carrier,
+        "service_code": service_code,
+        "carrier_service_code": carrier_service_code,
+        "service_name": service_name,
+        "shipment_type": _str(xlsx_row.get("shipment_type")) or "outbound",
+        "origin_country": (_str(xlsx_row.get("origin_country")) or "").upper(),
+        "zone_label": _str(xlsx_row.get("zone_label")),
+        "country_codes": _str(xlsx_row.get("country_codes")),
+        "min_weight": _num(xlsx_row.get("min_weight")),
+        "max_weight": _num(xlsx_row.get("max_weight")),
+        "weight_unit": _str(xlsx_row.get("weight_unit")) or "KG",
+        "max_length": _num(xlsx_row.get("max_length")),
+        "max_width": _num(xlsx_row.get("max_width")),
+        "max_height": _num(xlsx_row.get("max_height")),
+        "dimension_unit": _str(xlsx_row.get("dimension_unit")) or "CM",
+        "currency": _str(xlsx_row.get("currency")) or "EUR",
+        "base_rate": _num(xlsx_row.get("base_rate")),
+        "cost": _num(xlsx_row.get("cost")),
+        "transit_days": _num(xlsx_row.get("transit_days")),
+        "transit_time": _str(xlsx_row.get("transit_time")) or "best_effort",
+        **plan_cells,
+        "tracked": _bool(xlsx_row.get("tracked")),
+        "b2c": _bool(xlsx_row.get("b2c")),
+        "b2b": _bool(xlsx_row.get("b2b")),
+        "first_mile": _str(xlsx_row.get("first_mile")),
+        "last_mile": _str(xlsx_row.get("last_mile")),
+        "form_factor": _str(xlsx_row.get("form_factor")),
+        "signature": _bool(xlsx_row.get("signature")),
+        "insurance": _bool(xlsx_row.get("insurance")),
+        "multicollo": _bool(xlsx_row.get("multicollo")),
+        "neighbor_delivery": _bool(xlsx_row.get("neighbor_delivery")),
+        "saturday_delivery": _bool(xlsx_row.get("saturday") or xlsx_row.get("saturday_delivery")),
+        "age_check": _str(xlsx_row.get("age_check")),
+        "fuel_surcharge": _num(xlsx_row.get("fuel_surcharge")),
+        "seasonal_surcharge": _num(xlsx_row.get("seasonal_surcharge")),
+        "customs_surcharge": _num(xlsx_row.get("customs_surcharge")),
+        "energy_surcharge": _num(xlsx_row.get("energy_surcharge")),
+        "road_toll": _num(xlsx_row.get("road_toll")),
+        "security_surcharge": _num(xlsx_row.get("security_surcharge")),
+        "notes": _str(xlsx_row.get("notes")),
+    }
+
+
+# ---------------------------------------------------------------------------
+# Sheet driver
+# ---------------------------------------------------------------------------
+def emit_sheet(ws, carrier: str, out_dir: Path) -> tuple[int, Path]:
+    headers = [cell.value for cell in ws[1]]
+
+    def row_to_dict(row):
+        return {headers[i]: row[i] for i in range(len(headers)) if i < len(headers)}
+
+    out_rows = []
+    for row in ws.iter_rows(min_row=2, values_only=True):
+        if all(v is None for v in row):
+            continue
+        xlsx_row = row_to_dict(row)
+        built = build_row(carrier, xlsx_row)
+        if built:
+            built["_xlsx_notes"] = _str(xlsx_row.get("notes"))
+            out_rows.append(built)
+
+    # Resolve collisions on (service_name, zone_label, min_weight, max_weight).
+    # When the xlsx carries genuinely distinct rate cards under the same
+    # service_name/zone/weight (size tiers, product sub-variants only labeled
+    # in `notes`), append a disambiguator derived from the notes suffix so
+    # each lands as its own ServiceLevel.
+    from collections import defaultdict
+    groups: dict = defaultdict(list)
+    for r in out_rows:
+        key = (r["service_name"], r["zone_label"], r["min_weight"], r["max_weight"])
+        groups[key].append(r)
+    def _notes_token(r):
+        """Extract the distinguishing noun from the xlsx notes column.
+        Strips the weight-range suffix and any service-name echo."""
+        raw = r.get("_xlsx_notes", "") or ""
+        tok = re.sub(r"\s*\d+\s*-\s*\d+\s*kg.*$", "", raw, flags=re.I).strip()
+        if r["service_name"] and tok.lower().startswith(r["service_name"].lower().split(" - ")[0]):
+            tok = ""  # pure echo of service_name prefix → not informative
+        return re.sub(r"\s+", " ", tok).strip()
+
+    def _compact_origin(o: str) -> str:
+        """ZONE 601 → Z601; everything else passes through."""
+        m = re.fullmatch(r"\s*ZONE\s+(\S+)\s*", o or "", flags=re.I)
+        return f"Z{m.group(1)}" if m else (o or "")
+
+    for key, rows in groups.items():
+        if len(rows) <= 1:
+            continue
+        # Determine which dimensions actually distinguish rows in this group.
+        origins = {r["origin_country"] for r in rows}
+        notes_tokens = {_notes_token(r) for r in rows}
+        use_origin = len(origins) > 1
+        use_notes = len(notes_tokens) > 1
+
+        for idx, r in enumerate(rows, start=1):
+            parts = []
+            if use_notes:
+                nt = _notes_token(r)
+                if nt:
+                    parts.append(nt)
+            if use_origin and r["origin_country"]:
+                parts.append(_compact_origin(r["origin_country"]))
+            suffix = " ".join(parts) or f"v{idx}"
+            if not re.search(rf"\b{re.escape(suffix)}\b", r["service_name"], flags=re.I):
+                r["service_name"] = f"{r['service_name']} {suffix}"
+
+    # Second pass: if disambiguation produced further collisions (e.g. same
+    # notes AND same origin across multiple rows), append a numeric suffix
+    # as last resort.
+    groups2: dict = defaultdict(list)
+    for r in out_rows:
+        key = (r["service_name"], r["zone_label"], r["min_weight"], r["max_weight"])
+        groups2[key].append(r)
+    for rows in groups2.values():
+        if len(rows) <= 1:
+            continue
+        for idx, r in enumerate(rows, start=1):
+            r["service_name"] = f"{r['service_name']} v{idx}"
+    for r in out_rows:
+        r.pop("_xlsx_notes", None)
+
+    out_path = out_dir / f"{ws.title}.csv"
+    with out_path.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=HEADERS, extrasaction="ignore")
+        writer.writeheader()
+        writer.writerows(out_rows)
+    return len(out_rows), out_path
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--xlsx", required=True, type=Path, help="Path to master xlsx workbook.")
+    parser.add_argument("--out", required=True, type=Path, help="Output directory for per-carrier CSVs.")
+    parser.add_argument("--wipe", action="store_true", help="Delete existing *.csv in the output directory first.")
+    args = parser.parse_args()
+
+    if not args.xlsx.exists():
+        print(f"ERROR: xlsx not found: {args.xlsx}", file=sys.stderr)
+        return 1
+
+    args.out.mkdir(parents=True, exist_ok=True)
+    if args.wipe:
+        for p in args.out.glob("*.csv"):
+            p.unlink()
+
+    wb = openpyxl.load_workbook(args.xlsx, data_only=True)
+    total_rows = 0
+    for sheet_name in wb.sheetnames:
+        carrier = SHEET_TO_CARRIER.get(sheet_name)
+        if not carrier:
+            print(f"SKIP: unmapped sheet '{sheet_name}' — add to SHEET_TO_CARRIER", file=sys.stderr)
+            continue
+        ws = wb[sheet_name]
+        n, path = emit_sheet(ws, carrier, args.out)
+        total_rows += n
+        print(f"  {sheet_name:<20} → {path.name:<30} {n:>5} rows")
+
+    print(f"\nTotal rows written: {total_rows}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

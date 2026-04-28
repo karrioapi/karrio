@@ -1,9 +1,11 @@
 import unittest
-from unittest.mock import patch, ANY
-import karrio.lib as lib
+from unittest.mock import ANY, patch
+
 import karrio.core.models as models
-from .fixture import gateway
+import karrio.lib as lib
 import karrio.sdk as karrio
+
+from .fixture import gateway
 
 
 class TestUPSRating(unittest.TestCase):
@@ -17,9 +19,7 @@ class TestUPSRating(unittest.TestCase):
         self.assertEqual(request.serialize(), RateRequestData)
 
     def test_create_rate_with_package_preset_request(self):
-        request = gateway.mapper.create_rate_request(
-            models.RateRequest(**RateWithPresetPayload)
-        )
+        request = gateway.mapper.create_rate_request(models.RateRequest(**RateWithPresetPayload))
         self.assertEqual(request.serialize(), RateRequestWithPackagePresetData)
 
     @patch("karrio.mappers.ups.proxy.lib.request", return_value="<a></a>")
@@ -35,9 +35,7 @@ class TestUPSRating(unittest.TestCase):
     def test_parse_rate_response(self):
         with patch("karrio.mappers.ups.proxy.lib.request") as mock:
             mock.return_value = RateResponseJSON
-            parsed_response = (
-                karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertListEqual(lib.to_dict(parsed_response), ParsedRateResponse)
 
     def test_parse_fr_rate_response(self):
@@ -55,22 +53,14 @@ class TestUPSRating(unittest.TestCase):
     def test_parse_rate_response_with_total_charges(self):
         with patch("karrio.mappers.ups.proxy.lib.request") as mock:
             mock.return_value = RateResponseWithTotalChargesJSON
-            parsed_response = (
-                karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
-            )
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedRateResponseWithTotalCharges
-            )
+            parsed_response = karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedRateResponseWithTotalCharges)
 
     def test_parse_rate_response_with_missing_amount(self):
         with patch("karrio.mappers.ups.proxy.lib.request") as mock:
             mock.return_value = RateResponseWithMissingAmountJSON
-            parsed_response = (
-                karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
-            )
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedRateResponseWithMissingAmount
-            )
+            parsed_response = karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedRateResponseWithMissingAmount)
 
     def test_rate_request_contains_semantic_shipper_recipient_fields(self):
         """Semantic assertion on structured UPS request payload."""
@@ -508,9 +498,7 @@ RateRequestData = {
                         "UnitOfMeasurement": {"Code": "CM", "Description": "Dimension"},
                         "Width": "3.0",
                     },
-                    "PackageServiceOptions": {
-                        "DeliveryConfirmation": {"DCISType": "1"}
-                    },
+                    "PackageServiceOptions": {"DeliveryConfirmation": {"DCISType": "1"}},
                     "PackageWeight": {
                         "UnitOfMeasurement": {"Code": "KGS", "Description": "Weight"},
                         "Weight": "0.5",

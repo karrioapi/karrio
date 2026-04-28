@@ -1,42 +1,41 @@
-import io
 import base64
-
-from rest_framework import status, exceptions as drf_exceptions
-from rest_framework.request import Request
-from rest_framework.response import Response
-from rest_framework.pagination import LimitOffsetPagination
-from django_filters.rest_framework import DjangoFilterBackend
-from django_downloadview import VirtualDownloadView
-from django.core.files.base import ContentFile
-from django.urls import path, re_path
+import io
 
 import karrio.lib as lib
-import karrio.server.openapi as openapi
 import karrio.server.core.filters as filters
 import karrio.server.manager.models as models
-from karrio.server.core.views.api import GenericAPIView, APIView
+import karrio.server.openapi as openapi
+from django.core.files.base import ContentFile
+from django.urls import path, re_path
+from django_downloadview import VirtualDownloadView
+from django_filters.rest_framework import DjangoFilterBackend
 from karrio.server.core.authentication import AccessMixin
 from karrio.server.core.filters import ShipmentFilters
+from karrio.server.core.views.api import APIView, GenericAPIView
 from karrio.server.manager.router import router
 from karrio.server.manager.serializers import (
-    process_dictionaries_mutations,
-    fetch_shipment_rates,
-    PaginatedResult,
-    ErrorResponse,
     ErrorMessages,
+    ErrorResponse,
+    PaginatedResult,
+    PurchasedShipment,
     Shipment,
+    ShipmentCancelSerializer,
     ShipmentData,
+    ShipmentPurchaseData,
+    ShipmentRateData,
+    ShipmentSerializer,
     ShipmentStatus,
+    ShipmentUpdateData,
+    ShippingDocument,
     buy_shipment_label,
     can_mutate_shipment,
-    ShipmentSerializer,
-    ShipmentRateData,
-    ShipmentUpdateData,
-    ShipmentPurchaseData,
-    ShipmentCancelSerializer,
-    ShippingDocument,
-    PurchasedShipment,
+    fetch_shipment_rates,
+    process_dictionaries_mutations,
 )
+from rest_framework import status
+from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.request import Request
+from rest_framework.response import Response
 
 ENDPOINT_ID = "$$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 Shipments = PaginatedResult("ShipmentList", Shipment)
@@ -44,9 +43,7 @@ Shipments = PaginatedResult("ShipmentList", Shipment)
 
 class ShipmentList(GenericAPIView):
     throttle_scope = "carrier_request"
-    pagination_class = type(
-        "CustomPagination", (LimitOffsetPagination,), dict(default_limit=20)
-    )
+    pagination_class = type("CustomPagination", (LimitOffsetPagination,), dict(default_limit=20))
     filter_backends = (DjangoFilterBackend,)
     filterset_class = ShipmentFilters
     serializer_class = Shipments
@@ -90,13 +87,9 @@ class ShipmentList(GenericAPIView):
         """
         Create a new shipment instance.
         """
-        shipment = (
-            ShipmentSerializer.map(data=request.data, context=request).save().instance
-        )
+        shipment = ShipmentSerializer.map(data=request.data, context=request).save().instance
 
-        return Response(
-            PurchasedShipment(shipment).data, status=status.HTTP_201_CREATED
-        )
+        return Response(PurchasedShipment(shipment).data, status=status.HTTP_201_CREATED)
 
 
 class ShipmentDetails(APIView):
@@ -149,9 +142,7 @@ class ShipmentDetails(APIView):
             ShipmentSerializer.map(
                 shipment,
                 context=request,
-                data=process_dictionaries_mutations(
-                    ["metadata", "options"], payload, shipment
-                ),
+                data=process_dictionaries_mutations(["metadata", "options"], payload, shipment),
             )
             .save()
             .instance
@@ -193,11 +184,7 @@ class ShipmentCancel(APIView):
         try:
             shipment = qs.get(pk=pk)
         except models.Shipment.DoesNotExist:
-            shipment = (
-                qs.filter(meta__request_id=pk)
-                .order_by("-created_at")
-                .first()
-            )
+            shipment = qs.filter(meta__request_id=pk).order_by("-created_at").first()
 
         if shipment is None:
             raise models.Shipment.DoesNotExist()
@@ -242,9 +229,7 @@ class ShipmentRates(APIView):
         update = fetch_shipment_rates(
             shipment,
             context=request,
-            data=process_dictionaries_mutations(
-                ["metadata", "options"], payload, shipment
-            ),
+            data=process_dictionaries_mutations(["metadata", "options"], payload, shipment),
         )
 
         return Response(Shipment(update).data)
@@ -304,9 +289,7 @@ class ShipmentDocs(AccessMixin, VirtualDownloadView):
 
         query_params = request.GET.dict()
 
-        self.shipment = models.Shipment.objects.filter(
-            pk=pk, label__isnull=False
-        ).first()
+        self.shipment = models.Shipment.objects.filter(pk=pk, label__isnull=False).first()
 
         if self.shipment is None:
             return Response(
@@ -320,7 +303,7 @@ class ShipmentDocs(AccessMixin, VirtualDownloadView):
         self.preview = "preview" in query_params
         self.attachment = "download" in query_params
 
-        response = super(ShipmentDocs, self).get(request, pk, doc, format, **kwargs)
+        response = super().get(request, pk, doc, format, **kwargs)
         response["X-Frame-Options"] = "ALLOWALL"
         return response
 
@@ -390,10 +373,7 @@ class ShipmentDocumentDownload(APIView):
         document = getattr(shipment, doc)
 
         # Determine format based on label_type for label, always PDF for invoice
-        if doc == "label":
-            doc_format = shipment.label_type or "PDF"
-        else:
-            doc_format = "PDF"
+        doc_format = shipment.label_type or "PDF" if doc == "label" else "PDF"
 
         # Build the GET URL for the document
         doc_url = f"/v1/shipments/{pk}/{doc}.{doc_format.lower()}"
@@ -411,15 +391,9 @@ class ShipmentDocumentDownload(APIView):
 
 
 router.urls.append(path("shipments", ShipmentList.as_view(), name="shipment-list"))
-router.urls.append(
-    path("shipments/<str:pk>", ShipmentDetails.as_view(), name="shipment-details")
-)
-router.urls.append(
-    path("shipments/<str:pk>/cancel", ShipmentCancel.as_view(), name="shipment-cancel")
-)
-router.urls.append(
-    path("shipments/<str:pk>/rates", ShipmentRates.as_view(), name="shipment-rates")
-)
+router.urls.append(path("shipments/<str:pk>", ShipmentDetails.as_view(), name="shipment-details"))
+router.urls.append(path("shipments/<str:pk>/cancel", ShipmentCancel.as_view(), name="shipment-cancel"))
+router.urls.append(path("shipments/<str:pk>/rates", ShipmentRates.as_view(), name="shipment-rates"))
 router.urls.append(
     path(
         "shipments/<str:pk>/purchase",

@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("providers", "0070_tgesettings_alter_carrier_capabilities"),
     ]

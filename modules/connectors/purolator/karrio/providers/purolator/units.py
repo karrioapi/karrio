@@ -1,9 +1,9 @@
 import csv
 import pathlib
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
+
 import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
 
 PRESET_DEFAULTS = dict(dimension_unit="IN", weight_unit="LB")
 
@@ -19,9 +19,7 @@ class PackagePresets(lib.Enum):
     purolator_express_pack = units.PackagePreset(
         **dict(width=12.5, height=16, length=1.0, weight=3.0), **PRESET_DEFAULTS
     )
-    purolator_express_box = units.PackagePreset(
-        **dict(width=18, height=12, length=3.5, weight=7.0), **PRESET_DEFAULTS
-    )
+    purolator_express_box = units.PackagePreset(**dict(width=18, height=12, length=3.5, weight=7.0), **PRESET_DEFAULTS)
 
 
 class PackagingType(lib.StrEnum):
@@ -89,9 +87,7 @@ class ShippingOption(lib.Enum):
     purolator_special_handling = lib.OptionEnum("Special Handling")
 
     """Karrio specific option"""
-    purolator_show_alternative_services = lib.OptionEnum(
-        "Show Alternate Services", bool
-    )
+    purolator_show_alternative_services = lib.OptionEnum("Show Alternate Services", bool)
 
     """ Unified Option type mapping """
     saturday_delivery = purolator_saturday_service
@@ -113,9 +109,7 @@ def shipping_options_initializer(
     # When no specific service is requested, set a default one.
     _options.update(
         {
-            "purolator_show_alternative_services": _options.get(
-                "purolator_show_alternative_services"
-            )
+            "purolator_show_alternative_services": _options.get("purolator_show_alternative_services")
             or (not service_is_defined)
         }
     )
@@ -175,38 +169,26 @@ class ShippingService(lib.StrEnum):
     purolator_ground_9_am = "PurolatorGround9AM"
     purolator_express_envelope_international = "PurolatorExpressEnvelopeInternational"
     purolator_ground_10_30_am = "PurolatorGround10:30AM"
-    purolator_express_international_envelope_9_am = (
-        "PurolatorExpressInternationalEnvelope9AM"
-    )
+    purolator_express_international_envelope_9_am = "PurolatorExpressInternationalEnvelope9AM"
     purolator_ground_evening = "PurolatorGroundEvening"
-    purolator_express_international_envelope_10_30_am = (
-        "PurolatorExpressInternationalEnvelope10:30AM"
-    )
+    purolator_express_international_envelope_10_30_am = "PurolatorExpressInternationalEnvelope10:30AM"
     purolator_quick_ship = "PurolatorQuickShip"
-    purolator_express_international_envelope_12_00 = (
-        "PurolatorExpressInternationalEnvelope12:00"
-    )
+    purolator_express_international_envelope_12_00 = "PurolatorExpressInternationalEnvelope12:00"
     purolator_quick_ship_envelope = "PurolatorQuickShipEnvelope"
     purolator_express_pack_international = "PurolatorExpressPackInternational"
     purolator_quick_ship_pack = "PurolatorQuickShipPack"
     purolator_express_international_pack_9_am = "PurolatorExpressInternationalPack9AM"
     purolator_quick_ship_box = "PurolatorQuickShipBox"
-    purolator_express_international_pack_10_30_am = (
-        "PurolatorExpressInternationalPack10:30AM"
-    )
-    purolator_express_international_pack_12_00 = (
-        "PurolatorExpressInternationalPack12:00"
-    )
+    purolator_express_international_pack_10_30_am = "PurolatorExpressInternationalPack10:30AM"
+    purolator_express_international_pack_12_00 = "PurolatorExpressInternationalPack12:00"
     purolator_express_box_international = "PurolatorExpressBoxInternational"
     purolator_express_international_box_9_am = "PurolatorExpressInternationalBox9AM"
-    purolator_express_international_box_10_30_am = (
-        "PurolatorExpressInternationalBox10:30AM"
-    )
+    purolator_express_international_box_10_30_am = "PurolatorExpressInternationalBox10:30AM"
     purolator_express_international_box_12_00 = "PurolatorExpressInternationalBox12:00"
 
 
 def shipping_services_initializer(
-    services: typing.List[str],
+    services: list[str],
     is_international: bool = False,
     recipient_country: str = None,
 ) -> units.Services:
@@ -274,7 +256,7 @@ def load_services_from_csv() -> list:
     if not csv_path.exists():
         return []
     services_dict: dict[str, dict] = {}
-    with open(csv_path, "r", encoding="utf-8") as f:
+    with open(csv_path, encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
             service_code = row["service_code"]
@@ -301,7 +283,9 @@ def load_services_from_csv() -> list:
                 rate=float(row.get("rate", 0.0)),
                 min_weight=float(row["min_weight"]) if row.get("min_weight") else None,
                 max_weight=float(row["max_weight"]) if row.get("max_weight") else None,
-                transit_days=int(row["transit_days"].split("-")[0]) if row.get("transit_days") and row["transit_days"].split("-")[0].isdigit() else None,
+                transit_days=int(row["transit_days"].split("-")[0])
+                if row.get("transit_days") and row["transit_days"].split("-")[0].isdigit()
+                else None,
                 country_codes=country_codes if country_codes else None,
             )
             services_dict[karrio_service_code]["zones"].append(zone)

@@ -1,7 +1,8 @@
 """Unit tests for karrio.core.utils.redaction."""
 
 import unittest
-from karrio.core.utils.redaction import redact_headers, redact_query_params, REDACTED
+
+from karrio.core.utils.redaction import REDACTED, redact_headers, redact_query_params
 
 
 class TestRedactHeaders(unittest.TestCase):
@@ -30,24 +31,28 @@ class TestRedactHeaders(unittest.TestCase):
         self.assertEqual(result["X-Client-Secret"], REDACTED)
 
     def test_non_sensitive_headers_preserved(self):
-        result = redact_headers({
-            "Content-Type": "application/json",
-            "X-locale": "en_US",
-            "Accept": "application/json",
-            "X-RateLimit-Remaining": "95",
-        })
+        result = redact_headers(
+            {
+                "Content-Type": "application/json",
+                "X-locale": "en_US",
+                "Accept": "application/json",
+                "X-RateLimit-Remaining": "95",
+            }
+        )
         self.assertEqual(result["Content-Type"], "application/json")
         self.assertEqual(result["X-locale"], "en_US")
         self.assertEqual(result["Accept"], "application/json")
         self.assertEqual(result["X-RateLimit-Remaining"], "95")
 
     def test_mixed_headers(self):
-        result = redact_headers({
-            "Authorization": "Bearer token123",
-            "Content-Type": "application/json",
-            "X-Api-Key": "key123",
-            "X-Request-Id": "req-abc",
-        })
+        result = redact_headers(
+            {
+                "Authorization": "Bearer token123",
+                "Content-Type": "application/json",
+                "X-Api-Key": "key123",
+                "X-Request-Id": "req-abc",
+            }
+        )
         self.assertEqual(result["Authorization"], f"Bearer {REDACTED}")
         self.assertEqual(result["Content-Type"], "application/json")
         self.assertEqual(result["X-Api-Key"], REDACTED)
@@ -141,7 +146,7 @@ class TestTracerRedactsAtCapture(unittest.TestCase):
         records = tracer.records
         self.assertEqual(len(records), 1)
         headers = records[0].data.get("request_headers", {})
-        self.assertEqual(headers["Authorization"], f"Bearer val_xxx")
+        self.assertEqual(headers["Authorization"], "Bearer val_xxx")
         self.assertEqual(headers["X-Api-Key"], "val_xxx")
         self.assertEqual(headers["Content-Type"], "application/json")
 

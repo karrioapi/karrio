@@ -1,12 +1,14 @@
 """SmartKargo carrier shipment tests."""
 
-import unittest
-from unittest.mock import patch, ANY
-from .fixture import gateway
 import logging
-import karrio.sdk as karrio
-import karrio.lib as lib
+import unittest
+from unittest.mock import ANY, patch
+
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 logger = logging.getLogger(__name__)
 
@@ -15,9 +17,7 @@ class TestSmartKargoShipment(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.ShipmentRequest = models.ShipmentRequest(**ShipmentPayload)
-        self.ShipmentCancelRequest = models.ShipmentCancelRequest(
-            **ShipmentCancelPayload
-        )
+        self.ShipmentCancelRequest = models.ShipmentCancelRequest(**ShipmentCancelPayload)
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
@@ -35,18 +35,14 @@ class TestSmartKargoShipment(unittest.TestCase):
     def test_parse_shipment_response(self):
         with patch("karrio.mappers.smartkargo.proxy.lib.request") as mock:
             mock.side_effect = [ShipmentResponse, LabelResponse]
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             self.assertListEqual(
                 lib.to_dict(parsed_response),
                 ParsedShipmentResponse,
             )
 
     def test_create_shipment_cancel_request(self):
-        request = gateway.mapper.create_cancel_shipment_request(
-            self.ShipmentCancelRequest
-        )
+        request = gateway.mapper.create_cancel_shipment_request(self.ShipmentCancelRequest)
         self.assertEqual(lib.to_dict(request.serialize()), ShipmentCancelRequestData)
 
     def test_cancel_shipment(self):
@@ -61,11 +57,7 @@ class TestSmartKargoShipment(unittest.TestCase):
     def test_parse_shipment_cancel_response(self):
         with patch("karrio.mappers.smartkargo.proxy.lib.request") as mock:
             mock.return_value = ShipmentCancelResponse
-            parsed_response = (
-                karrio.Shipment.cancel(self.ShipmentCancelRequest)
-                .from_(gateway)
-                .parse()
-            )
+            parsed_response = karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()
             self.assertListEqual(
                 lib.to_dict(parsed_response),
                 ParsedCancelShipmentResponse,
@@ -74,9 +66,7 @@ class TestSmartKargoShipment(unittest.TestCase):
     def test_parse_error_response(self):
         with patch("karrio.mappers.smartkargo.proxy.lib.request") as mock:
             mock.return_value = ErrorResponse
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             self.assertListEqual(
                 lib.to_dict(parsed_response),
                 ParsedErrorResponse,
@@ -85,9 +75,7 @@ class TestSmartKargoShipment(unittest.TestCase):
     def test_parse_rejected_shipment_response(self):
         with patch("karrio.mappers.smartkargo.proxy.lib.request") as mock:
             mock.return_value = RejectedShipmentResponse
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             self.assertListEqual(
                 lib.to_dict(parsed_response),
                 ParsedRejectedShipmentResponse,

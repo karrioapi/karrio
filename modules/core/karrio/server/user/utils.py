@@ -1,12 +1,13 @@
 import datetime
-from django_email_verification.token_utils import default_token_generator
+
 from django_email_verification.confirm import (
-    Thread,
-    InvalidUserModel,
     EmailMultiAlternatives,
+    InvalidUserModel,
+    Thread,
     _get_validated_field,
     render_to_string,
 )
+from django_email_verification.token_utils import default_token_generator
 
 
 def send_email(user, redirect_url, thread=True, expiry=None, **kwargs):
@@ -40,13 +41,11 @@ def send_email(user, redirect_url, thread=True, expiry=None, **kwargs):
             t.start()
         else:
             send_email_thread(*args)
-    except AttributeError:
-        raise InvalidUserModel("The user model you provided is invalid")
+    except AttributeError as err:
+        raise InvalidUserModel("The user model you provided is invalid") from err
 
 
-def send_email_thread(
-    user, token, expiry, sender, domain, subject, mail_plain, mail_html
-):
+def send_email_thread(user, token, expiry, sender, domain, subject, mail_plain, mail_html):
     domain += "/" if not domain.endswith("/") else ""
     link = domain + token
 

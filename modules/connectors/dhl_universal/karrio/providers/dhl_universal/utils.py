@@ -28,8 +28,4 @@ class Settings(BaseSettings):
         country = self.account_country_code or "DE"
         language = self.language or "en"
         locale = f"{country}-{language}".lower()
-        return (
-            "https://www.dhl.com/"
-            + locale
-            + "/home/tracking/tracking-parcel.html?submit=1&tracking-id={}"
-        )
+        return "https://www.dhl.com/" + locale + "/home/tracking/tracking-parcel.html?submit=1&tracking-id={}"

@@ -1,21 +1,17 @@
 """Karrio DHL Germany pickup create implementation."""
 
-import karrio.schemas.dhl_parcel_de.pickup_request as dhl
-import karrio.schemas.dhl_parcel_de.pickup_response as pickup
-
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
 import karrio.core.models as models
-import karrio.core.errors as errors
+import karrio.lib as lib
 import karrio.providers.dhl_parcel_de.error as error
 import karrio.providers.dhl_parcel_de.utils as provider_utils
+import karrio.schemas.dhl_parcel_de.pickup_request as dhl
+import karrio.schemas.dhl_parcel_de.pickup_response as pickup
 
 
 def parse_pickup_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.Optional[models.PickupDetails], typing.List[models.Message]]:
+) -> tuple[models.PickupDetails | None, list[models.Message]]:
     response = _response.deserialize()
 
     messages = error.parse_error_response(response, settings)
@@ -78,32 +74,19 @@ def pickup_request(
             "PickupOptions",
             {
                 "billing_number": lib.OptionEnum("billing_number"),
-                "dhl_parcel_de_pickup_location_type": lib.OptionEnum(
-                    "pickupLocationType"
-                ),
+                "dhl_parcel_de_pickup_location_type": lib.OptionEnum("pickupLocationType"),
                 "dhl_parcel_de_as_id": lib.OptionEnum("asId"),
-                "dhl_parcel_de_transportation_type": lib.OptionEnum(
-                    "transportationType"
-                ),
+                "dhl_parcel_de_transportation_type": lib.OptionEnum("transportationType"),
                 "dhl_parcel_de_shipment_size": lib.OptionEnum("shipmentSize"),
-                "dhl_parcel_de_send_confirmation_email": lib.OptionEnum(
-                    "sendConfirmationEmail", bool
-                ),
-                "dhl_parcel_de_send_time_window_email": lib.OptionEnum(
-                    "sendTimeWindowEmail", bool
-                ),
+                "dhl_parcel_de_send_confirmation_email": lib.OptionEnum("sendConfirmationEmail", bool),
+                "dhl_parcel_de_send_time_window_email": lib.OptionEnum("sendTimeWindowEmail", bool),
                 "dhl_parcel_de_pickup_date_type": lib.OptionEnum("pickupDateType"),
             },
         ),
     )
 
-    billing_number = (
-        settings.connection_config.pickup_billing_number.state
-        or options.billing_number.state
-    )
-    pickup_date_type = options.dhl_parcel_de_pickup_date_type.state or (
-        "ASAP" if not payload.pickup_date else "Date"
-    )
+    billing_number = settings.connection_config.pickup_billing_number.state or options.billing_number.state
+    pickup_date_type = options.dhl_parcel_de_pickup_date_type.state or ("ASAP" if not payload.pickup_date else "Date")
     location_type = options.dhl_parcel_de_pickup_location_type.state or "Address"
     transportation_type = options.dhl_parcel_de_transportation_type.state or "PAKET"
     send_confirmation = options.dhl_parcel_de_send_confirmation_email.state
@@ -120,20 +103,10 @@ def pickup_request(
             pickupAddress=lib.identity(
                 dhl.PickupAddressType(
                     name1=address.company_name or address.person_name,
-                    name2=lib.identity(
-                        address.person_name if address.company_name else None
-                    ),
-                    addressStreet=lib.identity(
-                        address.street_name
-                        if address.street_number
-                        else address.address_line1
-                    ),
+                    name2=lib.identity(address.person_name if address.company_name else None),
+                    addressStreet=lib.identity(address.street_name if address.street_number else address.address_line1),
                     addressHouse=lib.text(
-                        (
-                            address.street_number
-                            if address.street_number
-                            else address.address_line2
-                        ),
+                        (address.street_number if address.street_number else address.address_line2),
                         max=10,
                     ),
                     postalCode=address.postal_code,
@@ -166,8 +139,7 @@ def pickup_request(
                         sendPickupConfirmationEmail=send_confirmation,
                         sendPickupTimeWindowEmail=send_time_window,
                     )
-                    if address.email
-                    and (send_confirmation is not None or send_time_window is not None)
+                    if address.email and (send_confirmation is not None or send_time_window is not None)
                     else None
                 ),
             )
@@ -193,11 +165,7 @@ def pickup_request(
                     transportationType=transportation_type,
                     size=options.dhl_parcel_de_shipment_size.state,
                 )
-                for _ in range(
-                    len(packages)
-                    if (payload.options or {}).get("shipment_identifiers")
-                    else 1
-                )
+                for _ in range(len(packages) if (payload.options or {}).get("shipment_identifiers") else 1)
             ]
         ),
     )

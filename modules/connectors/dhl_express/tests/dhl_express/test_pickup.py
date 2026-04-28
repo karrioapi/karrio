@@ -1,13 +1,15 @@
 import re
 import unittest
 from unittest.mock import patch
-from karrio.core.utils import DP
+
 from karrio.core.models import (
     PickupCancelRequest,
     PickupRequest,
     PickupUpdateRequest,
 )
+from karrio.core.utils import DP
 from karrio.sdk import Pickup
+
 from .fixture import gateway
 
 
@@ -21,18 +23,14 @@ class TestDHLPickup(unittest.TestCase):
     def test_create_pickup_request(self):
         request = gateway.mapper.create_pickup_request(self.BookPURequest)
         # remove MessageTime for testing purpose
-        serialized_request = re.sub(
-            "            <MessageTime>[^>]+</MessageTime>", "", request.serialize()
-        )
+        serialized_request = re.sub("            <MessageTime>[^>]+</MessageTime>", "", request.serialize())
 
         self.assertEqual(serialized_request, PickupRequestXML)
 
     def test_create_modify_pickup_request(self):
         request = gateway.mapper.create_pickup_update_request(self.ModifyPURequest)
         # remove MessageTime for testing purpose
-        serialized_request = re.sub(
-            "            <MessageTime>[^>]+</MessageTime>", "", request.serialize()
-        )
+        serialized_request = re.sub("            <MessageTime>[^>]+</MessageTime>", "", request.serialize())
 
         self.assertEqual(serialized_request, ModifyPURequestXML)
 
@@ -52,36 +50,28 @@ class TestDHLPickup(unittest.TestCase):
             mock.return_value = PickupResponseXML
             parsed_response = Pickup.schedule(self.BookPURequest).from_(gateway).parse()
 
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedPickupResponse)
-            )
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedPickupResponse))
 
     def test_parse_modify_pickup_response(self):
         with patch("karrio.mappers.dhl_express.proxy.lib.request") as mock:
             mock.return_value = ModifyPURequestXML
             parsed_response = Pickup.update(self.ModifyPURequest).from_(gateway).parse()
 
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedModifyPUResponse)
-            )
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedModifyPUResponse))
 
     def test_parse_cancellation_pickup_response(self):
         with patch("karrio.mappers.dhl_express.proxy.lib.request") as mock:
             mock.return_value = CancelPUResponseXML
             parsed_response = Pickup.cancel(self.CancelPURequest).from_(gateway).parse()
 
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedCancelPUResponse)
-            )
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedCancelPUResponse))
 
     def test_parse_request_pickup_error(self):
         with patch("karrio.mappers.dhl_express.proxy.lib.request") as mock:
             mock.return_value = PickupErrorResponseXML
             parsed_response = Pickup.schedule(self.BookPURequest).from_(gateway).parse()
 
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedPickupErrorResponse)
-            )
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedPickupErrorResponse))
 
 
 if __name__ == "__main__":

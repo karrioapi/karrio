@@ -7,17 +7,16 @@ with returnLabel=true in the request body.
 Documentation: schemas/label_request.json (returnLabel field)
 """
 
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.usps.shipment.create as create
 import karrio.providers.usps.utils as provider_utils
 
 
 def parse_return_shipment_response(
-    _response: lib.Deserializable[typing.List[dict]],
+    _response: lib.Deserializable[list[dict]],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+) -> tuple[models.ShipmentDetails, list[models.Message]]:
     return create.parse_shipment_response(_response, settings)
 
 

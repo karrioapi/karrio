@@ -1,11 +1,11 @@
 import enum
-import typing
 import functools
-import strawberry
-import rest_framework.exceptions as exceptions
-from strawberry.types import Info
+import typing
+
 import karrio.server.pricing.serializers as serializers
-from karrio.server.core.logging import logger
+import rest_framework.exceptions as exceptions
+import strawberry
+from strawberry.types import Info
 
 # Markup type enum for GraphQL
 MarkupTypeEnum: typing.Any = strawberry.enum(  # type: ignore

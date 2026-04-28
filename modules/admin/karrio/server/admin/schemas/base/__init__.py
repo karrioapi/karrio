@@ -1,14 +1,12 @@
-import typing
-import strawberry
-from strawberry.types import Info
-
-import karrio.server.iam.models as iam
-import karrio.server.graph.utils as utils
-import karrio.server.pricing.models as pricing
-import karrio.server.providers.models as providers
-import karrio.server.admin.schemas.base.types as types
 import karrio.server.admin.schemas.base.inputs as inputs
 import karrio.server.admin.schemas.base.mutations as mutations
+import karrio.server.admin.schemas.base.types as types
+import karrio.server.graph.utils as utils
+import karrio.server.iam.models as iam
+import karrio.server.pricing.models as pricing
+import karrio.server.providers.models as providers
+import strawberry
+from strawberry.types import Info
 
 extra_types = []
 
@@ -16,43 +14,25 @@ extra_types = []
 @strawberry.type
 class Query:
     me: types.SystemUserType = strawberry.field(resolver=types.SystemUserType.me)
-    user: typing.Optional[types.SystemUserType] = strawberry.field(
-        resolver=types.SystemUserType.resolve
+    user: types.SystemUserType | None = strawberry.field(resolver=types.SystemUserType.resolve)
+    users: utils.Connection[types.SystemUserType] = strawberry.field(resolver=types.SystemUserType.resolve_list)
+
+    configs: types.InstanceConfigType = strawberry.field(resolver=types.InstanceConfigType.resolve)
+    usage: types.AdminSystemUsageType = strawberry.field(resolver=types.AdminSystemUsageType.resolve)
+
+    markup: types.MarkupType | None = strawberry.field(resolver=types.MarkupType.resolve)
+    markups: utils.Connection[types.MarkupType] = strawberry.field(resolver=types.MarkupType.resolve_list)
+    fee: types.FeeType | None = strawberry.field(resolver=types.FeeType.resolve)
+    fees: utils.Connection[types.FeeType] = strawberry.field(resolver=types.FeeType.resolve_list)
+
+    system_carrier_connection: types.SystemCarrierConnectionType | None = strawberry.field(
+        resolver=types.SystemCarrierConnectionType.resolve
     )
-    users: utils.Connection[types.SystemUserType] = strawberry.field(
-        resolver=types.SystemUserType.resolve_list
+    system_carrier_connections: utils.Connection[types.SystemCarrierConnectionType] = strawberry.field(
+        resolver=types.SystemCarrierConnectionType.resolve_list
     )
 
-    configs: types.InstanceConfigType = strawberry.field(
-        resolver=types.InstanceConfigType.resolve
-    )
-    usage: types.AdminSystemUsageType = strawberry.field(
-        resolver=types.AdminSystemUsageType.resolve
-    )
-
-    markup: typing.Optional[types.MarkupType] = strawberry.field(
-        resolver=types.MarkupType.resolve
-    )
-    markups: utils.Connection[types.MarkupType] = strawberry.field(
-        resolver=types.MarkupType.resolve_list
-    )
-    fee: typing.Optional[types.FeeType] = strawberry.field(
-        resolver=types.FeeType.resolve
-    )
-    fees: utils.Connection[types.FeeType] = strawberry.field(
-        resolver=types.FeeType.resolve_list
-    )
-
-    system_carrier_connection: typing.Optional[types.SystemCarrierConnectionType] = (
-        strawberry.field(resolver=types.SystemCarrierConnectionType.resolve)
-    )
-    system_carrier_connections: utils.Connection[types.SystemCarrierConnectionType] = (
-        strawberry.field(resolver=types.SystemCarrierConnectionType.resolve_list)
-    )
-
-    rate_sheet: typing.Optional[types.SystemRateSheetType] = strawberry.field(
-        resolver=types.SystemRateSheetType.resolve
-    )
+    rate_sheet: types.SystemRateSheetType | None = strawberry.field(resolver=types.SystemRateSheetType.resolve)
     rate_sheets: utils.Connection[types.SystemRateSheetType] = strawberry.field(
         resolver=types.SystemRateSheetType.resolve_list
     )
@@ -61,39 +41,22 @@ class Query:
         resolver=types.PermissionGroupType.resolve_list
     )
 
-    task_executions: utils.Connection[types.TaskExecutionType] = strawberry.field(
-        resolver=types.TaskExecutionType.resolve_list
-    )
-    worker_health: types.WorkerHealthType = strawberry.field(
-        resolver=types.WorkerHealthType.resolve
-    )
-
-    config_fieldsets: typing.List[types.ConfigFieldsetType] = strawberry.field(
-        resolver=types.ConfigFieldsetType.resolve_list
-    )
-    config_schema: typing.List[types.ConfigSchemaItemType] = strawberry.field(
-        resolver=types.ConfigSchemaItemType.resolve_list
-    )
+    config_fieldsets: list[types.ConfigFieldsetType] = strawberry.field(resolver=types.ConfigFieldsetType.resolve_list)
+    config_schema: list[types.ConfigSchemaItemType] = strawberry.field(resolver=types.ConfigSchemaItemType.resolve_list)
 
 
 @strawberry.type
 class Mutation:
     @strawberry.mutation
-    def create_user(
-        self, info: Info, input: inputs.CreateUserMutationInput
-    ) -> mutations.CreateUserMutation:
+    def create_user(self, info: Info, input: inputs.CreateUserMutationInput) -> mutations.CreateUserMutation:
         return mutations.CreateUserMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def update_user(
-        self, info: Info, input: inputs.UpdateUserMutationInput
-    ) -> mutations.UpdateUserMutation:
+    def update_user(self, info: Info, input: inputs.UpdateUserMutationInput) -> mutations.UpdateUserMutation:
         return mutations.UpdateUserMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def remove_user(
-        self, info: Info, input: inputs.DeleteUserMutationInput
-    ) -> mutations.DeleteUserMutation:
+    def remove_user(self, info: Info, input: inputs.DeleteUserMutationInput) -> mutations.DeleteUserMutation:
         def validator(instance, **kwargs):
             if instance.id == info.context.request.user.id:
                 raise Exception("You can't remove yourself")
@@ -106,26 +69,20 @@ class Mutation:
         )
 
     @strawberry.mutation
-    def update_configs(
-        self, info: Info, input: inputs.InstanceConfigMutationInput
-    ) -> mutations.InstanceConfigMutation:
+    def update_configs(self, info: Info, input: inputs.InstanceConfigMutationInput) -> mutations.InstanceConfigMutation:
         return mutations.InstanceConfigMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
     def create_system_carrier_connection(
         self, info: Info, input: inputs.CreateConnectionMutationInput
     ) -> mutations.CreateSystemCarrierConnectionMutation:
-        return mutations.CreateSystemCarrierConnectionMutation.mutate(
-            info, **input.to_dict()
-        )
+        return mutations.CreateSystemCarrierConnectionMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
     def update_system_carrier_connection(
         self, info: Info, input: inputs.UpdateConnectionMutationInput
     ) -> mutations.UpdateSystemCarrierConnectionMutation:
-        return mutations.UpdateSystemCarrierConnectionMutation.mutate(
-            info, **input.to_dict()
-        )
+        return mutations.UpdateSystemCarrierConnectionMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
     def delete_system_carrier_connection(
@@ -134,24 +91,16 @@ class Mutation:
         return mutations.DeleteConnectionMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def create_markup(
-        self, info: Info, input: inputs.CreateMarkupMutationInput
-    ) -> mutations.CreateMarkupMutation:
+    def create_markup(self, info: Info, input: inputs.CreateMarkupMutationInput) -> mutations.CreateMarkupMutation:
         return mutations.CreateMarkupMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def update_markup(
-        self, info: Info, input: inputs.UpdateMarkupMutationInput
-    ) -> mutations.UpdateMarkupMutation:
+    def update_markup(self, info: Info, input: inputs.UpdateMarkupMutationInput) -> mutations.UpdateMarkupMutation:
         return mutations.UpdateMarkupMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def delete_markup(
-        self, info: Info, input: inputs.base.DeleteMutationInput
-    ) -> mutations.base.DeleteMutation:
-        return mutations.base.DeleteMutation.mutate(
-            info, model=pricing.Markup, **input.to_dict()
-        )
+    def delete_markup(self, info: Info, input: inputs.base.DeleteMutationInput) -> mutations.base.DeleteMutation:
+        return mutations.base.DeleteMutation.mutate(info, model=pricing.Markup, **input.to_dict())
 
     @strawberry.mutation
     def create_rate_sheet(
@@ -172,9 +121,7 @@ class Mutation:
         return mutations.DeleteRateSheetServiceMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def delete_rate_sheet(
-        self, info: Info, input: inputs.base.DeleteMutationInput
-    ) -> mutations.base.DeleteMutation:
+    def delete_rate_sheet(self, info: Info, input: inputs.base.DeleteMutationInput) -> mutations.base.DeleteMutation:
         id = input.to_dict().get("id")
         instance = providers.SystemRateSheet.objects.get(id=id)
         instance.delete(keep_parents=True)
@@ -295,31 +242,9 @@ class Mutation:
         return mutations.TriggerTrackerUpdateMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def retry_webhook(
-        self, info: Info, input: inputs.RetryWebhookInput
-    ) -> mutations.RetryWebhookMutation:
+    def retry_webhook(self, info: Info, input: inputs.RetryWebhookInput) -> mutations.RetryWebhookMutation:
         return mutations.RetryWebhookMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def revoke_task(
-        self, info: Info, input: inputs.RevokeTaskInput
-    ) -> mutations.RevokeTaskMutation:
-        return mutations.RevokeTaskMutation.mutate(info, **input.to_dict())
-
-    @strawberry.mutation
-    def cleanup_task_executions(
-        self, info: Info, input: inputs.CleanupTaskExecutionsInput
-    ) -> mutations.CleanupTaskExecutionsMutation:
-        return mutations.CleanupTaskExecutionsMutation.mutate(info, **input.to_dict())
-
-    @strawberry.mutation
-    def reset_stuck_tasks(
-        self, info: Info, input: inputs.ResetStuckTasksInput
-    ) -> mutations.ResetStuckTasksMutation:
-        return mutations.ResetStuckTasksMutation.mutate(info, **input.to_dict())
-
-    @strawberry.mutation
-    def trigger_data_archiving(
-        self, info: Info
-    ) -> mutations.TriggerDataArchivingMutation:
+    def trigger_data_archiving(self, info: Info) -> mutations.TriggerDataArchivingMutation:
         return mutations.TriggerDataArchivingMutation.mutate(info)

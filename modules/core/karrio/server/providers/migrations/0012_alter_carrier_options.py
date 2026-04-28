@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('providers', '0011_auto_20210409_0853'),
+        ("providers", "0011_auto_20210409_0853"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='carrier',
-            options={'ordering': ['test', '-created_at']},
+            name="carrier",
+            options={"ordering": ["test", "-created_at"]},
         ),
     ]

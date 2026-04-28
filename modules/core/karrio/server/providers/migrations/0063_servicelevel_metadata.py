@@ -16,9 +16,7 @@ class Migration(migrations.Migration):
             name="metadata",
             field=models.JSONField(
                 blank=True,
-                default=functools.partial(
-                    karrio.server.core.models._identity, *(), **{"value": {}}
-                ),
+                default=functools.partial(karrio.server.core.models._identity, *(), **{"value": {}}),
                 null=True,
             ),
         ),

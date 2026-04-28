@@ -1,25 +1,24 @@
 import pydoc
 import re
 import typing
+
 from django.conf import settings
 from django.http import JsonResponse
-from rest_framework import generics, views
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
-from rest_framework_tracking import mixins
-from rest_framework import status
-
 from karrio.core.utils import DP
-from karrio.server.serializers import link_org
-from karrio.server.tracing.utils import set_tracing_context
-from karrio.server.core.utils import failsafe
 from karrio.server.core.authentication import (
-    TokenAuthentication,
     JWTAuthentication,
-    TokenBasicAuthentication,
     OAuth2Authentication,
+    TokenAuthentication,
+    TokenBasicAuthentication,
 )
 from karrio.server.core.models import APILogIndex
+from karrio.server.core.utils import failsafe
+from karrio.server.serializers import link_org
+from karrio.server.tracing.utils import set_tracing_context
+from rest_framework import generics, status, views
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
+from rest_framework_tracking import mixins
 
 AccessMixin: typing.Any = pydoc.locate(
     getattr(settings, "ACCESS_METHOD", "karrio.server.core.authentication.AccessMixin")
@@ -29,19 +28,12 @@ AccessMixin: typing.Any = pydoc.locate(
 class LoggingMixin(mixins.LoggingMixin):
     def handle_log(self):
         data = None if "data" not in self.log else DP.jsonify(self.log["data"])
-        query_params = (
-            None
-            if "query_params" not in self.log
-            else DP.jsonify(self.log["query_params"])
-        )
+        query_params = None if "query_params" not in self.log else DP.jsonify(self.log["query_params"])
+        raw_response = self.log.get("response")
         response = (
-            dict(response=response)
+            dict(response=raw_response)
             if "response" not in self.log
-            else (
-                DP.jsonify(self.log["response"])
-                if isinstance(DP.to_object(self.log["response"]), dict)
-                else self.log["response"]
-            )
+            else (DP.jsonify(raw_response) if isinstance(DP.to_object(raw_response), dict) else raw_response)
         )
         # Derive entity_id for log correlation.
         entity_id = failsafe(lambda: DP.to_dict(response)["id"])
@@ -142,11 +134,7 @@ class LoginRequiredView(AccessMixin):
 
         if not request.user.is_verified():
             return JsonResponse(
-                dict(
-                    errors=[
-                        {"code": "not_verified", "message": "User is not verified."}
-                    ]
-                ),
+                dict(errors=[{"code": "not_verified", "message": "User is not verified."}]),
                 status=status.HTTP_403_FORBIDDEN,
             )
         return auth

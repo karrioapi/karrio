@@ -1,26 +1,24 @@
-import karrio.schemas.dpd.ShipmentServiceV33 as dpd
-import karrio.schemas.dpd.Authentication20 as auth_schema
-import typing
 import base64
-import karrio.lib as lib
-import karrio.core.units as units
+
 import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
 import karrio.providers.dpd.error as error
-import karrio.providers.dpd.utils as provider_utils
 import karrio.providers.dpd.units as provider_units
+import karrio.providers.dpd.utils as provider_utils
+import karrio.schemas.dpd.Authentication20 as auth_schema
+import karrio.schemas.dpd.ShipmentServiceV33 as dpd
 
 
 def parse_shipment_response(
     _response: lib.Deserializable[lib.Element],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+) -> tuple[list[models.RateDetails], list[models.Message]]:
     response = _response.deserialize()
     response_shipment = lib.find_element("shipmentResponses", response)
 
     messages = error.parse_error_response(response, settings)
-    shipment = (
-        _extract_details(response, settings) if len(response_shipment) > 0 else None
-    )
+    shipment = _extract_details(response, settings) if len(response_shipment) > 0 else None
 
     return shipment, messages
 
@@ -34,12 +32,8 @@ def _extract_details(
         "parcellabelsPDF",
         None,
     )
-    shipments: typing.List[dpd.shipmentResponses] = lib.find_element(
-        "shipmentResponses", data, dpd.shipmentResponses
-    )
-    parcels: typing.List[dpd.parcelInformation] = sum(
-        [_.parcelInformation for _ in shipments], start=[]
-    )
+    shipments: list[dpd.shipmentResponses] = lib.find_element("shipmentResponses", data, dpd.shipmentResponses)
+    parcels: list[dpd.parcelInformation] = sum([_.parcelInformation for _ in shipments], start=[])
     tracking_numbers = [_.parcelLabelNumber for _ in parcels]
     shipment_identifiers = [_.mpsId for _ in shipments]
 
@@ -89,9 +83,7 @@ def shipment_request(
         Body=lib.Body(
             dpd.storeOrders(
                 printOptions=dpd.printOptions(
-                    printerLanguage=units.LabelType.map(
-                        payload.label_type or "PDF"
-                    ).value,
+                    printerLanguage=units.LabelType.map(payload.label_type or "PDF").value,
                     paperFormat="A6",
                     printer=None,
                     startPosition=None,
@@ -102,11 +94,7 @@ def shipment_request(
                         generalShipmentData=dpd.generalShipmentData(
                             mpsId=None,
                             cUser=None,
-                            mpsCustomerReferenceNumber1=(
-                                payload.reference
-                                if any(payload.reference or "")
-                                else None
-                            ),
+                            mpsCustomerReferenceNumber1=(payload.reference if any(payload.reference or "") else None),
                             mpsCustomerReferenceNumber2=None,
                             mpsCustomerReferenceNumber3=None,
                             mpsCustomerReferenceNumber4=None,
@@ -194,33 +182,14 @@ def shipment_request(
                                 international=(
                                     dpd.international(
                                         parcelType=False,
-                                        customsAmount=(
-                                            customs.duty.declared_value
-                                            or options.declared_value.state
-                                        ),
-                                        customsCurrency=(
-                                            customs.duty.currency
-                                            or options.currency.state
-                                        ),
-                                        customsAmountEx=(
-                                            customs.duty.declared_value
-                                            or options.declared_value.state
-                                        ),
-                                        customsCurrencyEx=(
-                                            customs.duty.currency
-                                            or options.currency.state
-                                        ),
+                                        customsAmount=(customs.duty.declared_value or options.declared_value.state),
+                                        customsCurrency=(customs.duty.currency or options.currency.state),
+                                        customsAmountEx=(customs.duty.declared_value or options.declared_value.state),
+                                        customsCurrencyEx=(customs.duty.currency or options.currency.state),
                                         clearanceCleared="N",
                                         prealertStatus="S03",
-                                        exportReason=provider_units.CustomsContentType.map(
-                                            customs.incoterm
-                                        ).value,
-                                        customsTerms=(
-                                            provider_units.Incoterm.map(
-                                                customs.incoterm
-                                            ).value
-                                            or "DAP"
-                                        ),
+                                        exportReason=provider_units.CustomsContentType.map(customs.incoterm).value,
+                                        customsTerms=(provider_units.Incoterm.map(customs.incoterm).value or "DAP"),
                                         customsContent=customs.content_description,
                                         customsPaper="A",
                                         customsEnclosure=None,
@@ -236,9 +205,7 @@ def shipment_request(
                                         collectiveCustomsClearance=None,
                                         comment1=None,
                                         comment2=None,
-                                        commercialInvoiceConsigneeVatNumber=(
-                                            customs.duty_billing_address.tax_id
-                                        ),
+                                        commercialInvoiceConsigneeVatNumber=(customs.duty_billing_address.tax_id),
                                         commercialInvoiceConsignee=dpd.address(
                                             name1=(
                                                 customs.duty_billing_address.person_name
@@ -254,11 +221,7 @@ def shipment_request(
                                             city=customs.duty_billing_address.city,
                                             gln=None,
                                             customerNumber=None,
-                                            type_=(
-                                                "P"
-                                                if customs.duty_billing_address.residential
-                                                else "B"
-                                            ),
+                                            type_=("P" if customs.duty_billing_address.residential else "B"),
                                             contact=customs.duty_billing_address.person_name,
                                             phone=customs.duty_billing_address.phone_number,
                                             fax=None,
@@ -267,8 +230,7 @@ def shipment_request(
                                             iaccount=None,
                                             eoriNumber=customs.options.eoriNumber.state,
                                             vatNumber=(
-                                                customs.options.vatNumber.state
-                                                or customs.duty_billing_address.tax_id
+                                                customs.options.vatNumber.state or customs.duty_billing_address.tax_id
                                             ),
                                             idDocType=None,
                                             idDocNumber=None,
@@ -306,13 +268,9 @@ def shipment_request(
                                         commercialInvoiceLine=[
                                             dpd.internationalLine(
                                                 customsTarif=(item.hs_code or item.sku),
-                                                receiverCustomsTarif=(
-                                                    item.hs_code or item.sku
-                                                ),
+                                                receiverCustomsTarif=(item.hs_code or item.sku),
                                                 productCode=item.sku,
-                                                content=(
-                                                    item.title or item.description
-                                                ),
+                                                content=(item.title or item.description),
                                                 grossWeight=units.Weight(
                                                     item.weight,
                                                     item.weight_unit or "KG",
@@ -323,11 +281,7 @@ def shipment_request(
                                                 invoicePosition=None,
                                             )
                                             for index, item in enumerate(
-                                                (
-                                                    pkg.items
-                                                    if any(pkg.items)
-                                                    else customs.commodities
-                                                ),
+                                                (pkg.items if any(pkg.items) else customs.commodities),
                                                 start=1,
                                             )
                                         ],
@@ -361,8 +315,7 @@ def shipment_request(
                                             channel=(
                                                 "3"
                                                 if (
-                                                    options.email_notification_to.state
-                                                    is None
+                                                    options.email_notification_to.state is None
                                                     and recipient.email is None
                                                 )
                                                 else "1"

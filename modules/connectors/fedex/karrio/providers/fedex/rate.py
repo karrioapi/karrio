@@ -1,19 +1,19 @@
+import datetime
+
+import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
+import karrio.providers.fedex.error as error
+import karrio.providers.fedex.units as provider_units
+import karrio.providers.fedex.utils as provider_utils
 import karrio.schemas.fedex.rating_request as fedex
 import karrio.schemas.fedex.rating_responses as rating
-import typing
-import datetime
-import karrio.lib as lib
-import karrio.core.units as units
-import karrio.core.models as models
-import karrio.providers.fedex.error as error
-import karrio.providers.fedex.utils as provider_utils
-import karrio.providers.fedex.units as provider_units
 
 
 def parse_rate_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+) -> tuple[list[models.RateDetails], list[models.Message]]:
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
     rates = [
@@ -27,9 +27,11 @@ def parse_rate_response(
 def _extract_details(
     data: dict,
     settings: provider_utils.Settings,
-    ctx: dict = {},
+    ctx: dict = None,
 ) -> models.RateDetails:
     # fmt: off
+    if ctx is None:
+        ctx = {}
     rate = lib.to_object(rating.RateReplyDetailType, data)
     service = provider_units.ShippingService.map(rate.serviceType)
     details: rating.RatedShipmentDetailType = lib.identity(
@@ -119,8 +121,7 @@ def rate_request(
         or "USD"
     )
     weight_unit, dim_unit = lib.identity(
-        provider_units.COUNTRY_PREFERED_UNITS.get(shipper.country_code)
-        or packages.compatible_units
+        provider_units.COUNTRY_PREFERED_UNITS.get(shipper.country_code) or packages.compatible_units
     )
     request_types = lib.identity(
         settings.connection_config.rate_request_types.state
@@ -129,24 +130,29 @@ def rate_request(
     )
     shipment_date = lib.to_date(options.shipment_date.state or datetime.datetime.now())
     hub_id = lib.identity(
-        lib.text(options.fedex_smart_post_hub_id.state)
-        or lib.text(settings.connection_config.smart_post_hub_id.state)
+        lib.text(options.fedex_smart_post_hub_id.state) or lib.text(settings.connection_config.smart_post_hub_id.state)
     )
-    rate_options = lambda _options: [
-        option
-        for _, option in _options.items()
-        if option.state is not False and option.code in provider_units.RATING_OPTIONS
-    ]
-    shipment_options = lambda _options: [
-        option
-        for _, option in _options.items()
-        if option.state is not False and option.code in provider_units.SHIPMENT_OPTIONS
-    ]
-    package_options = lambda _options: [
-        option
-        for _, option in _options.items()
-        if option.state is not False and option.code in provider_units.PACKAGE_OPTIONS
-    ]
+
+    def rate_options(_options):
+        return [
+            option
+            for _, option in _options.items()
+            if option.state is not False and option.code in provider_units.RATING_OPTIONS
+        ]
+
+    def shipment_options(_options):
+        return [
+            option
+            for _, option in _options.items()
+            if option.state is not False and option.code in provider_units.SHIPMENT_OPTIONS
+        ]
+
+    def package_options(_options):
+        return [
+            option
+            for _, option in _options.items()
+            if option.state is not False and option.code in provider_units.PACKAGE_OPTIONS
+        ]
 
     customs = lib.to_customs_info(
         payload.customs,
@@ -179,9 +185,7 @@ def rate_request(
             returnTransitTimes=True,
             servicesNeededOnRateFailure=True,
             variableOptions=lib.identity(
-                ",".join([option.code for option in rate_options(options)])
-                if any(rate_options(options))
-                else None
+                ",".join([option.code for option in rate_options(options)]) if any(rate_options(options)) else None
             ),
             rateSortOrder=(options.fedex_rate_sort_order.state or "COMMITASCENDING"),
         ),
@@ -215,8 +219,7 @@ def rate_request(
             requestedPackageLineItems=[
                 fedex.RequestedPackageLineItemType(
                     subPackagingType=lib.identity(
-                        provider_units.SubPackageType.map(package.packaging_type).value
-                        or "OTHER"
+                        provider_units.SubPackageType.map(package.packaging_type).value or "OTHER"
                     ),
                     groupPackageCount=1,
                     contentRecord=[],
@@ -234,23 +237,15 @@ def rate_request(
                     ),
                     dimensions=lib.identity(
                         fedex.DimensionsType(
-                            length=package.length.map(
-                                provider_units.MeasurementOptions
-                            ).value,
-                            width=package.width.map(
-                                provider_units.MeasurementOptions
-                            ).value,
-                            height=package.height.map(
-                                provider_units.MeasurementOptions
-                            ).value,
+                            length=package.length.map(provider_units.MeasurementOptions).value,
+                            width=package.width.map(provider_units.MeasurementOptions).value,
+                            height=package.height.map(provider_units.MeasurementOptions).value,
                             units=dim_unit.value,
                         )
+                        # only set dimensions if the packaging type is set to your_packaging
                         if (
-                            # only set dimensions if the packaging type is set to your_packaging
                             package.has_dimensions
-                            and provider_units.PackagingType.map(
-                                package.packaging_type or "your_packaging"
-                            ).value
+                            and provider_units.PackagingType.map(package.packaging_type or "your_packaging").value
                             == provider_units.PackagingType.your_packaging.value
                         )
                         else None
@@ -258,19 +253,12 @@ def rate_request(
                     variableHandlingChargeDetail=None,
                     packageSpecialServices=lib.identity(
                         fedex.PackageSpecialServicesType(
-                            specialServiceTypes=[
-                                option.code
-                                for option in package_options(package.options)
-                            ],
+                            specialServiceTypes=[option.code for option in package_options(package.options)],
                             signatureOptionType=lib.identity(
                                 provider_units.SignatureOptionType.map(
                                     package.options.fedex_signature_option.state
                                 ).value
-                                or (
-                                    "DIRECT"
-                                    if package.options.fedex_signature_option.state
-                                    else None
-                                )
+                                or ("DIRECT" if package.options.fedex_signature_option.state else None)
                             ),
                             alcoholDetail=None,
                             dangerousGoodsDetail=None,
@@ -279,8 +267,7 @@ def rate_request(
                             batteryDetails=[],
                             dryIceWeight=None,
                         )
-                        if any(package_options(package.options))
-                        or package.options.fedex_signature_option.state
+                        if any(package_options(package.options)) or package.options.fedex_signature_option.state
                         else None
                     ),
                 )
@@ -288,9 +275,7 @@ def rate_request(
             ],
             documentShipment=packages.is_document,
             variableHandlingChargeDetail=None,
-            packagingType=provider_units.PackagingType.map(
-                packages.package_type or "your_packaging"
-            ).value,
+            packagingType=provider_units.PackagingType.map(packages.package_type or "your_packaging").value,
             totalWeight=packages.weight.LB,
             shipmentSpecialServices=lib.identity(
                 fedex.ShipmentSpecialServicesType(
@@ -310,9 +295,7 @@ def rate_request(
                     internationalControlledExportDetail=None,
                     homeDeliveryPremiumDetail=None,
                     specialServiceTypes=(
-                        [option.code for option in shipment_options(options)]
-                        if any(shipment_options(options))
-                        else []
+                        [option.code for option in shipment_options(options)] if any(shipment_options(options)) else []
                     ),
                 )
                 if any(shipment_options(options))
@@ -322,9 +305,7 @@ def rate_request(
                 fedex.CustomsClearanceDetailType(
                     brokers=[],
                     commercialInvoice=fedex.CommercialInvoiceType(
-                        shipmentPurpose=provider_units.PurposeType.map(
-                            customs.content_type or "sold"
-                        ).value
+                        shipmentPurpose=provider_units.PurposeType.map(customs.content_type or "sold").value
                     ),
                     freightOnValue=None,
                     dutiesPayment=fedex.DutiesPaymentType(
@@ -341,9 +322,7 @@ def rate_request(
                     ),
                     commodities=[
                         fedex.CommodityType(
-                            description=lib.text(
-                                item.description or item.title or "N/A", max=35
-                            ),
+                            description=lib.text(item.description or item.title or "N/A", max=35),
                             weight=fedex.WeightType(
                                 units=packages.weight_unit,
                                 value=item.weight,
@@ -357,14 +336,8 @@ def rate_request(
                                 else None
                             ),
                             customsValue=fedex.FixedValueType(
-                                amount=lib.identity(
-                                    lib.to_money(
-                                        item.value_amount or 1.0 * item.quantity
-                                    )
-                                ),
-                                currency=lib.identity(
-                                    item.value_currency or default_currency
-                                ),
+                                amount=lib.identity(lib.to_money(item.value_amount or 1.0 * item.quantity)),
+                                currency=lib.identity(item.value_currency or default_currency),
                             ),
                             quantity=item.quantity,
                             numberOfPieces=item.quantity,
@@ -385,10 +358,7 @@ def rate_request(
                 fedex.SmartPostInfoDetailType(
                     ancillaryEndorsement=None,
                     hubId=hub_id,
-                    indicia=(
-                        lib.text(options.fedex_smart_post_allowed_indicia.state)
-                        or "PARCEL_SELECT"
-                    ),
+                    indicia=(lib.text(options.fedex_smart_post_allowed_indicia.state) or "PARCEL_SELECT"),
                     specialServices=None,
                 )
                 if hub_id is not None

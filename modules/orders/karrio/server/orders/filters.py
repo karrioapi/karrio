@@ -1,10 +1,9 @@
-from django.db.models import Q
-from django.conf import settings
-
 import karrio.server.filters as filters
-import karrio.server.orders.serializers as serializers
-import karrio.server.orders.models as models
 import karrio.server.openapi as openapi
+import karrio.server.orders.models as models
+import karrio.server.orders.serializers as serializers
+from django.conf import settings
+from django.db.models import Q
 
 
 class OrderFilters(filters.FilterSet):
@@ -227,11 +226,7 @@ class OrderFilters(filters.FilterSet):
 
     def option_value_filter(self, queryset, name, value):
         return queryset.filter(
-            id__in=[
-                o["id"]
-                for o in queryset.values("id", "options")
-                if value in (o.get("options") or {}).values()
-            ]
+            id__in=[o["id"] for o in queryset.values("id", "options") if value in (o.get("options") or {}).values()]
         )
 
     def metadata_key_filter(self, queryset, name, value):
@@ -239,11 +234,7 @@ class OrderFilters(filters.FilterSet):
 
     def metadata_value_filter(self, queryset, name, value):
         return queryset.filter(
-            id__in=[
-                o["id"]
-                for o in queryset.values("id", "metadata")
-                if value in (o.get("metadata") or {}).values()
-            ]
+            id__in=[o["id"] for o in queryset.values("id", "metadata") if value in (o.get("metadata") or {}).values()]
         )
 
     def request_id_filter(self, queryset, name, value):
@@ -253,7 +244,5 @@ class OrderFilters(filters.FilterSet):
         import karrio.server.orders.models as order_models
 
         if value:
-            return order_models.Order.all_objects.filter(
-                pk__in=queryset.values("pk"), is_archived=True
-            )
+            return order_models.Order.all_objects.filter(pk__in=queryset.values("pk"), is_archived=True)
         return queryset.filter(is_archived=False)

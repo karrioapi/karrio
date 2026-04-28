@@ -1,8 +1,8 @@
 # Data migration: Move system carriers to SystemConnection and create BrokeredConnections
 # This migration uses the old is_system and active_users fields before they are removed
 
-from django.db import migrations
 from django.conf import settings
+from django.db import migrations
 
 
 def cleanup_orgs_carrier_references(apps, schema_editor, carrier):
@@ -120,9 +120,7 @@ def migrate_system_carriers(apps, schema_editor):
             )
             # In orgs mode, also filter by org=None
             if has_orgs:
-                system_configs = system_configs.filter(
-                    link__isnull=True
-                )
+                system_configs = system_configs.filter(link__isnull=True)
             system_config = system_configs.first()
         except Exception:
             pass

@@ -1,6 +1,5 @@
-import karrio.lib as lib
 import karrio.core as core
-
+import karrio.lib as lib
 
 LangEnum = lib.units.create_enum("LangEnum", ["fr_FR", "en_US"])
 

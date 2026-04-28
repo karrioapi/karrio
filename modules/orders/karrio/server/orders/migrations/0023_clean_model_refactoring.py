@@ -5,11 +5,10 @@
 # 3. Renaming *_data fields to direct names (removing suffix)
 # 4. Renaming table to plural form
 
-from django.db import migrations, models
+from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("orders", "0022_make_order_fk_nullable"),
         ("manager", "0074_clean_model_refactoring"),  # Ensure manager migration runs first
@@ -37,14 +36,12 @@ class Migration(migrations.Migration):
             model_name="order",
             name="line_items",
         ),
-
         # =========================================================
         # STEP 2: Delete OrderLineItemLink through model
         # =========================================================
         migrations.DeleteModel(
             name="OrderLineItemLink",
         ),
-
         # =========================================================
         # STEP 3: Rename *_data fields to direct names
         # =========================================================
@@ -68,7 +65,6 @@ class Migration(migrations.Migration):
             old_name="line_items_data",
             new_name="line_items",
         ),
-
         # =========================================================
         # STEP 4: Rename table to plural form
         # =========================================================

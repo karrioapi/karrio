@@ -1,12 +1,11 @@
-from django.db import transaction
-
 import karrio.lib as lib
 import karrio.server.conf as conf
-import karrio.server.manager.models as manager
-import karrio.server.serializers as serializers
 import karrio.server.core.exceptions as exceptions
 import karrio.server.data.serializers.base as base
+import karrio.server.manager.models as manager
 import karrio.server.manager.serializers as manager_serializers
+import karrio.server.serializers as serializers
+from django.db import transaction
 
 
 class ShipmentDataReference(manager_serializers.ShipmentData):
@@ -26,17 +25,11 @@ class BatchShipmentData(serializers.Serializer):
 
     @transaction.atomic
     def create(self, validated_data: dict, context: serializers.Context, **kwargs):
-        import karrio.server.events.tasks as tasks
         import karrio.server.data.serializers.batch as batch
+        import karrio.server.events.tasks as tasks
 
         operation_data = dict(resource_type="shipments", test_mode=context.test_mode)
-        operation = (
-            batch.BatchOperationModelSerializer.map(
-                data=operation_data, context=context
-            )
-            .save()
-            .instance
-        )
+        operation = batch.BatchOperationModelSerializer.map(data=operation_data, context=context).save().instance
 
         sid = transaction.savepoint()
         resources = BatchShipmentData.save_resources(
@@ -80,16 +73,12 @@ class BatchShipmentData(serializers.Serializer):
                     manager.Shipment.access_by(context).get(id=shipment_data["id"])
                     if shipment_data.get("id") is not None
                     else (
-                        manager_serializers.ShipmentSerializer.map(
-                            data=shipment_data, context=context
-                        )
+                        manager_serializers.ShipmentSerializer.map(data=shipment_data, context=context)
                         .save(fetch_rates=False)
                         .instance
                     )
                 )
-                resources.append(
-                    dict(id=shipment.id, status=base.ResourceStatus.queued.value)
-                )
+                resources.append(dict(id=shipment.id, status=base.ResourceStatus.queued.value))
             except Exception as e:
                 resources.append(
                     dict(

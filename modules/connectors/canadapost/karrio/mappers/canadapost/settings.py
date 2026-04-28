@@ -1,7 +1,6 @@
 """Karrio Canada post client settings."""
 
 import attr
-import karrio.lib as lib
 import karrio.providers.canadapost.utils as utils
 
 

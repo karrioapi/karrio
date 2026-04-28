@@ -1,22 +1,20 @@
-import typing
 import datetime
-import strawberry
-from constance import config
-from django.utils import timezone
-from strawberry.types import Info
+import typing
 
 import karrio.lib as lib
-import karrio.server.conf as conf
-import karrio.server.iam.models as iam
-import karrio.server.graph.utils as utils
-import karrio.server.admin.utils as admin
-import karrio.server.core.filters as filters
-import karrio.server.pricing.models as pricing
-import karrio.server.manager.models as manager
-import karrio.server.providers.models as providers
-import karrio.server.graph.schemas.base.types as base
 import karrio.server.admin.schemas.base.inputs as inputs
-
+import karrio.server.admin.utils as admin
+import karrio.server.conf as conf
+import karrio.server.core.filters as filters
+import karrio.server.graph.schemas.base.types as base
+import karrio.server.graph.utils as utils
+import karrio.server.iam.models as iam
+import karrio.server.manager.models as manager
+import karrio.server.pricing.models as pricing
+import karrio.server.providers.models as providers
+import strawberry
+from django.utils import timezone
+from strawberry.types import Info
 
 PRIVATE_CONFIGS = [
     "EMAIL_USE_TLS",
@@ -35,14 +33,14 @@ class SystemUserType(base.UserType):
     id: int
 
     @strawberry.field
-    def permissions(self: iam.User, info: Info) -> typing.Optional[typing.List[str]]:
+    def permissions(self: iam.User, info: Info) -> list[str] | None:
         return self.permissions
 
     @strawberry.field
-    def metadata(self: iam.User) -> typing.Optional[utils.JSON]:
+    def metadata(self: iam.User) -> utils.JSON | None:
         try:
             return lib.to_dict(self.metadata)
-        except:
+        except Exception:
             return self.metadata
 
     @staticmethod
@@ -65,12 +63,10 @@ class SystemUserType(base.UserType):
     @admin.staff_required
     def resolve_list(
         info: Info,
-        filter: typing.Optional[inputs.UserFilter] = strawberry.UNSET,
+        filter: inputs.UserFilter | None = strawberry.UNSET,
     ) -> utils.Connection["SystemUserType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.UserFilter()
-        queryset = filters.UserFilter(
-            _filter.to_dict(), iam.User.objects.filter(is_staff=True)
-        ).qs
+        queryset = filters.UserFilter(_filter.to_dict(), iam.User.objects.filter(is_staff=True)).qs
 
         return utils.paginated_connection(queryset, **_filter.pagination())
 
@@ -81,7 +77,7 @@ class PermissionGroupType:
     name: str
 
     @strawberry.field
-    def permissions(self: iam.Group) -> typing.Optional[typing.List[str]]:
+    def permissions(self: iam.Group) -> list[str] | None:
         return self.permissions.all().values_list("name", flat=True)
 
     @staticmethod
@@ -89,11 +85,9 @@ class PermissionGroupType:
     @admin.staff_required
     def resolve_list(
         info: Info,
-        filter: typing.Optional[inputs.PermissionGroupFilter] = strawberry.UNSET,
+        filter: inputs.PermissionGroupFilter | None = strawberry.UNSET,
     ) -> utils.Connection["PermissionGroupType"]:
-        _filter = (
-            filter if not utils.is_unset(filter) else inputs.PermissionGroupFilter()
-        )
+        _filter = filter if not utils.is_unset(filter) else inputs.PermissionGroupFilter()
         queryset = iam.Group.objects.filter()
 
         return utils.paginated_connection(queryset, **_filter.pagination())
@@ -107,7 +101,7 @@ class SystemCarrierConnectionType(base.CarrierConnectionType):
     This type now maps to the SystemConnection model (admin-managed platform connections).
     """
 
-    object_type: typing.Optional[str]
+    object_type: str | None
 
     @strawberry.field
     def credentials(self: providers.SystemConnection, info: Info) -> utils.JSON:
@@ -115,10 +109,20 @@ class SystemCarrierConnectionType(base.CarrierConnectionType):
         return self.get_credentials()
 
     @strawberry.field
+    def config(self: providers.SystemConnection, info: Info) -> utils.JSON | None:
+        """Return the raw system-connection config for admin editing.
+
+        Overrides the base resolver which returns None for SystemConnection to
+        prevent billing numbers leaking via the tenant graph. Admin staff need
+        the full config to manage billing numbers, label_type, default values, etc.
+        """
+        return getattr(self, "config", None)
+
+    @strawberry.field
     def usage(
         self: providers.SystemConnection,
         info: Info,
-        filter: typing.Optional[utils.UsageFilter] = strawberry.UNSET,
+        filter: utils.UsageFilter | None = strawberry.UNSET,
     ) -> "ResourceUsageType":
         # Check for batch-precomputed usage on request context (avoids N+1)
         _cache = getattr(info.context.request, "_usage_cache", None)
@@ -147,24 +151,18 @@ class SystemCarrierConnectionType(base.CarrierConnectionType):
     def shipments(
         self: providers.SystemConnection,
         info: Info,
-        filter: typing.Optional[inputs.base.ShipmentFilter] = strawberry.UNSET,
+        filter: inputs.base.ShipmentFilter | None = strawberry.UNSET,
     ) -> utils.Connection[base.ShipmentType]:
-        _filter = (
-            filter if not utils.is_unset(filter) else inputs.base.ShipmentFilter()
-        )
+        _filter = filter if not utils.is_unset(filter) else inputs.base.ShipmentFilter()
         _filter_data = _filter.to_dict()
         # Query shipments that used this system connection via brokered connections
         brokered_ids = list(
-            providers.BrokeredConnection.objects.filter(
-                system_connection=self
-            ).values_list("id", flat=True)
+            providers.BrokeredConnection.objects.filter(system_connection=self).values_list("id", flat=True)
         )
         # Include both direct system connection usage and brokered usage
         queryset = filters.ShipmentFilters(
             _filter_data,
-            manager.Shipment.objects.filter(
-                selected_rate__meta__connection_id__in=[self.id] + brokered_ids
-            ),
+            manager.Shipment.objects.filter(selected_rate__meta__connection_id__in=[self.id] + brokered_ids),
         ).qs
 
         return utils.paginated_connection(queryset, **_filter.pagination())
@@ -184,7 +182,7 @@ class SystemCarrierConnectionType(base.CarrierConnectionType):
     @admin.staff_required
     def resolve_list(
         info: Info,
-        filter: typing.Optional[inputs.base.CarrierFilter] = strawberry.UNSET,
+        filter: inputs.base.CarrierFilter | None = strawberry.UNSET,
     ) -> utils.Connection["SystemCarrierConnectionType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.base.CarrierFilter()
         _filter_data = _filter.to_dict()
@@ -202,19 +200,37 @@ class SystemCarrierConnectionType(base.CarrierConnectionType):
         # Batch-prefetch usage for all connections to avoid N+1 queries
         connection_ids = list(queryset.values_list("id", flat=True))
         if connection_ids:
-            info.context.request._usage_cache = (
-                ResourceUsageType.batch_resolve_usage(
-                    info, connection_ids=connection_ids
-                )
+            info.context.request._usage_cache = ResourceUsageType.batch_resolve_usage(
+                info, connection_ids=connection_ids
             )
 
         return utils.paginated_connection(queryset)
 
 
+def _ensure_aware(value):
+    """Coerce a datetime / ISO-string into a tz-aware datetime.
+
+    Admin usage-stat queries feed `created_at__gte=` / `__lte=` on
+    Fee/Shipment DateTimeFields, which are tz-aware. Naive values slip
+    through when the GraphQL input carries an ISO string without a
+    trailing 'Z' / offset — Django then emits the familiar
+    ``DateTimeField received a naive datetime`` RuntimeWarning on every
+    matching row. Normalise once at the query boundary.
+    """
+    if value is None:
+        return None
+    if isinstance(value, str):
+        parsed = timezone.datetime.fromisoformat(value.replace("Z", "+00:00"))
+        value = parsed
+    if isinstance(value, datetime.datetime) and timezone.is_naive(value):
+        return timezone.make_aware(value, timezone.get_current_timezone())
+    return value
+
+
 def _bulk_load_constance_config(keys):
     """Bulk load constance configuration values to avoid N+1 queries."""
-    from django.apps import apps
     from constance.codecs import loads
+    from django.apps import apps
 
     Constance = apps.get_model("constance", "Constance")
 
@@ -223,9 +239,7 @@ def _bulk_load_constance_config(keys):
     prefixed_keys = [f"{prefix}{key}" for key in keys]
 
     # Use Django ORM to bulk fetch all values in a single query
-    constance_values = Constance.objects.filter(key__in=prefixed_keys).values(
-        "key", "value"
-    )
+    constance_values = Constance.objects.filter(key__in=prefixed_keys).values("key", "value")
 
     # Build dict mapping unprefixed key to deserialized value
     values_dict = {}
@@ -250,17 +264,14 @@ def _bulk_load_constance_config(keys):
 
 @strawberry.type
 class InstanceConfigType:
-    configs: typing.Optional[utils.JSON] = None
+    configs: utils.JSON | None = None
 
     @staticmethod
     @utils.authentication_required
     @admin.staff_required
     def resolve(info: Info) -> "InstanceConfigType":
         if conf.settings.tenant:
-            values = {
-                k: getattr(conf.settings, k, None)
-                for k in conf.settings.CONSTANCE_CONFIG.keys()
-            }
+            values = {k: getattr(conf.settings, k, None) for k in conf.settings.CONSTANCE_CONFIG}
         else:
             all_keys = list(conf.settings.CONSTANCE_CONFIG.keys())
             values = _bulk_load_constance_config(all_keys)
@@ -271,17 +282,14 @@ class InstanceConfigType:
 @strawberry.type
 class ConfigFieldsetType:
     name: str
-    keys: typing.List[str]
+    keys: list[str]
 
     @staticmethod
     @utils.authentication_required
     @admin.staff_required
-    def resolve_list(info: Info) -> typing.List["ConfigFieldsetType"]:
+    def resolve_list(info: Info) -> list["ConfigFieldsetType"]:
         fieldsets = getattr(conf.settings, "CONSTANCE_CONFIG_FIELDSETS", {})
-        return [
-            ConfigFieldsetType(name=name, keys=list(keys))
-            for name, keys in fieldsets.items()
-        ]
+        return [ConfigFieldsetType(name=name, keys=list(keys)) for name, keys in fieldsets.items()]
 
 
 @strawberry.type
@@ -289,12 +297,12 @@ class ConfigSchemaItemType:
     key: str
     description: str
     value_type: str
-    default_value: typing.Optional[str] = None
+    default_value: str | None = None
 
     @staticmethod
     @utils.authentication_required
     @admin.staff_required
-    def resolve_list(info: Info) -> typing.List["ConfigSchemaItemType"]:
+    def resolve_list(info: Info) -> list["ConfigSchemaItemType"]:
         config = getattr(conf.settings, "CONSTANCE_CONFIG", {})
         return [
             ConfigSchemaItemType(
@@ -314,7 +322,7 @@ class SystemRateSheetType(base.RateSheetType):
     @strawberry.field
     def carriers(
         self: providers.SystemRateSheet,
-    ) -> typing.List[SystemCarrierConnectionType]:
+    ) -> list[SystemCarrierConnectionType]:
         return self.carriers
 
     @staticmethod
@@ -331,34 +339,30 @@ class SystemRateSheetType(base.RateSheetType):
     @admin.staff_required
     def resolve_list(
         info: Info,
-        filter: typing.Optional[inputs.base.RateSheetFilter] = strawberry.UNSET,
+        filter: inputs.base.RateSheetFilter | None = strawberry.UNSET,
     ) -> utils.Connection["SystemRateSheetType"]:
-        _filter = (
-            filter if not utils.is_unset(filter) else inputs.base.RateSheetFilter()
-        )
-        queryset = filters.SystemRateSheetFilter(
-            _filter.to_dict(), providers.SystemRateSheet.objects.all()
-        ).qs
+        _filter = filter if not utils.is_unset(filter) else inputs.base.RateSheetFilter()
+        queryset = filters.SystemRateSheetFilter(_filter.to_dict(), providers.SystemRateSheet.objects.all()).qs
 
         return utils.paginated_connection(queryset, **_filter.pagination())
 
 
 @strawberry.type
 class ResourceUsageType:
-    total_trackers: typing.Optional[int] = None
-    total_shipments: typing.Optional[int] = None
-    total_addons_charges: typing.Optional[float] = None
-    total_shipping_spend: typing.Optional[float] = None
-    addons_charges: typing.Optional[typing.List[utils.UsageStatType]] = None
-    shipping_spend: typing.Optional[typing.List[utils.UsageStatType]] = None
-    tracker_count: typing.Optional[typing.List[utils.UsageStatType]] = None
+    total_trackers: int | None = None
+    total_shipments: int | None = None
+    total_addons_charges: float | None = None
+    total_shipping_spend: float | None = None
+    addons_charges: list[utils.UsageStatType] | None = None
+    shipping_spend: list[utils.UsageStatType] | None = None
+    tracker_count: list[utils.UsageStatType] | None = None
 
     @staticmethod
     def batch_resolve_usage(
         info: Info,
-        connection_ids: typing.List[str],
+        connection_ids: list[str],
         filter: utils.UsageFilter = strawberry.UNSET,
-    ) -> typing.Dict[str, "ResourceUsageType"]:
+    ) -> dict[str, "ResourceUsageType"]:
         """Batch-compute usage for multiple connections in 4 queries total."""
         import django.db.models as models
         import django.db.models.functions as functions
@@ -370,6 +374,8 @@ class ResourceUsageType:
             "date_after": (timezone.now() - datetime.timedelta(days=30)),
             **(filter.to_dict() if not utils.is_unset(filter) else {}),
         }
+        _filter["date_before"] = _ensure_aware(_filter.get("date_before"))
+        _filter["date_after"] = _ensure_aware(_filter.get("date_after"))
 
         # Query 1: Shipment stats grouped by connection_id
         shipment_qs = (
@@ -385,20 +391,14 @@ class ResourceUsageType:
                 ),
             )
             .qs.annotate(
-                connection_id=models.F(
-                    "selected_rate__meta__carrier_connection_id"
-                ),
+                connection_id=models.F("selected_rate__meta__carrier_connection_id"),
                 date=functions.TruncDay("created_at"),
             )
             .values("connection_id", "date")
             .annotate(
                 count=models.Count("id"),
                 amount=functions.Coalesce(
-                    models.Sum(
-                        functions.Cast(
-                            "selected_rate__total_charge", models.FloatField()
-                        )
-                    ),
+                    models.Sum(functions.Cast("selected_rate__total_charge", models.FloatField())),
                     models.Value(0.0),
                 ),
             )
@@ -441,21 +441,21 @@ class ResourceUsageType:
         )
 
         # Build per-connection data from batch results
-        shipment_data: typing.Dict[str, list] = {cid: [] for cid in connection_ids}
-        shipment_counts: typing.Dict[str, int] = {cid: 0 for cid in connection_ids}
+        shipment_data: dict[str, list] = {cid: [] for cid in connection_ids}
+        shipment_counts: dict[str, int] = {cid: 0 for cid in connection_ids}
         for row in shipment_qs:
             cid = row["connection_id"]
             if cid in shipment_data:
                 shipment_data[cid].append(row)
                 shipment_counts[cid] += row["count"]
 
-        fee_data: typing.Dict[str, list] = {cid: [] for cid in connection_ids}
+        fee_data: dict[str, list] = {cid: [] for cid in connection_ids}
         for row in fee_qs:
             cid = row["connection_id"]
             if cid in fee_data:
                 fee_data[cid].append(row)
 
-        tracker_data: typing.Dict[str, list] = {cid: [] for cid in connection_ids}
+        tracker_data: dict[str, list] = {cid: [] for cid in connection_ids}
         for row in tracker_qs:
             cid = row["connection_id"]
             if cid in tracker_data:
@@ -468,33 +468,18 @@ class ResourceUsageType:
             _fees = fee_data[cid]
             _trackers = tracker_data[cid]
 
-            total_shipping_spend = lib.to_decimal(
-                sum((r["amount"] for r in _shipping if r["amount"] is not None), 0.0)
-            )
-            total_addons_charges = lib.to_decimal(
-                sum((r["amount"] for r in _fees if r["amount"] is not None), 0.0)
-            )
-            total_trackers = sum(
-                (r["count"] for r in _trackers if r["count"] is not None), 0
-            )
+            total_shipping_spend = lib.to_decimal(sum((r["amount"] for r in _shipping if r["amount"] is not None), 0.0))
+            total_addons_charges = lib.to_decimal(sum((r["amount"] for r in _fees if r["amount"] is not None), 0.0))
+            total_trackers = sum((r["count"] for r in _trackers if r["count"] is not None), 0)
 
             result[cid] = ResourceUsageType(
                 total_trackers=total_trackers,
                 total_shipments=shipment_counts[cid],
                 total_addons_charges=lib.to_decimal(total_addons_charges),
                 total_shipping_spend=lib.to_decimal(total_shipping_spend),
-                shipping_spend=[
-                    utils.UsageStatType.parse(r, label="shipping_spend")
-                    for r in _shipping
-                ],
-                tracker_count=[
-                    utils.UsageStatType.parse(r, label="tracker_count")
-                    for r in _trackers
-                ],
-                addons_charges=[
-                    utils.UsageStatType.parse(r, label="addons_charges")
-                    for r in _fees
-                ],
+                shipping_spend=[utils.UsageStatType.parse(r, label="shipping_spend") for r in _shipping],
+                tracker_count=[utils.UsageStatType.parse(r, label="tracker_count") for r in _trackers],
+                addons_charges=[utils.UsageStatType.parse(r, label="addons_charges") for r in _fees],
             )
 
         return result
@@ -515,22 +500,16 @@ class ResourceUsageType:
             "date_after": (timezone.now() - datetime.timedelta(days=30)),
             **filter.to_dict(),
         }
-        _account_filter = lib.identity(
-            dict(org__id=_filter.get("account_id")) if _filter.get("account_id") else {}
-        )
+        _filter["date_before"] = _ensure_aware(_filter.get("date_before"))
+        _filter["date_after"] = _ensure_aware(_filter.get("date_after"))
+        _account_filter = lib.identity(dict(org__id=_filter.get("account_id")) if _filter.get("account_id") else {})
         _connection_filter = lib.identity(
-            dict(
-                selected_rate__meta__carrier_connection_id=_filter.get(
-                    "carrier_connection_id"
-                )
-            )
+            dict(selected_rate__meta__carrier_connection_id=_filter.get("carrier_connection_id"))
             if _filter.get("carrier_connection_id")
             else {}
         )
         _tracker_filter = lib.identity(
-            dict(carrier__id=_filter.get("carrier_connection_id"))
-            if _filter.get("carrier_connection_id")
-            else {}
+            dict(carrier__id=_filter.get("carrier_connection_id")) if _filter.get("carrier_connection_id") else {}
         )
 
         shipments = lib.identity(
@@ -556,11 +535,7 @@ class ResourceUsageType:
             .annotate(
                 count=models.Count("id"),
                 amount=functions.Coalesce(
-                    models.Sum(
-                        functions.Cast(
-                            "selected_rate__total_charge", models.FloatField()
-                        )
-                    ),
+                    models.Sum(functions.Cast("selected_rate__total_charge", models.FloatField())),
                     models.Value(0.0),
                 ),
             )
@@ -611,45 +586,26 @@ class ResourceUsageType:
         total_shipments = shipments.qs.count()
         total_shipping_spend = lib.to_decimal(
             sum(
-                [
-                    item["amount"]
-                    for item in shipping_spend
-                    if item["amount"] is not None
-                ],
+                [item["amount"] for item in shipping_spend if item["amount"] is not None],
                 0.0,
             )
         )
         total_addons_charges = lib.to_decimal(
             sum(
-                [
-                    item["amount"]
-                    for item in addons_charges
-                    if item["amount"] is not None
-                ],
+                [item["amount"] for item in addons_charges if item["amount"] is not None],
                 0.0,
             )
         )
-        total_trackers = sum(
-            [item["count"] for item in tracker_count if item["count"] is not None], 0
-        )
+        total_trackers = sum([item["count"] for item in tracker_count if item["count"] is not None], 0)
 
         return ResourceUsageType(
             total_trackers=total_trackers,
             total_shipments=total_shipments,
             total_addons_charges=lib.to_decimal(total_addons_charges),
             total_shipping_spend=lib.to_decimal(total_shipping_spend),
-            shipping_spend=[
-                utils.UsageStatType.parse(item, label="shipping_spend")
-                for item in shipping_spend
-            ],
-            tracker_count=[
-                utils.UsageStatType.parse(item, label="tracker_count")
-                for item in tracker_count
-            ],
-            addons_charges=[
-                utils.UsageStatType.parse(item, label="addons_charges")
-                for item in addons_charges
-            ],
+            shipping_spend=[utils.UsageStatType.parse(item, label="shipping_spend") for item in shipping_spend],
+            tracker_count=[utils.UsageStatType.parse(item, label="tracker_count") for item in tracker_count],
+            addons_charges=[utils.UsageStatType.parse(item, label="addons_charges") for item in addons_charges],
         )
 
 
@@ -664,52 +620,44 @@ class MarkupType:
     amount: float
     markup_type: str
     is_visible: bool = True
-    meta: typing.Optional[utils.JSON] = None
-    metadata: typing.Optional[utils.JSON] = None
+    meta: utils.JSON | None = None
+    metadata: utils.JSON | None = None
 
     @strawberry.field
-    def service_codes(self: pricing.Markup) -> typing.List[str]:
+    def service_codes(self: pricing.Markup) -> list[str]:
         return self.service_codes or []
 
     @strawberry.field
-    def carrier_codes(self: pricing.Markup) -> typing.List[str]:
+    def carrier_codes(self: pricing.Markup) -> list[str]:
         return self.carrier_codes or []
 
     @strawberry.field
-    def connection_ids(self: pricing.Markup) -> typing.List[str]:
+    def connection_ids(self: pricing.Markup) -> list[str]:
         return self.connection_ids or []
 
     @strawberry.field
-    def organization_ids(self: pricing.Markup) -> typing.List[str]:
+    def organization_ids(self: pricing.Markup) -> list[str]:
         return self.organization_ids or []
 
     @strawberry.field
     def shipments(
         self: pricing.Markup,
         info: Info,
-        filter: typing.Optional[inputs.base.ShipmentFilter] = strawberry.UNSET,
-    ) -> typing.Optional[utils.Connection[base.ShipmentType]]:
-        _filter = (
-            filter if not utils.is_unset(filter) else inputs.base.ShipmentFilter()
-        )
+        filter: inputs.base.ShipmentFilter | None = strawberry.UNSET,
+    ) -> utils.Connection[base.ShipmentType] | None:
+        _filter = filter if not utils.is_unset(filter) else inputs.base.ShipmentFilter()
         _filter_data = _filter.to_dict()
         _test_mode = getattr(info.context.request, "test_mode", False)
 
         # Get shipment IDs from Fee table (indexed lookup)
         _fee_filters = dict(markup_id=self.id, test_mode=_test_mode)
 
-        shipment_ids = list(
-            pricing.Fee.objects.filter(**_fee_filters)
-            .values_list("shipment_id", flat=True)
-            .distinct()
-        )
+        shipment_ids = list(pricing.Fee.objects.filter(**_fee_filters).values_list("shipment_id", flat=True).distinct())
 
         return utils.paginated_connection(
             filters.ShipmentFilters(
                 _filter_data,
-                manager.Shipment.objects.filter(
-                    id__in=shipment_ids, test_mode=_test_mode
-                ),
+                manager.Shipment.objects.filter(id__in=shipment_ids, test_mode=_test_mode),
             ).qs,
             **_filter.pagination(),
         )
@@ -718,7 +666,7 @@ class MarkupType:
     def fees(
         self: pricing.Markup,
         info: Info,
-        filter: typing.Optional[utils.Paginated] = strawberry.UNSET,
+        filter: utils.Paginated | None = strawberry.UNSET,
     ) -> utils.Connection["FeeType"]:
         """Get fees generated by this markup."""
         _filter = filter if not utils.is_unset(filter) else utils.Paginated()
@@ -729,7 +677,7 @@ class MarkupType:
     def usage(
         self: pricing.Markup,
         info: Info,
-        filter: typing.Optional[utils.UsageFilter] = strawberry.UNSET,
+        filter: utils.UsageFilter | None = strawberry.UNSET,
     ) -> "ResourceUsageType":
         filter = {
             **(filter.to_dict() if not utils.is_unset(filter) else {}),
@@ -748,7 +696,7 @@ class MarkupType:
     @admin.staff_required
     def resolve_list(
         info: Info,
-        filter: typing.Optional[inputs.MarkupFilter] = strawberry.UNSET,
+        filter: inputs.MarkupFilter | None = strawberry.UNSET,
     ) -> utils.Connection["MarkupType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.MarkupFilter()
         _filter_data = _filter.to_dict()
@@ -791,13 +739,13 @@ class FeeType:
     amount: float
     currency: str
     fee_type: str
-    percentage: typing.Optional[float] = None
-    markup_id: typing.Optional[str] = None
+    percentage: float | None = None
+    markup_id: str | None = None
     shipment_id: str
-    account_id: typing.Optional[str] = None
+    account_id: str | None = None
     connection_id: str
     carrier_code: str
-    service_code: typing.Optional[str] = None
+    service_code: str | None = None
     test_mode: bool = False
     created_at: datetime.datetime
 
@@ -812,7 +760,7 @@ class FeeType:
     @admin.staff_required
     def resolve_list(
         info: Info,
-        filter: typing.Optional[inputs.FeeFilter] = strawberry.UNSET,
+        filter: inputs.FeeFilter | None = strawberry.UNSET,
     ) -> utils.Connection["FeeType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.FeeFilter()
         _filter_data = _filter.to_dict()
@@ -836,100 +784,20 @@ class FeeType:
 
 
 @strawberry.type
-class TaskExecutionType:
-    """Admin type for Huey task execution records."""
-
-    id: int
-    task_id: str
-    task_name: str
-    status: str
-    queued_at: typing.Optional[datetime.datetime] = None
-    started_at: typing.Optional[datetime.datetime] = None
-    completed_at: typing.Optional[datetime.datetime] = None
-    duration_ms: typing.Optional[int] = None
-    error: typing.Optional[str] = None
-    retries: int = 0
-    args_summary: typing.Optional[str] = None
-
-    @staticmethod
-    @utils.authentication_required
-    @admin.staff_required
-    def resolve_list(
-        info: Info,
-        filter: typing.Optional[inputs.TaskExecutionFilter] = strawberry.UNSET,
-    ) -> utils.Connection["TaskExecutionType"]:
-        from karrio.server.admin.worker.models import TaskExecution
-
-        _filter = (
-            filter if not utils.is_unset(filter) else inputs.TaskExecutionFilter()
-        )
-        _filter_data = _filter.to_dict()
-        _queryset_filters = {}
-
-        if _filter_data.get("status"):
-            _queryset_filters["status"] = _filter_data["status"]
-        if _filter_data.get("task_name"):
-            _queryset_filters["task_name__icontains"] = _filter_data["task_name"]
-        if _filter_data.get("date_after"):
-            _queryset_filters["queued_at__gte"] = _filter_data["date_after"]
-        if _filter_data.get("date_before"):
-            _queryset_filters["queued_at__lte"] = _filter_data["date_before"]
-
-        queryset = TaskExecution.objects.filter(**_queryset_filters)
-        return utils.paginated_connection(queryset, **_filter.pagination())
-
-
-@strawberry.type
-class QueueInfoType:
-    pending_count: int
-    scheduled_count: int
-    result_count: int
-
-
-@strawberry.type
-class WorkerHealthType:
-    is_available: bool
-    queue: typing.Optional[QueueInfoType] = None
-
-    @staticmethod
-    @utils.authentication_required
-    @admin.staff_required
-    def resolve(info: Info) -> "WorkerHealthType":
-        try:
-            from huey.contrib.djhuey import HUEY as huey_instance
-
-            storage = huey_instance.storage
-            return WorkerHealthType(
-                is_available=True,
-                queue=QueueInfoType(
-                    pending_count=storage.queue_size(),
-                    scheduled_count=storage.schedule_size(),
-                    result_count=storage.result_store_size(),
-                ),
-            )
-        except Exception:
-            return WorkerHealthType(is_available=False)
-
-
-@strawberry.type
 class AdminSystemUsageType(base.SystemUsageType):
-    total_addons_charges: typing.Optional[float] = None
-    addons_charges: typing.Optional[typing.List[utils.UsageStatType]] = None
+    total_addons_charges: float | None = None
+    addons_charges: list[utils.UsageStatType] | None = None
 
     @staticmethod
     @utils.authentication_required
     @admin.staff_required
     def resolve(
         info: Info,
-        filter: typing.Optional[utils.UsageFilter] = strawberry.UNSET,
+        filter: utils.UsageFilter | None = strawberry.UNSET,
     ) -> "AdminSystemUsageType":
         _filter_data = filter.to_dict() if not utils.is_unset(filter) else {}
-        base_usage = base.SystemUsageType.resolve(
-            info, filter=utils.UsageFilter(**_filter_data)
-        )
-        resource_usage = ResourceUsageType.resolve_usage(
-            info, filter=utils.UsageFilter(**_filter_data)
-        )
+        base_usage = base.SystemUsageType.resolve(info, filter=utils.UsageFilter(**_filter_data))
+        resource_usage = ResourceUsageType.resolve_usage(info, filter=utils.UsageFilter(**_filter_data))
 
         return AdminSystemUsageType(
             addons_charges=resource_usage.addons_charges,

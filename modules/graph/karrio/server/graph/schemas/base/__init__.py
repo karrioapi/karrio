@@ -1,16 +1,13 @@
-import typing
-import strawberry
-from strawberry.types import Info
-
 import karrio.server.core.models as core
-import karrio.server.graph.models as graph
-import karrio.server.manager.models as manager
-import karrio.server.providers.models as providers
-import karrio.server.manager.serializers as manager_serializers
-import karrio.server.graph.schemas.base.mutations as mutations
 import karrio.server.graph.schemas.base.inputs as inputs
+import karrio.server.graph.schemas.base.mutations as mutations
 import karrio.server.graph.schemas.base.types as types
 import karrio.server.graph.utils as utils
+import karrio.server.manager.models as manager
+import karrio.server.manager.serializers as manager_serializers
+import karrio.server.providers.models as providers
+import strawberry
+from strawberry.types import Info
 
 # extra_types = [*types.CarrierSettings.values()]
 extra_types = []
@@ -20,15 +17,9 @@ extra_types = []
 class Query:
     user: types.UserType = strawberry.field(resolver=types.UserType.resolve)
     token: types.TokenType = strawberry.field(resolver=types.TokenType.resolve)
-    api_keys: typing.List[types.APIKeyType] = strawberry.field(
-        resolver=types.APIKeyType.resolve_list
-    )
-    workspace_config: typing.Optional[types.WorkspaceConfigType] = strawberry.field(
-        resolver=types.WorkspaceConfigType.resolve
-    )
-    system_usage: types.SystemUsageType = strawberry.field(
-        resolver=types.SystemUsageType.resolve
-    )
+    api_keys: list[types.APIKeyType] = strawberry.field(resolver=types.APIKeyType.resolve_list)
+    workspace_config: types.WorkspaceConfigType | None = strawberry.field(resolver=types.WorkspaceConfigType.resolve)
+    system_usage: types.SystemUsageType = strawberry.field(resolver=types.SystemUsageType.resolve)
 
     user_connections: utils.Connection[types.CarrierConnectionType] = strawberry.field(
         resolver=types.CarrierConnectionType.resolve_list
@@ -37,104 +28,56 @@ class Query:
         resolver=types.SystemConnectionType.resolve_list
     )
 
-    default_templates: types.DefaultTemplatesType = strawberry.field(
-        resolver=types.resolve_default_templates
-    )
-    addresses: utils.Connection[types.AddressTemplateType] = strawberry.field(
-        resolver=types.resolve_addresses
-    )
-    address: typing.Optional[types.AddressTemplateType] = strawberry.field(
-        resolver=types.resolve_address
-    )
-    parcels: utils.Connection[types.ParcelTemplateType] = strawberry.field(
-        resolver=types.resolve_parcels
-    )
-    parcel: typing.Optional[types.ParcelTemplateType] = strawberry.field(
-        resolver=types.resolve_parcel
-    )
-    products: utils.Connection[types.ProductTemplateType] = strawberry.field(
-        resolver=types.resolve_products
-    )
-    product: typing.Optional[types.ProductTemplateType] = strawberry.field(
-        resolver=types.resolve_product
-    )
+    default_templates: types.DefaultTemplatesType = strawberry.field(resolver=types.resolve_default_templates)
+    addresses: utils.Connection[types.AddressTemplateType] = strawberry.field(resolver=types.resolve_addresses)
+    address: types.AddressTemplateType | None = strawberry.field(resolver=types.resolve_address)
+    parcels: utils.Connection[types.ParcelTemplateType] = strawberry.field(resolver=types.resolve_parcels)
+    parcel: types.ParcelTemplateType | None = strawberry.field(resolver=types.resolve_parcel)
+    products: utils.Connection[types.ProductTemplateType] = strawberry.field(resolver=types.resolve_products)
+    product: types.ProductTemplateType | None = strawberry.field(resolver=types.resolve_product)
 
-    log: typing.Optional[types.LogType] = strawberry.field(
-        resolver=types.LogType.resolve
-    )
-    logs: utils.Connection[types.LogType] = strawberry.field(
-        resolver=types.LogType.resolve_list
-    )
+    log: types.LogType | None = strawberry.field(resolver=types.LogType.resolve)
+    logs: utils.Connection[types.LogType] = strawberry.field(resolver=types.LogType.resolve_list)
 
-    tracing_record: typing.Optional[types.TracingRecordType] = strawberry.field(
-        resolver=types.TracingRecordType.resolve
-    )
+    tracing_record: types.TracingRecordType | None = strawberry.field(resolver=types.TracingRecordType.resolve)
     tracing_records: utils.Connection[types.TracingRecordType] = strawberry.field(
         resolver=types.TracingRecordType.resolve_list
     )
 
-    shipment: typing.Optional[types.ShipmentType] = strawberry.field(
-        resolver=types.ShipmentType.resolve
-    )
-    shipments: utils.Connection[types.ShipmentType] = strawberry.field(
-        resolver=types.ShipmentType.resolve_list
-    )
+    shipment: types.ShipmentType | None = strawberry.field(resolver=types.ShipmentType.resolve)
+    shipments: utils.Connection[types.ShipmentType] = strawberry.field(resolver=types.ShipmentType.resolve_list)
 
-    tracker: typing.Optional[types.TrackerType] = strawberry.field(
-        resolver=types.TrackerType.resolve
-    )
-    trackers: utils.Connection[types.TrackerType] = strawberry.field(
-        resolver=types.TrackerType.resolve_list
-    )
+    tracker: types.TrackerType | None = strawberry.field(resolver=types.TrackerType.resolve)
+    trackers: utils.Connection[types.TrackerType] = strawberry.field(resolver=types.TrackerType.resolve_list)
 
-    rate_sheet: typing.Optional[types.RateSheetType] = strawberry.field(
-        resolver=types.RateSheetType.resolve
-    )
-    rate_sheets: utils.Connection[types.RateSheetType] = strawberry.field(
-        resolver=types.RateSheetType.resolve_list
-    )
+    rate_sheet: types.RateSheetType | None = strawberry.field(resolver=types.RateSheetType.resolve)
+    rate_sheets: utils.Connection[types.RateSheetType] = strawberry.field(resolver=types.RateSheetType.resolve_list)
 
-    manifest: typing.Optional[types.ManifestType] = strawberry.field(
-        resolver=types.ManifestType.resolve
-    )
-    manifests: utils.Connection[types.ManifestType] = strawberry.field(
-        resolver=types.ManifestType.resolve_list
-    )
+    manifest: types.ManifestType | None = strawberry.field(resolver=types.ManifestType.resolve)
+    manifests: utils.Connection[types.ManifestType] = strawberry.field(resolver=types.ManifestType.resolve_list)
 
-    pickup: typing.Optional[types.PickupType] = strawberry.field(
-        resolver=types.PickupType.resolve
-    )
-    pickups: utils.Connection[types.PickupType] = strawberry.field(
-        resolver=types.PickupType.resolve_list
-    )
+    pickup: types.PickupType | None = strawberry.field(resolver=types.PickupType.resolve)
+    pickups: utils.Connection[types.PickupType] = strawberry.field(resolver=types.PickupType.resolve_list)
 
-    carrier_connection: typing.Optional[types.CarrierConnectionType] = strawberry.field(
+    carrier_connection: types.CarrierConnectionType | None = strawberry.field(
         resolver=types.CarrierConnectionType.resolve
     )
-    carrier_connections: utils.Connection[types.CarrierConnectionType] = (
-        strawberry.field(resolver=types.CarrierConnectionType.resolve_list)
+    carrier_connections: utils.Connection[types.CarrierConnectionType] = strawberry.field(
+        resolver=types.CarrierConnectionType.resolve_list
     )
 
-    metafield: typing.Optional[types.MetafieldType] = strawberry.field(
-        resolver=types.MetafieldType.resolve
-    )
-    metafields: utils.Connection[types.MetafieldType] = strawberry.field(
-        resolver=types.MetafieldType.resolve_list
-    )
+    metafield: types.MetafieldType | None = strawberry.field(resolver=types.MetafieldType.resolve)
+    metafields: utils.Connection[types.MetafieldType] = strawberry.field(resolver=types.MetafieldType.resolve_list)
 
 
 @strawberry.type
 class Mutation:
     @strawberry.mutation
-    def update_user(
-        self, info: Info, input: inputs.UpdateUserInput
-    ) -> mutations.UserUpdateMutation:
+    def update_user(self, info: Info, input: inputs.UpdateUserInput) -> mutations.UserUpdateMutation:
         return mutations.UserUpdateMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def register_user(
-        self, info: Info, input: inputs.RegisterUserMutationInput
-    ) -> mutations.RegisterUserMutation:
+    def register_user(self, info: Info, input: inputs.RegisterUserMutationInput) -> mutations.RegisterUserMutation:
         return mutations.RegisterUserMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
@@ -144,21 +87,15 @@ class Mutation:
         return mutations.WorkspaceConfigMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def mutate_token(
-        self, info: Info, input: inputs.TokenMutationInput
-    ) -> mutations.TokenMutation:
+    def mutate_token(self, info: Info, input: inputs.TokenMutationInput) -> mutations.TokenMutation:
         return mutations.TokenMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def create_api_key(
-        self, info: Info, input: inputs.CreateAPIKeyMutationInput
-    ) -> mutations.CreateAPIKeyMutation:
+    def create_api_key(self, info: Info, input: inputs.CreateAPIKeyMutationInput) -> mutations.CreateAPIKeyMutation:
         return mutations.CreateAPIKeyMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def delete_api_key(
-        self, info: Info, input: inputs.DeleteAPIKeyMutationInput
-    ) -> mutations.DeleteAPIKeyMutation:
+    def delete_api_key(self, info: Info, input: inputs.DeleteAPIKeyMutationInput) -> mutations.DeleteAPIKeyMutation:
         return mutations.DeleteAPIKeyMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
@@ -174,9 +111,7 @@ class Mutation:
         return mutations.ConfirmEmailChangeMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def confirm_email(
-        self, info: Info, input: inputs.ConfirmEmailMutationInput
-    ) -> mutations.ConfirmEmailMutation:
+    def confirm_email(self, info: Info, input: inputs.ConfirmEmailMutationInput) -> mutations.ConfirmEmailMutation:
         return mutations.ConfirmEmailMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
@@ -216,50 +151,33 @@ class Mutation:
         return mutations.DisableMultiFactorMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def create_address(
-        self, info: Info, input: inputs.CreateAddressInput
-    ) -> mutations.CreateAddressMutation:
+    def create_address(self, info: Info, input: inputs.CreateAddressInput) -> mutations.CreateAddressMutation:
         return mutations.CreateAddressMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def update_address(
-        self, info: Info, input: inputs.UpdateAddressInput
-    ) -> mutations.UpdateAddressMutation:
+    def update_address(self, info: Info, input: inputs.UpdateAddressInput) -> mutations.UpdateAddressMutation:
         return mutations.UpdateAddressMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def create_parcel(
-        self, info: Info, input: inputs.CreateParcelInput
-    ) -> mutations.CreateParcelMutation:
+    def create_parcel(self, info: Info, input: inputs.CreateParcelInput) -> mutations.CreateParcelMutation:
         return mutations.CreateParcelMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def update_parcel(
-        self, info: Info, input: inputs.UpdateParcelInput
-    ) -> mutations.UpdateParcelMutation:
+    def update_parcel(self, info: Info, input: inputs.UpdateParcelInput) -> mutations.UpdateParcelMutation:
         return mutations.UpdateParcelMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def create_product(
-        self, info: Info, input: inputs.CreateProductInput
-    ) -> mutations.CreateProductMutation:
+    def create_product(self, info: Info, input: inputs.CreateProductInput) -> mutations.CreateProductMutation:
         return mutations.CreateProductMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def update_product(
-        self, info: Info, input: inputs.UpdateProductInput
-    ) -> mutations.UpdateProductMutation:
+    def update_product(self, info: Info, input: inputs.UpdateProductInput) -> mutations.UpdateProductMutation:
         return mutations.UpdateProductMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def delete_product(
-        self, info: Info, input: inputs.DeleteMutationInput
-    ) -> mutations.DeleteMutation:
+    def delete_product(self, info: Info, input: inputs.DeleteMutationInput) -> mutations.DeleteMutation:
         return mutations.DeleteMutation.mutate(
-            info,
-            model=manager.Commodity,
-            validator=manager_serializers.can_mutate_commodity,
-            **input.to_dict()
+            info, model=manager.Commodity, validator=manager_serializers.can_mutate_commodity, **input.to_dict()
         )
 
     @strawberry.mutation
@@ -281,12 +199,8 @@ class Mutation:
         return mutations.SystemCarrierMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def delete_carrier_connection(
-        self, info: Info, input: inputs.DeleteMutationInput
-    ) -> mutations.DeleteMutation:
-        return mutations.DeleteMutation.mutate(
-            info, model=providers.CarrierConnection, **input.to_dict()
-        )
+    def delete_carrier_connection(self, info: Info, input: inputs.DeleteMutationInput) -> mutations.DeleteMutation:
+        return mutations.DeleteMutation.mutate(info, model=providers.CarrierConnection, **input.to_dict())
 
     @strawberry.mutation
     def partial_shipment_update(
@@ -295,9 +209,7 @@ class Mutation:
         return mutations.PartialShipmentMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def mutate_metadata(
-        self, info: Info, input: inputs.MetadataMutationInput
-    ) -> mutations.MetadataMutation:
+    def mutate_metadata(self, info: Info, input: inputs.MetadataMutationInput) -> mutations.MetadataMutation:
         return mutations.MetadataMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
@@ -307,37 +219,23 @@ class Mutation:
         return mutations.ChangeShipmentStatusMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def delete_address(
-        self, info: Info, input: inputs.DeleteMutationInput
-    ) -> mutations.DeleteAddressMutation:
+    def delete_address(self, info: Info, input: inputs.DeleteMutationInput) -> mutations.DeleteAddressMutation:
         return mutations.DeleteAddressMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def delete_parcel(
-        self, info: Info, input: inputs.DeleteMutationInput
-    ) -> mutations.DeleteParcelMutation:
+    def delete_parcel(self, info: Info, input: inputs.DeleteMutationInput) -> mutations.DeleteParcelMutation:
         return mutations.DeleteParcelMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def discard_commodity(
-        self, info: Info, input: inputs.DeleteMutationInput
-    ) -> mutations.DeleteMutation:
+    def discard_commodity(self, info: Info, input: inputs.DeleteMutationInput) -> mutations.DeleteMutation:
         return mutations.DeleteMutation.mutate(
-            info,
-            model=manager.Commodity,
-            validator=manager_serializers.can_mutate_commodity,
-            **input.to_dict()
+            info, model=manager.Commodity, validator=manager_serializers.can_mutate_commodity, **input.to_dict()
         )
 
     @strawberry.mutation
-    def discard_parcel(
-        self, info: Info, input: inputs.DeleteMutationInput
-    ) -> mutations.DeleteMutation:
+    def discard_parcel(self, info: Info, input: inputs.DeleteMutationInput) -> mutations.DeleteMutation:
         return mutations.DeleteMutation.mutate(
-            info,
-            model=manager.Parcel,
-            validator=manager_serializers.can_mutate_parcel,
-            **input.to_dict()
+            info, model=manager.Parcel, validator=manager_serializers.can_mutate_parcel, **input.to_dict()
         )
 
     @strawberry.mutation
@@ -359,21 +257,15 @@ class Mutation:
         return mutations.DeleteRateSheetServiceMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def delete_rate_sheet(
-        self, info: Info, input: inputs.DeleteMutationInput
-    ) -> mutations.DeleteMutation:
-        return mutations.DeleteMutation.mutate(
-            info, model=providers.RateSheet, **input.to_dict()
-        )
+    def delete_rate_sheet(self, info: Info, input: inputs.DeleteMutationInput) -> mutations.DeleteMutation:
+        return mutations.DeleteMutation.mutate(info, model=providers.RateSheet, **input.to_dict())
 
     # ─────────────────────────────────────────────────────────────────
     # SHARED ZONE MUTATIONS (Rate Sheet Level)
     # ─────────────────────────────────────────────────────────────────
 
     @strawberry.mutation
-    def add_shared_zone(
-        self, info: Info, input: inputs.AddSharedZoneMutationInput
-    ) -> mutations.AddSharedZoneMutation:
+    def add_shared_zone(self, info: Info, input: inputs.AddSharedZoneMutationInput) -> mutations.AddSharedZoneMutation:
         return mutations.AddSharedZoneMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
@@ -471,71 +363,47 @@ class Mutation:
         return mutations.UpdateServiceSurchargeIdsMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def create_metafield(
-        self, info: Info, input: inputs.CreateMetafieldInput
-    ) -> mutations.CreateMetafieldMutation:
+    def create_metafield(self, info: Info, input: inputs.CreateMetafieldInput) -> mutations.CreateMetafieldMutation:
         return mutations.CreateMetafieldMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def update_metafield(
-        self, info: Info, input: inputs.UpdateMetafieldInput
-    ) -> mutations.UpdateMetafieldMutation:
+    def update_metafield(self, info: Info, input: inputs.UpdateMetafieldInput) -> mutations.UpdateMetafieldMutation:
         return mutations.UpdateMetafieldMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
-    def delete_metafield(
-        self, info: Info, input: inputs.DeleteMutationInput
-    ) -> mutations.DeleteMutation:
-        return mutations.DeleteMutation.mutate(
-            info, model=core.Metafield, **input.to_dict()
-        )
+    def delete_metafield(self, info: Info, input: inputs.DeleteMutationInput) -> mutations.DeleteMutation:
+        return mutations.DeleteMutation.mutate(info, model=core.Metafield, **input.to_dict())
 
     # ── Archive / Unarchive mutations ─────────────────────────────────────────
 
     @strawberry.mutation
-    def archive_shipment(
-        self, info: Info, id: str
-    ) -> mutations.ArchiveShipmentMutation:
+    def archive_shipment(self, info: Info, id: str) -> mutations.ArchiveShipmentMutation:
         return mutations.ArchiveShipmentMutation.mutate(info, id=id)
 
     @strawberry.mutation
-    def unarchive_shipment(
-        self, info: Info, id: str
-    ) -> mutations.UnarchiveShipmentMutation:
+    def unarchive_shipment(self, info: Info, id: str) -> mutations.UnarchiveShipmentMutation:
         return mutations.UnarchiveShipmentMutation.mutate(info, id=id)
 
     @strawberry.mutation
-    def archive_tracker(
-        self, info: Info, id: str
-    ) -> mutations.ArchiveTrackerMutation:
+    def archive_tracker(self, info: Info, id: str) -> mutations.ArchiveTrackerMutation:
         return mutations.ArchiveTrackerMutation.mutate(info, id=id)
 
     @strawberry.mutation
-    def unarchive_tracker(
-        self, info: Info, id: str
-    ) -> mutations.UnarchiveTrackerMutation:
+    def unarchive_tracker(self, info: Info, id: str) -> mutations.UnarchiveTrackerMutation:
         return mutations.UnarchiveTrackerMutation.mutate(info, id=id)
 
     @strawberry.mutation
-    def archive_pickup(
-        self, info: Info, id: str
-    ) -> mutations.ArchivePickupMutation:
+    def archive_pickup(self, info: Info, id: str) -> mutations.ArchivePickupMutation:
         return mutations.ArchivePickupMutation.mutate(info, id=id)
 
     @strawberry.mutation
-    def unarchive_pickup(
-        self, info: Info, id: str
-    ) -> mutations.UnarchivePickupMutation:
+    def unarchive_pickup(self, info: Info, id: str) -> mutations.UnarchivePickupMutation:
         return mutations.UnarchivePickupMutation.mutate(info, id=id)
 
     @strawberry.mutation
-    def archive_order(
-        self, info: Info, id: str
-    ) -> mutations.ArchiveOrderMutation:
+    def archive_order(self, info: Info, id: str) -> mutations.ArchiveOrderMutation:
         return mutations.ArchiveOrderMutation.mutate(info, id=id)
 
     @strawberry.mutation
-    def unarchive_order(
-        self, info: Info, id: str
-    ) -> mutations.UnarchiveOrderMutation:
+    def unarchive_order(self, info: Info, id: str) -> mutations.UnarchiveOrderMutation:
         return mutations.UnarchiveOrderMutation.mutate(info, id=id)

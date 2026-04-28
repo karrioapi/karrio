@@ -1,15 +1,14 @@
-import typing
-from karrio.schemas.chronopost.trackingservice import cancelSkybill
 import karrio.core.models as models
 import karrio.lib as lib
 import karrio.providers.chronopost.error as provider_error
 import karrio.providers.chronopost.utils as provider_utils
+from karrio.schemas.chronopost.trackingservice import cancelSkybill
 
 
 def parse_shipment_cancel_response(
     _response: lib.Deserializable[lib.Element],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
+) -> tuple[models.ConfirmationDetails, list[models.Message]]:
     response = _response.deserialize()
     errors = provider_error.parse_error_response(response, settings)
     success = len(errors) == 0

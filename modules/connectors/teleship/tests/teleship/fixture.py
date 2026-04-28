@@ -1,8 +1,9 @@
 """Teleship carrier tests fixtures."""
 
-import karrio.sdk as karrio
-import karrio.lib as lib
 import datetime
+
+import karrio.lib as lib
+import karrio.sdk as karrio
 
 expiry = datetime.datetime.now() + datetime.timedelta(days=1)
 client_id = "TEST_CLIENT_ID"

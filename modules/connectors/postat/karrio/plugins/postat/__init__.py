@@ -1,10 +1,8 @@
+import karrio.providers.postat.units as units
 from karrio.core.metadata import PluginMetadata
-
 from karrio.mappers.postat.mapper import Mapper
 from karrio.mappers.postat.proxy import Proxy
 from karrio.mappers.postat.settings import Settings
-import karrio.providers.postat.units as units
-
 
 # This METADATA object is used by Karrio to discover and register this plugin
 # when loaded through Python entrypoints or local plugin directories.

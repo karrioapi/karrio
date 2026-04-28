@@ -1,21 +1,16 @@
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.usps_international.error as error
 import karrio.providers.usps_international.utils as provider_utils
-import karrio.providers.usps_international.units as provider_units
 
 
 def parse_shipment_cancel_response(
-    _response: lib.Deserializable[typing.List[typing.Tuple[str, dict]]],
+    _response: lib.Deserializable[list[tuple[str, dict]]],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
+) -> tuple[models.ConfirmationDetails, list[models.Message]]:
     responses = _response.deserialize()
-    messages: typing.List[models.Message] = sum(
-        [
-            error.parse_error_response(response, settings, tracking_number=_)
-            for _, response in responses
-        ],
+    messages: list[models.Message] = sum(
+        [error.parse_error_response(response, settings, tracking_number=_) for _, response in responses],
         start=[],
     )
     success = all([_.get("status") == "CANCELED" for __, _ in responses])

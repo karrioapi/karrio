@@ -1,30 +1,31 @@
-import yaml  # type: ignore
-import pydoc
 import functools
-from django.db.utils import ProgrammingError
+import pydoc
+
+import yaml  # type: ignore
 from django.conf import settings
-from django.contrib.auth import mixins, get_user_model
-from django.utils.translation import gettext_lazy as _
-from django.utils.functional import SimpleLazyObject
+from django.contrib.auth import get_user_model, mixins
 from django.contrib.auth.middleware import (
     AuthenticationMiddleware as BaseAuthenticationMiddleware,
 )
-from rest_framework import status
-from rest_framework import exceptions
+from django.db.utils import ProgrammingError
+from django.utils.functional import SimpleLazyObject
+from django.utils.translation import gettext_lazy as _
+from django_otp.middleware import OTPMiddleware
+from karrio.server.core.logging import logger
+from oauth2_provider.contrib.rest_framework import (
+    OAuth2Authentication as BaseOAuth2Authentication,
+)
+from rest_framework import exceptions, status
+from rest_framework.authentication import (
+    BasicAuthentication as BaseBasicAuthentication,
+)
 from rest_framework.authentication import (
     TokenAuthentication as BaseTokenAuthentication,
-    BasicAuthentication as BaseBasicAuthentication,
 )
 from rest_framework_simplejwt.authentication import (
     JWTAuthentication as BaseJWTAuthentication,
 )
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
-
-from oauth2_provider.contrib.rest_framework import (
-    OAuth2Authentication as BaseOAuth2Authentication,
-)
-from django_otp.middleware import OTPMiddleware
-from karrio.server.core.logging import logger
 
 UserModel = get_user_model()
 AUTHENTICATION_CLASSES = getattr(settings, "AUTHENTICATION_CLASSES", [])
@@ -35,14 +36,21 @@ def catch_auth_exception(func):
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
-        except exceptions.AuthenticationFailed:
+        except exceptions.AuthenticationFailed as e:
             from karrio.server.core.exceptions import APIException
+
+            logger.warning(
+                "Authentication failed in %s: %s (detail=%s)",
+                func.__qualname__,
+                type(e).__name__,
+                getattr(e, "detail", e),
+            )
 
             raise APIException(
                 "Given token not valid for any token type",
                 code="invalid_token",
                 status_code=status.HTTP_401_UNAUTHORIZED,
-            )
+            ) from e
 
     return wrapper
 
@@ -102,6 +110,7 @@ class TokenAuthentication(BaseTokenAuthentication):
 
         # Check cache first
         import hashlib
+
         from django.core.cache import cache
 
         cache_key = f"token_auth:{hashlib.sha256(key.encode()).hexdigest()}"
@@ -126,7 +135,7 @@ class TokenBasicAuthentication(BaseBasicAuthentication):
         if getattr(request, "_karrio_auth_result", None) is not None:
             return request._karrio_auth_result
 
-        auth = super(TokenBasicAuthentication, self).authenticate(request)
+        auth = super().authenticate(request)
 
         if auth is not None:
             user, token = auth
@@ -150,6 +159,7 @@ class TokenBasicAuthentication(BaseBasicAuthentication):
         Uses Django cache to avoid DB query on every request.
         """
         import hashlib
+
         from django.core.cache import cache
         from karrio.server.user.models import Token
 
@@ -199,7 +209,7 @@ class JWTAuthentication(BaseJWTAuthentication):
         try:
             validated_token = self.get_validated_token(raw_token)
         except TokenError as e:
-            raise InvalidToken(e.args[0])
+            raise InvalidToken(e.args[0]) from e
 
         user = self.get_user(validated_token)
 
@@ -220,9 +230,7 @@ class JWTAuthentication(BaseJWTAuthentication):
         )
 
         if not validated_token.get("is_verified"):
-            raise exceptions.AuthenticationFailed(
-                _("Authentication token not verified"), code="otp_not_verified"
-            )
+            raise exceptions.AuthenticationFailed(_("Authentication token not verified"), code="otp_not_verified")
 
         return (user, validated_token)
 
@@ -243,11 +251,7 @@ class OAuth2Authentication(BaseOAuth2Authentication):
             if user is None:
                 # For client credentials flow, the user might be None from the base class
                 # but our custom validator should have set it on the request
-                if (
-                    hasattr(request, "user")
-                    and request.user
-                    and not request.user.is_anonymous
-                ):
+                if hasattr(request, "user") and request.user and not request.user.is_anonymous:
                     user = request.user
                 elif hasattr(request, "oauth_user"):
                     user = request.oauth_user
@@ -262,17 +266,13 @@ class OAuth2Authentication(BaseOAuth2Authentication):
 
             # Enhanced organization context for OAuth apps
             default_org = None
-            if hasattr(token, "application") and hasattr(
-                token.application, "oauth_app"
-            ):
+            if hasattr(token, "application") and hasattr(token.application, "oauth_app"):
                 # If this is an OAuth app token, use the app owner's organization
                 oauth_app = token.application.oauth_app
                 if hasattr(oauth_app, "created_by") and oauth_app.created_by:
                     app_owner = oauth_app.created_by
                     if hasattr(app_owner, "organizations"):
-                        default_org = app_owner.organizations.filter(
-                            is_active=True
-                        ).first()
+                        default_org = app_owner.organizations.filter(is_active=True).first()
 
             request.org = SimpleLazyObject(
                 functools.partial(
@@ -295,16 +295,10 @@ class AccessMixin(mixins.AccessMixin):
     """Verify that the current user is authenticated."""
 
     def dispatch(self, request, *args, **kwargs):
-        if (
-            not hasattr(request, "user")
-            or request.user is None
-            or not request.user.is_authenticated
-        ):
+        if not hasattr(request, "user") or request.user is None or not request.user.is_authenticated:
             authenticate_user(request)
 
-        request.user = SimpleLazyObject(
-            functools.partial(get_request_user, request, request.user)
-        )
+        request.user = SimpleLazyObject(functools.partial(get_request_user, request, request.user))
 
         return super().dispatch(request, *args, **kwargs)
 
@@ -340,11 +334,7 @@ class AuthenticationMiddleware(BaseAuthenticationMiddleware):
 def authenticate_user(request):
     def authenticate(request, authenticator):
         # Check if user exists and is not authenticated
-        if (
-            not hasattr(request, "user")
-            or request.user is None
-            or not getattr(request.user, "is_authenticated", False)
-        ):
+        if not hasattr(request, "user") or request.user is None or not getattr(request.user, "is_authenticated", False):
             logger.debug(f"Trying authenticator: {authenticator}")
             try:
                 auth_instance = pydoc.locate(authenticator)()
@@ -360,9 +350,7 @@ def authenticate_user(request):
             except AttributeError as e:
                 # Skip SessionAuthentication if it fails with _request attribute error
                 if "'WSGIRequest' object has no attribute '_request'" in str(e):
-                    logger.debug(
-                        f"Skipping {authenticator} - incompatible with middleware context"
-                    )
+                    logger.debug(f"Skipping {authenticator} - incompatible with middleware context")
                 else:
                     raise
             except exceptions.AuthenticationFailed:
@@ -403,9 +391,7 @@ def get_request_org(request, user, org_id: str = None, default_org=None):
                 org = None
 
             if org is not None and not org.is_active:
-                raise exceptions.AuthenticationFailed(
-                    _("Organization is inactive"), code="inactive_organization"
-                )
+                raise exceptions.AuthenticationFailed(_("Organization is inactive"), code="inactive_organization")
 
             if org is None and org_id is not None:
                 raise exceptions.AuthenticationFailed(
@@ -422,15 +408,11 @@ def get_request_org(request, user, org_id: str = None, default_org=None):
 
 def get_request_user(request, user):
     if not getattr(request, "otp_is_verified", True):
-        raise exceptions.AuthenticationFailed(
-            _("Authentication token not verified"), code="otp_not_verified"
-        )
+        raise exceptions.AuthenticationFailed(_("Authentication token not verified"), code="otp_not_verified")
 
     if user is not None:
         user.otp_device = None
-        user.is_verified = functools.partial(
-            lambda _: getattr(request, "otp_is_verified", True), user
-        )
+        user.is_verified = functools.partial(lambda _: getattr(request, "otp_is_verified", True), user)
 
     return user
 

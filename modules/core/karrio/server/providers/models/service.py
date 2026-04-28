@@ -1,9 +1,9 @@
 import functools
-import django.db.models as models
-import django.core.validators as validators
 
-import karrio.server.core.models as core
+import django.core.validators as validators
+import django.db.models as models
 import karrio.server.core.datatypes as datatypes
+import karrio.server.core.models as core
 
 
 @core.register_model
@@ -28,16 +28,12 @@ class ServiceLevel(core.OwnedEntity):
         editable=False,
     )
     service_name = models.CharField(max_length=100)
-    service_code = models.CharField(
-        max_length=100, validators=[validators.RegexValidator(r"^[a-z0-9_]+$")]
-    )
+    service_code = models.CharField(max_length=100, validators=[validators.RegexValidator(r"^[a-z0-9_]+$")])
     carrier_service_code = models.CharField(max_length=100, null=True, blank=True)
     description = models.CharField(max_length=250, null=True, blank=True)
     active = models.BooleanField(null=True, default=True)
 
-    currency = models.CharField(
-        max_length=4, choices=datatypes.CURRENCIES, null=True, blank=True
-    )
+    currency = models.CharField(max_length=4, choices=datatypes.CURRENCIES, null=True, blank=True)
 
     transit_days = models.IntegerField(blank=True, null=True)
     transit_time = models.FloatField(blank=True, null=True)
@@ -45,15 +41,11 @@ class ServiceLevel(core.OwnedEntity):
     max_width = models.FloatField(blank=True, null=True)
     max_height = models.FloatField(blank=True, null=True)
     max_length = models.FloatField(blank=True, null=True)
-    dimension_unit = models.CharField(
-        max_length=2, choices=datatypes.DIMENSION_UNITS, null=True, blank=True
-    )
+    dimension_unit = models.CharField(max_length=2, choices=datatypes.DIMENSION_UNITS, null=True, blank=True)
 
     min_weight = models.FloatField(blank=True, null=True)
     max_weight = models.FloatField(blank=True, null=True)
-    weight_unit = models.CharField(
-        max_length=2, choices=datatypes.WEIGHT_UNITS, null=True, blank=True
-    )
+    weight_unit = models.CharField(max_length=2, choices=datatypes.WEIGHT_UNITS, null=True, blank=True)
 
     domicile = models.BooleanField(null=True)
     international = models.BooleanField(null=True)
@@ -144,10 +136,7 @@ class ServiceLevel(core.OwnedEntity):
     @property
     def rate_sheet(self):
         """Get the rate sheet this service belongs to."""
-        return (
-            self.service_sheet.first()
-            or self.system_service_sheet.first()
-        )
+        return self.service_sheet.first() or self.system_service_sheet.first()
 
     @property
     def zones(self):
@@ -176,9 +165,9 @@ class ServiceLevel(core.OwnedEntity):
 
         # Get all service_rates for this service (may have multiple per zone_id for weight brackets)
         service_rates = [
-            sr for sr in (_rate_sheet.service_rates or [])
-            if sr.get("service_id") == self.id
-            and sr.get("zone_id") in _zone_ids
+            sr
+            for sr in (_rate_sheet.service_rates or [])
+            if sr.get("service_id") == self.id and sr.get("zone_id") in _zone_ids
         ]
 
         result = []
@@ -190,23 +179,25 @@ class ServiceLevel(core.OwnedEntity):
                 continue
 
             # Build ServiceZone-compatible dict (one per service_rate entry)
-            result.append({
-                "id": zone_id,
-                "label": zone_def.get("label"),
-                "rate": rate_data.get("rate"),
-                "cost": rate_data.get("cost"),
-                "min_weight": rate_data.get("min_weight"),
-                "max_weight": rate_data.get("max_weight"),
-                "transit_days": rate_data.get("transit_days") or zone_def.get("transit_days"),
-                "transit_time": rate_data.get("transit_time") or zone_def.get("transit_time"),
-                "country_codes": zone_def.get("country_codes") or [],
-                "postal_codes": zone_def.get("postal_codes") or [],
-                "cities": zone_def.get("cities") or [],
-                "radius": zone_def.get("radius"),
-                "latitude": zone_def.get("latitude"),
-                "longitude": zone_def.get("longitude"),
-                "meta": rate_data.get("meta") or {},
-            })
+            result.append(
+                {
+                    "id": zone_id,
+                    "label": zone_def.get("label"),
+                    "rate": rate_data.get("rate"),
+                    "cost": rate_data.get("cost"),
+                    "min_weight": rate_data.get("min_weight"),
+                    "max_weight": rate_data.get("max_weight"),
+                    "transit_days": rate_data.get("transit_days") or zone_def.get("transit_days"),
+                    "transit_time": rate_data.get("transit_time") or zone_def.get("transit_time"),
+                    "country_codes": zone_def.get("country_codes") or [],
+                    "postal_codes": zone_def.get("postal_codes") or [],
+                    "cities": zone_def.get("cities") or [],
+                    "radius": zone_def.get("radius"),
+                    "latitude": zone_def.get("latitude"),
+                    "longitude": zone_def.get("longitude"),
+                    "meta": rate_data.get("meta") or {},
+                }
+            )
 
         return result
 
@@ -234,19 +225,21 @@ class ServiceLevel(core.OwnedEntity):
         surcharges_by_id = {s.get("id"): s for s in (_rate_sheet.surcharges or [])}
 
         result = []
-        for surcharge_id in (self.surcharge_ids or []):
+        for surcharge_id in self.surcharge_ids or []:
             surcharge_def = surcharges_by_id.get(surcharge_id)
             if not surcharge_def or not surcharge_def.get("active", True):
                 continue
 
-            result.append({
-                "id": surcharge_id,
-                "name": surcharge_def.get("name"),
-                "amount": surcharge_def.get("amount"),
-                "surcharge_type": surcharge_def.get("surcharge_type", "fixed"),
-                "cost": surcharge_def.get("cost"),
-                "active": surcharge_def.get("active", True),
-            })
+            result.append(
+                {
+                    "id": surcharge_id,
+                    "name": surcharge_def.get("name"),
+                    "amount": surcharge_def.get("amount"),
+                    "surcharge_type": surcharge_def.get("surcharge_type", "fixed"),
+                    "cost": surcharge_def.get("cost"),
+                    "active": surcharge_def.get("active", True),
+                }
+            )
 
         return result
 
@@ -274,9 +267,9 @@ class ServiceLevel(core.OwnedEntity):
             return []
 
         surcharges = []
-        for surcharge_id in (self.surcharge_ids or []):
+        for surcharge_id in self.surcharge_ids or []:
             surcharge = rate_sheet.get_surcharge(surcharge_id)
-            if surcharge and surcharge.get('active', True):
+            if surcharge and surcharge.get("active", True):
                 surcharges.append(surcharge)
         return surcharges
 
@@ -296,16 +289,14 @@ class ServiceLevel(core.OwnedEntity):
 
         # Get base rate for zone
         rate_data = rate_sheet.get_service_rate(self.id, zone_id)
-        base_rate = float(rate_data.get('rate', 0)) if rate_data else 0
+        base_rate = float(rate_data.get("rate", 0)) if rate_data else 0
 
         # Apply surcharges
-        total_rate, surcharge_breakdown = rate_sheet.apply_surcharges_to_rate(
-            base_rate, self.surcharge_ids or []
-        )
+        total_rate, surcharge_breakdown = rate_sheet.apply_surcharges_to_rate(base_rate, self.surcharge_ids or [])
 
         return total_rate, {
-            'base_rate': base_rate,
-            'base_cost': rate_data.get('cost') if rate_data else None,
-            'surcharges': surcharge_breakdown,
-            'total': total_rate,
+            "base_rate": base_rate,
+            "base_cost": rate_data.get("cost") if rate_data else None,
+            "surcharges": surcharge_breakdown,
+            "total": total_rate,
         }

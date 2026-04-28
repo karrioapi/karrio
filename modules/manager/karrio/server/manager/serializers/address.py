@@ -1,14 +1,13 @@
-from rest_framework import status
-
+from karrio.core import utils
+from karrio.server.core import gateway
+from karrio.server.core.exceptions import APIException
 from karrio.server.core.serializers import AddressData, ShipmentStatus
+from karrio.server.manager import models
 from karrio.server.serializers import (
     owned_model_serializer,
     process_dictionaries_mutations,
 )
-from karrio.server.core.exceptions import APIException
-from karrio.server.manager import models
-from karrio.server.core import gateway
-from karrio.core import utils
+from rest_framework import status
 
 
 @owned_model_serializer
@@ -21,9 +20,7 @@ class AddressSerializer(AddressData):
 
         if should_validate:
             address = {
-                **(
-                    AddressData(self.instance).data if self.instance is not None else {}
-                ),
+                **(AddressData(self.instance).data if self.instance is not None else {}),
                 **validated_data,
             }
             validation = gateway.Address.validate(address)
@@ -34,9 +31,7 @@ class AddressSerializer(AddressData):
     def create(self, validated_data: dict, **kwargs) -> models.Address:
         return models.Address.objects.create(**validated_data)
 
-    def update(
-        self, instance: models.Address, validated_data: dict, **kwargs
-    ) -> models.Address:
+    def update(self, instance: models.Address, validated_data: dict, **kwargs) -> models.Address:
         # Handle dictionary mutations for meta field
         data = process_dictionaries_mutations(["meta"], validated_data, instance)
         changes = []
@@ -50,9 +45,7 @@ class AddressSerializer(AddressData):
         return instance
 
 
-def can_mutate_address(
-    address: models.Address, update: bool = False, delete: bool = False
-):
+def can_mutate_address(address: models.Address, update: bool = False, delete: bool = False):
     shipment = address.shipment
     order = address.order
 

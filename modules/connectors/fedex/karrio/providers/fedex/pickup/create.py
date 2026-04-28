@@ -1,19 +1,15 @@
-import karrio.schemas.fedex.pickup_request as fedex
-import karrio.schemas.fedex.pickup_response as pickup
-
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.fedex.error as error
 import karrio.providers.fedex.utils as provider_utils
-import karrio.providers.fedex.units as provider_units
+import karrio.schemas.fedex.pickup_request as fedex
+import karrio.schemas.fedex.pickup_response as pickup
 
 
 def parse_pickup_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.PickupDetails], typing.List[models.Message]]:
+) -> tuple[list[models.PickupDetails], list[models.Message]]:
     response = _response.deserialize()
 
     messages = error.parse_error_response(response, settings)
@@ -71,11 +67,7 @@ def pickup_request(
     # Map unified pickup_type to FedEx pickup type
     # one_time -> ON_CALL, daily/recurring -> REGULAR_STOP
     unified_pickup_type = getattr(payload, "pickup_type", "one_time") or "one_time"
-    fedex_pickup_type = (
-        "REGULAR_STOP"
-        if unified_pickup_type in ("daily", "recurring")
-        else "ON_CALL"
-    )
+    fedex_pickup_type = "REGULAR_STOP" if unified_pickup_type in ("daily", "recurring") else "ON_CALL"
 
     # Normalize times to HH:MM format to handle both HH:MM and HH:MM:SS inputs
     ready_time = lib.ftime(payload.ready_time, try_formats=["%H:%M:%S", "%H:%M"]) or payload.ready_time

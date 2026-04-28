@@ -7,22 +7,26 @@ import karrio.server.core.models.base
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('user', '0001_initial'),
+        ("user", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Token',
+            name="Token",
             fields=[
-                ('key', models.CharField(max_length=40, primary_key=True, serialize=False, verbose_name='Key')),
-                ('created', models.DateTimeField(auto_now_add=True, verbose_name='Created')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='tokens', to=settings.AUTH_USER_MODEL)),
+                ("key", models.CharField(max_length=40, primary_key=True, serialize=False, verbose_name="Key")),
+                ("created", models.DateTimeField(auto_now_add=True, verbose_name="Created")),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, related_name="tokens", to=settings.AUTH_USER_MODEL
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Token',
-                'verbose_name_plural': 'Tokens',
+                "verbose_name": "Token",
+                "verbose_name_plural": "Tokens",
             },
             bases=(models.Model, karrio.server.core.models.base.ControlledAccessModel),
         ),

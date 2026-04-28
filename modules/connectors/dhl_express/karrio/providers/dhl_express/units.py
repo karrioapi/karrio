@@ -1,10 +1,10 @@
-""" DHL Native Types """
+"""DHL Native Types"""
 
 import csv
 import pathlib
-import typing
-import karrio.lib as lib
+
 import karrio.core.models as models
+import karrio.lib as lib
 
 MeasurementOptions = lib.units.MeasurementOptionsType(min_in=1, min_cm=1)
 COUNTRY_PREFERED_UNITS = dict(
@@ -15,18 +15,13 @@ PRESET_DEFAULTS = dict(dimension_unit="CM", weight_unit="KG")
 
 class PackagePresets(lib.Enum):
     dhl_express_envelope = lib.units.PackagePreset(
-        **dict(
-            weight=0.5, width=35.0, height=27.5, length=1.0, packaging_type="envelope"
-        ),
-        **PRESET_DEFAULTS
+        **dict(weight=0.5, width=35.0, height=27.5, length=1.0, packaging_type="envelope"), **PRESET_DEFAULTS
     )
     dhl_express_standard_flyer = lib.units.PackagePreset(
-        **dict(weight=2.0, width=40.0, height=30.0, length=1.5, packaging_type="pak"),
-        **PRESET_DEFAULTS
+        **dict(weight=2.0, width=40.0, height=30.0, length=1.5, packaging_type="pak"), **PRESET_DEFAULTS
     )
     dhl_express_large_flyer = lib.units.PackagePreset(
-        **dict(weight=3.0, width=47.5, height=37.5, length=1.5, packaging_type="pak"),
-        **PRESET_DEFAULTS
+        **dict(weight=3.0, width=47.5, height=37.5, length=1.5, packaging_type="pak"), **PRESET_DEFAULTS
     )
     dhl_express_box_2 = lib.units.PackagePreset(
         **dict(
@@ -36,13 +31,10 @@ class PackagePresets(lib.Enum):
             length=10.0,
             packaging_type="medium_box",
         ),
-        **PRESET_DEFAULTS
+        **PRESET_DEFAULTS,
     )
     dhl_express_box_3 = lib.units.PackagePreset(
-        **dict(
-            weight=2.0, width=33.6, height=32.0, length=5.2, packaging_type="medium_box"
-        ),
-        **PRESET_DEFAULTS
+        **dict(weight=2.0, width=33.6, height=32.0, length=5.2, packaging_type="medium_box"), **PRESET_DEFAULTS
     )
     dhl_express_box_4 = lib.units.PackagePreset(
         **dict(
@@ -52,7 +44,7 @@ class PackagePresets(lib.Enum):
             length=18.0,
             packaging_type="medium_box",
         ),
-        **PRESET_DEFAULTS
+        **PRESET_DEFAULTS,
     )
     dhl_express_box_5 = lib.units.PackagePreset(
         **dict(
@@ -62,7 +54,7 @@ class PackagePresets(lib.Enum):
             length=34.5,
             packaging_type="medium_box",
         ),
-        **PRESET_DEFAULTS
+        **PRESET_DEFAULTS,
     )
     dhl_express_box_6 = lib.units.PackagePreset(
         **dict(
@@ -72,7 +64,7 @@ class PackagePresets(lib.Enum):
             length=36.9,
             packaging_type="large_box",
         ),
-        **PRESET_DEFAULTS
+        **PRESET_DEFAULTS,
     )
     dhl_express_box_7 = lib.units.PackagePreset(
         **dict(
@@ -82,7 +74,7 @@ class PackagePresets(lib.Enum):
             length=38.9,
             packaging_type="large_box",
         ),
-        **PRESET_DEFAULTS
+        **PRESET_DEFAULTS,
     )
     dhl_express_box_8 = lib.units.PackagePreset(
         **dict(
@@ -92,11 +84,10 @@ class PackagePresets(lib.Enum):
             length=40.9,
             packaging_type="large_box",
         ),
-        **PRESET_DEFAULTS
+        **PRESET_DEFAULTS,
     )
     dhl_express_tube = lib.units.PackagePreset(
-        **dict(weight=5.0, width=96.0, height=15.0, length=15.0, packaging_type="tube"),
-        **PRESET_DEFAULTS
+        **dict(weight=5.0, width=96.0, height=15.0, length=15.0, packaging_type="tube"), **PRESET_DEFAULTS
     )
     dhl_didgeridoo_box = lib.units.PackagePreset(
         **dict(
@@ -106,7 +97,7 @@ class PackagePresets(lib.Enum):
             length=162.0,
             packaging_type="medium_box",
         ),
-        **PRESET_DEFAULTS
+        **PRESET_DEFAULTS,
     )
     dhl_jumbo_box = lib.units.PackagePreset(
         **dict(
@@ -116,7 +107,7 @@ class PackagePresets(lib.Enum):
             length=33.0,
             packaging_type="medium_box",
         ),
-        **PRESET_DEFAULTS
+        **PRESET_DEFAULTS,
     )
     dhl_jumbo_box_junior = lib.units.PackagePreset(
         **dict(
@@ -126,7 +117,7 @@ class PackagePresets(lib.Enum):
             length=24.1,
             packaging_type="medium_box",
         ),
-        **PRESET_DEFAULTS
+        **PRESET_DEFAULTS,
     )
 
 
@@ -334,7 +325,7 @@ class ShippingService(lib.Enum):
 
 
 def shipping_services_initializer(
-    services: typing.List[str],
+    services: list[str],
     is_international: bool = True,
     is_document: bool = False,
     is_envelope: bool = False,
@@ -343,9 +334,7 @@ def shipping_services_initializer(
     """Apply default product codes to the list of products."""
     _region = CountryRegion.map(origin_country).value
     _services = list(set(services))
-    _no_service_provided = (
-        any([ShippingService.map(_).key is not None for _ in _services]) is False
-    )
+    _no_service_provided = any([ShippingService.map(_).key is not None for _ in _services]) is False
 
     if _no_service_provided and _region == "AM":
         if is_international and is_document:
@@ -622,9 +611,7 @@ def shipping_options_initializer(
     def items_filter(key: str) -> bool:
         return key in ShippingOption and key != "dhl_shipment_content"  # type: ignore
 
-    return lib.units.ShippingOptions(
-        _options, ShippingOption, items_filter=items_filter
-    )
+    return lib.units.ShippingOptions(_options, ShippingOption, items_filter=items_filter)
 
 
 class TrackingStatus(lib.Enum):
@@ -642,6 +629,7 @@ class TrackingIncidentReason(lib.Enum):
 
     Based on DHL Express API exception/status codes.
     """
+
     # Carrier-caused issues
     carrier_damaged_parcel = ["DA", "DG", "BR"]  # Damaged, broken
     carrier_sorting_error = ["MS", "MR"]  # Missorted, misrouted
@@ -1039,7 +1027,9 @@ def load_services_from_csv() -> list:
             service_code = row["service_code"]
             zone_label = row.get("zone_label", "")
             country_codes_str = row.get("country_codes", "")
-            country_codes = [c.strip() for c in country_codes_str.split(",") if c.strip()] if country_codes_str else None
+            country_codes = (
+                [c.strip() for c in country_codes_str.split(",") if c.strip()] if country_codes_str else None
+            )
 
             zone = models.ServiceZone(
                 label=zone_label if zone_label else None,
@@ -1068,9 +1058,7 @@ def load_services_from_csv() -> list:
             else:
                 services_dict[service_code]["zones"].append(zone)
 
-    return [
-        models.ServiceLevel(**service_data) for service_data in services_dict.values()
-    ]
+    return [models.ServiceLevel(**service_data) for service_data in services_dict.values()]
 
 
 DEFAULT_SERVICES = load_services_from_csv()

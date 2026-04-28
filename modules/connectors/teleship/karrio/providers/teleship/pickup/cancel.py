@@ -1,8 +1,7 @@
 """Karrio Teleship pickup cancellation implementation."""
 
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.teleship.error as error
 import karrio.providers.teleship.utils as provider_utils
 
@@ -10,14 +9,12 @@ import karrio.providers.teleship.utils as provider_utils
 def parse_cancel_pickup_response(
     _response: lib.Deserializable[str],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
+) -> tuple[models.ConfirmationDetails, list[models.Message]]:
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
 
     success = not any(messages) and (
-        isinstance(response, dict) and response.get("success") is not False
-        or response == ""
-        or response is None
+        isinstance(response, dict) and response.get("success") is not False or response == "" or response is None
     )
 
     confirmation = (

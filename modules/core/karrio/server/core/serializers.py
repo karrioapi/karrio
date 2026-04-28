@@ -1,10 +1,9 @@
-import rest_framework as drf
-
 import karrio.core.units as units
 import karrio.core.utils as utils
-import karrio.server.serializers as serializers
 import karrio.server.core.dataunits as dataunits
 import karrio.server.core.validators as validators
+import karrio.server.serializers as serializers
+import rest_framework as drf
 
 
 class PickupStatus(utils.Enum):
@@ -58,9 +57,7 @@ CUSTOMS_CONTENT_TYPE = [(c.name, c.name) for c in list(units.CustomsContentType)
 UPLOAD_DOCUMENT_TYPE = [(c.name, c.name) for c in list(units.UploadDocumentType)]
 LABEL_TYPES = [(c.name, c.name) for c in list(units.LabelType)]
 LABEL_TEMPLATE_TYPES = [("SVG", "SVG"), ("ZPL", "ZPL")]
-TRACKING_INCIDENT_REASONS = [
-    (c.name, c.name) for c in list(units.TrackingIncidentReason)
-]
+TRACKING_INCIDENT_REASONS = [(c.name, c.name) for c in list(units.TrackingIncidentReason)]
 
 
 class CarrierDetails(serializers.Serializer):
@@ -103,18 +100,10 @@ class CarrierDetails(serializers.Serializer):
 
 class CarrierSettings(serializers.Serializer):
     id = serializers.CharField(required=True, help_text="A unique address identifier")
-    object_type = serializers.CharField(
-        default="carrier", help_text="Specifies the object type"
-    )
-    carrier_id = serializers.CharField(
-        required=True, help_text="Indicates a specific carrier configuration name."
-    )
-    carrier_name = serializers.ChoiceField(
-        choices=CARRIERS, required=True, help_text="Indicates a carrier (type)"
-    )
-    display_name = serializers.CharField(
-        required=False, help_text="The carrier verbose name."
-    )
+    object_type = serializers.CharField(default="carrier", help_text="Specifies the object type")
+    carrier_id = serializers.CharField(required=True, help_text="Indicates a specific carrier configuration name.")
+    carrier_name = serializers.ChoiceField(choices=CARRIERS, required=True, help_text="Indicates a carrier (type)")
+    display_name = serializers.CharField(required=False, help_text="The carrier verbose name.")
     test_mode = serializers.BooleanField(
         required=True,
         help_text="The test flag indicates whether to use a carrier configured for test.",
@@ -128,37 +117,25 @@ class CarrierSettings(serializers.Serializer):
         allow_null=True,
         help_text="""The carrier supported and enabled capabilities.""",
     )
-    metadata = serializers.PlainDictField(
-        required=False, default={}, help_text="The carrier user metadata."
-    )
-    config = serializers.PlainDictField(
-        required=False, default={}, help_text="The carrier connection config."
-    )
+    metadata = serializers.PlainDictField(required=False, default={}, help_text="The carrier user metadata.")
+    config = serializers.PlainDictField(required=False, default={}, help_text="The carrier connection config.")
 
 
 class APIError(serializers.Serializer):
-    message = serializers.CharField(
-        required=False, help_text="The error or warning message"
-    )
+    message = serializers.CharField(required=False, help_text="The error or warning message")
     code = serializers.CharField(required=False, help_text="The message code")
     level = serializers.CharField(required=False, help_text="The message level")
     details = serializers.DictField(required=False, help_text="any additional details")
 
 
 class Message(APIError):
-    carrier_name = serializers.CharField(
-        required=False, help_text="The targeted carrier"
-    )
-    carrier_id = serializers.CharField(
-        required=False, help_text="The targeted carrier name (unique identifier)"
-    )
+    carrier_name = serializers.CharField(required=False, help_text="The targeted carrier")
+    carrier_id = serializers.CharField(required=False, help_text="The targeted carrier name (unique identifier)")
 
 
 class AddressValidation(serializers.Serializer):
     success = serializers.BooleanField(help_text="True if the address is valid")
-    meta = serializers.PlainDictField(
-        required=False, allow_null=True, help_text="validation service details"
-    )
+    meta = serializers.PlainDictField(required=False, allow_null=True, help_text="validation service details")
 
 
 class AddressData(validators.AugmentedAddressSerializer):
@@ -221,9 +198,7 @@ class AddressData(validators.AugmentedAddressSerializer):
         choices=COUNTRIES,
         help_text="The address country code",
     )
-    email = serializers.CharField(
-        required=False, allow_blank=True, allow_null=True, help_text="The party email"
-    )
+    email = serializers.CharField(required=False, allow_blank=True, allow_null=True, help_text="The party email")
     phone_number = serializers.CharField(
         required=False,
         allow_blank=True,
@@ -285,12 +260,8 @@ class AddressData(validators.AugmentedAddressSerializer):
 
 
 class Address(serializers.EntitySerializer, AddressData):
-    object_type = serializers.CharField(
-        default="address", help_text="Specifies the object type"
-    )
-    validation = AddressValidation(
-        required=False, allow_null=True, help_text="Specify address validation result"
-    )
+    object_type = serializers.CharField(default="address", help_text="Specifies the object type")
+    validation = AddressValidation(required=False, allow_null=True, help_text="Specify address validation result")
 
 
 class CommodityData(serializers.Serializer):
@@ -402,9 +373,7 @@ class CommodityData(serializers.Serializer):
 
 
 class Commodity(serializers.EntitySerializer, CommodityData):
-    object_type = serializers.CharField(
-        default="commodity", help_text="Specifies the object type"
-    )
+    object_type = serializers.CharField(default="commodity", help_text="Specifies the object type")
 
 
 @serializers.allow_model_id(
@@ -414,15 +383,9 @@ class Commodity(serializers.EntitySerializer, CommodityData):
 )
 class ParcelData(validators.PresetSerializer):
     weight = serializers.FloatField(required=True, help_text="The parcel's weight")
-    width = serializers.FloatField(
-        required=False, allow_null=True, help_text="The parcel's width"
-    )
-    height = serializers.FloatField(
-        required=False, allow_null=True, help_text="The parcel's height"
-    )
-    length = serializers.FloatField(
-        required=False, allow_null=True, help_text="The parcel's length"
-    )
+    width = serializers.FloatField(required=False, allow_null=True, help_text="The parcel's width")
+    height = serializers.FloatField(required=False, allow_null=True, help_text="The parcel's height")
+    length = serializers.FloatField(required=False, allow_null=True, help_text="The parcel's length")
     packaging_type = serializers.CharField(
         required=False,
         allow_blank=True,
@@ -431,7 +394,7 @@ class ParcelData(validators.PresetSerializer):
         help_text=f"""The parcel's packaging type.<br/>
         **Note that the packaging is optional when using a package preset.**<br/>
         values: <br/>
-        {' '.join([f'`{pkg}`' for pkg, _ in PACKAGING_UNIT])}<br/>
+        {" ".join([f"`{pkg}`" for pkg, _ in PACKAGING_UNIT])}<br/>
         For carrier specific packaging types, please consult the reference.
         """,
     )
@@ -464,9 +427,7 @@ class ParcelData(validators.PresetSerializer):
         default=False,
         help_text="Indicates if the parcel is composed of documents only",
     )
-    weight_unit = serializers.ChoiceField(
-        required=True, choices=WEIGHT_UNIT, help_text="The parcel's weight unit"
-    )
+    weight_unit = serializers.ChoiceField(required=True, choices=WEIGHT_UNIT, help_text="The parcel's weight unit")
     dimension_unit = serializers.ChoiceField(
         required=False,
         allow_blank=False,
@@ -513,9 +474,7 @@ class ParcelData(validators.PresetSerializer):
 
 
 class Parcel(serializers.EntitySerializer, ParcelData):
-    object_type = serializers.CharField(
-        default="parcel", help_text="Specifies the object type"
-    )
+    object_type = serializers.CharField(default="parcel", help_text="Specifies the object type")
     items = Commodity(required=False, many=True, help_text="The parcel items.")
 
 
@@ -556,9 +515,7 @@ class Duty(serializers.Serializer):
         allow_null=True,
         help_text="The declared value currency",
     )
-    declared_value = serializers.FloatField(
-        required=False, allow_null=True, help_text="The package declared value"
-    )
+    declared_value = serializers.FloatField(required=False, allow_null=True, help_text="The package declared value")
     account_number = serializers.CharField(
         required=False,
         allow_blank=True,
@@ -568,9 +525,7 @@ class Duty(serializers.Serializer):
 
 
 class CustomsData(serializers.Serializer):
-    commodities = CommodityData(
-        many=True, allow_empty=False, help_text="The parcel content items"
-    )
+    commodities = CommodityData(many=True, allow_empty=False, help_text="The parcel content items")
     duty = Duty(
         required=False,
         allow_null=True,
@@ -578,15 +533,11 @@ class CustomsData(serializers.Serializer):
         **Note that this is required for a Dutiable parcel shipped internationally.**
         """,
     )
-    duty_billing_address = AddressData(
-        required=False, allow_null=True, help_text="The duty payor address."
-    )
+    duty_billing_address = AddressData(required=False, allow_null=True, help_text="The duty payor address.")
     content_type = serializers.ChoiceField(
         required=False, choices=CUSTOMS_CONTENT_TYPE, allow_blank=True, allow_null=True
     )
-    content_description = serializers.CharField(
-        required=False, allow_blank=True, allow_null=True
-    )
+    content_description = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     incoterm = serializers.ChoiceField(
         required=False,
         allow_null=True,
@@ -619,9 +570,7 @@ class CustomsData(serializers.Serializer):
         allow_null=True,
         help_text="Indicate that signer certified confirmed all",
     )
-    signer = serializers.CharField(
-        required=False, max_length=50, allow_blank=True, allow_null=True
-    )
+    signer = serializers.CharField(required=False, max_length=50, allow_blank=True, allow_null=True)
     options = serializers.PlainDictField(
         required=False,
         default={},
@@ -649,9 +598,7 @@ class Charge(serializers.Serializer):
         allow_null=True,
         help_text="The charge description",
     )
-    amount = serializers.FloatField(
-        required=False, allow_null=True, help_text="The charge monetary value"
-    )
+    amount = serializers.FloatField(required=False, allow_null=True, help_text="The charge monetary value")
     currency = serializers.CharField(
         required=False,
         allow_blank=True,
@@ -791,39 +738,19 @@ class TrackingInfo(serializers.Serializer):
     carrier_tracking_link = serializers.CharField(
         required=False, allow_null=True, help_text="The carrier tracking link"
     )
-    customer_name = serializers.CharField(
-        required=False, allow_null=True, help_text="The customer name"
-    )
-    expected_delivery = serializers.CharField(
-        required=False, allow_null=True, help_text="The expected delivery date"
-    )
-    note = serializers.CharField(
-        required=False, allow_null=True, help_text="A tracking note"
-    )
-    order_date = serializers.CharField(
-        required=False, allow_null=True, help_text="The package order date"
-    )
-    order_id = serializers.CharField(
-        required=False, allow_null=True, help_text="The package order id or number"
-    )
-    package_weight = serializers.CharField(
-        required=False, allow_null=True, help_text="The package weight"
-    )
-    package_weight_unit = serializers.CharField(
-        required=False, allow_null=True, help_text="The package weight unit"
-    )
-    shipment_package_count = serializers.CharField(
-        required=False, allow_null=True, help_text="The package count"
-    )
-    shipment_pickup_date = serializers.CharField(
-        required=False, allow_null=True, help_text="The shipment pickup date"
-    )
+    customer_name = serializers.CharField(required=False, allow_null=True, help_text="The customer name")
+    expected_delivery = serializers.CharField(required=False, allow_null=True, help_text="The expected delivery date")
+    note = serializers.CharField(required=False, allow_null=True, help_text="A tracking note")
+    order_date = serializers.CharField(required=False, allow_null=True, help_text="The package order date")
+    order_id = serializers.CharField(required=False, allow_null=True, help_text="The package order id or number")
+    package_weight = serializers.CharField(required=False, allow_null=True, help_text="The package weight")
+    package_weight_unit = serializers.CharField(required=False, allow_null=True, help_text="The package weight unit")
+    shipment_package_count = serializers.CharField(required=False, allow_null=True, help_text="The package count")
+    shipment_pickup_date = serializers.CharField(required=False, allow_null=True, help_text="The shipment pickup date")
     shipment_delivery_date = serializers.CharField(
         required=False, allow_null=True, help_text="The shipment delivery date"
     )
-    shipment_service = serializers.CharField(
-        required=False, allow_null=True, help_text="The shipment service"
-    )
+    shipment_service = serializers.CharField(required=False, allow_null=True, help_text="The shipment service")
     shipment_origin_country = serializers.CharField(
         required=False, allow_null=True, help_text="The shipment origin country"
     )
@@ -838,17 +765,13 @@ class TrackingInfo(serializers.Serializer):
         allow_null=True,
         help_text="The shipment destination postal code",
     )
-    shipping_date = serializers.CharField(
-        required=False, allow_null=True, help_text="The shipping date"
-    )
+    shipping_date = serializers.CharField(required=False, allow_null=True, help_text="The shipping date")
     signed_by = serializers.CharField(
         required=False,
         allow_null=True,
         help_text="The person who signed for the package",
     )
-    source = serializers.CharField(
-        required=False, allow_null=True, help_text="The tracker source"
-    )
+    source = serializers.CharField(required=False, allow_null=True, help_text="The tracker source")
 
 
 class TrackingData(serializers.Serializer):
@@ -878,15 +801,11 @@ class TrackingData(serializers.Serializer):
         allow_null=True,
         help_text="The package and shipment tracking details",
     )
-    metadata = serializers.PlainDictField(
-        required=False, default={}, help_text="The carrier user metadata."
-    )
+    metadata = serializers.PlainDictField(required=False, default={}, help_text="The carrier user metadata.")
 
 
 class TrackingRequest(serializers.Serializer):
-    tracking_numbers = serializers.StringListField(
-        required=True, help_text="a list of tracking numbers to fetch."
-    )
+    tracking_numbers = serializers.StringListField(required=True, help_text="a list of tracking numbers to fetch.")
     account_number = serializers.CharField(
         required=False,
         allow_blank=True,
@@ -1020,9 +939,7 @@ class PickupUpdateRequest(serializers.Serializer):
         allow_empty=False,
         help_text="The shipment parcels to pickup.",
     )
-    confirmation_number = serializers.CharField(
-        required=True, help_text="pickup identification number"
-    )
+    confirmation_number = serializers.CharField(required=True, help_text="pickup identification number")
     ready_time = serializers.CharField(
         required=True,
         validators=[validators.valid_time_format("ready_time")],
@@ -1081,9 +998,7 @@ class PickupUpdateRequest(serializers.Serializer):
 
 class PickupDetails(serializers.Serializer):
     id = serializers.CharField(required=False, help_text="A unique pickup identifier")
-    object_type = serializers.CharField(
-        default="pickup", help_text="Specifies the object type"
-    )
+    object_type = serializers.CharField(default="pickup", help_text="Specifies the object type")
     is_archived = serializers.BooleanField(
         required=False,
         default=False,
@@ -1095,27 +1010,17 @@ class PickupDetails(serializers.Serializer):
         help_text="Timestamp when the pickup was archived.",
     )
     carrier_name = serializers.CharField(required=True, help_text="The pickup carrier")
-    carrier_id = serializers.CharField(
-        required=True, help_text="The pickup carrier configured name"
-    )
-    confirmation_number = serializers.CharField(
-        required=True, help_text="The pickup confirmation identifier"
-    )
+    carrier_id = serializers.CharField(required=True, help_text="The pickup carrier configured name")
+    confirmation_number = serializers.CharField(required=True, help_text="The pickup confirmation identifier")
     status = serializers.ChoiceField(
         required=False,
         default=PickupStatus.scheduled.value,
         choices=PICKUP_STATUS,
         help_text="The current pickup status",
     )
-    pickup_date = serializers.CharField(
-        required=False, allow_null=True, help_text="The pickup date"
-    )
-    pickup_charge = Charge(
-        required=False, allow_null=True, help_text="The pickup cost details"
-    )
-    ready_time = serializers.CharField(
-        required=False, allow_null=True, help_text="The pickup expected ready time"
-    )
+    pickup_date = serializers.CharField(required=False, allow_null=True, help_text="The pickup date")
+    pickup_charge = Charge(required=False, allow_null=True, help_text="The pickup cost details")
+    ready_time = serializers.CharField(required=False, allow_null=True, help_text="The pickup expected ready time")
     closing_time = serializers.CharField(
         required=False,
         allow_null=True,
@@ -1139,12 +1044,8 @@ class PickupDetails(serializers.Serializer):
         Example: {"frequency": "weekly", "days_of_week": ["monday", "wednesday", "friday"]}
         """,
     )
-    metadata = serializers.PlainDictField(
-        required=False, default={}, help_text="User metadata for the pickup"
-    )
-    meta = serializers.PlainDictField(
-        required=False, allow_null=True, help_text="provider specific metadata"
-    )
+    metadata = serializers.PlainDictField(required=False, default={}, help_text="User metadata for the pickup")
+    meta = serializers.PlainDictField(required=False, allow_null=True, help_text="provider specific metadata")
 
 
 class Pickup(PickupDetails, PickupRequest):
@@ -1166,9 +1067,7 @@ class Pickup(PickupDetails, PickupRequest):
     ]
 )
 class PickupCancelRequest(serializers.Serializer):
-    confirmation_number = serializers.CharField(
-        required=True, help_text="The pickup confirmation identifier"
-    )
+    confirmation_number = serializers.CharField(required=True, help_text="The pickup confirmation identifier")
     address = AddressData(required=False, help_text="The pickup address")
     pickup_date = serializers.CharField(
         required=False,
@@ -1178,9 +1077,7 @@ class PickupCancelRequest(serializers.Serializer):
         Date Format: `YYYY-MM-DD`
         """,
     )
-    reason = serializers.CharField(
-        required=False, help_text="The reason of the pickup cancellation"
-    )
+    reason = serializers.CharField(required=False, help_text="The reason of the pickup cancellation")
 
 
 class Images(serializers.Serializer):
@@ -1199,9 +1096,7 @@ class Images(serializers.Serializer):
 
 
 class TrackingEvent(serializers.Serializer):
-    date = serializers.CharField(
-        required=False, help_text="The tracking event's date. Format: `YYYY-MM-DD`"
-    )
+    date = serializers.CharField(required=False, help_text="The tracking event's date. Format: `YYYY-MM-DD`")
     time = serializers.CharField(
         required=False,
         allow_blank=True,
@@ -1234,12 +1129,8 @@ class TrackingEvent(serializers.Serializer):
         choices=TRACKING_INCIDENT_REASONS,
         help_text="The normalized incident reason (for exception events only)",
     )
-    description = serializers.CharField(
-        required=False, help_text="The tracking event's description"
-    )
-    location = serializers.CharField(
-        required=False, help_text="The tracking event's location"
-    )
+    description = serializers.CharField(required=False, help_text="The tracking event's description")
+    location = serializers.CharField(required=False, help_text="The tracking event's location")
     latitude = serializers.FloatField(
         required=False,
         allow_null=True,
@@ -1253,15 +1144,9 @@ class TrackingEvent(serializers.Serializer):
 
 
 class TrackingDetails(serializers.Serializer):
-    carrier_name = serializers.CharField(
-        required=True, help_text="The tracking carrier"
-    )
-    carrier_id = serializers.CharField(
-        required=True, help_text="The tracking carrier configured identifier"
-    )
-    tracking_number = serializers.CharField(
-        required=True, help_text="The shipment tracking number"
-    )
+    carrier_name = serializers.CharField(required=True, help_text="The tracking carrier")
+    carrier_id = serializers.CharField(required=True, help_text="The tracking carrier configured identifier")
+    tracking_number = serializers.CharField(required=True, help_text="The shipment tracking number")
     info = TrackingInfo(
         required=False,
         allow_null=True,
@@ -1292,9 +1177,7 @@ class TrackingDetails(serializers.Serializer):
         required=False,
         help_text="The delivery estimated date",
     )
-    meta = serializers.PlainDictField(
-        required=False, allow_null=True, help_text="provider specific metadata"
-    )
+    meta = serializers.PlainDictField(required=False, allow_null=True, help_text="provider specific metadata")
     images = Images(
         required=False,
         allow_null=True,
@@ -1303,9 +1186,7 @@ class TrackingDetails(serializers.Serializer):
 
 
 class TrackerDetails(serializers.EntitySerializer, TrackingDetails):
-    object_type = serializers.CharField(
-        default="tracker", help_text="Specifies the object type"
-    )
+    object_type = serializers.CharField(default="tracker", help_text="Specifies the object type")
     is_archived = serializers.BooleanField(
         required=False,
         default=False,
@@ -1316,9 +1197,7 @@ class TrackerDetails(serializers.EntitySerializer, TrackingDetails):
         allow_null=True,
         help_text="Timestamp when the tracker was archived.",
     )
-    metadata = serializers.PlainDictField(
-        required=False, default={}, help_text="User metadata for the tracker"
-    )
+    metadata = serializers.PlainDictField(required=False, default={}, help_text="User metadata for the tracker")
     messages = Message(
         required=False,
         many=True,
@@ -1368,7 +1247,9 @@ class ShippingDocument(serializers.Serializer):
     )
 
 
-class ShippingDocument(serializers.Serializer):
+# FIXME: real duplicate class definition — second copy below shadows the first.
+# Flagged for human review (2026.5 ruff sub-PR). Intentional noqa until reviewed.
+class ShippingDocument(serializers.Serializer):  # noqa: F811
     """Serializer for shipping document download response."""
 
     category = serializers.CharField(
@@ -1421,16 +1302,10 @@ class Documents(serializers.Serializer):
 
 
 class Rate(serializers.EntitySerializer):
-    object_type = serializers.CharField(
-        default="rate", help_text="Specifies the object type"
-    )
+    object_type = serializers.CharField(default="rate", help_text="Specifies the object type")
     carrier_name = serializers.CharField(required=True, help_text="The rate's carrier")
-    carrier_id = serializers.CharField(
-        required=True, help_text="The targeted carrier's name (unique identifier)"
-    )
-    currency = serializers.CharField(
-        required=False, help_text="The rate monetary values currency code"
-    )
+    carrier_id = serializers.CharField(required=True, help_text="The targeted carrier's name (unique identifier)")
+    currency = serializers.CharField(required=False, help_text="The rate monetary values currency code")
     service = serializers.CharField(
         required=False,
         allow_blank=True,
@@ -1457,9 +1332,7 @@ class Rate(serializers.EntitySerializer):
         allow_null=True,
         help_text="The delivery estimated date",
     )
-    meta = serializers.PlainDictField(
-        required=False, allow_null=True, help_text="provider specific metadata"
-    )
+    meta = serializers.PlainDictField(required=False, allow_null=True, help_text="provider specific metadata")
     test_mode = serializers.BooleanField(
         required=True,
         help_text="Specified whether it was created with a carrier in test mode",
@@ -1590,9 +1463,7 @@ class ShippingData(validators.OptionDefaultSerializer):
 
 
 class ShippingRequest(ShippingData):
-    selected_rate_id = serializers.CharField(
-        required=True, help_text="The shipment selected rate."
-    )
+    selected_rate_id = serializers.CharField(required=True, help_text="The shipment selected rate.")
     rates = Rate(many=True, help_text="The list for shipment rates fetched previously")
 
 
@@ -1669,17 +1540,13 @@ class ShipmentDetails(serializers.Serializer):
         allow_null=True,
         help_text="The shipment carrier system identifier",
     )
-    selected_rate = Rate(
-        required=False, allow_null=True, help_text="The shipment selected rate"
-    )
+    selected_rate = Rate(required=False, allow_null=True, help_text="The shipment selected rate")
     docs = Documents(
         required=False,
         allow_null=True,
         help_text="The shipment documents",
     )
-    meta = serializers.PlainDictField(
-        required=False, allow_null=True, help_text="provider specific metadata"
-    )
+    meta = serializers.PlainDictField(required=False, allow_null=True, help_text="provider specific metadata")
     return_shipment = serializers.PlainDictField(
         required=False,
         allow_null=True,
@@ -1716,9 +1583,7 @@ class ShipmentDetails(serializers.Serializer):
 
 
 class ShipmentContent(serializers.Serializer):
-    object_type = serializers.CharField(
-        default="shipment", help_text="Specifies the object type"
-    )
+    object_type = serializers.CharField(default="shipment", help_text="Specifies the object type")
     tracking_url = serializers.URLField(
         required=False,
         allow_blank=True,
@@ -1863,9 +1728,7 @@ class ShipmentContent(serializers.Serializer):
         Date Format: `YYYY-MM-DD HH:MM:SS.mmmmmmz`
         """,
     )
-    metadata = serializers.PlainDictField(
-        required=False, default={}, help_text="User metadata for the shipment"
-    )
+    metadata = serializers.PlainDictField(required=False, default={}, help_text="User metadata for the shipment")
     messages = Message(
         required=False,
         many=True,
@@ -1925,9 +1788,7 @@ class ShipmentCancelRequest(serializers.Serializer):
     ]
 )
 class ManifestRequestData(serializers.Serializer):
-    carrier_name = serializers.CharField(
-        required=True, help_text="The manifest's carrier"
-    )
+    carrier_name = serializers.CharField(required=True, help_text="The manifest's carrier")
     address = AddressData(
         required=True,
         help_text="The address of the warehouse or location where the shipments originate.",
@@ -1985,23 +1846,15 @@ class ManifestDocument(serializers.Serializer):
 
 class ManifestDetails(serializers.Serializer):
     id = serializers.CharField(required=False, help_text="A unique manifest identifier")
-    object_type = serializers.CharField(
-        default="manifest", help_text="Specifies the object type"
-    )
-    carrier_name = serializers.CharField(
-        required=True, help_text="The manifest carrier"
-    )
-    carrier_id = serializers.CharField(
-        required=True, help_text="The manifest carrier configured name"
-    )
+    object_type = serializers.CharField(default="manifest", help_text="Specifies the object type")
+    carrier_name = serializers.CharField(required=True, help_text="The manifest carrier")
+    carrier_id = serializers.CharField(required=True, help_text="The manifest carrier configured name")
     doc = ManifestDocument(
         required=False,
         allow_null=True,
         help_text="The manifest documents",
     )
-    meta = serializers.PlainDictField(
-        required=False, allow_null=True, help_text="provider specific metadata"
-    )
+    meta = serializers.PlainDictField(required=False, allow_null=True, help_text="provider specific metadata")
     test_mode = serializers.BooleanField(
         required=True,
         help_text="Specified whether it was created with a carrier in test mode",
@@ -2010,9 +1863,7 @@ class ManifestDetails(serializers.Serializer):
 
 class Manifest(ManifestDetails, ManifestRequest):
     doc = None
-    metadata = serializers.PlainDictField(
-        required=False, default={}, help_text="User metadata for the pickup"
-    )
+    metadata = serializers.PlainDictField(required=False, default={}, help_text="User metadata for the pickup")
     manifest_url = serializers.URLField(
         required=False,
         allow_blank=True,
@@ -2028,23 +1879,17 @@ class Manifest(ManifestDetails, ManifestRequest):
 
 
 class ManifestResponse(serializers.Serializer):
-    messages = Message(
-        required=False, many=True, help_text="The list of note or warning messages"
-    )
+    messages = Message(required=False, many=True, help_text="The list of note or warning messages")
     manifest = ManifestDetails(required=False, help_text="The manifest details")
 
 
 class Operation(serializers.Serializer):
     operation = serializers.CharField(required=True, help_text="Operation performed")
-    success = serializers.BooleanField(
-        required=True, help_text="Specify whether the operation was successful"
-    )
+    success = serializers.BooleanField(required=True, help_text="Specify whether the operation was successful")
 
 
 class OperationConfirmation(Operation):
-    carrier_name = serializers.CharField(
-        required=True, help_text="The operation carrier"
-    )
+    carrier_name = serializers.CharField(required=True, help_text="The operation carrier")
     carrier_id = serializers.CharField(
         required=False,
         allow_blank=True,
@@ -2054,35 +1899,23 @@ class OperationConfirmation(Operation):
 
 
 class OperationResponse(serializers.Serializer):
-    messages = Message(
-        required=False, many=True, help_text="The list of note or warning messages"
-    )
-    confirmation = OperationConfirmation(
-        required=False, help_text="The operation details"
-    )
+    messages = Message(required=False, many=True, help_text="The list of note or warning messages")
+    confirmation = OperationConfirmation(required=False, help_text="The operation details")
 
 
 class PickupResponse(serializers.Serializer):
-    messages = Message(
-        required=False, many=True, help_text="The list of note or warning messages"
-    )
+    messages = Message(required=False, many=True, help_text="The list of note or warning messages")
     pickup = Pickup(required=False, help_text="The scheduled pickup's summary")
 
 
 class RateResponse(serializers.Serializer):
-    messages = Message(
-        required=False, many=True, help_text="The list of note or warning messages"
-    )
+    messages = Message(required=False, many=True, help_text="The list of note or warning messages")
     rates = Rate(many=True, help_text="The list of returned rates")
 
 
 class TrackingResponse(serializers.Serializer):
-    messages = Message(
-        required=False, many=True, help_text="The list of note or warning messages"
-    )
-    tracking = TrackerDetails(
-        required=False, help_text="The tracking details retrieved"
-    )
+    messages = Message(required=False, many=True, help_text="The list of note or warning messages")
+    tracking = TrackerDetails(required=False, help_text="The tracking details retrieved")
 
 
 class DocumentFileData(serializers.Serializer):
@@ -2111,7 +1944,7 @@ class DocumentFileData(serializers.Serializer):
         Shipment document type
 
         values: <br/>
-        {' '.join([f'`{pkg}`' for pkg, _ in UPLOAD_DOCUMENT_TYPE])}
+        {" ".join([f"`{pkg}`" for pkg, _ in UPLOAD_DOCUMENT_TYPE])}
 
         For carrier specific packaging types, please consult the reference.
         """,
@@ -2119,9 +1952,7 @@ class DocumentFileData(serializers.Serializer):
 
 
 class DocumentUploadData(serializers.Serializer):
-    shipment_id = serializers.CharField(
-        required=True, help_text="The documents related shipment."
-    )
+    shipment_id = serializers.CharField(required=True, help_text="The documents related shipment.")
     document_files = DocumentFileData(
         many=True,
         allow_empty=False,

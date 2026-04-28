@@ -1,12 +1,10 @@
+import karrio.providers.teleship.units as units
+import karrio.providers.teleship.utils as utils
 from karrio.core.metadata import PluginMetadata
-
+from karrio.mappers.teleship.hooks import Hooks
 from karrio.mappers.teleship.mapper import Mapper
 from karrio.mappers.teleship.proxy import Proxy
 from karrio.mappers.teleship.settings import Settings
-from karrio.mappers.teleship.hooks import Hooks
-import karrio.providers.teleship.units as units
-import karrio.providers.teleship.utils as utils
-
 
 # This METADATA object is used by Karrio to discover and register this plugin
 # when loaded through Python entrypoints or local plugin directories.

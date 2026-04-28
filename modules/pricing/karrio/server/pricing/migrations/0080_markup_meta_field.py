@@ -11,7 +11,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("pricing", "0079_fee_snapshot_model"),
     ]
@@ -24,7 +23,7 @@ class Migration(migrations.Migration):
                 blank=True,
                 default=dict,
                 help_text=(
-                    'Structured categorization metadata: '
+                    "Structured categorization metadata: "
                     '{"type": "brokerage-fee", "plan": "scale", "show_in_preview": true}'
                 ),
             ),

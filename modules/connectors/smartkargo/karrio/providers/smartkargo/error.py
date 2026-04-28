@@ -1,8 +1,7 @@
 """Karrio SmartKargo error parser."""
 
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.smartkargo.utils as provider_utils
 
 _ERROR_STATUSES = {"ERROR", "FAILED", "REJECTED"}
@@ -10,10 +9,10 @@ _SUCCESS_STATUSES = {"PROCESSED", "QUOTED", "SUCCESS", "OK", ""}
 
 
 def parse_error_response(
-    response: typing.Union[dict, typing.List[dict]],
+    response: dict | list[dict],
     settings: provider_utils.Settings,
     **kwargs,
-) -> typing.List[models.Message]:
+) -> list[models.Message]:
     """Parse SmartKargo API error responses.
 
     Extracts errors from all SmartKargo response formats:
@@ -32,10 +31,10 @@ def parse_error_response(
 
 
 def _extract_errors(
-    res: typing.Union[str, dict],
+    res: str | dict,
     settings: provider_utils.Settings,
     **kwargs,
-) -> typing.List[models.Message]:
+) -> list[models.Message]:
     """Extract all errors from a single response object."""
 
     # Plain text error (e.g. HTTP error body)
@@ -51,12 +50,14 @@ def _extract_errors(
     # Explicit error object: {"error": {"code": "...", "message": "..."}}
     error_obj = res.get("error")
     if isinstance(error_obj, dict):
-        return [_message(
-            settings,
-            error_obj.get("code", "ERROR"),
-            error_obj.get("message", "Unknown error"),
-            **kwargs,
-        )]
+        return [
+            _message(
+                settings,
+                error_obj.get("code", "ERROR"),
+                error_obj.get("message", "Unknown error"),
+                **kwargs,
+            )
+        ]
 
     # Successful response with no issues — skip
     if status in _SUCCESS_STATUSES and valid != "NO":
@@ -79,10 +80,10 @@ def _extract_errors(
 
 
 def _parse_validations(
-    validations: typing.Optional[typing.List[dict]],
+    validations: list[dict] | None,
     settings: provider_utils.Settings,
     **kwargs,
-) -> typing.List[models.Message]:
+) -> list[models.Message]:
     """Parse top-level validations[] array."""
     return [
         _message(
@@ -98,10 +99,10 @@ def _parse_validations(
 
 
 def _parse_shipment_validations(
-    shipments: typing.Optional[typing.List[dict]],
+    shipments: list[dict] | None,
     settings: provider_utils.Settings,
     **kwargs,
-) -> typing.List[models.Message]:
+) -> list[models.Message]:
     """Parse nested shipments[].validations[] arrays."""
     return [
         _message(
@@ -124,7 +125,7 @@ def _parse_status_error(
     res: dict,
     settings: provider_utils.Settings,
     **kwargs,
-) -> typing.List[models.Message]:
+) -> list[models.Message]:
     """Parse status-based error with details string."""
     status = (res.get("status") or "").upper()
     details = res.get("details")

@@ -1,7 +1,8 @@
 import datetime
-import karrio.lib as lib
+
 import karrio.core as core
 import karrio.core.errors as errors
+import karrio.lib as lib
 
 
 class Settings(core.Settings):
@@ -58,8 +59,8 @@ class Settings(core.Settings):
 
 def login(settings: Settings):
     """Authenticate with Hermes OAuth2 password flow."""
-    import karrio.providers.hermes.error as error
     import karrio.core.models as models
+    import karrio.providers.hermes.error as error
 
     result = lib.request(
         url=settings.token_url,
@@ -68,13 +69,15 @@ def login(settings: Settings):
         headers={
             "Content-Type": "application/x-www-form-urlencoded",
         },
-        data=lib.to_query_string({
-            "grant_type": "password",
-            "username": settings.username,
-            "password": settings.password,
-            "client_id": settings.client_id,
-            "client_secret": settings.client_secret,
-        }),
+        data=lib.to_query_string(
+            {
+                "grant_type": "password",
+                "username": settings.username,
+                "password": settings.password,
+                "client_id": settings.client_id,
+                "client_secret": settings.client_secret,
+            }
+        ),
     )
     response = lib.to_dict(result)
 
@@ -96,9 +99,7 @@ def login(settings: Settings):
     if any(messages):
         raise errors.ParsedMessagesError(messages=messages)
 
-    expiry = datetime.datetime.now() + datetime.timedelta(
-        seconds=float(response.get("expires_in", 3600))
-    )
+    expiry = datetime.datetime.now() + datetime.timedelta(seconds=float(response.get("expires_in", 3600)))
     return {**response, "expiry": lib.fdatetime(expiry)}
 
 

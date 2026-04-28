@@ -1,13 +1,15 @@
 import logging
 import unittest
 from unittest.mock import patch
+
 import karrio.sdk as karrio
-from karrio.core.utils import DP
 from karrio.core.models import (
+    PickupCancelRequest,
     PickupRequest,
     PickupUpdateRequest,
-    PickupCancelRequest,
 )
+from karrio.core.utils import DP
+
 from .fixture import gateway
 
 logger = logging.getLogger(__name__)
@@ -35,9 +37,7 @@ class TestPurolatorPickup(unittest.TestCase):
         validate_request = pipeline["validate"]()
         modify_request = pipeline["modify"](PickupValidationResponseXML)
 
-        self.assertEqual(
-            validate_request.data.serialize(), PickupUpdateValidationRequestXML
-        )
+        self.assertEqual(validate_request.data.serialize(), PickupUpdateValidationRequestXML)
         self.assertEqual(modify_request.data.serialize(), PickupUpdateRequestXML)
 
     def test_create_pickup(self):
@@ -93,22 +93,16 @@ class TestPurolatorPickup(unittest.TestCase):
     def test_parse_pickup_reply(self):
         with patch("karrio.mappers.purolator.proxy.http") as mocks:
             mocks.side_effect = [PickupValidationResponseXML, PickupResponseXML]
-            parsed_response = (
-                karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
 
             self.assertListEqual(DP.to_dict(parsed_response), ParsedPickupResponse)
 
     def test_parse_pickup_cancel_reply(self):
         with patch("karrio.mappers.purolator.proxy.http") as mock:
             mock.return_value = PickupCancelResponseXML
-            parsed_response = (
-                karrio.Pickup.cancel(self.PickupCancelRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Pickup.cancel(self.PickupCancelRequest).from_(gateway).parse()
 
-            self.assertListEqual(
-                DP.to_dict(parsed_response), ParsedPickupCancelResponse
-            )
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedPickupCancelResponse)
 
 
 if __name__ == "__main__":

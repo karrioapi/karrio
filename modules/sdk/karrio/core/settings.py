@@ -1,9 +1,9 @@
 """Karrio Settings abstract class definition"""
 
 import abc
-import attr
-import typing
 import functools
+
+import attr
 
 
 @attr.s(auto_attribs=True)
@@ -21,15 +21,15 @@ class Settings(abc.ABC):
     system_config = None  # Will be set during Gateway initialization
 
     @property
-    def carrier_name(self) -> typing.Optional[str]:
+    def carrier_name(self) -> str | None:
         return None
 
     @property
-    def server_url(self) -> typing.Optional[str]:
+    def server_url(self) -> str | None:
         return None
 
     @property
-    def tracking_url(self) -> typing.Optional[str]:
+    def tracking_url(self) -> str | None:
         return None
 
     @property
@@ -86,7 +86,7 @@ class Settings(abc.ABC):
         return _partial
 
     @classmethod
-    def as_stub(cls, settings: typing.Optional[dict] = None) -> "Settings":
+    def as_stub(cls, settings: dict | None = None) -> "Settings":
         """
         Create a stub instance of the Settings class with placeholder values
         for any required fields that are not provided.

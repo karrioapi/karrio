@@ -2,11 +2,12 @@
 
 import unittest
 from unittest.mock import patch
-from .fixture import gateway
 
-import karrio.sdk as karrio
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 
 class TestMyDHLTracking(unittest.TestCase):
@@ -23,8 +24,7 @@ class TestMyDHLTracking(unittest.TestCase):
             mock.return_value = "{}"
             karrio.Tracking.fetch(self.TrackingRequest).from_(gateway)
             self.assertEqual(
-                mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/tracking?shipmentTrackingNumber=9356579890"
+                mock.call_args[1]["url"], f"{gateway.settings.server_url}/tracking?shipmentTrackingNumber=9356579890"
             )
 
     def test_parse_tracking_response(self):
@@ -41,9 +41,7 @@ class TestMyDHLTracking(unittest.TestCase):
     def test_parse_error_response(self):
         with patch("karrio.mappers.mydhl.proxy.lib.request") as mock:
             mock.return_value = ErrorResponse
-            parsed_response = (
-                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
 
@@ -51,9 +49,7 @@ if __name__ == "__main__":
     unittest.main()
 
 
-TrackingPayload = {
-    "tracking_numbers": ["9356579890"]
-}
+TrackingPayload = {"tracking_numbers": ["9356579890"]}
 
 TrackingRequest = "shipmentTrackingNumber=9356579890"
 
@@ -138,7 +134,7 @@ ParsedTrackingResponse = [
                     "status": "pending",
                     "time": "08:00",
                     "timestamp": "2024-01-15T08:00:00.000Z",
-                }
+                },
             ],
             "images": {},
             "info": {
@@ -150,13 +146,13 @@ ParsedTrackingResponse = [
             "meta": {
                 "description": "EXPRESS WORLDWIDE",
                 "product_code": "P",
-                "shipment_timestamp": "2024-01-10T10:00:00"
+                "shipment_timestamp": "2024-01-10T10:00:00",
             },
             "status": "delivered",
             "tracking_number": "9356579890",
         }
     ],
-    []
+    [],
 ]
 
 ParsedErrorResponse = [
@@ -167,10 +163,7 @@ ParsedErrorResponse = [
             "carrier_name": "mydhl",
             "code": "404",
             "message": "No shipments found for the given tracking number",
-            "details": {
-                "instance": "/tracking?shipmentTrackingNumber=9356579890",
-                "title": "Not Found"
-            }
+            "details": {"instance": "/tracking?shipmentTrackingNumber=9356579890", "title": "Not Found"},
         }
-    ]
+    ],
 ]

@@ -1,11 +1,12 @@
-import unittest
-from unittest.mock import patch, ANY
-from .fixture import gateway
 import logging as logger
+import unittest
+from unittest.mock import patch
 
-import karrio.sdk as karrio
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 
 class TestUSPSTracking(unittest.TestCase):
@@ -31,27 +32,21 @@ class TestUSPSTracking(unittest.TestCase):
     def test_parse_tracking_response(self):
         with patch("karrio.mappers.usps.proxy.lib.request") as mock:
             mock.return_value = TrackingResponse
-            parsed_response = (
-                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             logger.debug(lib.to_dict(parsed_response))
             self.assertListEqual(lib.to_dict(parsed_response), ParsedTrackingResponse)
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.usps.proxy.lib.request") as mock:
             mock.return_value = ErrorResponse
-            parsed_response = (
-                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             logger.debug(lib.to_dict(parsed_response))
             self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
     def test_parse_auth_error_response(self):
         with patch("karrio.mappers.usps.proxy.lib.request") as mock:
             mock.return_value = AuthErrorResponse
-            parsed_response = (
-                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             logger.debug(lib.to_dict(parsed_response))
             self.assertListEqual(lib.to_dict(parsed_response), ParsedAuthErrorResponse)
 

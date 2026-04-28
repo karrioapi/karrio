@@ -1,3 +1,4 @@
+# ruff: noqa: I001
 # Re-export all test classes for backward-compatible discovery.
 # `karrio test karrio.server.admin.tests` still works without changes.
 

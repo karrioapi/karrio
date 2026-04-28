@@ -1,9 +1,22 @@
-from django.db.models import signals
-
-from karrio.server.core import utils
-from karrio.server.core.logging import logger
 import karrio.server.manager.models as models
 import karrio.server.manager.serializers as serializers
+from django.db.models import signals
+from django.dispatch import Signal
+from karrio.server.core import utils
+from karrio.server.core.logging import logger
+
+# Custom signal sent after bulk_update of Tracking instances.
+# bulk_update() bypasses Django post_save, so listeners that need to react
+# to background poll updates (e.g. the bridge module) must subscribe here.
+#
+# Defined before `serializers` import to avoid a circular-import issue:
+# signals.py → serializers/__init__.py → tracking.py → signals.trackers_bulk_updated
+#
+# Sender:  models.Tracking (the model class)
+# kwargs:
+#   changed_trackers – List[Tuple[Tracking, List[str]]] — (instance, changed_fields)
+trackers_bulk_updated = Signal()
+
 RATE_RELATED_CHANGES = [
     # address related changes
     "address_line1",
@@ -33,9 +46,7 @@ def register_signals():
 
 
 @utils.disable_for_loaddata
-def address_updated(
-    sender, instance, created, raw, using, update_fields, *args, **kwargs
-):
+def address_updated(sender, instance, created, raw, using, update_fields, *args, **kwargs):
     """ """
     changes = update_fields or []
 
@@ -44,9 +55,7 @@ def address_updated(
 
 
 @utils.disable_for_loaddata
-def parcel_updated(
-    sender, instance, created, raw, using, update_fields, *args, **kwargs
-):
+def parcel_updated(sender, instance, created, raw, using, update_fields, *args, **kwargs):
     """ """
     changes = update_fields or []
 

@@ -1,10 +1,11 @@
 """Karrio SmartKargo client proxy."""
 
 import urllib.parse
-import karrio.lib as lib
+
 import karrio.api.proxy as proxy
-import karrio.providers.smartkargo.utils as provider_utils
+import karrio.lib as lib
 import karrio.mappers.smartkargo.settings as provider_settings
+import karrio.providers.smartkargo.utils as provider_utils
 
 
 class Proxy(proxy.Proxy):
@@ -79,10 +80,7 @@ class Proxy(proxy.Proxy):
                     else {}
                 ),
             ),
-            [
-                provider_utils.extract_booking_data(raw)
-                for raw in booking_responses
-            ],
+            [provider_utils.extract_booking_data(raw) for raw in booking_responses],
         )
 
         return lib.Deserializable(
@@ -140,10 +138,7 @@ class Proxy(proxy.Proxy):
 
         return lib.Deserializable(
             responses,
-            lambda __: [
-                (tracking_number, provider_utils.parse_void_response(raw))
-                for tracking_number, raw in __
-            ],
+            lambda __: [(tracking_number, provider_utils.parse_void_response(raw)) for tracking_number, raw in __],
         )
 
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
@@ -154,9 +149,7 @@ class Proxy(proxy.Proxy):
         _partner_url = self.settings.connection_config.partner_tracking_url.state
         _base_url = f"{_partner_url}/api" if _partner_url else self.settings.server_url
         _code = (
-            self.settings.connection_config.partner_tracking_api_code.state
-            if _partner_url
-            else self.settings.api_key
+            self.settings.connection_config.partner_tracking_api_code.state if _partner_url else self.settings.api_key
         ) or self.settings.api_key
         _site_id = self.settings.connection_config.site_id.state
 

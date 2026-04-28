@@ -1,14 +1,13 @@
-import typing
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 
 class DATEFORMAT:
     @staticmethod
     def date(
-        date_value: typing.Union[str, int, datetime] = None,
+        date_value: str | int | datetime = None,
         current_format: str = "%Y-%m-%d",
-        try_formats: typing.List[str] = None,
-    ) -> typing.Optional[datetime]:
+        try_formats: list[str] = None,
+    ) -> datetime | None:
         if date_value is None:
             return None
 
@@ -32,15 +31,13 @@ class DATEFORMAT:
 
     @staticmethod
     def next_business_datetime(
-        date_value: typing.Union[str, datetime] = None,
+        date_value: str | datetime = None,
         current_format: str = "%Y-%m-%d %H:%M:%S",
-        try_formats: typing.List[str] = None,
+        try_formats: list[str] = None,
         start_hour: int = 10,
         end_hour: int = 17,
-    ) -> typing.Optional[datetime]:
-        date = DATEFORMAT.date(
-            date_value, current_format=current_format, try_formats=try_formats
-        )
+    ) -> datetime | None:
+        date = DATEFORMAT.date(date_value, current_format=current_format, try_formats=try_formats)
         if date is None:
             return None
 
@@ -62,40 +59,34 @@ class DATEFORMAT:
             # Move to the next Monday
             days_to_add = 7 - date.weekday()
             next_business_day = date + timedelta(days=days_to_add)
-            return next_business_day.replace(
-                hour=_start_hour, minute=0, second=0, microsecond=0
-            )
+            return next_business_day.replace(hour=_start_hour, minute=0, second=0, microsecond=0)
         elif date.hour >= _end_hour:  # If it's after business hours
             # Move to the next business day
             next_business_day = date + timedelta(days=1)
             if next_business_day.weekday() >= 5:  # If it's Saturday or Sunday
                 days_to_add = 7 - next_business_day.weekday()
                 next_business_day += timedelta(days=days_to_add)
-            return next_business_day.replace(
-                hour=_start_hour, minute=0, second=0, microsecond=0
-            )
+            return next_business_day.replace(hour=_start_hour, minute=0, second=0, microsecond=0)
         else:  # If it's before business hours
             return date.replace(hour=_start_hour, minute=0, second=0, microsecond=0)
 
     @staticmethod
     def fdate(
-        date_str: typing.Union[str, int, datetime] = None,
+        date_str: str | int | datetime = None,
         current_format: str = "%Y-%m-%d",
-        try_formats: typing.List[str] = None,
+        try_formats: list[str] = None,
     ):
-        date = DATEFORMAT.date(
-            date_str, current_format=current_format, try_formats=try_formats
-        )
+        date = DATEFORMAT.date(date_str, current_format=current_format, try_formats=try_formats)
         if date is None:
             return None
         return date.strftime("%Y-%m-%d")
 
     @staticmethod
     def fdatetime(
-        date_str: typing.Union[str, int, datetime] = None,
+        date_str: str | int | datetime = None,
         current_format: str = "%Y-%m-%d %H:%M:%S",
         output_format: str = "%Y-%m-%d %H:%M:%S",
-        try_formats: typing.List[str] = None,
+        try_formats: list[str] = None,
     ):
         date = DATEFORMAT.date(
             date_str,
@@ -111,20 +102,18 @@ class DATEFORMAT:
         time_str: str,
         current_format: str = "%H:%M:%S",
         output_format: str = "%H:%M",
-        try_formats: typing.List[str] = None,
+        try_formats: list[str] = None,
     ):
-        time = DATEFORMAT.date(
-            time_str, current_format=current_format, try_formats=try_formats
-        )
+        time = DATEFORMAT.date(time_str, current_format=current_format, try_formats=try_formats)
         if time is None:
             return None
         return time.strftime(output_format)
 
     @staticmethod
-    def ftimestamp(timestamp: typing.Union[str, int] = None):
+    def ftimestamp(timestamp: str | int = None):
         if timestamp is None:
             return None
-        return datetime.fromtimestamp(float(timestamp), timezone.utc).strftime("%H:%M")
+        return datetime.fromtimestamp(float(timestamp), UTC).strftime("%H:%M")
 
     @staticmethod
     def is_business_hour(dt: datetime):
@@ -135,6 +124,4 @@ class DATEFORMAT:
         # Check if the given datetime is within business hours
         if dt.weekday() >= 5:  # 5 and 6 correspond to Saturday and Sunday
             return False
-        if dt.hour < start_hour or dt.hour >= end_hour:
-            return False
-        return True
+        return not (dt.hour < start_hour or dt.hour >= end_hour)

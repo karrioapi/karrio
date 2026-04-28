@@ -1,23 +1,19 @@
-import typing
+import karrio.server.documents.models as models
+import karrio.server.documents.serializers as serializers
+import karrio.server.graph.schemas.documents.inputs as inputs
+import karrio.server.graph.schemas.documents.types as types
+import karrio.server.graph.utils as utils
 import strawberry
 from strawberry.types import Info
-
-import karrio.server.graph.utils as utils
-import karrio.server.graph.schemas.documents.types as types
-import karrio.server.graph.schemas.documents.inputs as inputs
-import karrio.server.documents.serializers as serializers
-import karrio.server.documents.models as models
 
 
 @strawberry.type
 class CreateDocumentTemplateMutation(utils.BaseMutation):
-    template: typing.Optional[types.DocumentTemplateType] = None
+    template: types.DocumentTemplateType | None = None
 
     @staticmethod
     @utils.authentication_required
-    def mutate(
-        info: Info, **input: inputs.CreateDocumentTemplateMutationInput
-    ) -> "CreateDocumentTemplateMutation":
+    def mutate(info: Info, **input: inputs.CreateDocumentTemplateMutationInput) -> "CreateDocumentTemplateMutation":
         serializer = serializers.DocumentTemplateModelSerializer(
             data=input,
             context=info.context.request,
@@ -29,16 +25,12 @@ class CreateDocumentTemplateMutation(utils.BaseMutation):
 
 @strawberry.type
 class UpdateDocumentTemplateMutation(utils.BaseMutation):
-    template: typing.Optional[types.DocumentTemplateType] = None
+    template: types.DocumentTemplateType | None = None
 
     @staticmethod
     @utils.authentication_required
-    def mutate(
-        info: Info, **input: inputs.UpdateDocumentTemplateMutationInput
-    ) -> "UpdateDocumentTemplateMutation":
-        instance = models.DocumentTemplate.access_by(info.context.request).get(
-            id=input["id"]
-        )
+    def mutate(info: Info, **input: inputs.UpdateDocumentTemplateMutationInput) -> "UpdateDocumentTemplateMutation":
+        instance = models.DocumentTemplate.access_by(info.context.request).get(id=input["id"])
 
         serializer = serializers.DocumentTemplateModelSerializer(
             instance,

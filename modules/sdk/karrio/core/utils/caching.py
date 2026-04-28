@@ -1,7 +1,7 @@
-import typing
-import threading
-import datetime
 import concurrent.futures as futures
+import datetime
+import threading
+import typing
 
 
 class AbstractCache:
@@ -15,13 +15,13 @@ class AbstractCache:
 class Cache(AbstractCache):
     def __init__(
         self,
-        cache: typing.Optional[AbstractCache] = None,
+        cache: AbstractCache | None = None,
         version: str = "",
         **kwargs,
     ) -> None:
         self._cache = cache  # system cache
         self._version = version  # connection version for cache invalidation
-        self._values: typing.Dict[str, futures.Future] = {}  # shallow cache
+        self._values: dict[str, futures.Future] = {}  # shallow cache
 
         for key, value in kwargs.items():
             self.set(key, value)
@@ -60,9 +60,7 @@ class Cache(AbstractCache):
 
         # set value in cache if it exist
         if self._cache is not None:
-            promise.add_done_callback(
-                lambda _: self._cache.set(key, _.result(), timeout=timeout)
-            )
+            promise.add_done_callback(lambda _: self._cache.set(key, _.result(), timeout=timeout))
 
     def thread_safe(
         self,
@@ -97,9 +95,7 @@ class Cache(AbstractCache):
             )
             token = token_manager.get_token()
         """
-        _versioned_key = (
-            f"{cache_key}|v:{self._version}" if self._version else cache_key
-        )
+        _versioned_key = f"{cache_key}|v:{self._version}" if self._version else cache_key
         return ThreadSafeTokenManager(
             cache=self,
             refresh_func=refresh_func,
@@ -249,12 +245,10 @@ class ThreadSafeTokenManager:
         if not token or not expiry:
             return False
 
-        buffer_time = datetime.datetime.now() + datetime.timedelta(
-            minutes=self.buffer_minutes
-        )
+        buffer_time = datetime.datetime.now() + datetime.timedelta(minutes=self.buffer_minutes)
         return expiry > buffer_time
 
-    def _parse_expiry(self, expiry_str: str) -> typing.Optional[datetime.datetime]:
+    def _parse_expiry(self, expiry_str: str) -> datetime.datetime | None:
         """Parse expiry string to datetime object.
 
         Args:

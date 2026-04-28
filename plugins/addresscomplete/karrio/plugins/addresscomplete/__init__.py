@@ -5,11 +5,9 @@ This module provides address validation using the Canada Post AddressComplete AP
 """
 
 from karrio.core.metadata import PluginMetadata
-
 from karrio.mappers.addresscomplete.mapper import Mapper
 from karrio.mappers.addresscomplete.proxy import Proxy
 from karrio.mappers.addresscomplete.settings import Settings
-
 
 METADATA = PluginMetadata(
     id="addresscomplete",

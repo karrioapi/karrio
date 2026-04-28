@@ -1,7 +1,7 @@
 """Karrio La Poste client proxy."""
 
-import karrio.lib as lib
 import karrio.api.proxy as proxy
+import karrio.lib as lib
 import karrio.mappers.laposte.settings as provider_settings
 
 

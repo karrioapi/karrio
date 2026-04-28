@@ -1,10 +1,11 @@
 import unittest
-from unittest.mock import patch, ANY
-from .fixture import gateway
+from unittest.mock import ANY, patch
 
-import karrio.sdk as karrio
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 
 class TestAustraliaPostManifest(unittest.TestCase):
@@ -35,9 +36,7 @@ class TestAustraliaPostManifest(unittest.TestCase):
     def test_parse_manifest_response(self):
         with patch("karrio.mappers.australiapost.proxy.lib.request") as mock:
             mock.side_effect = [ManifestResponse, "manifest file"]
-            parsed_response = (
-                karrio.Manifest.create(self.ManifestRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Manifest.create(self.ManifestRequest).from_(gateway).parse()
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedManifestResponse)
 

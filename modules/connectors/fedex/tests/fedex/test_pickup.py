@@ -1,9 +1,11 @@
 import unittest
-from unittest.mock import patch, ANY
-from .fixture import gateway
-import karrio.sdk as karrio
-import karrio.lib as lib
+from unittest.mock import patch
+
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 
 class TestFedExPickup(unittest.TestCase):
@@ -77,22 +79,16 @@ class TestFedExPickup(unittest.TestCase):
     def test_parse_pickup_response(self):
         with patch("karrio.mappers.fedex.proxy.lib.request") as mock:
             mock.side_effect = [PickupCancelResponse, PickupResponse]
-            parsed_response = (
-                karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedPickupResponse)
 
     def test_parse_cancel_pickup_response(self):
         with patch("karrio.mappers.fedex.proxy.lib.request") as mock:
             mock.return_value = PickupCancelResponse
-            parsed_response = (
-                karrio.Pickup.cancel(self.PickupCancelRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Pickup.cancel(self.PickupCancelRequest).from_(gateway).parse()
 
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedCancelPickupResponse
-            )
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedCancelPickupResponse)
 
 
 if __name__ == "__main__":

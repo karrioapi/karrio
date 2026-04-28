@@ -2,7 +2,6 @@ import karrio.core.metadata as metadata
 import karrio.mappers.dhl_poland as mappers
 from karrio.providers.dhl_poland import units
 
-
 METADATA = metadata.PluginMetadata(
     status="production-ready",
     id="dhl_poland",

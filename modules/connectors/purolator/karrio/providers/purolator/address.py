@@ -1,35 +1,32 @@
-from typing import Tuple, List
-from karrio.schemas.purolator.service_availability_service_2_0_2 import (
-    ValidateCityPostalCodeZipRequest,
-    ValidateCityPostalCodeZipResponse,
-    ArrayOfShortAddress,
-    ShortAddress,
-    RequestContext,
-)
-from karrio.core.utils import Serializable, Element, create_envelope, XP
+import karrio.lib as lib
 from karrio.core.models import (
+    Address,
+    AddressValidationDetails,
     AddressValidationRequest,
     Message,
-    AddressValidationDetails,
-    Address,
 )
-from karrio.providers.purolator.utils import Settings, standard_request_serializer
+from karrio.core.utils import XP, Element, Serializable, create_envelope
 from karrio.providers.purolator.error import parse_error_response
-import karrio.lib as lib
+from karrio.providers.purolator.utils import Settings, standard_request_serializer
+from karrio.schemas.purolator.service_availability_service_2_0_2 import (
+    ArrayOfShortAddress,
+    RequestContext,
+    ShortAddress,
+    ValidateCityPostalCodeZipRequest,
+    ValidateCityPostalCodeZipResponse,
+)
 
 
 def parse_address_validation_response(
     _response: lib.Deserializable[Element], settings: Settings
-) -> Tuple[AddressValidationDetails, List[Message]]:
+) -> tuple[AddressValidationDetails, list[Message]]:
     response = _response.deserialize()
     errors = parse_error_response(response, settings)
     reply = XP.to_object(
         ValidateCityPostalCodeZipResponse,
         lib.find_element("ValidateCityPostalCodeZipResponse", response, first=True),
     )
-    address: ShortAddress = next(
-        (result.Address for result in reply.SuggestedAddresses.SuggestedAddress), None
-    )
+    address: ShortAddress = next((result.Address for result in reply.SuggestedAddresses.SuggestedAddress), None)
     success = len(errors) == 0
     validation_details = (
         AddressValidationDetails(
@@ -52,9 +49,7 @@ def parse_address_validation_response(
     return validation_details, errors
 
 
-def address_validation_request(
-    payload: AddressValidationRequest, settings: Settings
-) -> Serializable:
+def address_validation_request(payload: AddressValidationRequest, settings: Settings) -> Serializable:
     request = create_envelope(
         header_content=RequestContext(
             Version="2.1",

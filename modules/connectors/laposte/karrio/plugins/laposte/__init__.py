@@ -2,7 +2,6 @@ import karrio.core.metadata as metadata
 import karrio.mappers.laposte as mappers
 import karrio.providers.laposte.units as units
 
-
 METADATA = metadata.PluginMetadata(
     status="production-ready",
     id="laposte",

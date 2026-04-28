@@ -1,15 +1,12 @@
-import typing
+import karrio.lib as lib
+import karrio.schemas.chronopost.shippingservice as chronopost
 from karrio.core.models import Message
 from karrio.providers.chronopost.utils import Settings
-import karrio.schemas.chronopost.shippingservice as chronopost
-import karrio.lib as lib
 
 ReturnType = chronopost.resultMultiParcelExpeditionValue
 
 
-def parse_error_response(
-    response: lib.Element, settings: Settings
-) -> typing.List[Message]:
+def parse_error_response(response: lib.Element, settings: Settings) -> list[Message]:
     errors = lib.find_element("return", response, ReturnType)
     return [
         Message(

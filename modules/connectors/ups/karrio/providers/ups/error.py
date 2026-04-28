@@ -1,18 +1,16 @@
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
 from karrio.providers.ups.utils import Settings
 
 
 def parse_error_response(
-    responses: typing.Union[typing.List[dict], dict],
+    responses: list[dict] | dict,
     settings: Settings,
     details: dict = None,
-) -> typing.List[models.Message]:
+) -> list[models.Message]:
     results = responses if isinstance(responses, list) else [responses]
     # Separate errors from warnings to set appropriate levels
-    errors: typing.List[dict] = []
-    warnings: typing.List[dict] = []
+    errors: list[dict] = []
+    warnings: list[dict] = []
 
     for result in results:
         # get errors from the response object returned by UPS
@@ -21,28 +19,18 @@ def parse_error_response(
 
         # get warnings from the trackResponse object returned by UPS
         if "trackResponse" in result:
-            warnings.extend(
-                result["trackResponse"]["shipment"][0].get("warnings", [])
-            )
+            warnings.extend(result["trackResponse"]["shipment"][0].get("warnings", []))
 
         # get warnings from the UploadResponse object returned by UPS
         if "UploadResponse" in result:
-            warnings.extend(
-                result["UploadResponse"]["FormsHistoryDocumentID"].get("warnings", [])
-            )
+            warnings.extend(result["UploadResponse"]["FormsHistoryDocumentID"].get("warnings", []))
 
         # get errors from the API Fault
         if (
-            result.get("Fault", {})
-            .get("detail", {})
-            .get("Errors", {})
-            .get("ErrorDetail", {})
-            .get("PrimaryErrorCode")
+            result.get("Fault", {}).get("detail", {}).get("Errors", {}).get("ErrorDetail", {}).get("PrimaryErrorCode")
             is not None
         ):
-            errors.append(
-                result["Fault"]["detail"]["Errors"]["ErrorDetail"]["PrimaryErrorCode"]
-            )
+            errors.append(result["Fault"]["detail"]["Errors"]["ErrorDetail"]["PrimaryErrorCode"])
 
     return [
         *[

@@ -1,27 +1,25 @@
-import typing
 import datetime
-import strawberry
-from constance import config
-from strawberry.types import Info
-import django.db.transaction as transaction
-from django.utils import timezone
-from rest_framework import exceptions
 
+import django.db.transaction as transaction
 import karrio.lib as lib
-import karrio.server.conf as conf
-import karrio.server.iam.models as iam
-import karrio.server.graph.utils as utils
-import karrio.server.admin.utils as admin
 import karrio.server.admin.forms as forms
-import karrio.server.pricing.models as pricing
-import karrio.server.serializers as serializers
-import karrio.server.providers.models as providers
-import karrio.server.admin.schemas.base.types as types
 import karrio.server.admin.schemas.base.inputs as inputs
+import karrio.server.admin.schemas.base.types as types
+import karrio.server.admin.utils as admin
+import karrio.server.conf as conf
 import karrio.server.graph.schemas.base.mutations as base
 import karrio.server.graph.serializers as graph_serializers
+import karrio.server.graph.utils as utils
+import karrio.server.iam.models as iam
+import karrio.server.pricing.models as pricing
+import karrio.server.providers.models as providers
 import karrio.server.providers.serializers as providers_serializers
+import karrio.server.serializers as serializers
+import strawberry
+from constance import config
 from karrio.server.core.logging import logger
+from rest_framework import exceptions
+from strawberry.types import Info
 
 # Feature fields that clients may send at service root level instead of nested
 # in features{}. Pop them from each service dict and merge into features.
@@ -33,11 +31,25 @@ def _merge_root_features(services: list) -> list:
     result = []
     for svc in services:
         svc = svc.copy() if isinstance(svc, dict) else dict(svc)
-        root_features = {
-            k: svc.pop(k)
-            for k in _ROOT_FEATURE_KEYS
-            if k in svc and svc[k] is not None
-        }
+        root_features = {k: svc.pop(k) for k in _ROOT_FEATURE_KEYS if k in svc and svc[k] is not None}
+        if root_features:
+            features = svc.get("features") or {}
+            svc["features"] = {**features, **root_features}
+        result.append(svc)
+    return result
+
+
+# Feature fields that clients may send at service root level instead of nested
+# in features{}. Pop them from each service dict and merge into features.
+_ROOT_FEATURE_KEYS = ("age_check", "neighbor_delivery", "saturday_delivery")
+
+
+def _merge_root_features(services: list) -> list:
+    """Move root-level feature fields into the features dict for each service."""
+    result = []
+    for svc in services:
+        svc = svc.copy() if isinstance(svc, dict) else dict(svc)
+        root_features = {k: svc.pop(k) for k in _ROOT_FEATURE_KEYS if k in svc and svc[k] is not None}
         if root_features:
             features = svc.get("features") or {}
             svc["features"] = {**features, **root_features}
@@ -47,7 +59,7 @@ def _merge_root_features(services: list) -> list:
 
 @strawberry.type
 class InstanceConfigMutation(utils.BaseMutation):
-    configs: typing.Optional[types.InstanceConfigType] = None
+    configs: types.InstanceConfigType | None = None
 
     @staticmethod
     @admin.staff_required
@@ -63,8 +75,7 @@ class InstanceConfigMutation(utils.BaseMutation):
                             "feature_flags": {
                                 k: v
                                 for k, v in data.items()
-                                if k in conf.settings.CONSTANCE_CONFIG
-                                and k not in ["APP_NAME", "APP_WEBSITE"]
+                                if k in conf.settings.CONSTANCE_CONFIG and k not in ["APP_NAME", "APP_WEBSITE"]
                             }
                         },
                         conf.settings.tenant,
@@ -82,9 +93,7 @@ class InstanceConfigMutation(utils.BaseMutation):
                     if k in conf.settings.CONSTANCE_CONFIG:
                         setattr(config, k, v)
 
-            return InstanceConfigMutation(
-                configs=types.InstanceConfigType.resolve(info)
-            )
+            return InstanceConfigMutation(configs=types.InstanceConfigType.resolve(info))
         except Exception as e:
             logger.error("Failed to update instance config", error=str(e), exc_info=True)
             raise e
@@ -92,7 +101,7 @@ class InstanceConfigMutation(utils.BaseMutation):
 
 @strawberry.type
 class CreateUserMutation(utils.BaseMutation):
-    user: typing.Optional[types.SystemUserType] = None
+    user: types.SystemUserType | None = None
 
     @staticmethod
     @transaction.atomic
@@ -101,8 +110,8 @@ class CreateUserMutation(utils.BaseMutation):
     @admin.superuser_required
     def mutate(
         info: Info,
-        organization_id: typing.Optional[str] = None,
-        permissions: typing.Optional[typing.List[str]] = None,
+        organization_id: str | None = None,
+        permissions: list[str] | None = None,
         **input: inputs.CreateUserMutationInput,
     ) -> "CreateUserMutation":
         try:
@@ -142,9 +151,7 @@ class CreateUserMutation(utils.BaseMutation):
             if any(permissions or []):
                 user.groups.set(iam.Group.objects.filter(name__in=permissions))
 
-            return CreateUserMutation(
-                user=iam.User.objects.get(id=user.id)
-            )  # type:ignore
+            return CreateUserMutation(user=iam.User.objects.get(id=user.id))  # type:ignore
         except Exception as e:
             logger.error("Failed to create user", email=input.get("email"), error=str(e), exc_info=True)
             raise e
@@ -152,7 +159,7 @@ class CreateUserMutation(utils.BaseMutation):
 
 @strawberry.type
 class UpdateUserMutation(utils.BaseMutation):
-    user: typing.Optional[types.SystemUserType] = None
+    user: types.SystemUserType | None = None
 
     @staticmethod
     @transaction.atomic
@@ -162,7 +169,7 @@ class UpdateUserMutation(utils.BaseMutation):
     def mutate(
         info: Info,
         id: int,
-        permissions: typing.Optional[typing.List[str]] = None,
+        permissions: list[str] | None = None,
         **input: inputs.UpdateUserMutationInput,
     ) -> "UpdateUserMutation":
         instance = iam.User.objects.get(id=id)
@@ -205,7 +212,7 @@ class DeleteConnectionMutation(utils.BaseMutation):
 
 @strawberry.type
 class CreateSystemCarrierConnectionMutation(utils.BaseMutation):
-    connection: typing.Optional[types.SystemCarrierConnectionType] = None
+    connection: types.SystemCarrierConnectionType | None = None
 
     @staticmethod
     @transaction.atomic
@@ -232,7 +239,7 @@ class CreateSystemCarrierConnectionMutation(utils.BaseMutation):
 
 @strawberry.type
 class UpdateSystemCarrierConnectionMutation(utils.BaseMutation):
-    connection: typing.Optional[types.SystemCarrierConnectionType] = None
+    connection: types.SystemCarrierConnectionType | None = None
 
     @staticmethod
     @transaction.atomic
@@ -266,7 +273,7 @@ class UpdateSystemCarrierConnectionMutation(utils.BaseMutation):
 class CreateMarkupMutation(utils.BaseMutation):
     """Create a new Markup."""
 
-    markup: typing.Optional[types.MarkupType] = None
+    markup: types.MarkupType | None = None
 
     @staticmethod
     @utils.authentication_required
@@ -285,16 +292,14 @@ class CreateMarkupMutation(utils.BaseMutation):
 
         instance.save()
 
-        return CreateMarkupMutation(
-            markup=pricing.Markup.objects.get(id=instance.id)
-        )  # type:ignore
+        return CreateMarkupMutation(markup=pricing.Markup.objects.get(id=instance.id))  # type:ignore
 
 
 @strawberry.type
 class UpdateMarkupMutation(utils.BaseMutation):
     """Update an existing Markup."""
 
-    markup: typing.Optional[types.MarkupType] = None
+    markup: types.MarkupType | None = None
 
     @staticmethod
     @utils.authentication_required
@@ -318,23 +323,19 @@ class UpdateMarkupMutation(utils.BaseMutation):
 
         instance.save()
 
-        return UpdateMarkupMutation(
-            markup=pricing.Markup.objects.get(id=id)
-        )  # type:ignore
+        return UpdateMarkupMutation(markup=pricing.Markup.objects.get(id=id))  # type:ignore
 
 
 @strawberry.type
 class CreateRateSheetMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.SystemRateSheetType] = None
+    rate_sheet: types.SystemRateSheetType | None = None
 
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
     @utils.authorization_required(["manage_carriers"])
     @admin.staff_required
-    def mutate(
-        info: Info, **input: inputs.base.CreateRateSheetMutationInput
-    ) -> "CreateRateSheetMutation":
+    def mutate(info: Info, **input: inputs.base.CreateRateSheetMutationInput) -> "CreateRateSheetMutation":
         data = input.copy()
         carriers = data.pop("carriers", [])
         zones_data = data.pop("zones", [])
@@ -384,16 +385,14 @@ class CreateRateSheetMutation(utils.BaseMutation):
 
 @strawberry.type
 class UpdateRateSheetMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.SystemRateSheetType] = None
+    rate_sheet: types.SystemRateSheetType | None = None
 
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
     @utils.authorization_required(["manage_carriers"])
     @admin.staff_required
-    def mutate(
-        info: Info, **input: inputs.base.UpdateRateSheetMutationInput
-    ) -> "UpdateRateSheetMutation":
+    def mutate(info: Info, **input: inputs.base.UpdateRateSheetMutationInput) -> "UpdateRateSheetMutation":
         data = input.copy()
         carriers = data.pop("carriers", [])
         if "services" in data:
@@ -425,18 +424,14 @@ class UpdateRateSheetMutation(utils.BaseMutation):
                 carrier_code=rate_sheet.carrier_name,
             )
             connection_qs.filter(id__in=carriers).update(rate_sheet=rate_sheet)
-            connection_qs.filter(rate_sheet=rate_sheet).exclude(id__in=carriers).update(
-                rate_sheet=None
-            )
+            connection_qs.filter(rate_sheet=rate_sheet).exclude(id__in=carriers).update(rate_sheet=None)
 
-        return UpdateRateSheetMutation(
-            rate_sheet=providers.SystemRateSheet.objects.get(id=input["id"])
-        )
+        return UpdateRateSheetMutation(rate_sheet=providers.SystemRateSheet.objects.get(id=input["id"]))
 
 
 @strawberry.type
 class DeleteRateSheetServiceMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.SystemRateSheetType] = None
+    rate_sheet: types.SystemRateSheetType | None = None
 
     @staticmethod
     @transaction.atomic
@@ -446,14 +441,15 @@ class DeleteRateSheetServiceMutation(utils.BaseMutation):
     def mutate(
         info: Info, **input: inputs.base.DeleteRateSheetServiceMutationInput
     ) -> "DeleteRateSheetServiceMutation":
-        rate_sheet = providers.SystemRateSheet.objects.get(
-            id=input["rate_sheet_id"]
-        )
+        rate_sheet = providers.SystemRateSheet.objects.get(id=input["rate_sheet_id"])
         service = rate_sheet.services.get(id=input["service_id"])
 
-        # Remove service from rate sheet and delete it
+        # Remove service from rate sheet and delete it. Also scrub any
+        # service_rates entries that pointed at the removed service so a
+        # subsequent re-import doesn't resurface them as 'removed' rows.
         rate_sheet.services.remove(service)
         service.delete()
+        rate_sheet.scrub_orphan_service_rates()
 
         return DeleteRateSheetServiceMutation(rate_sheet=rate_sheet)
 
@@ -465,16 +461,14 @@ class DeleteRateSheetServiceMutation(utils.BaseMutation):
 
 @strawberry.type
 class AddSharedZoneMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.SystemRateSheetType] = None
+    rate_sheet: types.SystemRateSheetType | None = None
 
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
     @utils.authorization_required(["manage_carriers"])
     @admin.staff_required
-    def mutate(
-        info: Info, **input: inputs.base.AddSharedZoneMutationInput
-    ) -> "AddSharedZoneMutation":
+    def mutate(info: Info, **input: inputs.base.AddSharedZoneMutationInput) -> "AddSharedZoneMutation":
         from rest_framework import exceptions
 
         rate_sheet = providers.SystemRateSheet.objects.get(id=input["rate_sheet_id"])
@@ -484,23 +478,21 @@ class AddSharedZoneMutation(utils.BaseMutation):
         try:
             rate_sheet.add_zone(zone_dict)
         except ValueError as e:
-            raise exceptions.ValidationError({"zone": str(e)})
+            raise exceptions.ValidationError({"zone": str(e)}) from e
 
         return AddSharedZoneMutation(rate_sheet=rate_sheet)
 
 
 @strawberry.type
 class UpdateSharedZoneMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.SystemRateSheetType] = None
+    rate_sheet: types.SystemRateSheetType | None = None
 
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
     @utils.authorization_required(["manage_carriers"])
     @admin.staff_required
-    def mutate(
-        info: Info, **input: inputs.base.UpdateSharedZoneMutationInput
-    ) -> "UpdateSharedZoneMutation":
+    def mutate(info: Info, **input: inputs.base.UpdateSharedZoneMutationInput) -> "UpdateSharedZoneMutation":
         from rest_framework import exceptions
 
         rate_sheet = providers.SystemRateSheet.objects.get(id=input["rate_sheet_id"])
@@ -510,23 +502,21 @@ class UpdateSharedZoneMutation(utils.BaseMutation):
         try:
             rate_sheet.update_zone(input["zone_id"], zone_dict)
         except ValueError as e:
-            raise exceptions.ValidationError({"zone_id": str(e)})
+            raise exceptions.ValidationError({"zone_id": str(e)}) from e
 
         return UpdateSharedZoneMutation(rate_sheet=rate_sheet)
 
 
 @strawberry.type
 class DeleteSharedZoneMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.SystemRateSheetType] = None
+    rate_sheet: types.SystemRateSheetType | None = None
 
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
     @utils.authorization_required(["manage_carriers"])
     @admin.staff_required
-    def mutate(
-        info: Info, **input: inputs.base.DeleteSharedZoneMutationInput
-    ) -> "DeleteSharedZoneMutation":
+    def mutate(info: Info, **input: inputs.base.DeleteSharedZoneMutationInput) -> "DeleteSharedZoneMutation":
         from rest_framework import exceptions
 
         rate_sheet = providers.SystemRateSheet.objects.get(id=input["rate_sheet_id"])
@@ -534,7 +524,7 @@ class DeleteSharedZoneMutation(utils.BaseMutation):
         try:
             rate_sheet.remove_zone(input["zone_id"])
         except ValueError as e:
-            raise exceptions.ValidationError({"zone_id": str(e)})
+            raise exceptions.ValidationError({"zone_id": str(e)}) from e
 
         return DeleteSharedZoneMutation(rate_sheet=rate_sheet)
 
@@ -546,16 +536,14 @@ class DeleteSharedZoneMutation(utils.BaseMutation):
 
 @strawberry.type
 class AddSharedSurchargeMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.SystemRateSheetType] = None
+    rate_sheet: types.SystemRateSheetType | None = None
 
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
     @utils.authorization_required(["manage_carriers"])
     @admin.staff_required
-    def mutate(
-        info: Info, **input: inputs.base.AddSharedSurchargeMutationInput
-    ) -> "AddSharedSurchargeMutation":
+    def mutate(info: Info, **input: inputs.base.AddSharedSurchargeMutationInput) -> "AddSharedSurchargeMutation":
         from rest_framework import exceptions
 
         rate_sheet = providers.SystemRateSheet.objects.get(id=input["rate_sheet_id"])
@@ -565,23 +553,21 @@ class AddSharedSurchargeMutation(utils.BaseMutation):
         try:
             rate_sheet.add_surcharge(surcharge_dict)
         except ValueError as e:
-            raise exceptions.ValidationError({"surcharge": str(e)})
+            raise exceptions.ValidationError({"surcharge": str(e)}) from e
 
         return AddSharedSurchargeMutation(rate_sheet=rate_sheet)
 
 
 @strawberry.type
 class UpdateSharedSurchargeMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.SystemRateSheetType] = None
+    rate_sheet: types.SystemRateSheetType | None = None
 
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
     @utils.authorization_required(["manage_carriers"])
     @admin.staff_required
-    def mutate(
-        info: Info, **input: inputs.base.UpdateSharedSurchargeMutationInput
-    ) -> "UpdateSharedSurchargeMutation":
+    def mutate(info: Info, **input: inputs.base.UpdateSharedSurchargeMutationInput) -> "UpdateSharedSurchargeMutation":
         from rest_framework import exceptions
 
         rate_sheet = providers.SystemRateSheet.objects.get(id=input["rate_sheet_id"])
@@ -591,23 +577,21 @@ class UpdateSharedSurchargeMutation(utils.BaseMutation):
         try:
             rate_sheet.update_surcharge(input["surcharge_id"], surcharge_dict)
         except ValueError as e:
-            raise exceptions.ValidationError({"surcharge_id": str(e)})
+            raise exceptions.ValidationError({"surcharge_id": str(e)}) from e
 
         return UpdateSharedSurchargeMutation(rate_sheet=rate_sheet)
 
 
 @strawberry.type
 class DeleteSharedSurchargeMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.SystemRateSheetType] = None
+    rate_sheet: types.SystemRateSheetType | None = None
 
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
     @utils.authorization_required(["manage_carriers"])
     @admin.staff_required
-    def mutate(
-        info: Info, **input: inputs.base.DeleteSharedSurchargeMutationInput
-    ) -> "DeleteSharedSurchargeMutation":
+    def mutate(info: Info, **input: inputs.base.DeleteSharedSurchargeMutationInput) -> "DeleteSharedSurchargeMutation":
         from rest_framework import exceptions
 
         rate_sheet = providers.SystemRateSheet.objects.get(id=input["rate_sheet_id"])
@@ -615,35 +599,30 @@ class DeleteSharedSurchargeMutation(utils.BaseMutation):
         try:
             rate_sheet.remove_surcharge(input["surcharge_id"])
         except ValueError as e:
-            raise exceptions.ValidationError({"surcharge_id": str(e)})
+            raise exceptions.ValidationError({"surcharge_id": str(e)}) from e
 
         return DeleteSharedSurchargeMutation(rate_sheet=rate_sheet)
 
 
 @strawberry.type
 class BatchUpdateSurchargesMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.SystemRateSheetType] = None
+    rate_sheet: types.SystemRateSheetType | None = None
 
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
     @utils.authorization_required(["manage_carriers"])
     @admin.staff_required
-    def mutate(
-        info: Info, **input: inputs.base.BatchUpdateSurchargesMutationInput
-    ) -> "BatchUpdateSurchargesMutation":
+    def mutate(info: Info, **input: inputs.base.BatchUpdateSurchargesMutationInput) -> "BatchUpdateSurchargesMutation":
         from rest_framework import exceptions
 
         rate_sheet = providers.SystemRateSheet.objects.get(id=input["rate_sheet_id"])
-        surcharges = [
-            {k: v for k, v in s.items() if not utils.is_unset(v)}
-            for s in input["surcharges"]
-        ]
+        surcharges = [{k: v for k, v in s.items() if not utils.is_unset(v)} for s in input["surcharges"]]
 
         try:
             rate_sheet.batch_update_surcharges(surcharges)
         except ValueError as e:
-            raise exceptions.ValidationError({"surcharges": str(e)})
+            raise exceptions.ValidationError({"surcharges": str(e)}) from e
 
         return BatchUpdateSurchargesMutation(rate_sheet=rate_sheet)
 
@@ -655,16 +634,14 @@ class BatchUpdateSurchargesMutation(utils.BaseMutation):
 
 @strawberry.type
 class UpdateServiceRateMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.SystemRateSheetType] = None
+    rate_sheet: types.SystemRateSheetType | None = None
 
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
     @utils.authorization_required(["manage_carriers"])
     @admin.staff_required
-    def mutate(
-        info: Info, **input: inputs.base.UpdateServiceRateMutationInput
-    ) -> "UpdateServiceRateMutation":
+    def mutate(info: Info, **input: inputs.base.UpdateServiceRateMutationInput) -> "UpdateServiceRateMutation":
         from rest_framework import exceptions
 
         rate_sheet = providers.SystemRateSheet.objects.get(id=input["rate_sheet_id"])
@@ -678,19 +655,17 @@ class UpdateServiceRateMutation(utils.BaseMutation):
 
         try:
             rate_sheet.update_service_rate(
-                service_id=input["service_id"],
-                zone_id=input["zone_id"],
-                rate_data=rate_data
+                service_id=input["service_id"], zone_id=input["zone_id"], rate_data=rate_data
             )
         except ValueError as e:
-            raise exceptions.ValidationError({"rate": str(e)})
+            raise exceptions.ValidationError({"rate": str(e)}) from e
 
         return UpdateServiceRateMutation(rate_sheet=rate_sheet)
 
 
 @strawberry.type
 class BatchUpdateServiceRatesMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.SystemRateSheetType] = None
+    rate_sheet: types.SystemRateSheetType | None = None
 
     @staticmethod
     @transaction.atomic
@@ -704,31 +679,26 @@ class BatchUpdateServiceRatesMutation(utils.BaseMutation):
 
         rate_sheet = providers.SystemRateSheet.objects.get(id=input["rate_sheet_id"])
 
-        updates = [
-            {k: v for k, v in rate.items() if not utils.is_unset(v)}
-            for rate in input["rates"]
-        ]
+        updates = [{k: v for k, v in rate.items() if not utils.is_unset(v)} for rate in input["rates"]]
 
         try:
             rate_sheet.batch_update_service_rates(updates)
         except ValueError as e:
-            raise exceptions.ValidationError({"rates": str(e)})
+            raise exceptions.ValidationError({"rates": str(e)}) from e
 
         return BatchUpdateServiceRatesMutation(rate_sheet=rate_sheet)
 
 
 @strawberry.type
 class DeleteServiceRateMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.SystemRateSheetType] = None
+    rate_sheet: types.SystemRateSheetType | None = None
 
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
     @utils.authorization_required(["manage_carriers"])
     @admin.staff_required
-    def mutate(
-        info: Info, **input: inputs.base.DeleteServiceRateMutationInput
-    ) -> "DeleteServiceRateMutation":
+    def mutate(info: Info, **input: inputs.base.DeleteServiceRateMutationInput) -> "DeleteServiceRateMutation":
         rate_sheet = providers.SystemRateSheet.objects.get(id=input["rate_sheet_id"])
 
         min_weight = input.get("min_weight")
@@ -755,16 +725,14 @@ class DeleteServiceRateMutation(utils.BaseMutation):
 
 @strawberry.type
 class AddWeightRangeMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.SystemRateSheetType] = None
+    rate_sheet: types.SystemRateSheetType | None = None
 
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
     @utils.authorization_required(["manage_carriers"])
     @admin.staff_required
-    def mutate(
-        info: Info, **input: inputs.base.AddWeightRangeMutationInput
-    ) -> "AddWeightRangeMutation":
+    def mutate(info: Info, **input: inputs.base.AddWeightRangeMutationInput) -> "AddWeightRangeMutation":
         rate_sheet = providers.SystemRateSheet.objects.get(id=input["rate_sheet_id"])
 
         rate_sheet.add_weight_range(
@@ -777,16 +745,14 @@ class AddWeightRangeMutation(utils.BaseMutation):
 
 @strawberry.type
 class RemoveWeightRangeMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.SystemRateSheetType] = None
+    rate_sheet: types.SystemRateSheetType | None = None
 
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
     @utils.authorization_required(["manage_carriers"])
     @admin.staff_required
-    def mutate(
-        info: Info, **input: inputs.base.RemoveWeightRangeMutationInput
-    ) -> "RemoveWeightRangeMutation":
+    def mutate(info: Info, **input: inputs.base.RemoveWeightRangeMutationInput) -> "RemoveWeightRangeMutation":
         rate_sheet = providers.SystemRateSheet.objects.get(id=input["rate_sheet_id"])
 
         rate_sheet.remove_weight_range(
@@ -804,16 +770,14 @@ class RemoveWeightRangeMutation(utils.BaseMutation):
 
 @strawberry.type
 class UpdateServiceZoneIdsMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.SystemRateSheetType] = None
+    rate_sheet: types.SystemRateSheetType | None = None
 
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
     @utils.authorization_required(["manage_carriers"])
     @admin.staff_required
-    def mutate(
-        info: Info, **input: inputs.base.UpdateServiceZoneIdsMutationInput
-    ) -> "UpdateServiceZoneIdsMutation":
+    def mutate(info: Info, **input: inputs.base.UpdateServiceZoneIdsMutationInput) -> "UpdateServiceZoneIdsMutation":
         rate_sheet = providers.SystemRateSheet.objects.get(id=input["rate_sheet_id"])
         service = rate_sheet.services.get(id=input["service_id"])
 
@@ -825,7 +789,7 @@ class UpdateServiceZoneIdsMutation(utils.BaseMutation):
 
 @strawberry.type
 class UpdateServiceSurchargeIdsMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.SystemRateSheetType] = None
+    rate_sheet: types.SystemRateSheetType | None = None
 
     @staticmethod
     @transaction.atomic
@@ -857,8 +821,8 @@ class TriggerTrackerUpdateMutation(utils.BaseMutation):
     @utils.authentication_required
     @admin.superuser_required
     def mutate(info: Info, **input) -> "TriggerTrackerUpdateMutation":
-        from karrio.server.events.task_definitions.base import tracking
         import karrio.server.core.utils as core_utils
+        from karrio.server.events.task_definitions.base import tracking
 
         tracker_ids = input.get("tracker_ids") or []
         task_count = 0
@@ -881,7 +845,7 @@ class TriggerTrackerUpdateMutation(utils.BaseMutation):
 
 @strawberry.type
 class RetryWebhookMutation(utils.BaseMutation):
-    event_id: typing.Optional[str] = None
+    event_id: str | None = None
 
     @staticmethod
     @utils.authentication_required
@@ -906,78 +870,6 @@ class RetryWebhookMutation(utils.BaseMutation):
 
 
 @strawberry.type
-class RevokeTaskMutation(utils.BaseMutation):
-    task_id: typing.Optional[str] = None
-
-    @staticmethod
-    @utils.authentication_required
-    @admin.superuser_required
-    def mutate(info: Info, **input) -> "RevokeTaskMutation":
-        from huey.contrib.djhuey import HUEY as huey_instance
-        from karrio.server.admin.worker.models import TaskExecution
-
-        task_id = input["task_id"]
-        huey_instance.revoke_by_id(task_id)
-
-        TaskExecution.objects.filter(task_id=task_id).update(
-            status="revoked",
-            completed_at=timezone.now(),
-            error="Revoked by admin",
-        )
-
-        return RevokeTaskMutation(task_id=task_id)
-
-
-@strawberry.type
-class CleanupTaskExecutionsMutation(utils.BaseMutation):
-    deleted_count: int = 0
-
-    @staticmethod
-    @utils.authentication_required
-    @admin.superuser_required
-    def mutate(info: Info, **input) -> "CleanupTaskExecutionsMutation":
-        from karrio.server.admin.worker.models import TaskExecution
-
-        retention_days = input.get("retention_days") or 7
-        statuses = input.get("statuses") or []
-        cutoff = timezone.now() - datetime.timedelta(days=retention_days)
-
-        qs = TaskExecution.objects.filter(queued_at__lt=cutoff)
-        if statuses:
-            qs = qs.filter(status__in=statuses)
-
-        deleted_count, _ = qs.delete()
-
-        return CleanupTaskExecutionsMutation(deleted_count=deleted_count)
-
-
-@strawberry.type
-class ResetStuckTasksMutation(utils.BaseMutation):
-    updated_count: int = 0
-
-    @staticmethod
-    @utils.authentication_required
-    @admin.superuser_required
-    def mutate(info: Info, **input) -> "ResetStuckTasksMutation":
-        from karrio.server.admin.worker.models import TaskExecution
-
-        threshold_minutes = input.get("threshold_minutes") or 60
-        statuses = input.get("statuses") or ["executing", "queued"]
-        cutoff = timezone.now() - datetime.timedelta(minutes=threshold_minutes)
-
-        updated_count = TaskExecution.objects.filter(
-            status__in=statuses,
-            queued_at__lt=cutoff,
-        ).update(
-            status="error",
-            error="Reset by admin",
-            completed_at=timezone.now(),
-        )
-
-        return ResetStuckTasksMutation(updated_count=updated_count)
-
-
-@strawberry.type
 class TriggerDataArchivingMutation(utils.BaseMutation):
     success: bool = False
 
@@ -985,8 +877,8 @@ class TriggerDataArchivingMutation(utils.BaseMutation):
     @utils.authentication_required
     @admin.superuser_required
     def mutate(info: Info, **input) -> "TriggerDataArchivingMutation":
-        from karrio.server.events.task_definitions.base import archiving
         import karrio.server.core.utils as core_utils
+        from karrio.server.events.task_definitions.base import archiving
 
         @core_utils.run_on_all_tenants
         def _run(**kwargs):

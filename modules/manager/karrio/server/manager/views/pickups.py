@@ -1,36 +1,32 @@
-from django.urls import path
-from rest_framework import status
-from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.response import Response
-from rest_framework.request import Request
-from django_filters.rest_framework import DjangoFilterBackend
-
-from karrio.server.core.logging import logger
-from karrio.server.core.views.api import GenericAPIView, APIView
-from karrio.server.core.filters import PickupFilters
-from karrio.server.manager.router import router
-from karrio.server.core.serializers import PickupStatus
-from karrio.server.manager.serializers import (
-    PaginatedResult,
-    Pickup,
-    ErrorResponse,
-    ErrorMessages,
-    PickupData,
-    PickupUpdateData,
-    PickupCancelData,
-    can_mutate_pickup,
-)
 import karrio.server.manager.models as models
 import karrio.server.openapi as openapi
+from django.urls import path
+from django_filters.rest_framework import DjangoFilterBackend
+from karrio.server.core.filters import PickupFilters
+from karrio.server.core.serializers import PickupStatus
+from karrio.server.core.views.api import APIView, GenericAPIView
+from karrio.server.manager.router import router
+from karrio.server.manager.serializers import (
+    ErrorMessages,
+    ErrorResponse,
+    PaginatedResult,
+    Pickup,
+    PickupCancelData,
+    PickupData,
+    PickupUpdateData,
+    can_mutate_pickup,
+)
+from rest_framework import status
+from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.request import Request
+from rest_framework.response import Response
 
 ENDPOINT_ID = "$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 Pickups = PaginatedResult("PickupList", Pickup)
 
 
 class PickupList(GenericAPIView):
-    pagination_class = type(
-        "CustomPagination", (LimitOffsetPagination,), dict(default_limit=20)
-    )
+    pagination_class = type("CustomPagination", (LimitOffsetPagination,), dict(default_limit=20))
     filter_backends = (DjangoFilterBackend,)
     filterset_class = PickupFilters
     serializer_class = Pickups
@@ -77,11 +73,7 @@ class PickupList(GenericAPIView):
         The carrier is identified by `carrier_code` in the request body.
         Use `options.connection_id` to target a specific carrier connection.
         """
-        pickup = (
-            PickupData.map(data=request.data, context=request)
-            .save()
-            .instance
-        )
+        pickup = PickupData.map(data=request.data, context=request).save().instance
 
         return Response(Pickup(pickup).data, status=status.HTTP_201_CREATED)
 
@@ -113,11 +105,7 @@ class PickupRequest(APIView):
             "carrier_name": carrier_name,
         }
 
-        pickup = (
-            PickupData.map(data=request.data, context=request)
-            .save(carrier_filter=carrier_filter)
-            .instance
-        )
+        pickup = PickupData.map(data=request.data, context=request).save(carrier_filter=carrier_filter).instance
 
         response = Response(Pickup(pickup).data, status=status.HTTP_201_CREATED)
         response["Deprecation"] = "true"
@@ -172,17 +160,12 @@ class PickupDetails(APIView):
             pickup.save(update_fields=["metadata", "updated_at"])
             return Response(Pickup(pickup).data, status=status.HTTP_200_OK)
 
-        instance = (
-            PickupUpdateData.map(pickup, data=request.data, context=request)
-            .save()
-            .instance
-        )
+        instance = PickupUpdateData.map(pickup, data=request.data, context=request).save().instance
 
         return Response(Pickup(instance).data, status=status.HTTP_200_OK)
 
 
 class PickupCancel(APIView):
-
     @openapi.extend_schema(
         tags=["Pickups"],
         operation_id=f"{ENDPOINT_ID}cancel",
@@ -208,11 +191,7 @@ class PickupCancel(APIView):
         try:
             pickup = qs.get(pk=pk)
         except models.Pickup.DoesNotExist:
-            pickup = (
-                qs.filter(meta__request_id=pk)
-                .order_by("-created_at")
-                .first()
-            )
+            pickup = qs.filter(meta__request_id=pk).order_by("-created_at").first()
 
         if pickup is None:
             raise models.Pickup.DoesNotExist()
@@ -235,11 +214,5 @@ router.urls.append(
         name="shipment-pickup-request",
     )
 )
-router.urls.append(
-    path(
-        "pickups/<str:pk>/cancel", PickupCancel.as_view(), name="shipment-pickup-cancel"
-    )
-)
-router.urls.append(
-    path("pickups/<str:pk>", PickupDetails.as_view(), name="shipment-pickup-details")
-)
+router.urls.append(path("pickups/<str:pk>/cancel", PickupCancel.as_view(), name="shipment-pickup-cancel"))
+router.urls.append(path("pickups/<str:pk>", PickupDetails.as_view(), name="shipment-pickup-details"))

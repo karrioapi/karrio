@@ -1,18 +1,16 @@
-import karrio.schemas.dpd.ParcelLifecycleServiceV20 as dpd
-import karrio.schemas.dpd.Authentication20 as auth_schema
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.dpd.error as error
-import karrio.providers.dpd.utils as provider_utils
 import karrio.providers.dpd.units as provider_units
+import karrio.providers.dpd.utils as provider_utils
+import karrio.schemas.dpd.Authentication20 as auth_schema
+import karrio.schemas.dpd.ParcelLifecycleServiceV20 as dpd
 
 
 def parse_tracking_response(
-    _responses: lib.Deserializable[typing.List[typing.Tuple[str, lib.Element]]],
+    _responses: lib.Deserializable[list[tuple[str, lib.Element]]],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+) -> tuple[list[models.TrackingDetails], list[models.Message]]:
     responses = _responses.deserialize()
     response_messages = []
     response_details = []
@@ -26,11 +24,8 @@ def parse_tracking_response(
             response_messages.append(response)
 
     tracking_details = [_extract_details(_, settings) for _ in response_details]
-    messages: typing.List[models.Message] = sum(
-        [
-            error.parse_error_response(_[1], settings, **dict(tracking_number=_[0]))
-            for _ in response_messages
-        ],
+    messages: list[models.Message] = sum(
+        [error.parse_error_response(_[1], settings, **dict(tracking_number=_[0])) for _ in response_messages],
         start=[],
     )
 
@@ -38,13 +33,11 @@ def parse_tracking_response(
 
 
 def _extract_details(
-    data: typing.Tuple[str, lib.Element],
+    data: tuple[str, lib.Element],
     settings: provider_utils.Settings,
 ) -> models.TrackingDetails:
     tracking_number, node = data
-    events: typing.List[dpd.StatusInfo] = [
-        _ for _ in reversed(lib.find_element("statusInfo", node, dpd.StatusInfo))
-    ]
+    events: list[dpd.StatusInfo] = [_ for _ in reversed(lib.find_element("statusInfo", node, dpd.StatusInfo))]
     delivered = any([_.status == "Delivered" for _ in events])
     status = next(
         (
@@ -81,19 +74,11 @@ def _extract_details(
                     current_format="%m/%d/%Y %H:%M:%S %p",
                 ),
                 status=next(
-                    (
-                        s.name
-                        for s in list(provider_units.TrackingStatus)
-                        if event.status in s.value
-                    ),
+                    (s.name for s in list(provider_units.TrackingStatus) if event.status in s.value),
                     None,
                 ),
                 reason=next(
-                    (
-                        r.name
-                        for r in list(provider_units.TrackingIncidentReason)
-                        if event.status in r.value
-                    ),
+                    (r.name for r in list(provider_units.TrackingIncidentReason) if event.status in r.value),
                     None,
                 ),
             )

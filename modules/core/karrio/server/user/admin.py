@@ -1,10 +1,8 @@
 from django.conf import settings
-from django.contrib import auth
-from django.contrib import admin
+from django.contrib import admin, auth
 from django.contrib.auth import admin as auth_admin
 from django.utils.translation import gettext_lazy as _
-
-from karrio.server.user.models import Token, Group
+from karrio.server.user.models import Group, Token
 
 User = auth.get_user_model()
 admin.site.unregister(auth.models.Group)

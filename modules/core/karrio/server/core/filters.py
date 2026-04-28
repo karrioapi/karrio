@@ -1,14 +1,12 @@
-import typing
 import django.conf as conf
-import django.db.models as models
 import django.contrib.auth as auth
-
-import karrio.server.core.serializers as serializers
+import django.db.models as models
 import karrio.server.core.dataunits as dataunits
-import karrio.server.tracing.models as tracing
 import karrio.server.core.models as core
+import karrio.server.core.serializers as serializers
 import karrio.server.filters as filters
 import karrio.server.openapi as openapi
+import karrio.server.tracing.models as tracing
 
 User = auth.get_user_model()
 
@@ -45,7 +43,7 @@ class CarrierFilters(filters.FilterSet):
         field_name="carrier_code",
         help_text=f"""
         carrier_name used to fulfill the shipment
-        Values: {', '.join([f"`{c}`" for c in dataunits.CARRIER_NAMES])}
+        Values: {", ".join([f"`{c}`" for c in dataunits.CARRIER_NAMES])}
         """,
     )
     active = filters.BooleanFilter(
@@ -71,8 +69,7 @@ class CarrierFilters(filters.FilterSet):
             type=openapi.OpenApiTypes.STR,
             location=openapi.OpenApiParameter.QUERY,
             description=(
-                "The unique carrier slug. <br/>"
-                f"Values: {', '.join([f'`{c}`' for c in dataunits.CARRIER_NAMES])}"
+                f"The unique carrier slug. <br/>Values: {', '.join([f'`{c}`' for c in dataunits.CARRIER_NAMES])}"
             ),
         ),
         openapi.OpenApiParameter(
@@ -101,18 +98,14 @@ class CarrierFilters(filters.FilterSet):
         import karrio.server.providers.models as providers
 
         model = providers.CarrierConnection
-        fields: typing.List[str] = []
+        fields: list[str] = []
 
     def metadata_key_filter(self, queryset, name, value):
         return queryset.filter(metadata__has_key=value)
 
     def metadata_value_filter(self, queryset, name, value):
         return queryset.filter(
-            id__in=[
-                o["id"]
-                for o in queryset.values("id", "metadata")
-                if value in (o.get("metadata") or {}).values()
-            ]
+            id__in=[o["id"] for o in queryset.values("id", "metadata") if value in (o.get("metadata") or {}).values()]
         )
 
 
@@ -121,7 +114,7 @@ class CarrierConnectionFilter(filters.FilterSet):
         field_name="carrier_code",
         help_text=f"""
         carrier_name used to fulfill the shipment
-        Values: {', '.join([f"`{c}`" for c in dataunits.CARRIER_NAMES])}
+        Values: {", ".join([f"`{c}`" for c in dataunits.CARRIER_NAMES])}
         """,
     )
     active = filters.BooleanFilter(
@@ -147,8 +140,7 @@ class CarrierConnectionFilter(filters.FilterSet):
             type=openapi.OpenApiTypes.STR,
             location=openapi.OpenApiParameter.QUERY,
             description=(
-                "The unique carrier slug. <br/>"
-                f"Values: {', '.join([f'`{c}`' for c in dataunits.CARRIER_NAMES])}"
+                f"The unique carrier slug. <br/>Values: {', '.join([f'`{c}`' for c in dataunits.CARRIER_NAMES])}"
             ),
         ),
         openapi.OpenApiParameter(
@@ -177,18 +169,14 @@ class CarrierConnectionFilter(filters.FilterSet):
         import karrio.server.providers.models as providers
 
         model = providers.CarrierConnection
-        fields: typing.List[str] = []
+        fields: list[str] = []
 
     def metadata_key_filter(self, queryset, name, value):
         return queryset.filter(metadata__has_key=value)
 
     def metadata_value_filter(self, queryset, name, value):
         return queryset.filter(
-            id__in=[
-                o["id"]
-                for o in queryset.values("id", "metadata")
-                if value in (o.get("metadata") or {}).values()
-            ]
+            id__in=[o["id"] for o in queryset.values("id", "metadata") if value in (o.get("metadata") or {}).values()]
         )
 
 
@@ -197,9 +185,7 @@ class ShipmentFilters(filters.FilterSet):
         method="keyword_filter",
         help_text="shipment' keyword and indexes search",
     )
-    tracking_number = filters.CharFilter(
-        field_name="tracking_number", lookup_expr="icontains"
-    )
+    tracking_number = filters.CharFilter(field_name="tracking_number", lookup_expr="icontains")
     id = filters.CharInFilter(
         field_name="id",
         lookup_expr="in",
@@ -224,7 +210,7 @@ class ShipmentFilters(filters.FilterSet):
         choices=[(c, c) for c in dataunits.CARRIER_NAMES],
         help_text=f"""
         carrier_name used to fulfill the shipment
-        Values: {', '.join([f"`{c}`" for c in dataunits.CARRIER_NAMES])}
+        Values: {", ".join([f"`{c}`" for c in dataunits.CARRIER_NAMES])}
         """,
     )
     reference = filters.CharFilter(
@@ -247,7 +233,7 @@ class ShipmentFilters(filters.FilterSet):
         choices=[(c.value, c.value) for c in list(serializers.ShipmentStatus)],
         help_text=f"""
         shipment status
-        Values: {', '.join([f"`{s.name}`" for s in list(serializers.ShipmentStatus)])}
+        Values: {", ".join([f"`{s.name}`" for s in list(serializers.ShipmentStatus)])}
         """,
     )
     option_key = filters.CharFilter(
@@ -339,8 +325,7 @@ class ShipmentFilters(filters.FilterSet):
             type=openapi.OpenApiTypes.STR,
             location=openapi.OpenApiParameter.QUERY,
             description=(
-                "The unique carrier slug. <br/>"
-                f"Values: {', '.join([f'`{c}`' for c in dataunits.CARRIER_NAMES])}"
+                f"The unique carrier slug. <br/>Values: {', '.join([f'`{c}`' for c in dataunits.CARRIER_NAMES])}"
             ),
         ),
         openapi.OpenApiParameter(
@@ -428,7 +413,7 @@ class ShipmentFilters(filters.FilterSet):
         import karrio.server.manager.models as manager
 
         model = manager.Shipment
-        fields: typing.List[str] = []
+        fields: list[str] = []
 
     def address_filter(self, queryset, name, value):
         if "postgres" in conf.settings.DB_ENGINE:
@@ -516,11 +501,7 @@ class ShipmentFilters(filters.FilterSet):
 
     def option_value_filter(self, queryset, name, value):
         return queryset.filter(
-            id__in=[
-                o["id"]
-                for o in queryset.values("id", "options")
-                if value in (o.get("options") or {}).values()
-            ]
+            id__in=[o["id"] for o in queryset.values("id", "options") if value in (o.get("options") or {}).values()]
         )
 
     def metadata_key_filter(self, queryset, name, value):
@@ -528,11 +509,7 @@ class ShipmentFilters(filters.FilterSet):
 
     def metadata_value_filter(self, queryset, name, value):
         return queryset.filter(
-            id__in=[
-                o["id"]
-                for o in queryset.values("id", "metadata")
-                if value in (o.get("metadata") or {}).values()
-            ]
+            id__in=[o["id"] for o in queryset.values("id", "metadata") if value in (o.get("metadata") or {}).values()]
         )
 
     def meta_key_filter(self, queryset, name, value):
@@ -540,11 +517,7 @@ class ShipmentFilters(filters.FilterSet):
 
     def meta_value_filter(self, queryset, name, value):
         return queryset.filter(
-            id__in=[
-                o["id"]
-                for o in queryset.values("id", "meta")
-                if value in map(str, (o.get("meta") or {}).values())
-            ]
+            id__in=[o["id"] for o in queryset.values("id", "meta") if value in map(str, (o.get("meta") or {}).values())]
         )
 
     def has_tracker_filter(self, queryset, name, value):
@@ -565,9 +538,7 @@ class ShipmentFilters(filters.FilterSet):
         import karrio.server.manager.models as mgr_models
 
         if value:
-            return mgr_models.Shipment.all_objects.filter(
-                pk__in=queryset.values("pk"), is_archived=True
-            )
+            return mgr_models.Shipment.all_objects.filter(pk__in=queryset.values("pk"), is_archived=True)
         return queryset.filter(is_archived=False)
 
 
@@ -592,7 +563,7 @@ class TrackerFilters(filters.FilterSet):
         choices=[(c, c) for c in dataunits.CARRIER_NAMES],
         help_text=f"""
         carrier_name used to fulfill the shipment
-        Values: {', '.join([f"`{c}`" for c in dataunits.CARRIER_NAMES])}
+        Values: {", ".join([f"`{c}`" for c in dataunits.CARRIER_NAMES])}
         """,
     )
     status = filters.MultipleChoiceFilter(
@@ -600,7 +571,7 @@ class TrackerFilters(filters.FilterSet):
         choices=[(c.value, c.value) for c in list(serializers.TrackerStatus)],
         help_text=f"""
         tracker status
-        Values: {', '.join([f"`{s.name}`" for s in list(serializers.TrackerStatus)])}
+        Values: {", ".join([f"`{s.name}`" for s in list(serializers.TrackerStatus)])}
         """,
     )
     keyword = filters.CharFilter(
@@ -637,8 +608,7 @@ class TrackerFilters(filters.FilterSet):
             type=openapi.OpenApiTypes.STR,
             location=openapi.OpenApiParameter.QUERY,
             description=(
-                "The unique carrier slug. <br/>"
-                f"Values: {', '.join([f'`{c}`' for c in dataunits.CARRIER_NAMES])}"
+                f"The unique carrier slug. <br/>Values: {', '.join([f'`{c}`' for c in dataunits.CARRIER_NAMES])}"
             ),
         ),
         openapi.OpenApiParameter(
@@ -671,7 +641,7 @@ class TrackerFilters(filters.FilterSet):
         import karrio.server.manager.models as manager
 
         model = manager.Tracking
-        fields: typing.List[str] = []
+        fields: list[str] = []
 
     def carrier_filter(self, queryset, name, values):
         # Filter by carrier_code in carrier JSON snapshot
@@ -697,9 +667,7 @@ class TrackerFilters(filters.FilterSet):
         import karrio.server.manager.models as mgr_models
 
         if value:
-            return mgr_models.Tracking.all_objects.filter(
-                pk__in=queryset.values("pk"), is_archived=True
-            )
+            return mgr_models.Tracking.all_objects.filter(pk__in=queryset.values("pk"), is_archived=True)
         return queryset.filter(is_archived=False)
 
 
@@ -742,7 +710,7 @@ class LogFilter(filters.FilterSet):
 
     class Meta:
         model = core.APILogIndex
-        fields: typing.List[str] = []
+        fields: list[str] = []
 
     def status_filter(self, queryset, name, value):
         if value == "succeeded":
@@ -754,24 +722,25 @@ class LogFilter(filters.FilterSet):
 
     def query_filter(self, queryset, name, value):
         return queryset.filter(
-            models.Q(entity_id__icontains=value) |
-            models.Q(data__icontains=value) |
-            models.Q(path__icontains=value) |
-            models.Q(remote_addr__icontains=value) |
-            models.Q(host__icontains=value) |
-            models.Q(method__icontains=value)
+            models.Q(entity_id__icontains=value)
+            | models.Q(data__icontains=value)
+            | models.Q(path__icontains=value)
+            | models.Q(remote_addr__icontains=value)
+            | models.Q(host__icontains=value)
+            | models.Q(method__icontains=value)
         )
 
     def keyword_filter(self, queryset, name, value):
         return queryset.filter(
-            models.Q(entity_id__icontains=value) |
-            models.Q(data__icontains=value) |
-            models.Q(path__icontains=value) |
-            models.Q(remote_addr__icontains=value) |
-            models.Q(host__icontains=value) |
-            models.Q(method__icontains=value) |
-            models.Q(request_id__icontains=value)
+            models.Q(entity_id__icontains=value)
+            | models.Q(data__icontains=value)
+            | models.Q(path__icontains=value)
+            | models.Q(remote_addr__icontains=value)
+            | models.Q(host__icontains=value)
+            | models.Q(method__icontains=value)
+            | models.Q(request_id__icontains=value)
         )
+
 
 class TracingRecordFilter(filters.FilterSet):
     key = filters.CharFilter(
@@ -807,20 +776,14 @@ class TracingRecordFilter(filters.FilterSet):
 
     def keyword_filter(self, queryset, name, value):
         return queryset.filter(
-            models.Q(key__icontains=value)
-            | models.Q(meta__icontains=value)
-            | models.Q(record__icontains=value)
+            models.Q(key__icontains=value) | models.Q(meta__icontains=value) | models.Q(record__icontains=value)
         )
 
 
 class UploadRecordFilter(filters.FilterSet):
-    shipment_id = filters.CharFilter(
-        field_name="shipment__id", help_text="related shipment id"
-    )
+    shipment_id = filters.CharFilter(field_name="shipment__id", help_text="related shipment id")
     created_after = filters.DateTimeFilter(field_name="requested_at", lookup_expr="gte")
-    created_before = filters.DateTimeFilter(
-        field_name="requested_at", lookup_expr="lte"
-    )
+    created_before = filters.DateTimeFilter(field_name="requested_at", lookup_expr="lte")
 
     parameters = [
         openapi.OpenApiParameter(
@@ -862,7 +825,7 @@ class PickupFilters(filters.FilterSet):
         choices=[(c.value, c.value) for c in list(serializers.PickupStatus)],
         help_text=f"""
         pickup status
-        Values: {', '.join([f"`{s.name}`" for s in list(serializers.PickupStatus)])}
+        Values: {", ".join([f"`{s.name}`" for s in list(serializers.PickupStatus)])}
         """,
     )
     confirmation_number = filters.CharFilter(
@@ -895,7 +858,7 @@ class PickupFilters(filters.FilterSet):
         choices=[(c, c) for c in dataunits.CARRIER_NAMES],
         help_text=f"""
         carrier_name for the pickup
-        Values: {', '.join([f"`{c}`" for c in dataunits.CARRIER_NAMES])}
+        Values: {", ".join([f"`{c}`" for c in dataunits.CARRIER_NAMES])}
         """,
     )
     address = filters.CharFilter(
@@ -942,8 +905,7 @@ class PickupFilters(filters.FilterSet):
             type=openapi.OpenApiTypes.STR,
             location=openapi.OpenApiParameter.QUERY,
             description=(
-                "The pickup status. <br/>"
-                f"Values: {', '.join([f'`{s.name}`' for s in list(serializers.PickupStatus)])}"
+                f"The pickup status. <br/>Values: {', '.join([f'`{s.name}`' for s in list(serializers.PickupStatus)])}"
             ),
         ),
         openapi.OpenApiParameter(
@@ -976,8 +938,7 @@ class PickupFilters(filters.FilterSet):
             type=openapi.OpenApiTypes.STR,
             location=openapi.OpenApiParameter.QUERY,
             description=(
-                "The unique carrier slug. <br/>"
-                f"Values: {', '.join([f'`{c}`' for c in dataunits.CARRIER_NAMES])}"
+                f"The unique carrier slug. <br/>Values: {', '.join([f'`{c}`' for c in dataunits.CARRIER_NAMES])}"
             ),
         ),
         openapi.OpenApiParameter(
@@ -1049,11 +1010,7 @@ class PickupFilters(filters.FilterSet):
 
     def metadata_value_filter(self, queryset, name, value):
         return queryset.filter(
-            id__in=[
-                o["id"]
-                for o in queryset.values("id", "metadata")
-                if value in (o.get("metadata") or {}).values()
-            ]
+            id__in=[o["id"] for o in queryset.values("id", "metadata") if value in (o.get("metadata") or {}).values()]
         )
 
     def meta_key_filter(self, queryset, name, value):
@@ -1061,11 +1018,7 @@ class PickupFilters(filters.FilterSet):
 
     def meta_value_filter(self, queryset, name, value):
         return queryset.filter(
-            id__in=[
-                o["id"]
-                for o in queryset.values("id", "meta")
-                if value in map(str, (o.get("meta") or {}).values())
-            ]
+            id__in=[o["id"] for o in queryset.values("id", "meta") if value in map(str, (o.get("meta") or {}).values())]
         )
 
     def request_id_filter(self, queryset, name, value):
@@ -1075,9 +1028,7 @@ class PickupFilters(filters.FilterSet):
         import karrio.server.manager.models as mgr_models
 
         if value:
-            return mgr_models.Pickup.all_objects.filter(
-                pk__in=queryset.values("pk"), is_archived=True
-            )
+            return mgr_models.Pickup.all_objects.filter(pk__in=queryset.values("pk"), is_archived=True)
         return queryset.filter(is_archived=False)
 
 
@@ -1091,7 +1042,7 @@ class RateSheetFilter(filters.FilterSet):
         import karrio.server.providers.models as providers
 
         model = providers.RateSheet
-        fields: typing.List[str] = []
+        fields: list[str] = []
 
     def keyword_filter(self, queryset, name, value):
         if "postgres" in conf.settings.DB_ENGINE:
@@ -1124,7 +1075,7 @@ class SystemRateSheetFilter(filters.FilterSet):
         import karrio.server.providers.models as providers
 
         model = providers.SystemRateSheet
-        fields: typing.List[str] = []
+        fields: list[str] = []
 
     def keyword_filter(self, queryset, name, value):
         if "postgres" in conf.settings.DB_ENGINE:
@@ -1158,7 +1109,7 @@ class ManifestFilters(filters.FilterSet):
         choices=[(c, c) for c in dataunits.CARRIER_NAMES],
         help_text=f"""
         carrier_name used to fulfill the shipment
-        Values: {', '.join([f"`{c}`" for c in dataunits.CARRIER_NAMES])}
+        Values: {", ".join([f"`{c}`" for c in dataunits.CARRIER_NAMES])}
         """,
     )
     created_after = filters.DateTimeFilter(
@@ -1182,8 +1133,7 @@ class ManifestFilters(filters.FilterSet):
             type=openapi.OpenApiTypes.STR,
             location=openapi.OpenApiParameter.QUERY,
             description=(
-                "The unique carrier slug. <br/>"
-                f"Values: {', '.join([f'`{c}`' for c in dataunits.CARRIER_NAMES])}"
+                f"The unique carrier slug. <br/>Values: {', '.join([f'`{c}`' for c in dataunits.CARRIER_NAMES])}"
             ),
         ),
         openapi.OpenApiParameter(
@@ -1202,7 +1152,7 @@ class ManifestFilters(filters.FilterSet):
         import karrio.server.manager.models as manager
 
         model = manager.Manifest
-        fields: typing.List[str] = []
+        fields: list[str] = []
 
     def request_id_filter(self, queryset, name, value):
         return queryset.filter(meta__request_id=value)

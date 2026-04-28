@@ -1,8 +1,7 @@
 """Karrio Landmark Global error parser."""
 
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.landmark.utils as provider_utils
 import karrio.schemas.landmark.error_response as landmark
 
@@ -12,9 +11,9 @@ def parse_error_response(
     settings: provider_utils.Settings,
     details: dict = None,
     **kwargs,
-) -> typing.List[models.Message]:
+) -> list[models.Message]:
     responses = lib.to_list(response)
-    errors: typing.List[landmark.ErrorType] = sum(
+    errors: list[landmark.ErrorType] = sum(
         [
             [
                 *(lib.find_element("Error", resp, landmark.ErrorType)),

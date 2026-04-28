@@ -1,23 +1,23 @@
-from typing import List, Tuple
-from karrio.core.utils.serializable import Serializable, Deserializable
 from karrio.api.mapper import Mapper as BaseMapper
 from karrio.core.models import (
+    # ShipmentDetails,
+    # PickupDetails,
+    # RateDetails,
+    Message,
+    # PickupRequest,
+    # RateRequest,
+    # AddressValidationDetails,
+    # ConfirmationDetails,
+    TrackingDetails,
     # AddressValidationRequest,
     # ShipmentCancelRequest,
     # PickupUpdateRequest,
     # PickupCancelRequest,
     # ShipmentRequest,
     TrackingRequest,
-    # PickupRequest,
-    # RateRequest,
-    # AddressValidationDetails,
-    # ConfirmationDetails,
-    TrackingDetails,
-    # ShipmentDetails,
-    # PickupDetails,
-    # RateDetails,
-    Message,
 )
+from karrio.core.utils.serializable import Deserializable, Serializable
+from karrio.mappers.dhl_universal.settings import Settings
 from karrio.providers.dhl_universal import (
     # parse_address_validation_response,
     # parse_shipment_cancel_response,
@@ -36,7 +36,6 @@ from karrio.providers.dhl_universal import (
     # pickup_request,
     # rate_request,
 )
-from karrio.mappers.dhl_universal.settings import Settings
 
 
 class Mapper(BaseMapper):
@@ -111,7 +110,5 @@ class Mapper(BaseMapper):
     # ) -> Tuple[ConfirmationDetails, List[Message]]:
     #     return parse_shipment_cancel_response(response, self.settings)
 
-    def parse_tracking_response(
-        self, response: Deserializable
-    ) -> Tuple[List[TrackingDetails], List[Message]]:
+    def parse_tracking_response(self, response: Deserializable) -> tuple[list[TrackingDetails], list[Message]]:
         return parse_tracking_response(response, self.settings)

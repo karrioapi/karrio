@@ -1,7 +1,7 @@
-import typing
 import base64
-import karrio.lib as lib
+
 import karrio.core.units as units
+import karrio.lib as lib
 from karrio.core import Settings as BaseSettings
 
 
@@ -23,14 +23,10 @@ class Settings(BaseSettings):
 
     @property
     def server_url(self):
-        return (
-            "https://wwwcie.ups.com"
-            if self.test_mode
-            else "https://onlinetools.ups.com"
-        )
+        return "https://wwwcie.ups.com" if self.test_mode else "https://onlinetools.ups.com"
 
     @property
-    def default_currency(self) -> typing.Optional[str]:
+    def default_currency(self) -> str | None:
         if self.account_country_code in SUPPORTED_COUNTRY_CURRENCY:
             return units.CountryCurrency.map(self.account_country_code).value
 
@@ -51,7 +47,7 @@ class Settings(BaseSettings):
 
     @property
     def authorization(self):
-        pair = "%s:%s" % (self.client_id, self.client_secret)
+        pair = f"{self.client_id}:{self.client_secret}"
         return base64.b64encode(pair.encode("utf-8")).decode("ascii")
 
 

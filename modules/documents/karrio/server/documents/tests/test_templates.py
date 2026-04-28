@@ -1,10 +1,11 @@
 import json
 from unittest.mock import ANY
+
 from django.urls import reverse
-from rest_framework import status
 from karrio.server.core.tests import APITestCase
-from karrio.server.graph.tests.base import GraphTestCase
 from karrio.server.documents.models import DocumentTemplate
+from karrio.server.graph.tests.base import GraphTestCase
+from rest_framework import status
 
 
 class TestDocumentTemplatesREST(APITestCase):

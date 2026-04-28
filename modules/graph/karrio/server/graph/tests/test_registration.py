@@ -1,12 +1,12 @@
-from unittest.mock import patch, MagicMock
-from karrio.server.graph.tests.base import GraphTestCase
+from unittest.mock import patch
+
 from django.contrib.auth import get_user_model
+from karrio.server.graph.tests.base import GraphTestCase
 
 User = get_user_model()
 
 
 class TestUserRegistration(GraphTestCase):
-
     @patch("karrio.server.conf.settings.ALLOW_SIGNUP", True)
     @patch("karrio.server.conf.settings.EMAIL_ENABLED", False)
     def test_register_user_mutation(self):
@@ -44,9 +44,7 @@ class TestUserRegistration(GraphTestCase):
             response.data["data"]["register_user"]["user"]["email"],
             "newuser@example.com",
         )
-        self.assertEqual(
-            response.data["data"]["register_user"]["user"]["full_name"], "New Test User"
-        )
+        self.assertEqual(response.data["data"]["register_user"]["user"]["full_name"], "New Test User")
 
         # Verify user was created in database
         user = User.objects.get(email="newuser@example.com")
@@ -147,7 +145,6 @@ class TestUserRegistration(GraphTestCase):
 
 
 class TestPasswordReset(GraphTestCase):
-
     def setUp(self):
         super().setUp()
         # Create a test user for password reset
@@ -186,7 +183,6 @@ class TestPasswordReset(GraphTestCase):
 
 
 class TestEmailConfirmation(GraphTestCase):
-
     @patch("karrio.server.graph.schemas.base.mutations.email_verification.verify_token")
     def test_confirm_email(self, mock_verify):
         """Test email confirmation"""

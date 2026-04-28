@@ -1,10 +1,10 @@
 from functools import partial
-from django.db import models
-from django.core.validators import RegexValidator
 
-import karrio.server.core.utils as utils
 import karrio.server.core.models as core
+import karrio.server.core.utils as utils
 import karrio.server.data.serializers as serializers
+from django.core.validators import RegexValidator
+from django.db import models
 
 
 @core.register_model
@@ -61,9 +61,7 @@ class DataTemplate(core.OwnedEntity):
     name = models.CharField(max_length=50)
     slug = models.SlugField(max_length=25, validators=[RegexValidator(r"^[a-z0-9_]+$")])
     description = models.CharField(max_length=50, null=True, blank=True)
-    resource_type = models.CharField(
-        max_length=25, blank=False, null=False, choices=serializers.RESOURCE_TYPE
-    )
+    resource_type = models.CharField(max_length=25, blank=False, null=False, choices=serializers.RESOURCE_TYPE)
     fields_mapping = models.JSONField(
         blank=False,
         null=False,
@@ -87,9 +85,7 @@ class DataTemplate(core.OwnedEntity):
 
     @property
     def data_fields(self):
-        default_fields_mapping = serializers.ResourceType.get_default_mapping(
-            self.resource_type
-        )
+        default_fields_mapping = serializers.ResourceType.get_default_mapping(self.resource_type)
 
         return {
             **default_fields_mapping,

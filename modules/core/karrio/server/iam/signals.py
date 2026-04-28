@@ -1,9 +1,8 @@
-from django.db.models import signals
-
-from karrio.server.core.logging import logger
 import karrio.server.core.utils as utils
-import karrio.server.user.models as user
 import karrio.server.iam.models as models
+import karrio.server.user.models as user
+from django.db.models import signals
+from karrio.server.core.logging import logger
 
 
 def register_all():

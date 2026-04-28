@@ -1,6 +1,6 @@
 import karrio.lib as lib
-import rest_framework.fields as fields
 import karrio.server.serializers as serializers
+import rest_framework.fields as fields
 
 
 class ResourceType(lib.StrEnum):

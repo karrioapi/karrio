@@ -1,8 +1,6 @@
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.dhl_parcel_de.utils as provider_utils
-
 
 TRACKING_ERROR_CODES = {
     "5": "Login failed",
@@ -16,22 +14,23 @@ TRACKING_ERROR_CODES = {
 
 
 def parse_error_response(
-    responses: typing.Union[typing.List[dict], dict],
+    responses: list[dict] | dict,
     settings: provider_utils.Settings,
     **kwargs,
-) -> typing.List[models.Message]:
+) -> list[models.Message]:
     results = responses if isinstance(responses, list) else [responses]
-    errors: typing.List[dict] = sum(
+    errors: list[dict] = sum(
         [
             [result.get("status")]
-            if isinstance(result.get("status"), dict)
-            and result.get("status", {}).get("title", "").lower() != "ok"
-            else [result] if result.get("title") and result.get("title") != "ok" else []
+            if isinstance(result.get("status"), dict) and result.get("status", {}).get("title", "").lower() != "ok"
+            else [result]
+            if result.get("title") and result.get("title") != "ok"
+            else []
             for result in results
         ],
         [],
     )
-    validations: typing.List[dict] = sum(
+    validations: list[dict] = sum(
         [
             [
                 {**msg, "shipmentNo": item.get("shipmentNo")}
@@ -50,9 +49,7 @@ def parse_error_response(
             carrier_name=settings.carrier_name,
             code=str(error.get("status") or error.get("statusCode")),
             message=error.get("detail") or error.get("title"),
-            details=lib.to_dict(
-                dict(title=error.get("title"), instance=error.get("instance"))
-            ),
+            details=lib.to_dict(dict(title=error.get("title"), instance=error.get("instance"))),
         )
         for error in errors
     ] + [
@@ -60,9 +57,7 @@ def parse_error_response(
             carrier_id=settings.carrier_id,
             carrier_name=settings.carrier_name,
             code=msg.get("validationMessageCode") or msg.get("validationState"),
-            message=lib.text(
-                msg.get("property"), msg.get("validationMessage"), separator=": "
-            ),
+            message=lib.text(msg.get("property"), msg.get("validationMessage"), separator=": "),
             details=lib.to_dict(
                 dict(
                     property=msg.get("property"),
@@ -79,7 +74,7 @@ def parse_tracking_error_response(
     response: lib.Element,
     settings: provider_utils.Settings,
     **kwargs,
-) -> typing.List[models.Message]:
+) -> list[models.Message]:
     code = response.get("code")
     error_status = response.get("error-status")
     messages = []

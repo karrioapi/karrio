@@ -1,30 +1,30 @@
-import typing
 import datetime
-import strawberry
-from strawberry.types import Info
+import typing
 
 import karrio.lib as lib
-import karrio.server.graph.utils as utils
+import karrio.server.events.filters as filters
+import karrio.server.events.models as models
 import karrio.server.graph.schemas.base.types as base
 import karrio.server.graph.schemas.events.inputs as inputs
-import karrio.server.events.models as models
-import karrio.server.events.filters as filters
+import karrio.server.graph.utils as utils
+import strawberry
+from strawberry.types import Info
 
 
 @strawberry.type
 class WebhookType:
     object_type: str
     id: str
-    url: typing.Optional[str]
-    secret: typing.Optional[str]
-    disabled: typing.Optional[bool]
-    test_mode: typing.Optional[bool]
-    description: typing.Optional[str]
-    enabled_events: typing.List[inputs.EventStatusEnum]
-    last_event_at: typing.Optional[datetime.datetime]
-    created_at: typing.Optional[datetime.datetime]
-    updated_at: typing.Optional[datetime.datetime]
-    created_by: typing.Optional[base.UserType]
+    url: str | None
+    secret: str | None
+    disabled: bool | None
+    test_mode: bool | None
+    description: str | None
+    enabled_events: list[inputs.EventStatusEnum]
+    last_event_at: datetime.datetime | None
+    created_at: datetime.datetime | None
+    updated_at: datetime.datetime | None
+    created_by: base.UserType | None
 
     @staticmethod
     @utils.authentication_required
@@ -35,12 +35,10 @@ class WebhookType:
     @utils.authentication_required
     def resolve_list(
         info: Info,
-        filter: typing.Optional[inputs.WebhookFilter] = strawberry.UNSET,
+        filter: inputs.WebhookFilter | None = strawberry.UNSET,
     ) -> utils.Connection["WebhookType"]:
         _filter = filter if filter is not strawberry.UNSET else inputs.WebhookFilter()
-        queryset = filters.WebhookFilter(
-            _filter.to_dict(), models.Webhook.access_by(info.context.request)
-        ).qs
+        queryset = filters.WebhookFilter(_filter.to_dict(), models.Webhook.access_by(info.context.request)).qs
         return utils.paginated_connection(queryset, **_filter.pagination())
 
 
@@ -48,25 +46,25 @@ class WebhookType:
 class EventType:
     object_type: str
     id: str
-    test_mode: typing.Optional[bool]
-    pending_webhooks: typing.Optional[int]
-    type: typing.Optional[inputs.EventStatusEnum]
-    created_at: typing.Optional[datetime.datetime]
-    updated_at: typing.Optional[datetime.datetime]
-    created_by: typing.Optional[base.UserType]
+    test_mode: bool | None
+    pending_webhooks: int | None
+    type: inputs.EventStatusEnum | None
+    created_at: datetime.datetime | None
+    updated_at: datetime.datetime | None
+    created_by: base.UserType | None
 
     @strawberry.field
-    def request_id(self: models.Event) -> typing.Optional[str]:
+    def request_id(self: models.Event) -> str | None:
         try:
             return (lib.to_dict(self.data) or {}).get("meta", {}).get("request_id")
         except (AttributeError, TypeError, ValueError):
             return (self.data or {}).get("meta", {}).get("request_id")
 
     @strawberry.field
-    def data(self: models.Event) -> typing.Optional[utils.JSON]:
+    def data(self: models.Event) -> utils.JSON | None:
         try:
             return lib.to_dict(self.data)
-        except:
+        except (AttributeError, TypeError, ValueError):
             return self.data
 
     @staticmethod
@@ -78,10 +76,8 @@ class EventType:
     @utils.authentication_required
     def resolve_list(
         info: Info,
-        filter: typing.Optional[inputs.EventFilter] = strawberry.UNSET,
+        filter: inputs.EventFilter | None = strawberry.UNSET,
     ) -> utils.Connection["EventType"]:
         _filter = filter if filter is not strawberry.UNSET else inputs.EventFilter()
-        queryset = filters.EventFilter(
-            _filter.to_dict(), models.Event.access_by(info.context.request)
-        ).qs
+        queryset = filters.EventFilter(_filter.to_dict(), models.Event.access_by(info.context.request)).qs
         return utils.paginated_connection(queryset, **_filter.pagination())

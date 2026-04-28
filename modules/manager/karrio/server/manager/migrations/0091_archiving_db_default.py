@@ -5,58 +5,87 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('manager', '0090_add_archiving_fields'),
+        ("manager", "0090_add_archiving_fields"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='pickup',
-            options={'base_manager_name': 'all_objects', 'ordering': ['-created_at'], 'verbose_name': 'Pickup', 'verbose_name_plural': 'Pickups'},
+            name="pickup",
+            options={
+                "base_manager_name": "all_objects",
+                "ordering": ["-created_at"],
+                "verbose_name": "Pickup",
+                "verbose_name_plural": "Pickups",
+            },
         ),
         migrations.AlterModelOptions(
-            name='shipment',
-            options={'base_manager_name': 'all_objects', 'ordering': ['-created_at'], 'verbose_name': 'Shipment', 'verbose_name_plural': 'Shipments'},
+            name="shipment",
+            options={
+                "base_manager_name": "all_objects",
+                "ordering": ["-created_at"],
+                "verbose_name": "Shipment",
+                "verbose_name_plural": "Shipments",
+            },
         ),
         migrations.AlterModelOptions(
-            name='tracking',
-            options={'base_manager_name': 'all_objects', 'ordering': ['-created_at'], 'verbose_name': 'Tracking Status', 'verbose_name_plural': 'Tracking Statuses'},
+            name="tracking",
+            options={
+                "base_manager_name": "all_objects",
+                "ordering": ["-created_at"],
+                "verbose_name": "Tracking Status",
+                "verbose_name_plural": "Tracking Statuses",
+            },
         ),
         migrations.AlterModelManagers(
-            name='pickup',
+            name="pickup",
             managers=[
-                ('objects', django.db.models.manager.Manager()),
-                ('all_objects', django.db.models.manager.Manager()),
+                ("objects", django.db.models.manager.Manager()),
+                ("all_objects", django.db.models.manager.Manager()),
             ],
         ),
         migrations.AlterModelManagers(
-            name='shipment',
+            name="shipment",
             managers=[
-                ('objects', django.db.models.manager.Manager()),
-                ('all_objects', django.db.models.manager.Manager()),
+                ("objects", django.db.models.manager.Manager()),
+                ("all_objects", django.db.models.manager.Manager()),
             ],
         ),
         migrations.AlterModelManagers(
-            name='tracking',
+            name="tracking",
             managers=[
-                ('objects', django.db.models.manager.Manager()),
-                ('all_objects', django.db.models.manager.Manager()),
+                ("objects", django.db.models.manager.Manager()),
+                ("all_objects", django.db.models.manager.Manager()),
             ],
         ),
         migrations.AlterField(
-            model_name='pickup',
-            name='is_archived',
-            field=models.BooleanField(db_default=False, db_index=True, default=False, help_text='Archived records are excluded from default queries and background jobs.'),
+            model_name="pickup",
+            name="is_archived",
+            field=models.BooleanField(
+                db_default=False,
+                db_index=True,
+                default=False,
+                help_text="Archived records are excluded from default queries and background jobs.",
+            ),
         ),
         migrations.AlterField(
-            model_name='shipment',
-            name='is_archived',
-            field=models.BooleanField(db_default=False, db_index=True, default=False, help_text='Archived records are excluded from default queries and background jobs.'),
+            model_name="shipment",
+            name="is_archived",
+            field=models.BooleanField(
+                db_default=False,
+                db_index=True,
+                default=False,
+                help_text="Archived records are excluded from default queries and background jobs.",
+            ),
         ),
         migrations.AlterField(
-            model_name='tracking',
-            name='is_archived',
-            field=models.BooleanField(db_default=False, db_index=True, default=False, help_text='Archived records are excluded from default queries and background jobs.'),
+            model_name="tracking",
+            name="is_archived",
+            field=models.BooleanField(
+                db_default=False,
+                db_index=True,
+                default=False,
+                help_text="Archived records are excluded from default queries and background jobs.",
+            ),
         ),
     ]

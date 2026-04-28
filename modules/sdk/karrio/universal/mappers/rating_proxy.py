@@ -1,12 +1,12 @@
 import attr
-import typing
-import karrio.lib as lib
+
+import karrio.core.models as models
 import karrio.core.units as units
 import karrio.core.utils as utils
-import karrio.core.models as models
+import karrio.lib as lib
 from karrio.universal.providers.rating import (
-    RatingMixinSettings,
     PackageRates,
+    RatingMixinSettings,
 )
 
 
@@ -27,13 +27,11 @@ class RatingMixinProxy:
             )
         )(*args, **kwargs)
 
-    def get_rates(
-        self, request: utils.Serializable
-    ) -> utils.Deserializable[typing.List[typing.Tuple[str, PackageRates]]]:
+    def get_rates(self, request: utils.Serializable) -> utils.Deserializable[list[tuple[str, PackageRates]]]:
         _request = request.serialize()
 
         # Extract required features from options
-        options = getattr(_request, 'options', {}) or {}
+        options = getattr(_request, "options", {}) or {}
         required_features = options.get("features", [])
 
         shipper = lib.to_address(_request.shipper)
@@ -51,14 +49,12 @@ class RatingMixinProxy:
         )
         is_international = not is_domicile
         selected_services = [
-            s.service_code
-            for s in self.settings.shipping_services
-            if s.service_code in _request.services
+            s.service_code for s in self.settings.shipping_services if s.service_code in _request.services
         ]
 
-        response: typing.List[typing.Tuple[str, PackageRates]] = [
+        response: list[tuple[str, PackageRates]] = [
             (
-                f'{getattr(pkg, "id", idx)}',
+                f"{getattr(pkg, 'id', idx)}",
                 get_available_rates(
                     pkg,
                     shipper,
@@ -126,15 +122,13 @@ def check_location_match(
     """
     # Check postal codes (most specific)
     if zone.postal_codes:
-        return recipient.postal_code is not None and str(
-            recipient.postal_code
-        ).lower() in [str(pc).lower() for pc in zone.postal_codes]
+        return recipient.postal_code is not None and str(recipient.postal_code).lower() in [
+            str(pc).lower() for pc in zone.postal_codes
+        ]
 
     # Check cities (medium specific)
     if zone.cities:
-        return recipient.city is not None and recipient.city.lower() in [
-            city.lower() for city in zone.cities
-        ]
+        return recipient.city is not None and recipient.city.lower() in [city.lower() for city in zone.cities]
 
     # Check country codes (least specific)
     if zone.country_codes:
@@ -147,7 +141,7 @@ def check_location_match(
 def calculate_billable_weight(
     package: units.Package,
     service,
-) -> typing.Tuple[float, float, float]:
+) -> tuple[float, float, float]:
     """
     Calculate billable weight for a package.
 
@@ -169,7 +163,7 @@ def calculate_billable_weight(
     actual_weight = package.weight[weight_unit] if package.weight else 0.0
 
     # If volumetric not enabled or no dim_factor, use actual weight
-    if not getattr(service, 'use_volumetric', False) or not getattr(service, 'dim_factor', None):
+    if not getattr(service, "use_volumetric", False) or not getattr(service, "dim_factor", None):
         return actual_weight, actual_weight, 0.0
 
     # Calculate volumetric weight if dimensions are available
@@ -215,10 +209,7 @@ def check_weight_match(
     weight_unit = service.weight_unit or "KG"
 
     # Use billable weight if provided, otherwise calculate actual weight
-    if billable_weight is not None:
-        package_weight = billable_weight
-    else:
-        package_weight = package.weight[weight_unit]
+    package_weight = billable_weight if billable_weight is not None else package.weight[weight_unit]
 
     # Check min weight (inclusive)
     if zone.min_weight is not None:
@@ -236,11 +227,11 @@ def check_weight_match(
 
 
 def find_best_matching_zone(
-    zones: typing.List[models.ServiceZone],
+    zones: list[models.ServiceZone],
     package: units.Package,
     recipient: units.ComputedAddress,
     service,
-) -> typing.Optional[models.ServiceZone]:
+) -> models.ServiceZone | None:
     """
     Find the most specific zone that matches package and destination.
 
@@ -254,9 +245,7 @@ def find_best_matching_zone(
     Returns:
         Best matching zone, or None if no matches found
     """
-    matching_zones: typing.List[typing.Tuple[int, float, float, models.ServiceZone]] = (
-        []
-    )
+    matching_zones: list[tuple[int, float, float, models.ServiceZone]] = []
 
     for zone in zones:
         # Must match location
@@ -294,12 +283,14 @@ def get_available_rates(
     settings: RatingMixinSettings,
     is_domicile: bool = None,
     is_international: bool = None,
-    selected_services: typing.List[str] = [],
-    required_features: typing.List[str] = [],
+    selected_services: list[str] | None = None,
+    required_features: list[str] | None = None,
 ) -> PackageRates:
-    errors: typing.List[models.Message] = []
-    rates: typing.List[models.RateDetails] = []
+    errors: list[models.Message] = []
+    rates: list[models.RateDetails] = []
     services = [svc for svc in settings.shipping_services if svc.active]
+    selected_services = selected_services or []
+    required_features = required_features or []
 
     for service in services:
         # Check if service requested
@@ -315,28 +306,20 @@ def get_available_rates(
         cover_domestic_shipment = service.domicile is True and is_domicile is True
 
         # Service explicitly supports international shipments
-        cover_international_shipment = (
-            service.international is True and is_international is True
-        )
+        cover_international_shipment = service.international is True and is_international is True
 
         # Service supports all destinations (both flags None OR both flags True)
-        cover_all_destination = (
-            service.domicile is None and service.international is None
-        ) or (service.domicile is True and service.international is True)
+        cover_all_destination = (service.domicile is None and service.international is None) or (
+            service.domicile is True and service.international is True
+        )
         explicit_destination_covered = explicitly_requested and (
-            cover_domestic_shipment
-            or cover_international_shipment
-            or cover_all_destination
+            cover_domestic_shipment or cover_international_shipment or cover_all_destination
         )
         implicit_destination_covered = implicitly_requested and (
-            cover_domestic_shipment
-            or cover_international_shipment
-            or cover_all_destination
+            cover_domestic_shipment or cover_international_shipment or cover_all_destination
         )
 
-        destination_covered = (
-            explicit_destination_covered or implicit_destination_covered
-        )
+        destination_covered = explicit_destination_covered or implicit_destination_covered
 
         # Check if weight and dimensions fit restrictions
         # Default to CM for dimensions and KG for weight if not specified
@@ -348,15 +331,9 @@ def get_available_rates(
         package_height = None
         package_width = None
         if service.dimension_unit is not None:
-            package_length = (
-                package.length[dimension_unit] if package.length is not None else None
-            )
-            package_height = (
-                package.height[dimension_unit] if package.height is not None else None
-            )
-            package_width = (
-                package.width[dimension_unit] if package.width is not None else None
-            )
+            package_length = package.length[dimension_unit] if package.length is not None else None
+            package_height = package.height[dimension_unit] if package.height is not None else None
+            package_width = package.width[dimension_unit] if package.width is not None else None
 
         # Safely get package weight only if service specifies weight unit
         package_weight = None
@@ -373,8 +350,7 @@ def get_available_rates(
             or package_length is None  # No dimension provided = assume valid
             or (
                 service.dimension_unit is not None
-                and package_length
-                <= units.Dimension(service.max_length, dimension_unit).value
+                and package_length <= units.Dimension(service.max_length, dimension_unit).value
             )
         )
         match_height_requirements = (
@@ -382,8 +358,7 @@ def get_available_rates(
             or package_height is None  # No dimension provided = assume valid
             or (
                 service.dimension_unit is not None
-                and package_height
-                <= units.Dimension(service.max_height, dimension_unit).value
+                and package_height <= units.Dimension(service.max_height, dimension_unit).value
             )
         )
         match_width_requirements = (
@@ -391,8 +366,7 @@ def get_available_rates(
             or package_width is None  # No dimension provided = assume valid
             or (
                 service.dimension_unit is not None
-                and package_width
-                <= units.Dimension(service.max_width, dimension_unit).value
+                and package_width <= units.Dimension(service.max_width, dimension_unit).value
             )
         )
         match_min_weight_requirements = (
@@ -400,8 +374,7 @@ def get_available_rates(
             or package_weight is None  # No weight provided = assume valid
             or (
                 service.weight_unit is not None
-                and package_weight
-                >= units.Weight(service.min_weight, weight_unit).value
+                and package_weight >= units.Weight(service.min_weight, weight_unit).value
             )
         )
         match_max_weight_requirements = (
@@ -409,13 +382,12 @@ def get_available_rates(
             or package_weight is None  # No weight provided = assume valid
             or (
                 service.weight_unit is not None
-                and package_weight
-                <= units.Weight(service.max_weight, weight_unit).value
+                and package_weight <= units.Weight(service.max_weight, weight_unit).value
             )
         )
 
         # resolve matching zone using improved algorithm
-        selected_zone: typing.Optional[models.ServiceZone] = find_best_matching_zone(
+        selected_zone: models.ServiceZone | None = find_best_matching_zone(
             zones=service.zones or [],
             package=package,
             recipient=recipient,
@@ -506,23 +478,13 @@ def get_available_rates(
                 "custom_carrier_name",
                 settings.carrier_name,
             )
-            transit_days = (
-                service.transit_days
-                if selected_zone.transit_days is None
-                else selected_zone.transit_days
-            )
+            transit_days = service.transit_days if selected_zone.transit_days is None else selected_zone.transit_days
 
             # Calculate base rate and apply surcharges
             base_rate = selected_zone.rate
             # COGS: rate-level cost overrides service-level cost
-            base_cost = (
-                selected_zone.cost
-                if selected_zone.cost is not None
-                else service.cost
-            )
-            total_charge, surcharge_charges = apply_surcharges(
-                base_rate, service.surcharges or [], service.currency
-            )
+            base_cost = selected_zone.cost if selected_zone.cost is not None else service.cost
+            total_charge, surcharge_charges = apply_surcharges(base_rate, service.surcharges or [], service.currency)
 
             # Build extra charges list (with COGS when available)
             extra_charges = [
@@ -536,16 +498,24 @@ def get_available_rates(
             extra_charges.extend(surcharge_charges)
 
             # Merge markup exclusions from service pricing_config + rate-level meta
-            _svc_config = getattr(service, 'pricing_config', None) or {}
-            _zone_meta = getattr(selected_zone, 'meta', None) or {}
-            _excluded_markup_ids = list(dict.fromkeys(
-                list(_svc_config.get("excluded_markup_ids", []))
-                + list(_zone_meta.get("excluded_markup_ids", []))
-            ))
+            _svc_config = getattr(service, "pricing_config", None) or {}
+            _zone_meta = getattr(selected_zone, "meta", None) or {}
+            _excluded_markup_ids = list(
+                dict.fromkeys(
+                    list(_svc_config.get("excluded_markup_ids", [])) + list(_zone_meta.get("excluded_markup_ids", []))
+                )
+            )
             _excluded_surcharge_ids = list(_zone_meta.get("excluded_surcharge_ids", []))
 
             # Per-plan costs from rate-level meta
             _plan_costs = _zone_meta.get("plan_costs") or {}
+
+            # Service-level shipping_method override (display name). Set on
+            # ServiceLevel.metadata via the rate sheet CSV import (`shipping_method`
+            # column) or the admin Service Editor. When present, downstream
+            # consumers prefer it over service.service_name for display.
+            _service_metadata = getattr(service, "metadata", None) or {}
+            _shipping_method = _service_metadata.get("shipping_method") if isinstance(_service_metadata, dict) else None
 
             _rate_meta = dict(
                 carrier_service_code=service.carrier_service_code,
@@ -554,6 +524,8 @@ def get_available_rates(
                 shipping_currency=service.currency,
                 service_features=_normalize_features(service.features),
             )
+            if _shipping_method:
+                _rate_meta["shipping_method"] = _shipping_method
             if _excluded_markup_ids:
                 _rate_meta["excluded_markup_ids"] = _excluded_markup_ids
             if _excluded_surcharge_ids:
@@ -577,7 +549,7 @@ def get_available_rates(
     return rates, errors
 
 
-def _normalize_features(features) -> typing.List[str]:
+def _normalize_features(features) -> list[str]:
     """Normalize service features to a list of strings.
 
     Handles dict format ({insurance: true}), list format (["insurance"]),
@@ -596,9 +568,9 @@ def _normalize_features(features) -> typing.List[str]:
 
 def apply_surcharges(
     base_rate: float,
-    surcharges: typing.List[models.Surcharge],
+    surcharges: list[models.Surcharge],
     currency: str,
-) -> typing.Tuple[float, typing.List[models.ChargeDetails]]:
+) -> tuple[float, list[models.ChargeDetails]]:
     """
     Apply service-level surcharges to a base rate.
 
@@ -611,7 +583,7 @@ def apply_surcharges(
         Tuple of (total_charge, list of ChargeDetails for surcharges)
     """
     total_surcharge = 0.0
-    surcharge_charges: typing.List[models.ChargeDetails] = []
+    surcharge_charges: list[models.ChargeDetails] = []
 
     for surcharge in surcharges:
         name = surcharge.name or "Surcharge"
@@ -619,9 +591,7 @@ def apply_surcharges(
         surcharge_type = surcharge.surcharge_type or "fixed"
 
         # Calculate applied amount based on type
-        applied_amount = (
-            (base_rate * amount / 100) if surcharge_type == "percentage" else amount
-        )
+        applied_amount = (base_rate * amount / 100) if surcharge_type == "percentage" else amount
 
         total_surcharge += applied_amount
         surcharge_charges.append(

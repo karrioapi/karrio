@@ -1,16 +1,15 @@
-import karrio.schemas.purolator.tracking_service_1_2_2 as purolator
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.purolator.error as error
-import karrio.providers.purolator.utils as provider_utils
 import karrio.providers.purolator.units as provider_units
+import karrio.providers.purolator.utils as provider_utils
+import karrio.schemas.purolator.tracking_service_1_2_2 as purolator
 
 
 def parse_tracking_response(
     _response: lib.Deserializable[lib.Element],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+) -> tuple[list[models.TrackingDetails], list[models.Message]]:
     response = _response.deserialize()
     track_infos = lib.find_element("TrackingInformation", response)
     return (
@@ -19,9 +18,7 @@ def parse_tracking_response(
     )
 
 
-def _extract_details(
-    node: lib.Element, settings: provider_utils.Settings
-) -> models.TrackingDetails:
+def _extract_details(node: lib.Element, settings: provider_utils.Settings) -> models.TrackingDetails:
     track = lib.to_object(purolator.TrackingInformation, node)
     delivered = any(scan.ScanType == "Delivery" for scan in track.Scans.Scan)
     last_event = track.Scans.Scan[0]
@@ -52,11 +49,7 @@ def _extract_details(
                     lib.ftime(scan.ScanTime, "%H%M%S"),
                 ),
                 status=next(
-                    (
-                        s.name
-                        for s in list(provider_units.TrackingStatus)
-                        if getattr(scan, "ScanType", None) in s.value
-                    ),
+                    (s.name for s in list(provider_units.TrackingStatus) if getattr(scan, "ScanType", None) in s.value),
                     None,
                 ),
                 reason=next(
@@ -70,9 +63,7 @@ def _extract_details(
             )
             for scan in track.Scans.Scan
         ],
-        info=models.TrackingInfo(
-            carrier_tracking_link=settings.tracking_url.format(track.PIN.Value)
-        ),
+        info=models.TrackingInfo(carrier_tracking_link=settings.tracking_url.format(track.PIN.Value)),
     )
 
 
@@ -92,9 +83,7 @@ def tracking_request(
         ),
         Body=lib.Body(
             purolator.TrackPackagesByPinRequest(
-                PINs=purolator.ArrayOfPIN(
-                    PIN=[purolator.PIN(Value=pin) for pin in payload.tracking_numbers]
-                )
+                PINs=purolator.ArrayOfPIN(PIN=[purolator.PIN(Value=pin) for pin in payload.tracking_numbers])
             ),
         ),
     )

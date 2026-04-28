@@ -4,11 +4,10 @@
 
 from django.db import migrations
 
-
 # Mapping of old table names to new table names
 TABLE_RENAMES = [
-    ('customs_shipment_commodities', 'customs_commodities'),
-    ('shipment_shipment_parcels', 'shipment_parcels'),
+    ("customs_shipment_commodities", "customs_commodities"),
+    ("shipment_shipment_parcels", "shipment_parcels"),
 ]
 
 
@@ -23,7 +22,8 @@ def rename_junction_tables(_apps, schema_editor):
     for old_table, new_table in TABLE_RENAMES:
         if old_table in existing_tables and new_table not in existing_tables:
             schema_editor.execute(
-                schema_editor.sql_rename_table % {
+                schema_editor.sql_rename_table
+                % {
                     "old_table": schema_editor.quote_name(old_table),
                     "new_table": schema_editor.quote_name(new_table),
                 }
@@ -38,7 +38,8 @@ def reverse_rename(_apps, schema_editor):
     for old_table, new_table in TABLE_RENAMES:
         if new_table in existing_tables and old_table not in existing_tables:
             schema_editor.execute(
-                schema_editor.sql_rename_table % {
+                schema_editor.sql_rename_table
+                % {
                     "old_table": schema_editor.quote_name(new_table),
                     "new_table": schema_editor.quote_name(old_table),
                 }
@@ -46,9 +47,8 @@ def reverse_rename(_apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('manager', '0066_commodity_image_url_commodity_product_id_and_more'),
+        ("manager", "0066_commodity_image_url_commodity_product_id_and_more"),
     ]
 
     operations = [

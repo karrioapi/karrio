@@ -1,11 +1,10 @@
 """Karrio GLS Group shipment creation implementation."""
 
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.gls.error as error
-import karrio.providers.gls.utils as provider_utils
 import karrio.providers.gls.units as provider_units
+import karrio.providers.gls.utils as provider_utils
 import karrio.schemas.gls.shipment_request as gls_request
 import karrio.schemas.gls.shipment_response as gls_response
 
@@ -13,7 +12,7 @@ import karrio.schemas.gls.shipment_response as gls_response
 def parse_shipment_response(
     _response: lib.Deserializable[str],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.Optional[models.ShipmentDetails], typing.List[models.Message]]:
+) -> tuple[models.ShipmentDetails | None, list[models.Message]]:
     """Parse GLS Group shipment response."""
     response = lib.failsafe(lambda: _response.deserialize()) or {}
     messages = error.parse_error_response(response, settings)
@@ -131,19 +130,15 @@ def shipment_request(
                         Width=str(package.width.CM) if package.width.value else None,
                         Height=str(package.height.CM) if package.height.value else None,
                         Length=str(package.length.CM) if package.length.value else None,
-                    ) if any([package.width.value, package.height.value, package.length.value]) else None,
-                    ShipmentUnitReference=(
-                        [payload.reference] if payload.reference else None
-                    ),
+                    )
+                    if any([package.width.value, package.height.value, package.length.value])
+                    else None,
+                    ShipmentUnitReference=([payload.reference] if payload.reference else None),
                 )
                 for package in packages
             ],
-            ShipmentReference=(
-                [payload.reference] if payload.reference else None
-            ),
-            ShippingDate=lib.fdate(
-                options.shipment_date.state
-            ) if options.shipment_date.state else None,
+            ShipmentReference=([payload.reference] if payload.reference else None),
+            ShippingDate=lib.fdate(options.shipment_date.state) if options.shipment_date.state else None,
         ),
         PrintingOptions=gls_request.PrintingOptionsType(
             ReturnLabels=gls_request.ReturnLabelsType(

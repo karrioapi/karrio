@@ -1,28 +1,23 @@
-import typer
-import karrio_cli.common.utils as utils
-import typing
 import datetime
+
+import typer
+
+import karrio_cli.common.utils as utils
 
 app = typer.Typer()
 
 
 @app.command("list")
 def list_logs(
-    entity_id: typing.Optional[str] = None,
-    method: typing.Optional[str] = None,
-    status_code: typing.Optional[str] = None,
-    created_after: typing.Optional[datetime.datetime] = None,
-    created_before: typing.Optional[datetime.datetime] = None,
+    entity_id: str | None = None,
+    method: str | None = None,
+    status_code: str | None = None,
+    created_after: datetime.datetime | None = None,
+    created_before: datetime.datetime | None = None,
     limit: int = typer.Option(20, help="Number of results to return per page"),
-    offset: int = typer.Option(
-        0, help="The initial index from which to return the results"
-    ),
-    pretty: bool = typer.Option(
-        False, "--pretty", "-p", help="Pretty print the output"
-    ),
-    line_numbers: bool = typer.Option(
-        False, "--line-numbers", "-n", help="Show line numbers in pretty print"
-    ),
+    offset: int = typer.Option(0, help="The initial index from which to return the results"),
+    pretty: bool = typer.Option(False, "--pretty", "-p", help="Pretty print the output"),
+    line_numbers: bool = typer.Option(False, "--line-numbers", "-n", help="Show line numbers in pretty print"),
 ):
     """
     List all logs with optional filters and pagination.
@@ -85,23 +80,14 @@ def list_logs(
     # Remove None values from params
     params = {k: v for k, v in params.items() if v is not None}
 
-    utils.make_graphql_request(
-        "get_logs",
-        {"filter": params},
-        pretty_print=pretty,
-        line_numbers=line_numbers
-    )
+    utils.make_graphql_request("get_logs", {"filter": params}, pretty_print=pretty, line_numbers=line_numbers)
 
 
 @app.command("retrieve")
 def retrieve_log(
     log_id: str,
-    pretty: bool = typer.Option(
-        False, "--pretty", "-p", help="Pretty print the output"
-    ),
-    line_numbers: bool = typer.Option(
-        False, "--line-numbers", "-n", help="Show line numbers in pretty print"
-    ),
+    pretty: bool = typer.Option(False, "--pretty", "-p", help="Pretty print the output"),
+    line_numbers: bool = typer.Option(False, "--line-numbers", "-n", help="Show line numbers in pretty print"),
 ):
     """
     Retrieve a log by ID.
@@ -143,9 +129,4 @@ def retrieve_log(
     }
     ```
     """
-    utils.make_graphql_request(
-        "get_log",
-        {"id": int(log_id)},
-        pretty_print=pretty,
-        line_numbers=line_numbers
-    )
+    utils.make_graphql_request("get_log", {"id": int(log_id)}, pretty_print=pretty, line_numbers=line_numbers)

@@ -1,17 +1,14 @@
-import re
-from unittest.mock import ANY
-from django.test import TestCase, RequestFactory
 from django.http import HttpResponse
+from django.test import RequestFactory, TestCase
 from django.urls import reverse
-
+from karrio.core.utils.helpers import _resolve_request_id
+from karrio.core.utils.tracing import Tracer
 from karrio.server.core.middleware import (
     RequestIDMiddleware,
     _generate_request_id,
     _is_valid_request_id,
 )
 from karrio.server.core.tests.base import APITestCase
-from karrio.core.utils.helpers import _resolve_request_id
-from karrio.core.utils.tracing import Tracer
 
 
 class TestRequestIDValidation(TestCase):
@@ -88,20 +85,20 @@ class TestRequestIDMiddleware(TestCase):
 
     def test_rejects_invalid_client_request_id(self):
         request = self.factory.get("/", HTTP_X_REQUEST_ID="invalid id with spaces")
-        response = self.middleware(request)
+        self.middleware(request)
 
         self.assertTrue(request.request_id.startswith("req_"))
         self.assertNotEqual(request.request_id, "invalid id with spaces")
 
     def test_rejects_empty_client_request_id(self):
         request = self.factory.get("/", HTTP_X_REQUEST_ID="")
-        response = self.middleware(request)
+        self.middleware(request)
 
         self.assertTrue(request.request_id.startswith("req_"))
 
     def test_strips_whitespace_from_client_id(self):
         request = self.factory.get("/", HTTP_X_REQUEST_ID="  valid-id  ")
-        response = self.middleware(request)
+        self.middleware(request)
 
         self.assertEqual(request.request_id, "valid-id")
 
@@ -188,10 +185,9 @@ class TestRequestIDPropagation(TestCase):
 
     def test_request_id_propagated_through_trace_as(self):
         """Verify request_id survives Settings.trace_as() wrapping chain."""
-        from karrio.core.settings import Settings
-
         # Create a minimal concrete Settings subclass for testing
         import attr
+        from karrio.core.settings import Settings
 
         @attr.s(auto_attribs=True)
         class TestSettings(Settings):
@@ -214,8 +210,8 @@ class TestRequestIDPropagation(TestCase):
 
     def test_trace_as_creates_tracer_if_missing(self):
         """Verify trace_as() creates a tracer when none exists."""
-        from karrio.core.settings import Settings
         import attr
+        from karrio.core.settings import Settings
 
         @attr.s(auto_attribs=True)
         class TestSettings(Settings):

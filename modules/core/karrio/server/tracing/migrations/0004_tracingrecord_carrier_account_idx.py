@@ -5,7 +5,6 @@ import django.db.models.fields.json
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("tracing", "0003_auto_20221105_0317"),
     ]
@@ -14,9 +13,7 @@ class Migration(migrations.Migration):
         migrations.AddIndex(
             model_name="tracingrecord",
             index=models.Index(
-                django.db.models.fields.json.KeyTextTransform(
-                    "carrier_account_id", "meta"
-                ),
+                django.db.models.fields.json.KeyTextTransform("carrier_account_id", "meta"),
                 condition=models.Q(("meta__carrier_account_id__isnull", False)),
                 name="carrier_account_idx",
             ),

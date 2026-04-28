@@ -1,17 +1,16 @@
 """Karrio ParcelOne shipment cancellation implementation."""
 
-import typing
-import karrio.schemas.parcelone as parcelone
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.parcelone.error as error
 import karrio.providers.parcelone.utils as provider_utils
+import karrio.schemas.parcelone as parcelone
 
 
 def parse_shipment_cancel_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.Optional[models.ConfirmationDetails], typing.List[models.Message]]:
+) -> tuple[models.ConfirmationDetails | None, list[models.Message]]:
     """Parse shipment cancellation response from ParcelOne REST API."""
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)

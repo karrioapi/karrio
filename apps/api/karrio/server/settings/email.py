@@ -26,7 +26,7 @@ EMAIL_ENABLED = False
 def user_verified_callback(user):
     from karrio.server.conf import settings
 
-    if settings.ALLOW_ADMIN_APPROVED_SIGNUP == False:
+    if not settings.ALLOW_ADMIN_APPROVED_SIGNUP:
         user.is_active = True
         user.save()
 

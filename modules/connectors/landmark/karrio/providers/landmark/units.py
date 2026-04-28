@@ -1,8 +1,9 @@
 import csv
 import pathlib
-import karrio.lib as lib
-import karrio.core.units as units
+
 import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
 
 
 class WeightUnit(lib.StrEnum):
@@ -51,9 +52,7 @@ class ConnectionConfig(lib.Enum):
 
     label_type = lib.OptionEnum("label_type", LabelFormat, default="PDF")
     account_currency = lib.OptionEnum("account_currency", str, default="EUR")
-    import_request_by_default = lib.OptionEnum(
-        "import_request_by_default", bool, default=False
-    )
+    import_request_by_default = lib.OptionEnum("import_request_by_default", bool, default=False)
     shipping_services = lib.OptionEnum("shipping_services", list)
     shipping_options = lib.OptionEnum("shipping_options", list)
 
@@ -145,10 +144,10 @@ class TrackingStatus(lib.Enum):
     """Carrier tracking status mapping"""
 
     pending = [
-        "50",   # Shipment Data Uploaded
-        "60",   # Shipment inventory allocated (still at Landmark facility — cancellable)
-        "75",   # Shipment Processed (still at Landmark facility — cancellable)
-        "80",   # Shipment Fulfilled (still at Landmark facility — cancellable)
+        "50",  # Shipment Data Uploaded
+        "60",  # Shipment inventory allocated (still at Landmark facility — cancellable)
+        "75",  # Shipment Processed (still at Landmark facility — cancellable)
+        "80",  # Shipment Fulfilled (still at Landmark facility — cancellable)
         "100",  # Shipment information transmitted to carrier (label created, not yet picked up — cancellable)
     ]
     delivered = [
@@ -229,9 +228,7 @@ def load_services_from_csv() -> list:
         # Fallback to simple default if CSV doesn't exist
         return [
             models.ServiceLevel(
-                service_name=ShippingServiceName.map(
-                    ShippingService.map(service.name).name_or_key
-                ).value_or_key,
+                service_name=ShippingServiceName.map(ShippingService.map(service.name).name_or_key).value_or_key,
                 service_code=service.name,
                 currency="GBP",
                 zones=[models.ServiceZone(label="Flat Rate", rate=0.0)],
@@ -242,7 +239,7 @@ def load_services_from_csv() -> list:
     # Group zones by service
     services_dict: dict[str, dict] = {}
 
-    with open(csv_path, "r", encoding="utf-8") as f:
+    with open(csv_path, encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
             service_code = row["service_code"]
@@ -255,9 +252,7 @@ def load_services_from_csv() -> list:
                 max_weight = 2.0 if is_minipak else 30.0
 
                 services_dict[service_code] = {
-                    "service_name": ShippingServiceName.map(
-                        ShippingService.map(service_code).name_or_key
-                    ).value_or_key,
+                    "service_name": ShippingServiceName.map(ShippingService.map(service_code).name_or_key).value_or_key,
                     "service_code": ShippingService.map(service_code).name_or_key,
                     "currency": row.get("currency", "GBP"),
                     "min_weight": 0.0,
@@ -267,9 +262,7 @@ def load_services_from_csv() -> list:
                 }
 
             # Parse country codes
-            country_codes = [
-                c.strip() for c in row.get("country_codes", "").split(",") if c.strip()
-            ]
+            country_codes = [c.strip() for c in row.get("country_codes", "").split(",") if c.strip()]
 
             # Create zone
             zone = models.ServiceZone(
@@ -277,9 +270,7 @@ def load_services_from_csv() -> list:
                 rate=float(row.get("rate", 0.0)),
                 min_weight=float(row["min_weight"]) if row.get("min_weight") else None,
                 max_weight=float(row["max_weight"]) if row.get("max_weight") else None,
-                transit_days=(
-                    int(row["transit_days"].split("-")[0]) if row.get("transit_days") else None
-                ),
+                transit_days=(int(row["transit_days"].split("-")[0]) if row.get("transit_days") else None),
                 country_codes=country_codes,
             )
 
