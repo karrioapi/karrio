@@ -92,6 +92,18 @@ class TestSmartKargoTracking(unittest.TestCase):
                 ParsedTrackingErrorResponse,
             )
 
+    def test_parse_tracking_response_with_dotnet_ticks(self):
+        """SmartKargo can return .NET ticks-precision dates (7 fractional digits)."""
+        with patch("karrio.mappers.smartkargo.proxy.lib.request") as mock:
+            mock.return_value = DotNetTicksTrackingResponse
+            parsed_response = (
+                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
+            self.assertListEqual(
+                lib.to_dict(parsed_response),
+                ParsedDotNetTicksTrackingResponse,
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
@@ -334,4 +346,65 @@ ParsedTrackingErrorResponse = [
             "message": "Tracking information not found",
         },
     ],
+]
+
+# .NET DateTime ticks have 100-ns precision (7 fractional digits), exceeding
+# Python's strptime %f cap of 6. SmartKargo emits these for some upstream
+# events — see karrioapi/karrio production trace 7c567b59.
+DotNetTicksTrackingResponse = """[
+  {
+    "prefix": "XIA",
+    "airWaybill": "12316189",
+    "headerReference": "yogi045",
+    "packageReference": "yogi045",
+    "pieceReference": "yogi045",
+    "eventType": "PND",
+    "eventDate": "2026-04-17T23:43:17.6571145",
+    "flightNumber": "",
+    "flightDate": "2026-04-18T00:00:00",
+    "eventLocation": "LHR",
+    "flightSegmentOrigin": "TLS01",
+    "flightSegmentDestination": "LHR",
+    "pieces": 1.0,
+    "weight": 1.78,
+    "description": "In Transit",
+    "estimatedDeliveryDate": "2026-04-23T23:59:39"
+  }
+]"""
+
+ParsedDotNetTicksTrackingResponse = [
+    [
+        {
+            "carrier_id": "smartkargo",
+            "carrier_name": "smartkargo",
+            "delivered": False,
+            "estimated_delivery": "2026-04-23",
+            "events": [
+                {
+                    "code": "PND",
+                    "date": "2026-04-17",
+                    "description": "In Transit",
+                    "location": "LHR",
+                    "time": "23:43",
+                    "timestamp": "2026-04-17T23:43:17.000Z",
+                },
+            ],
+            "info": {
+                "carrier_tracking_link": "https://www.deliverdirect.com/tracking?ref=yogi045",
+                "package_weight": 1.78,
+                "package_weight_unit": "KG",
+                "shipment_package_count": 1,
+            },
+            "meta": {
+                "smartkargo_air_waybill": "12316189",
+                "smartkargo_header_reference": "yogi045",
+                "smartkargo_package_reference": "yogi045",
+                "smartkargo_piece_reference": "yogi045",
+                "smartkargo_prefix": "XIA",
+            },
+            "status": "in_transit",
+            "tracking_number": "yogi045",
+        },
+    ],
+    [],
 ]

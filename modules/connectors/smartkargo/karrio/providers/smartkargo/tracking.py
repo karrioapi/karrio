@@ -1,5 +1,6 @@
 """Karrio SmartKargo tracking API implementation."""
 
+import re
 import karrio.schemas.smartkargo.tracking_response as smartkargo
 
 import typing
@@ -8,6 +9,19 @@ import karrio.core.models as models
 import karrio.providers.smartkargo.error as error
 import karrio.providers.smartkargo.utils as provider_utils
 import karrio.providers.smartkargo.units as provider_units
+
+DATETIME_FORMATS = ["%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M:%S.%f"]
+
+# SmartKargo upstream occasionally emits .NET ticks-precision timestamps
+# (7 fractional digits, e.g. "2026-04-17T23:43:17.6571145"), exceeding Python's
+# strptime %f cap of 6. Truncate to microseconds so %f parses cleanly.
+_TICKS_RE = re.compile(r"(\.\d{6})\d+")
+
+
+def _normalize_event_date(date_str: typing.Optional[str]) -> typing.Optional[str]:
+    if not date_str:
+        return date_str
+    return _TICKS_RE.sub(r"\1", date_str)
 
 
 def parse_tracking_response(
@@ -62,10 +76,16 @@ def _extract_details(
         tracking_number=tracking_number,
         events=[
             models.TrackingEvent(
-                date=lib.fdate(e.eventDate, "%Y-%m-%dT%H:%M:%S"),
+                date=lib.fdate(
+                    _normalize_event_date(e.eventDate),
+                    try_formats=DATETIME_FORMATS,
+                ),
                 description=e.description,
                 code=e.eventType,
-                time=lib.ftime(e.eventDate, "%Y-%m-%dT%H:%M:%S"),
+                time=lib.ftime(
+                    _normalize_event_date(e.eventDate),
+                    try_formats=DATETIME_FORMATS,
+                ),
                 location=(
                     lib.join(
                         e.location.city,
@@ -77,7 +97,8 @@ def _extract_details(
                     else e.eventLocation
                 ),
                 timestamp=lib.fiso_timestamp(
-                    e.eventDate, current_format="%Y-%m-%dT%H:%M:%S"
+                    _normalize_event_date(e.eventDate),
+                    try_formats=DATETIME_FORMATS,
                 ),
                 status=provider_units.TrackingStatus.find(e.eventType).name,
                 reason=provider_units.TrackingIncidentReason.find(e.eventType).name,
@@ -87,8 +108,8 @@ def _extract_details(
             for e in events
         ],
         estimated_delivery=lib.fdate(
-            getattr(latest, "estimatedDeliveryDate", None),
-            "%Y-%m-%dT%H:%M:%S",
+            _normalize_event_date(getattr(latest, "estimatedDeliveryDate", None)),
+            try_formats=DATETIME_FORMATS,
         ),
         delivered=(status == "delivered"),
         status=status,
@@ -124,8 +145,6 @@ def tracking_request(
     - Fallback: GET /tracking?packageReference=<ref>
       Used for legacy / non-AWB references (e.g. "yogi045")
     """
-    import re
-
     _AWB_PATTERN = re.compile(r"^([A-Za-z]{3})[-_ ]?([0-9]+)$")
     options = payload.options or {}
 
