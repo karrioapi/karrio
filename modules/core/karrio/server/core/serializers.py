@@ -1235,7 +1235,10 @@ class TrackingEvent(serializers.Serializer):
         help_text="The normalized incident reason (for exception events only)",
     )
     description = serializers.CharField(
-        required=False, help_text="The tracking event's description"
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="The tracking event's description",
     )
     location = serializers.CharField(
         required=False, help_text="The tracking event's location"
