@@ -1,3 +1,27 @@
+# Karrio 2026.1.31
+
+> Hotfix release. Tracking lookups returned a 500 with
+> `TrackingEvent.__init__() missing 1 required positional argument: 'description'`
+> whenever any single event in a carrier response had a null/missing
+> `description` (reproduced against SmartKargo `MDL` events). The unified SDK
+> model required `description` as a positional argument and the DRF serializer
+> didn't allow nulls — both now align with the rest of the optional event
+> fields, so a null description from any carrier survives the SDK → server →
+> API JSON round-trip.
+
+## Changes
+
+### Fix
+
+- fix(sdk,core): make `TrackingEvent.description` optional end-to-end. Defaults
+  to `None` on the unified `models.TrackingEvent`, and the DRF
+  `TrackingEvent.description` field now sets `allow_blank=True, allow_null=True`
+  to match siblings (`time`, `code`, `status`). Django storage
+  (`Tracking.events` is a `JSONField`) and GraphQL `TrackingEventType`
+  (`Optional[str]`) were already permissive.
+
+---
+
 # Karrio 2026.1.30
 
 > Hotfix release. SmartKargo tracking lookups returned a 404
