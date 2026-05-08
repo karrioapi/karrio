@@ -16,7 +16,7 @@
     "@karrio/lib": "*",
     "@karrio/types": "*",
     "@karrio/ui": "*",
-    "axios": "1.13.2",
+    "axios": "1.15.2",
     "mime-types": "^2.1.35",
     "next-runtime-env": "^3.2.2"
   },
