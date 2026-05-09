@@ -62,6 +62,7 @@ Skills in `.claude/skills/` provide step-by-step guides:
 - `project-setup/` — Environment setup, running servers, schema generation
 - `create-prd/` — Write PRDs with ASCII diagrams before non-trivial features
 - `review-implementation/` — Fresh-context review checklist for quality gates
+- `triage-inbox/` — Pull Notion Agent Inbox + GitHub backlog, rank, tag scope, surface top 5 (morning triage)
 
 ## Full Reference
 
