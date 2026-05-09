@@ -2,21 +2,30 @@
 
 Surface the top 5 karrio engineering items for the day, ranked and tagged. Bridge between the **Notion Agent Inbox** (cross-domain capture surface) and the **Linear Karrio Maintenance project** (engineering source of truth). Approval-gated — never auto-acts.
 
-## Two-Surface Architecture
+## Three-Surface Architecture
 
 ```
-NOTION Agent Inbox            LINEAR Karrio Maintenance
-(any role: Eng/Chief/         (engineering execution —
- Logger/Research/Admin)        agents read state here)
+NOTION Agent Inbox        GH DISCUSSIONS         LINEAR Karrio Maintenance
+(personal capture —       (community capture —   (engineering execution —
+ any role)                 bug reports, ideas)    agents read state here)
 
-  capture ──promote──►  EBE-### issue ──branch──► PR ──merge──► Done
-  (user approves)                                  (auto-update via
-                                                    EBE-### in title)
+  capture ─────────────promote──────────────►  EBE-### issue
+  (user approves)                                    │
+                                                     ▼
+                                          branch (EBE-{n}-{slug})
+                                                     │
+                                                     ▼
+                                          PR titled "[EBE-{n}] ..."
+                                                     │
+                                          merge → Linear auto-moves
+                                                   to Done
 ```
 
-- **Notion** = capture + reflection. The skill never works directly off Inbox items; it promotes the Eng-tagged ones into Linear first.
-- **Linear** = canonical engineering backlog. Issue IDs (`EBE-###`) embed in branch names so parallel agents don't collide.
-- **GitHub** = code only (issues are disabled on `karrioapi/karrio`). PR titles include `[EBE-###]` so Linear auto-moves issues to In Review / Done.
+- **Notion Inbox** = personal capture + reflection. Cross-domain (Eng/Chief/Logger/Research/Admin). Eng-tagged items promote to Linear.
+- **GitHub Discussions** = community capture. Bug reports and feature ideas from external users. Promote to Linear when triaged.
+- **Linear** = canonical engineering backlog. `EBE-###` IDs embed in branch names so parallel agents don't collide.
+- **GitHub Issues** = **disabled** on `karrioapi/karrio`. Don't query `gh issue list`.
+- **GitHub PRs** = code. Title includes `[EBE-###]` so Linear auto-moves the issue to In Review / Done on merge.
 
 ## When to Use
 
@@ -39,7 +48,28 @@ This skill has **two modes**. The user picks; default is `triage`.
 |---|---|---|
 | Linear backlog | `mcp__claude_ai_Linear__list_issues` | `project: "Karrio Maintenance"`, `state: Backlog` or `Todo` |
 | Notion Agent Inbox | `mcp__claude_ai_Notion__notion-search` on `collection://e8147767-2ae6-43df-a1f5-9d89c2312640` | `Status = Pending` AND (`Agent = Eng` OR `Agent` is empty) |
+| GH Discussions | `gh api graphql` (see below) | recent unresolved discussions in `General`, `Ideas`, `Q&A` (skip `Announcements`, `Show and tell`, `Polls`) |
 | In-repo TODOs (optional) | `Grep "TODO\|FIXME"` | only when explicitly asked |
+
+GraphQL query for Discussions:
+
+```
+query {
+  repository(owner: "karrioapi", name: "karrio") {
+    discussions(first: 30, orderBy: {field: UPDATED_AT, direction: DESC},
+                categoryId: <general/ideas/q-a id>) {
+      nodes {
+        number title url updatedAt
+        answer { id }                  # null = unresolved
+        category { name }
+        labels(first: 5) { nodes { name } }
+      }
+    }
+  }
+}
+```
+
+Categories worth triaging: `General` (most bug reports land here), `Ideas` (feature/connector requests), `Q&A` (often surfaces real bugs). Skip `Announcements`, `Show and tell`, `Polls`. Only promote discussions where `answer` is null (unresolved) and the title doesn't already correspond to an open Linear issue.
 
 ### Reference IDs
 
@@ -146,19 +176,27 @@ Once the user picks issue `EBE-{n}`:
 
 ## Mode: `promote`
 
-For pushing Notion Inbox items into Linear. Run when:
-- Linear backlog is sparse and Notion Inbox has Eng-tagged Pending items
-- User explicitly says "promote" / "drain the inbox"
+For pushing **Notion Inbox** items OR **GH Discussions** into Linear. Run when:
+- Linear backlog is sparse and capture surfaces have unprocessed items
+- User explicitly says "promote" / "drain the inbox" / "promote discussions"
 
-### 1. Pull Eng-tagged Pending Inbox items
+### 1. Pull from capture surfaces
 
+**Notion Inbox** — Eng-tagged Pending items:
 ```
 mcp__claude_ai_Notion__notion-search with
   query: ""
   data_source_url: "collection://e8147767-2ae6-43df-a1f5-9d89c2312640"
 ```
+Filter in-process to `Status = Pending` AND (`Agent = Eng` OR `Agent` empty).
 
-Filter results in-process to `Status = Pending` AND (`Agent = Eng` OR `Agent` empty).
+**GH Discussions** — recent unresolved discussions:
+```
+gh api graphql -f query='<query above with recent discussions, answer:null>'
+```
+Filter to categories `General` / `Ideas` / `Q&A`. De-dupe against existing open Linear issues (compare titles).
+
+The user usually picks ONE source per run. Default: ask which surface to drain.
 
 ### 2. For each item, draft a Linear issue
 
