@@ -174,7 +174,7 @@ def process_request(
         if raw is None:
             payload = {}
         elif isinstance(raw, (bytes, bytearray)):
-            payload = dict(data=raw)
+            payload = dict(data=bytes(raw))
         elif isinstance(raw, str):
             payload = dict(data=raw.encode("utf-8"))
         else:
