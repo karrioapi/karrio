@@ -1,6 +1,6 @@
 import json
 from unittest.mock import ANY, patch
-from requests import Response
+from requests import RequestException, Response
 
 from django.urls import reverse
 from django.utils import timezone
@@ -61,11 +61,11 @@ class TestWebhookDetails(APITestCase):
         )
 
         with patch(
-            "karrio.server.events.task_definitions.base.webhook.identity"
-        ) as mocks:
+            "karrio.server.events.task_definitions.base.webhook.requests.post"
+        ) as requests_post:
             response = Response()
             response.status_code = 200
-            mocks.return_value = response
+            requests_post.return_value = response
 
             notify_webhook_subscribers(
                 event="shipment.purchased",
@@ -81,6 +81,8 @@ class TestWebhookDetails(APITestCase):
         response_data = json.loads(response.content)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertDictEqual(response_data, WEBHOOK_NOTIFIED_RESPONSE)
+        _, kwargs = requests_post.call_args
+        self.assertEqual(kwargs["timeout"], 10)
 
     def test_tracker_updated_payload_structure(self):
         """Webhook payload for tracker_updated contains tracking-specific fields."""
@@ -142,10 +144,12 @@ class TestWebhookDetails(APITestCase):
 
     def test_webhook_failure_streak_increments_and_auto_disables_after_threshold(self):
         """Failed deliveries increment failure_streak_count and eventually disable."""
-        with patch("karrio.server.events.task_definitions.base.webhook.identity") as mocks:
+        with patch(
+            "karrio.server.events.task_definitions.base.webhook.requests.post"
+        ) as requests_post:
             failed = Response()
             failed.status_code = 500
-            mocks.return_value = failed
+            requests_post.return_value = failed
 
             # Trigger 6 failed notifications (disable when > 5)
             for _ in range(6):
@@ -159,6 +163,26 @@ class TestWebhookDetails(APITestCase):
         self.webhook.refresh_from_db()
         self.assertEqual(self.webhook.failure_streak_count, 6)
         self.assertTrue(self.webhook.disabled)
+        self.assertIsNone(self.webhook.last_event_at)
+
+    def test_webhook_request_exception_increments_failure_streak(self):
+        with patch(
+            "karrio.server.events.task_definitions.base.webhook.requests.post",
+            side_effect=RequestException("timeout"),
+        ):
+            notify_webhook_subscribers(
+                event="shipment.purchased",
+                data={"shipment": "content"},
+                event_at=NOTIFICATION_DATETIME,
+                ctx=dict(
+                    user_id=self.user.id,
+                    test_mode=True,
+                ),
+            )
+
+        self.webhook.refresh_from_db()
+        self.assertEqual(self.webhook.failure_streak_count, 1)
+        self.assertFalse(self.webhook.disabled)
         self.assertIsNone(self.webhook.last_event_at)
 
 
