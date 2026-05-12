@@ -47,7 +47,14 @@ class TrackingSerializer(TrackingDetails):
     def create(self, validated_data: dict, context, **kwargs) -> models.Tracking:
         options = validated_data["options"]
         metadata = validated_data["metadata"]
-        carrier_filter = validated_data["carrier_filter"]
+        carrier_filter = {
+            **validated_data["carrier_filter"],
+            **(
+                {"carrier_id": validated_data["carrier_id"]}
+                if validated_data.get("carrier_id")
+                else {}
+            ),
+        }
         tracking_number = validated_data["tracking_number"]
         account_number = validated_data.get("account_number")
         info = validated_data.get("info")
