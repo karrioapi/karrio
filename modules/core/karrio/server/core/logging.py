@@ -55,6 +55,7 @@ def get_django_log_config():
             "log_file": getattr(settings, "LOG_FILE_NAME", None),
             "log_dir": getattr(settings, "LOG_FILE_DIR", None),
             "debug": getattr(settings, "DEBUG", False),
+            "colorize": getattr(settings, "LOG_COLORIZE", True),
         }
     except Exception:
         # Fallback to environment variables
@@ -63,6 +64,8 @@ def get_django_log_config():
             "log_file": os.getenv("LOG_FILE_NAME"),
             "log_dir": os.getenv("LOG_DIR"),
             "debug": os.getenv("DEBUG_MODE", "False").lower() in ("true", "1", "yes"),
+            "colorize": os.getenv("LOG_COLORIZE", "True").lower()
+            in ("true", "1", "yes"),
         }
 
 
@@ -159,6 +162,7 @@ def setup_django_loguru(
     intercept_django: bool = True,
     serialize: bool = False,
     enqueue: bool = True,
+    colorize: Optional[bool] = None,
 ):
     """
     Set up Loguru for Django with optimal configuration.
@@ -169,6 +173,7 @@ def setup_django_loguru(
         intercept_django: Whether to intercept Django's logging (recommended)
         serialize: Whether to serialize logs as JSON
         enqueue: Whether to use async logging (recommended for Django)
+        colorize: Whether to colorize console logs
 
     This function should be called in Django settings after LOGGING configuration.
     """
@@ -179,14 +184,15 @@ def setup_django_loguru(
     config = get_django_log_config()
     log_level = level or config["level"]
     debug_mode = config["debug"]
+    colorize = config["colorize"] if colorize is None else colorize
     log_format = get_log_format(debug_mode)
 
-    # Add console handler with colors
+    # Add console handler
     _logger.add(
         sys.stderr,
         format=log_format,
         level=log_level,
-        colorize=True,
+        colorize=colorize,
         diagnose=debug_mode,
         backtrace=True,
         enqueue=enqueue,
