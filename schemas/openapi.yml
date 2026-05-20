@@ -501,6 +501,7 @@ paths:
           enum:
           - billing
           - order
+          - rate_sheet
           - shipment
           - trackers
         required: true
@@ -511,6 +512,7 @@ paths:
           enum:
           - billing
           - order
+          - rate_sheet
           - shipment
           - trackers
         required: true
@@ -549,9 +551,9 @@ paths:
         - trackers data
         - orders data
         - shipments data
-        - billing data (soon)<br/><br/>
-        **This operation will return a batch operation that you can poll to follow
-        the import progression.**
+        - rate_sheet data (Excel/CSV)<br/><br/>
+        **For rate_sheet imports, pass dry_run=true to validate and preview a diff
+        without writing. For other resource types, a BatchOperation is returned.**
       summary: Import data files
       parameters:
       - in: query
@@ -572,6 +574,7 @@ paths:
           enum:
           - billing
           - order
+          - rate_sheet
           - shipment
           - trackers
         description: The type of the resource to import
@@ -587,6 +590,8 @@ paths:
                   type: string
                 data_template:
                   type: string
+                dry_run:
+                  type: boolean
                 data_file:
                   type: string
                   format: binary
@@ -596,6 +601,13 @@ paths:
       - OAuth2: []
       - JWT: []
       responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
         '202':
           content:
             application/json:
@@ -838,6 +850,12 @@ paths:
       operationId: '&&list'
       description: Returns the list of configured carriers
       summary: List all carriers
+      parameters:
+      - in: query
+        name: lang
+        schema:
+          type: string
+        description: Language code for translated labels (e.g., 'de', 'en').
       tags:
       - Carriers
       responses:
@@ -1084,6 +1102,12 @@ paths:
                         type: boolean
                   summary: Carrier List
           description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
         '500':
           content:
             application/json:
@@ -1101,15 +1125,11 @@ paths:
         name: carrier_name
         schema:
           type: string
-        description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia`, `asendia_us`,
-          `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
-          `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
-          `dicom`, `dpd`, `dpd_meta`, `dtdc`, `easypost`, `easyship`, `eshipper`,
-          `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
-          `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
-          `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
-          `veho`, `zoom2u`'
+        description: 'The unique carrier slug. <br/>Values: `asendia`, `australiapost`,
+          `bpost`, `canadapost`, `chronopost`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`,
+          `dhl_universal`, `dpd`, `dpd_meta`, `fedex`, `generic`, `gls`, `hermes`,
+          `landmark`, `laposte`, `mydhl`, `parcelone`, `postat`, `purolator`, `seko`,
+          `sendle`, `smartkargo`, `spring`, `teleship`, `ups`, `usps`, `usps_international`'
         required: true
       tags:
       - Carriers
@@ -1143,15 +1163,11 @@ paths:
         name: carrier_name
         schema:
           type: string
-        description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia`, `asendia_us`,
-          `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
-          `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
-          `dicom`, `dpd`, `dpd_meta`, `dtdc`, `easypost`, `easyship`, `eshipper`,
-          `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
-          `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
-          `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
-          `veho`, `zoom2u`'
+        description: 'The unique carrier slug. <br/>Values: `asendia`, `australiapost`,
+          `bpost`, `canadapost`, `chronopost`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`,
+          `dhl_universal`, `dpd`, `dpd_meta`, `fedex`, `generic`, `gls`, `hermes`,
+          `landmark`, `laposte`, `mydhl`, `parcelone`, `postat`, `purolator`, `seko`,
+          `sendle`, `smartkargo`, `spring`, `teleship`, `ups`, `usps`, `usps_international`'
         required: true
       tags:
       - Carriers
@@ -1196,15 +1212,11 @@ paths:
         name: carrier_name
         schema:
           type: string
-        description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia`, `asendia_us`,
-          `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
-          `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
-          `dicom`, `dpd`, `dpd_meta`, `dtdc`, `easypost`, `easyship`, `eshipper`,
-          `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
-          `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
-          `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
-          `veho`, `zoom2u`'
+        description: 'The unique carrier slug. <br/>Values: `asendia`, `australiapost`,
+          `bpost`, `canadapost`, `chronopost`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`,
+          `dhl_universal`, `dpd`, `dpd_meta`, `fedex`, `generic`, `gls`, `hermes`,
+          `landmark`, `laposte`, `mydhl`, `parcelone`, `postat`, `purolator`, `seko`,
+          `sendle`, `smartkargo`, `spring`, `teleship`, `ups`, `usps`, `usps_international`'
         required: true
       tags:
       - Carriers
@@ -1270,15 +1282,11 @@ paths:
         name: carrier_name
         schema:
           type: string
-        description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia`, `asendia_us`,
-          `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
-          `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
-          `dicom`, `dpd`, `dpd_meta`, `dtdc`, `easypost`, `easyship`, `eshipper`,
-          `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
-          `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
-          `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
-          `veho`, `zoom2u`'
+        description: 'The unique carrier slug. <br/>Values: `asendia`, `australiapost`,
+          `bpost`, `canadapost`, `chronopost`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`,
+          `dhl_universal`, `dpd`, `dpd_meta`, `fedex`, `generic`, `gls`, `hermes`,
+          `landmark`, `laposte`, `mydhl`, `parcelone`, `postat`, `purolator`, `seko`,
+          `sendle`, `smartkargo`, `spring`, `teleship`, `ups`, `usps`, `usps_international`'
       - in: query
         name: metadata_key
         schema:
@@ -1862,15 +1870,11 @@ paths:
         name: carrier_name
         schema:
           type: string
-        description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia`, `asendia_us`,
-          `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
-          `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
-          `dicom`, `dpd`, `dpd_meta`, `dtdc`, `easypost`, `easyship`, `eshipper`,
-          `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
-          `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
-          `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
-          `veho`, `zoom2u`'
+        description: 'The unique carrier slug. <br/>Values: `asendia`, `australiapost`,
+          `bpost`, `canadapost`, `chronopost`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`,
+          `dhl_universal`, `dpd`, `dpd_meta`, `fedex`, `generic`, `gls`, `hermes`,
+          `landmark`, `laposte`, `mydhl`, `parcelone`, `postat`, `purolator`, `seko`,
+          `sendle`, `smartkargo`, `spring`, `teleship`, `ups`, `usps`, `usps_international`'
       - in: query
         name: created_after
         schema:
@@ -2238,7 +2242,11 @@ paths:
   /v1/orders/{id}/cancel:
     post:
       operationId: '&&&&cancel'
-      description: Cancel an order.
+      description: |-
+        Cancel an order.
+
+        ``pk`` can be either the karrio order ID or a ``request_id``
+        stored in ``order.meta["request_id"]``.
       summary: Cancel an order
       parameters:
       - in: path
@@ -2500,15 +2508,11 @@ paths:
         name: carrier_name
         schema:
           type: string
-        description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia`, `asendia_us`,
-          `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
-          `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
-          `dicom`, `dpd`, `dpd_meta`, `dtdc`, `easypost`, `easyship`, `eshipper`,
-          `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
-          `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
-          `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
-          `veho`, `zoom2u`'
+        description: 'The unique carrier slug. <br/>Values: `asendia`, `australiapost`,
+          `bpost`, `canadapost`, `chronopost`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`,
+          `dhl_universal`, `dpd`, `dpd_meta`, `fedex`, `generic`, `gls`, `hermes`,
+          `landmark`, `laposte`, `mydhl`, `parcelone`, `postat`, `purolator`, `seko`,
+          `sendle`, `smartkargo`, `spring`, `teleship`, `ups`, `usps`, `usps_international`'
       - in: query
         name: confirmation_number
         schema:
@@ -2523,6 +2527,10 @@ paths:
         schema:
           type: string
           format: date-time
+      - in: query
+        name: is_archived
+        schema:
+          type: boolean
       - in: query
         name: keyword
         schema:
@@ -2771,7 +2779,11 @@ paths:
   /v1/pickups/{id}/cancel:
     post:
       operationId: $$$$cancel
-      description: Cancel a pickup of one or more shipments.
+      description: |-
+        Cancel a pickup of one or more shipments.
+
+        ``pk`` can be either the karrio pickup ID (``pck_…``) or a
+        ``request_id`` stored in ``pickup.meta["request_id"]``.
       summary: Cancel a pickup
       parameters:
       - in: path
@@ -3091,57 +3103,35 @@ paths:
         schema:
           type: string
           enum:
-          - aramex
           - asendia
-          - asendia_us
           - australiapost
-          - boxknight
           - bpost
           - canadapost
-          - canpar
           - chronopost
-          - colissimo
           - dhl_express
           - dhl_parcel_de
           - dhl_poland
           - dhl_universal
-          - dicom
           - dpd
           - dpd_meta
-          - dtdc
-          - easypost
-          - easyship
-          - eshipper
           - fedex
-          - freightcom
           - generic
-          - geodis
           - gls
-          - hay_post
           - hermes
           - landmark
           - laposte
-          - locate2u
           - mydhl
-          - nationex
           - parcelone
           - postat
           - purolator
-          - roadie
-          - royalmail
-          - sapient
           - seko
           - sendle
-          - shipengine
+          - smartkargo
           - spring
           - teleship
-          - tge
-          - tnt
           - ups
           - usps
           - usps_international
-          - veho
-          - zoom2u
         required: true
       tags:
       - Proxy
@@ -3193,57 +3183,35 @@ paths:
         schema:
           type: string
           enum:
-          - aramex
           - asendia
-          - asendia_us
           - australiapost
-          - boxknight
           - bpost
           - canadapost
-          - canpar
           - chronopost
-          - colissimo
           - dhl_express
           - dhl_parcel_de
           - dhl_poland
           - dhl_universal
-          - dicom
           - dpd
           - dpd_meta
-          - dtdc
-          - easypost
-          - easyship
-          - eshipper
           - fedex
-          - freightcom
           - generic
-          - geodis
           - gls
-          - hay_post
           - hermes
           - landmark
           - laposte
-          - locate2u
           - mydhl
-          - nationex
           - parcelone
           - postat
           - purolator
-          - roadie
-          - royalmail
-          - sapient
           - seko
           - sendle
-          - shipengine
+          - smartkargo
           - spring
           - teleship
-          - tge
-          - tnt
           - ups
           - usps
           - usps_international
-          - veho
-          - zoom2u
         required: true
       tags:
       - Proxy
@@ -3295,57 +3263,35 @@ paths:
         schema:
           type: string
           enum:
-          - aramex
           - asendia
-          - asendia_us
           - australiapost
-          - boxknight
           - bpost
           - canadapost
-          - canpar
           - chronopost
-          - colissimo
           - dhl_express
           - dhl_parcel_de
           - dhl_poland
           - dhl_universal
-          - dicom
           - dpd
           - dpd_meta
-          - dtdc
-          - easypost
-          - easyship
-          - eshipper
           - fedex
-          - freightcom
           - generic
-          - geodis
           - gls
-          - hay_post
           - hermes
           - landmark
           - laposte
-          - locate2u
           - mydhl
-          - nationex
           - parcelone
           - postat
           - purolator
-          - roadie
-          - royalmail
-          - sapient
           - seko
           - sendle
-          - shipengine
+          - smartkargo
           - spring
           - teleship
-          - tge
-          - tnt
           - ups
           - usps
           - usps_international
-          - veho
-          - zoom2u
         required: true
       tags:
       - Proxy
@@ -3490,57 +3436,35 @@ paths:
         schema:
           type: string
           enum:
-          - aramex
           - asendia
-          - asendia_us
           - australiapost
-          - boxknight
           - bpost
           - canadapost
-          - canpar
           - chronopost
-          - colissimo
           - dhl_express
           - dhl_parcel_de
           - dhl_poland
           - dhl_universal
-          - dicom
           - dpd
           - dpd_meta
-          - dtdc
-          - easypost
-          - easyship
-          - eshipper
           - fedex
-          - freightcom
           - generic
-          - geodis
           - gls
-          - hay_post
           - hermes
           - landmark
           - laposte
-          - locate2u
           - mydhl
-          - nationex
           - parcelone
           - postat
           - purolator
-          - roadie
-          - royalmail
-          - sapient
           - seko
           - sendle
-          - shipengine
+          - smartkargo
           - spring
           - teleship
-          - tge
-          - tnt
           - ups
           - usps
           - usps_international
-          - veho
-          - zoom2u
         required: true
       tags:
       - Proxy
@@ -3637,50 +3561,34 @@ paths:
         schema:
           type: string
           enum:
-          - aramex
           - asendia
-          - asendia_us
           - australiapost
-          - boxknight
           - bpost
           - canadapost
-          - canpar
           - chronopost
-          - colissimo
           - dhl_express
           - dhl_parcel_de
           - dhl_poland
           - dhl_universal
-          - dicom
           - dpd
           - dpd_meta
-          - dtdc
           - fedex
           - generic
-          - geodis
           - gls
-          - hay_post
           - hermes
           - landmark
           - laposte
-          - locate2u
           - mydhl
-          - nationex
           - postat
           - purolator
-          - roadie
-          - royalmail
           - seko
           - sendle
+          - smartkargo
           - spring
           - teleship
-          - tge
-          - tnt
           - ups
           - usps
           - usps_international
-          - veho
-          - zoom2u
         required: true
       - in: query
         name: hub
@@ -3796,15 +3704,11 @@ paths:
         name: carrier_name
         schema:
           type: string
-        description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia`, `asendia_us`,
-          `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
-          `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
-          `dicom`, `dpd`, `dpd_meta`, `dtdc`, `easypost`, `easyship`, `eshipper`,
-          `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
-          `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
-          `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
-          `veho`, `zoom2u`'
+        description: 'The unique carrier slug. <br/>Values: `asendia`, `australiapost`,
+          `bpost`, `canadapost`, `chronopost`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`,
+          `dhl_universal`, `dpd`, `dpd_meta`, `fedex`, `generic`, `gls`, `hermes`,
+          `landmark`, `laposte`, `mydhl`, `parcelone`, `postat`, `purolator`, `seko`,
+          `sendle`, `smartkargo`, `spring`, `teleship`, `ups`, `usps`, `usps_international`'
       - in: query
         name: created_after
         schema:
@@ -3827,6 +3731,10 @@ paths:
         name: id
         schema:
           type: string
+      - in: query
+        name: is_archived
+        schema:
+          type: boolean
       - in: query
         name: is_return
         schema:
@@ -4059,7 +3967,13 @@ paths:
   /v1/shipments/{id}/cancel:
     post:
       operationId: $$$$$cancel
-      description: Void a shipment with the associated label.
+      description: |-
+        Void a shipment with the associated label.
+
+        ``pk`` can be either the karrio shipment ID (``shp_…``) or a
+        ``request_id`` stored in ``shipment.meta["request_id"]``.
+        When multiple records share the same ``request_id`` the most
+        recently created one is used.
       summary: Cancel a shipment
       parameters:
       - in: path
@@ -4292,15 +4206,11 @@ paths:
         name: carrier_name
         schema:
           type: string
-        description: 'The unique carrier slug. <br/>Values: `aramex`, `asendia`, `asendia_us`,
-          `australiapost`, `boxknight`, `bpost`, `canadapost`, `canpar`, `chronopost`,
-          `colissimo`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`, `dhl_universal`,
-          `dicom`, `dpd`, `dpd_meta`, `dtdc`, `easypost`, `easyship`, `eshipper`,
-          `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
-          `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
-          `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
-          `veho`, `zoom2u`'
+        description: 'The unique carrier slug. <br/>Values: `asendia`, `australiapost`,
+          `bpost`, `canadapost`, `chronopost`, `dhl_express`, `dhl_parcel_de`, `dhl_poland`,
+          `dhl_universal`, `dpd`, `dpd_meta`, `fedex`, `generic`, `gls`, `hermes`,
+          `landmark`, `laposte`, `mydhl`, `parcelone`, `postat`, `purolator`, `seko`,
+          `sendle`, `smartkargo`, `spring`, `teleship`, `ups`, `usps`, `usps_international`'
       - in: query
         name: created_after
         schema:
@@ -4311,6 +4221,10 @@ paths:
         schema:
           type: string
           format: date-time
+      - in: query
+        name: is_archived
+        schema:
+          type: boolean
       - in: query
         name: keyword
         schema:
@@ -4432,50 +4346,34 @@ paths:
         schema:
           type: string
           enum:
-          - aramex
           - asendia
-          - asendia_us
           - australiapost
-          - boxknight
           - bpost
           - canadapost
-          - canpar
           - chronopost
-          - colissimo
           - dhl_express
           - dhl_parcel_de
           - dhl_poland
           - dhl_universal
-          - dicom
           - dpd
           - dpd_meta
-          - dtdc
           - fedex
           - generic
-          - geodis
           - gls
-          - hay_post
           - hermes
           - landmark
           - laposte
-          - locate2u
           - mydhl
-          - nationex
           - postat
           - purolator
-          - roadie
-          - royalmail
           - seko
           - sendle
+          - smartkargo
           - spring
           - teleship
-          - tge
-          - tnt
           - ups
           - usps
           - usps_international
-          - veho
-          - zoom2u
         required: true
       - in: query
         name: hub
@@ -4520,16 +4418,17 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
       x-operationId: createTracker
-  /v1/trackers/{id_or_tracking_number}:
+  /v1/trackers/{identifier}:
     get:
       operationId: $$$$$$retrieve
-      description: Retrieve a package tracker
+      description: Retrieve a package tracker by ID or tracking number.
       summary: Retrieves a package tracker
       parameters:
       - in: path
-        name: id_or_tracking_number
+        name: identifier
         schema:
           type: string
+        description: Tracker ID (trk_...) or tracking number
         required: true
       tags:
       - Trackers
@@ -4561,13 +4460,14 @@ paths:
       x-operationId: retrieveTracker
     put:
       operationId: $$$$$$update
-      description: Mixin to log requests
+      description: Update a package tracker by ID.
       summary: Update tracker data
       parameters:
       - in: path
-        name: id_or_tracking_number
+        name: identifier
         schema:
           type: string
+        description: Tracker ID (trk_...)
         required: true
       tags:
       - Trackers
@@ -4615,13 +4515,16 @@ paths:
       x-operationId: updateTracker
     delete:
       operationId: $$$$$$remove
-      description: Discard a package tracker.
+      description: Remove a package tracker by ID, tracking number, or request_id.
+        The lookup tries the karrio tracker ID first, then tracking number, then falls
+        back to request_id (most recent match).
       summary: Discard a package tracker
       parameters:
       - in: path
-        name: id_or_tracking_number
+        name: identifier
         schema:
           type: string
+        description: Tracker ID (trk_...), tracking number, or request_id
         required: true
       tags:
       - Trackers
@@ -5707,8 +5610,9 @@ components:
           - shipments
           - trackers
           - billing
+          - rate_sheet
           type: string
-          x-spec-enum-id: ab2ec94900a0feec
+          x-spec-enum-id: caabd60234799675
         resources:
           type: array
           items:
@@ -5852,59 +5756,37 @@ components:
           description: Specifies the object type
         carrier_name:
           enum:
-          - aramex
           - asendia
-          - asendia_us
           - australiapost
-          - boxknight
           - bpost
           - canadapost
-          - canpar
           - chronopost
-          - colissimo
           - dhl_express
           - dhl_parcel_de
           - dhl_poland
           - dhl_universal
-          - dicom
           - dpd
           - dpd_meta
-          - dtdc
-          - easypost
-          - easyship
-          - eshipper
           - fedex
-          - freightcom
           - generic
-          - geodis
           - gls
-          - hay_post
           - hermes
           - landmark
           - laposte
-          - locate2u
           - mydhl
-          - nationex
           - parcelone
           - postat
           - purolator
-          - roadie
-          - royalmail
-          - sapient
           - seko
           - sendle
-          - shipengine
+          - smartkargo
           - spring
           - teleship
-          - tge
-          - tnt
           - ups
           - usps
           - usps_international
-          - veho
-          - zoom2u
           type: string
-          x-spec-enum-id: fba052f05fc9e3a2
+          x-spec-enum-id: 45ac83c5f87316a9
           description: A carrier connection type.
         display_name:
           type: string
@@ -5953,59 +5835,37 @@ components:
       properties:
         carrier_name:
           enum:
-          - aramex
           - asendia
-          - asendia_us
           - australiapost
-          - boxknight
           - bpost
           - canadapost
-          - canpar
           - chronopost
-          - colissimo
           - dhl_express
           - dhl_parcel_de
           - dhl_poland
           - dhl_universal
-          - dicom
           - dpd
           - dpd_meta
-          - dtdc
-          - easypost
-          - easyship
-          - eshipper
           - fedex
-          - freightcom
           - generic
-          - geodis
           - gls
-          - hay_post
           - hermes
           - landmark
           - laposte
-          - locate2u
           - mydhl
-          - nationex
           - parcelone
           - postat
           - purolator
-          - roadie
-          - royalmail
-          - sapient
           - seko
           - sendle
-          - shipengine
+          - smartkargo
           - spring
           - teleship
-          - tge
-          - tnt
           - ups
           - usps
           - usps_international
-          - veho
-          - zoom2u
           type: string
-          x-spec-enum-id: fba052f05fc9e3a2
+          x-spec-enum-id: 45ac83c5f87316a9
           description: A carrier connection type.
         carrier_id:
           type: string
@@ -6064,59 +5924,37 @@ components:
       properties:
         carrier_name:
           enum:
-          - aramex
           - asendia
-          - asendia_us
           - australiapost
-          - boxknight
           - bpost
           - canadapost
-          - canpar
           - chronopost
-          - colissimo
           - dhl_express
           - dhl_parcel_de
           - dhl_poland
           - dhl_universal
-          - dicom
           - dpd
           - dpd_meta
-          - dtdc
-          - easypost
-          - easyship
-          - eshipper
           - fedex
-          - freightcom
           - generic
-          - geodis
           - gls
-          - hay_post
           - hermes
           - landmark
           - laposte
-          - locate2u
           - mydhl
-          - nationex
           - parcelone
           - postat
           - purolator
-          - roadie
-          - royalmail
-          - sapient
           - seko
           - sendle
-          - shipengine
+          - smartkargo
           - spring
           - teleship
-          - tge
-          - tnt
           - ups
           - usps
           - usps_international
-          - veho
-          - zoom2u
           type: string
-          x-spec-enum-id: fba052f05fc9e3a2
+          x-spec-enum-id: 45ac83c5f87316a9
           description: Indicates a carrier (type)
         display_name:
           type: string
@@ -7148,57 +6986,35 @@ components:
       - weight_unit
     ConnectionCredentialsField:
       oneOf:
-      - $ref: '#/components/schemas/aramex'
       - $ref: '#/components/schemas/asendia'
-      - $ref: '#/components/schemas/asendia_us'
       - $ref: '#/components/schemas/australiapost'
-      - $ref: '#/components/schemas/boxknight'
       - $ref: '#/components/schemas/bpost'
       - $ref: '#/components/schemas/canadapost'
-      - $ref: '#/components/schemas/canpar'
       - $ref: '#/components/schemas/chronopost'
-      - $ref: '#/components/schemas/colissimo'
       - $ref: '#/components/schemas/dhl_express'
       - $ref: '#/components/schemas/dhl_parcel_de'
       - $ref: '#/components/schemas/dhl_poland'
       - $ref: '#/components/schemas/dhl_universal'
-      - $ref: '#/components/schemas/dicom'
       - $ref: '#/components/schemas/dpd'
       - $ref: '#/components/schemas/dpd_meta'
-      - $ref: '#/components/schemas/dtdc'
-      - $ref: '#/components/schemas/easypost'
-      - $ref: '#/components/schemas/easyship'
-      - $ref: '#/components/schemas/eshipper'
       - $ref: '#/components/schemas/fedex'
-      - $ref: '#/components/schemas/freightcom'
       - $ref: '#/components/schemas/generic'
-      - $ref: '#/components/schemas/geodis'
       - $ref: '#/components/schemas/gls'
-      - $ref: '#/components/schemas/hay_post'
       - $ref: '#/components/schemas/hermes'
       - $ref: '#/components/schemas/landmark'
       - $ref: '#/components/schemas/laposte'
-      - $ref: '#/components/schemas/locate2u'
       - $ref: '#/components/schemas/mydhl'
-      - $ref: '#/components/schemas/nationex'
       - $ref: '#/components/schemas/parcelone'
       - $ref: '#/components/schemas/postat'
       - $ref: '#/components/schemas/purolator'
-      - $ref: '#/components/schemas/roadie'
-      - $ref: '#/components/schemas/royalmail'
-      - $ref: '#/components/schemas/sapient'
       - $ref: '#/components/schemas/seko'
       - $ref: '#/components/schemas/sendle'
-      - $ref: '#/components/schemas/shipengine'
+      - $ref: '#/components/schemas/smartkargo'
       - $ref: '#/components/schemas/spring'
       - $ref: '#/components/schemas/teleship'
-      - $ref: '#/components/schemas/tge'
-      - $ref: '#/components/schemas/tnt'
       - $ref: '#/components/schemas/ups'
       - $ref: '#/components/schemas/usps'
       - $ref: '#/components/schemas/usps_international'
-      - $ref: '#/components/schemas/veho'
-      - $ref: '#/components/schemas/zoom2u'
     CustomsData:
       type: object
       properties:
@@ -8553,6 +8369,14 @@ components:
           type: string
           default: order
           description: Specifies the object type
+        is_archived:
+          type: boolean
+          default: false
+          description: Indicates whether this order is archived.
+        archived_at:
+          type: string
+          nullable: true
+          description: Timestamp when the order was archived.
         order_id:
           type: string
           description: The source' order id.
@@ -9295,59 +9119,37 @@ components:
       properties:
         carrier_name:
           enum:
-          - aramex
           - asendia
-          - asendia_us
           - australiapost
-          - boxknight
           - bpost
           - canadapost
-          - canpar
           - chronopost
-          - colissimo
           - dhl_express
           - dhl_parcel_de
           - dhl_poland
           - dhl_universal
-          - dicom
           - dpd
           - dpd_meta
-          - dtdc
-          - easypost
-          - easyship
-          - eshipper
           - fedex
-          - freightcom
           - generic
-          - geodis
           - gls
-          - hay_post
           - hermes
           - landmark
           - laposte
-          - locate2u
           - mydhl
-          - nationex
           - parcelone
           - postat
           - purolator
-          - roadie
-          - royalmail
-          - sapient
           - seko
           - sendle
-          - shipengine
+          - smartkargo
           - spring
           - teleship
-          - tge
-          - tnt
           - ups
           - usps
           - usps_international
-          - veho
-          - zoom2u
           type: string
-          x-spec-enum-id: fba052f05fc9e3a2
+          x-spec-enum-id: 45ac83c5f87316a9
           description: A carrier connection type.
         carrier_id:
           type: string
@@ -10213,6 +10015,14 @@ components:
           type: string
           default: pickup
           description: Specifies the object type
+        is_archived:
+          type: boolean
+          default: false
+          description: Indicates whether this pickup is archived.
+        archived_at:
+          type: string
+          nullable: true
+          description: Timestamp when the pickup was archived.
         carrier_name:
           type: string
           description: The pickup carrier
@@ -10844,6 +10654,10 @@ components:
           - $ref: '#/components/schemas/AddressData'
           nullable: true
           description: The billing address for this shipment.
+        is_return:
+          type: boolean
+          default: false
+          description: Indicates whether this is a return shipment rate request.
         carrier_ids:
           type: array
           items:
@@ -11087,6 +10901,14 @@ components:
             $ref: '#/components/schemas/Message'
           default: []
           description: The list of note or warning messages
+        is_archived:
+          type: boolean
+          default: false
+          description: Indicates whether this shipment is archived.
+        archived_at:
+          type: string
+          nullable: true
+          description: Timestamp when the shipment was archived.
         status:
           enum:
           - draft
@@ -11852,6 +11674,14 @@ components:
             $ref: '#/components/schemas/Message'
           default: []
           description: The list of note or warning messages
+        is_archived:
+          type: boolean
+          default: false
+          description: Indicates whether this shipment is archived.
+        archived_at:
+          type: string
+          nullable: true
+          description: Timestamp when the shipment was archived.
         status:
           enum:
           - draft
@@ -12054,6 +11884,14 @@ components:
           type: string
           default: tracker
           description: Specifies the object type
+        is_archived:
+          type: boolean
+          default: false
+          description: Indicates whether this tracker is archived.
+        archived_at:
+          type: string
+          nullable: true
+          description: Timestamp when the tracker was archived.
         metadata:
           type: object
           additionalProperties: {}
@@ -12149,52 +11987,36 @@ components:
           description: The package tracking number
         carrier_name:
           enum:
-          - aramex
           - asendia
-          - asendia_us
           - australiapost
-          - boxknight
           - bpost
           - canadapost
-          - canpar
           - chronopost
-          - colissimo
           - dhl_express
           - dhl_parcel_de
           - dhl_poland
           - dhl_universal
-          - dicom
           - dpd
           - dpd_meta
-          - dtdc
           - fedex
           - generic
-          - geodis
           - gls
-          - hay_post
           - hermes
           - landmark
           - laposte
-          - locate2u
           - mydhl
-          - nationex
           - postat
           - purolator
-          - roadie
-          - royalmail
           - seko
           - sendle
+          - smartkargo
           - spring
           - teleship
-          - tge
-          - tnt
           - ups
           - usps
           - usps_international
-          - veho
-          - zoom2u
           type: string
-          x-spec-enum-id: aab0f690054e0465
+          x-spec-enum-id: ee2570d368fc7948
           description: The tracking carrier
         account_number:
           type: string
@@ -12301,6 +12123,7 @@ components:
           description: The normalized incident reason (for exception events only)
         description:
           type: string
+          nullable: true
           description: The tracking event's description
         location:
           type: string
@@ -12489,6 +12312,14 @@ components:
           type: string
           default: tracker
           description: Specifies the object type
+        is_archived:
+          type: boolean
+          default: false
+          description: Indicates whether this tracker is archived.
+        archived_at:
+          type: string
+          nullable: true
+          description: Timestamp when the tracker was archived.
         metadata:
           type: object
           additionalProperties: {}
@@ -12671,28 +12502,6 @@ components:
           additionalProperties: {}
         event_id:
           type: string
-    aramex:
-      type: object
-      properties:
-        username:
-          type: string
-        password:
-          type: string
-        account_pin:
-          type: string
-        account_entity:
-          type: string
-        account_number:
-          type: string
-        account_country_code:
-          type: string
-      required:
-      - account_country_code
-      - account_entity
-      - account_number
-      - account_pin
-      - password
-      - username
     asendia:
       type: object
       properties:
@@ -12707,26 +12516,6 @@ components:
           type: string
           nullable: true
       required:
-      - password
-      - username
-    asendia_us:
-      type: object
-      properties:
-        username:
-          type: string
-        password:
-          type: string
-        api_key:
-          type: string
-        account_number:
-          type: string
-          nullable: true
-        account_country_code:
-          type: string
-          nullable: true
-          default: US
-      required:
-      - api_key
       - password
       - username
     australiapost:
@@ -12746,20 +12535,6 @@ components:
       - account_number
       - api_key
       - password
-    boxknight:
-      type: object
-      properties:
-        username:
-          type: string
-        password:
-          type: string
-        account_country_code:
-          type: string
-          nullable: true
-          default: CA
-      required:
-      - password
-      - username
     bpost:
       type: object
       properties:
@@ -12801,27 +12576,6 @@ components:
       required:
       - password
       - username
-    canpar:
-      type: object
-      properties:
-        username:
-          type: string
-        password:
-          type: string
-        language:
-          enum:
-          - en
-          - fr
-          type: string
-          x-spec-enum-id: e4be23cf445bc4cb
-          description: Indicates a language string
-        account_country_code:
-          type: string
-          nullable: true
-          default: CA
-      required:
-      - password
-      - username
     chronopost:
       type: object
       properties:
@@ -12846,23 +12600,6 @@ components:
           default: FR
       required:
       - account_number
-      - password
-    colissimo:
-      type: object
-      properties:
-        password:
-          type: string
-        contract_number:
-          type: string
-        laposte_api_key:
-          type: string
-          nullable: true
-        account_country_code:
-          type: string
-          nullable: true
-          default: FR
-      required:
-      - contract_number
       - password
     dhl_express:
       type: object
@@ -12937,22 +12674,6 @@ components:
       required:
       - consumer_key
       - consumer_secret
-    dicom:
-      type: object
-      properties:
-        username:
-          type: string
-        password:
-          type: string
-        billing_account:
-          type: string
-          nullable: true
-        account_country_code:
-          type: string
-          nullable: true
-      required:
-      - password
-      - username
     dpd:
       type: object
       properties:
@@ -13004,59 +12725,6 @@ components:
         account_country_code:
           type: string
           nullable: true
-    dtdc:
-      type: object
-      properties:
-        api_key:
-          type: string
-        customer_code:
-          type: string
-        username:
-          type: string
-          nullable: true
-        password:
-          type: string
-          nullable: true
-        account_country_code:
-          type: string
-          nullable: true
-          default: IN
-      required:
-      - api_key
-      - customer_code
-    easypost:
-      type: object
-      properties:
-        api_key:
-          type: string
-        account_country_code:
-          type: string
-          nullable: true
-      required:
-      - api_key
-    easyship:
-      type: object
-      properties:
-        access_token:
-          type: string
-        account_country_code:
-          type: string
-          nullable: true
-      required:
-      - access_token
-    eshipper:
-      type: object
-      properties:
-        principal:
-          type: string
-        credential:
-          type: string
-        account_country_code:
-          type: string
-          nullable: true
-      required:
-      - credential
-      - principal
     fedex:
       type: object
       properties:
@@ -13078,19 +12746,6 @@ components:
         account_country_code:
           type: string
           nullable: true
-    freightcom:
-      type: object
-      properties:
-        username:
-          type: string
-        password:
-          type: string
-        account_country_code:
-          type: string
-          nullable: true
-      required:
-      - password
-      - username
     generic:
       type: object
       properties:
@@ -13107,30 +12762,6 @@ components:
       required:
       - custom_carrier_name
       - display_name
-    geodis:
-      type: object
-      properties:
-        api_key:
-          type: string
-        identifier:
-          type: string
-        code_client:
-          type: string
-          nullable: true
-        language:
-          enum:
-          - fr
-          - en
-          type: string
-          x-spec-enum-id: e4be23cf445bc4cb
-          description: Indicates a language string
-        account_country_code:
-          type: string
-          nullable: true
-          default: FR
-      required:
-      - api_key
-      - identifier
     gls:
       type: object
       properties:
@@ -13148,25 +12779,6 @@ components:
       required:
       - client_id
       - client_secret
-    hay_post:
-      type: object
-      properties:
-        username:
-          type: string
-        password:
-          type: string
-        customer_id:
-          type: string
-        customer_type:
-          type: string
-        account_country_code:
-          type: string
-          nullable: true
-      required:
-      - customer_id
-      - customer_type
-      - password
-      - username
     hermes:
       type: object
       properties:
@@ -13228,19 +12840,6 @@ components:
           default: FR
       required:
       - api_key
-    locate2u:
-      type: object
-      properties:
-        client_id:
-          type: string
-          nullable: true
-        client_secret:
-          type: string
-          nullable: true
-        account_country_code:
-          type: string
-          nullable: true
-          default: AU
     mydhl:
       type: object
       properties:
@@ -13257,30 +12856,6 @@ components:
       required:
       - password
       - username
-    nationex:
-      type: object
-      properties:
-        api_key:
-          type: string
-        customer_id:
-          type: string
-        billing_account:
-          type: string
-          nullable: true
-        language:
-          enum:
-          - en
-          - fr
-          type: string
-          x-spec-enum-id: e4be23cf445bc4cb
-          description: Indicates a language string
-        account_country_code:
-          type: string
-          nullable: true
-          default: CA
-      required:
-      - api_key
-      - customer_id
     parcelone:
       type: object
       properties:
@@ -13345,58 +12920,6 @@ components:
       - account_number
       - password
       - username
-    roadie:
-      type: object
-      properties:
-        api_key:
-          type: string
-        account_country_code:
-          type: string
-          nullable: true
-          default: US
-      required:
-      - api_key
-    royalmail:
-      type: object
-      properties:
-        client_id:
-          type: string
-        client_secret:
-          type: string
-        account_country_code:
-          type: string
-          nullable: true
-          default: UK
-      required:
-      - client_id
-      - client_secret
-    sapient:
-      type: object
-      properties:
-        client_id:
-          type: string
-        client_secret:
-          type: string
-        shipping_account_id:
-          type: string
-        sapient_carrier_code:
-          enum:
-          - DX
-          - EVRI
-          - RM
-          - UPS
-          - YODEL
-          type: string
-          x-spec-enum-id: 24b797aea0df4a45
-          description: Indicates a sapient_carrier_code string
-        account_country_code:
-          type: string
-          nullable: true
-          default: GB
-      required:
-      - client_id
-      - client_secret
-      - shipping_account_id
     seko:
       type: object
       properties:
@@ -13420,21 +12943,18 @@ components:
       required:
       - api_key
       - sendle_id
-    shipengine:
+    smartkargo:
       type: object
       properties:
         api_key:
           type: string
-        carrier_ids:
-          type: string
-          nullable: true
         account_number:
           type: string
-          nullable: true
         account_country_code:
           type: string
           nullable: true
       required:
+      - account_number
       - api_key
     spring:
       type: object
@@ -13459,58 +12979,6 @@ components:
       required:
       - client_id
       - client_secret
-    tge:
-      type: object
-      properties:
-        username:
-          type: string
-        password:
-          type: string
-        api_key:
-          type: string
-        toll_username:
-          type: string
-        toll_password:
-          type: string
-        my_toll_token:
-          type: string
-        my_toll_identity:
-          type: string
-        account_code:
-          type: string
-          nullable: true
-        sscc_count:
-          type: integer
-        shipment_count:
-          type: integer
-        account_country_code:
-          type: string
-          nullable: true
-          default: AU
-      required:
-      - api_key
-      - my_toll_identity
-      - my_toll_token
-      - password
-      - toll_password
-      - toll_username
-      - username
-    tnt:
-      type: object
-      properties:
-        username:
-          type: string
-        password:
-          type: string
-        account_number:
-          type: string
-          nullable: true
-        account_country_code:
-          type: string
-          nullable: true
-      required:
-      - password
-      - username
     ups:
       type: object
       properties:
@@ -13595,30 +13063,6 @@ components:
       required:
       - client_id
       - client_secret
-    veho:
-      type: object
-      properties:
-        api_key:
-          type: string
-        account_number:
-          type: string
-          nullable: true
-        account_country_code:
-          type: string
-          nullable: true
-      required:
-      - api_key
-    zoom2u:
-      type: object
-      properties:
-        api_key:
-          type: string
-        account_country_code:
-          type: string
-          nullable: true
-          default: AU
-      required:
-      - api_key
   securitySchemes:
     JWT:
       in: header
@@ -13725,56 +13169,34 @@ tags:
     ## Carriers
     | Carrier Name | Display Name |
     | ------------ | ------------ |
-    | aramex | Aramex |
     | asendia | Asendia |
-    | asendia_us | Asendia US |
     | australiapost | Australia Post |
-    | boxknight | BoxKnight |
     | bpost | Belgian Post |
     | canadapost | Canada Post |
-    | canpar | Canpar |
     | chronopost | Chronopost |
-    | colissimo | Colissimo |
     | dhl_express | DHL Express |
     | dhl_parcel_de | DHL Germany |
     | dhl_poland | DHL Parcel Poland |
     | dhl_universal | DHL Universal |
-    | dicom | Dicom |
     | dpd | DPD |
     | dpd_meta | DPD Global |
-    | dtdc | DTDC |
-    | easypost | EasyPost |
-    | easyship | Easyship |
-    | eshipper | eShipper |
     | fedex | FedEx |
-    | freightcom | Freightcom |
-    | geodis | GEODIS |
     | gls | GLS Group |
-    | hay_post | HayPost |
     | hermes | Hermes |
     | landmark | Landmark Global |
     | laposte | La Poste |
-    | locate2u | Locate2u |
     | mydhl | MyDHL Express |
-    | nationex | Nationex |
     | parcelone | ParcelOne |
     | postat | Austrian Post |
     | purolator | Purolator |
-    | roadie | Roadie |
-    | royalmail | Royal Mail |
-    | sapient | SAPIENT |
     | seko | SEKO Logistics |
     | sendle | Sendle |
-    | shipengine | ShipEngine |
+    | smartkargo | SmartKargo |
     | spring | Spring |
     | teleship | Teleship |
-    | tge | TGE |
-    | tnt | TNT |
     | ups | UPS |
     | usps | USPS |
     | usps_international | USPS International |
-    | veho | Veho |
-    | zoom2u | Zoom2u |
 
     ---
     ## Services
@@ -13798,13 +13220,6 @@ tags:
     | asendia_priority | PRIORITY |
     | asendia_priority_tracked | PRIORITYTRK |
 
-    ### Asendia US
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | asendia_us_e_com_tracked_ddp | 19 |
-    | asendia_us_fully_tracked | 65 |
-    | asendia_us_country_tracked | 66 |
-
     ### Australia Post
     | Code         | Service Name |
     | ------------ | ------------ |
@@ -13818,13 +13233,6 @@ tags:
     | australiapost_intl_express_docs | ECD8 |
     | australiapost_eparcel_post_returns | PR |
     | australiapost_express_eparcel_post_returns | XPR |
-
-    ### BoxKnight
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | boxknight_sameday | SAMEDAY |
-    | boxknight_nextday | NEXTDAY |
-    | boxknight_scheduled | SCHEDULED |
 
     ### Belgian Post
     | Code         | Service Name |
@@ -13882,24 +13290,6 @@ tags:
     | chronopost_express_international | 17 |
     | chronopost_premium_international | 37 |
     | chronopost_classic_international | 44 |
-
-    ### Colissimo
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | colissimo_home_without_signature | DOM |
-    | colissimo_home_with_signature | DOS |
-    | colissimo_eco_france | CECO |
-    | colissimo_return_france | CORE |
-    | colissimo_flash_without_signature | COLR |
-    | colissimo_flash_with_signature | J+1 |
-    | colissimo_oversea_home_without_signature | COM |
-    | colissimo_oversea_home_with_signature | CDS |
-    | colissimo_eco_om_without_signature | ECO |
-    | colissimo_eco_om_with_signature | ECOS |
-    | colissimo_retour_om | CORI |
-    | colissimo_return_international_from_france | CORF |
-    | colissimo_economical_big_export_offer | ACCI |
-    | colissimo_out_of_home_national_international | HD |
 
     ### DHL Express
     | Code         | Service Name |
@@ -13983,1017 +13373,6 @@ tags:
     | dpd_meta_mail | MAIL |
     | dpd_meta_max | MAX |
 
-    ### DTDC
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | dtdc_b2c_priority | B2C PRIORITY |
-    | dtdc_b2c_economy | B2C SMART EXPRESS |
-    | dtdc_b2c_express | B2C PREMIUM |
-    | dtdc_b2c_ground | B2C GROUND ECONOMY |
-    | dtdc_priority | PRIORITY |
-    | dtdc_ground_express | GROUND EXPRESS |
-    | dtdc_premium | PREMIUM |
-    | dtdc_economy_ground | GEC |
-    | dtdc_standard_express | STD EXP-A |
-
-    ### EasyPost
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | easypost_amazonmws_ups_rates | UPS Rates |
-    | easypost_amazonmws_usps_rates | USPS Rates |
-    | easypost_amazonmws_fedex_rates | FedEx Rates |
-    | easypost_amazonmws_ups_labels | UPS Labels |
-    | easypost_amazonmws_usps_labels | USPS Labels |
-    | easypost_amazonmws_fedex_labels | FedEx Labels |
-    | easypost_amazonmws_ups_tracking | UPS Tracking |
-    | easypost_amazonmws_usps_tracking | USPS Tracking |
-    | easypost_amazonmws_fedex_tracking | FedEx Tracking |
-    | easypost_apc_parcel_connect_book_service | parcelConnectBookService |
-    | easypost_apc_parcel_connect_expedited_ddp | parcelConnectExpeditedDDP |
-    | easypost_apc_parcel_connect_expedited_ddu | parcelConnectExpeditedDDU |
-    | easypost_apc_parcel_connect_priority_ddp | parcelConnectPriorityDDP |
-    | easypost_apc_parcel_connect_priority_ddp_delcon | parcelConnectPriorityDDPDelcon |
-    | easypost_apc_parcel_connect_priority_ddu | parcelConnectPriorityDDU |
-    | easypost_apc_parcel_connect_priority_ddu_delcon | parcelConnectPriorityDDUDelcon |
-    | easypost_apc_parcel_connect_priority_ddupqw | parcelConnectPriorityDDUPQW |
-    | easypost_apc_parcel_connect_standard_ddu | parcelConnectStandardDDU |
-    | easypost_apc_parcel_connect_standard_ddupqw | parcelConnectStandardDDUPQW |
-    | easypost_apc_parcel_connect_packet_ddu | parcelConnectPacketDDU |
-    | easypost_asendia_pmi | PMI |
-    | easypost_asendia_e_packet | ePacket |
-    | easypost_asendia_ipa | IPA |
-    | easypost_asendia_isal | ISAL |
-    | easypost_asendia_us_ads | ADS |
-    | easypost_asendia_us_air_freight_inbound | AirFreightInbound |
-    | easypost_asendia_us_air_freight_outbound | AirFreightOutbound |
-    | easypost_asendia_us_domestic_bound_printer_matter_expedited | AsendiaDomesticBoundPrinterMatterExpedited |
-    | easypost_asendia_us_domestic_bound_printer_matter_ground | AsendiaDomesticBoundPrinterMatterGround |
-    | easypost_asendia_us_domestic_flats_expedited | AsendiaDomesticFlatsExpedited |
-    | easypost_asendia_us_domestic_flats_ground | AsendiaDomesticFlatsGround |
-    | easypost_asendia_us_domestic_parcel_ground_over1lb | AsendiaDomesticParcelGroundOver1lb |
-    | easypost_asendia_us_domestic_parcel_ground_under1lb | AsendiaDomesticParcelGroundUnder1lb |
-    | easypost_asendia_us_domestic_parcel_max_over1lb | AsendiaDomesticParcelMAXOver1lb |
-    | easypost_asendia_us_domestic_parcel_max_under1lb | AsendiaDomesticParcelMAXUnder1lb |
-    | easypost_asendia_us_domestic_parcel_over1lb_expedited | AsendiaDomesticParcelOver1lbExpedited |
-    | easypost_asendia_us_domestic_parcel_under1lb_expedited | AsendiaDomesticParcelUnder1lbExpedited |
-    | easypost_asendia_us_domestic_promo_parcel_expedited | AsendiaDomesticPromoParcelExpedited |
-    | easypost_asendia_us_domestic_promo_parcel_ground | AsendiaDomesticPromoParcelGround |
-    | easypost_asendia_us_bulk_freight | BulkFreight |
-    | easypost_asendia_us_business_mail_canada_lettermail | BusinessMailCanadaLettermail |
-    | easypost_asendia_us_business_mail_canada_lettermail_machineable | BusinessMailCanadaLettermailMachineable |
-    | easypost_asendia_us_business_mail_economy | BusinessMailEconomy |
-    | easypost_asendia_us_business_mail_economy_lp_wholesale | BusinessMailEconomyLPWholesale |
-    | easypost_asendia_us_business_mail_economy_sp_wholesale | BusinessMailEconomySPWholesale |
-    | easypost_asendia_us_business_mail_ipa | BusinessMailIPA |
-    | easypost_asendia_us_business_mail_isal | BusinessMailISAL |
-    | easypost_asendia_us_business_mail_priority | BusinessMailPriority |
-    | easypost_asendia_us_business_mail_priority_lp_wholesale | BusinessMailPriorityLPWholesale |
-    | easypost_asendia_us_business_mail_priority_sp_wholesale | BusinessMailPrioritySPWholesale |
-    | easypost_asendia_us_marketing_mail_canada_personalized_lcp | MarketingMailCanadaPersonalizedLCP |
-    | easypost_asendia_us_marketing_mail_canada_personalized_machineable | MarketingMailCanadaPersonalizedMachineable |
-    | easypost_asendia_us_marketing_mail_canada_personalized_ndg | MarketingMailCanadaPersonalizedNDG |
-    | easypost_asendia_us_marketing_mail_economy | MarketingMailEconomy |
-    | easypost_asendia_us_marketing_mail_ipa | MarketingMailIPA |
-    | easypost_asendia_us_marketing_mail_isal | MarketingMailISAL |
-    | easypost_asendia_us_marketing_mail_priority | MarketingMailPriority |
-    | easypost_asendia_us_publications_canada_lcp | PublicationsCanadaLCP |
-    | easypost_asendia_us_publications_canada_ndg | PublicationsCanadaNDG |
-    | easypost_asendia_us_publications_economy | PublicationsEconomy |
-    | easypost_asendia_us_publications_ipa | PublicationsIPA |
-    | easypost_asendia_us_publications_isal | PublicationsISAL |
-    | easypost_asendia_us_publications_priority | PublicationsPriority |
-    | easypost_asendia_us_epaq_elite | ePAQElite |
-    | easypost_asendia_us_epaq_elite_custom | ePAQEliteCustom |
-    | easypost_asendia_us_epaq_elite_dap | ePAQEliteDAP |
-    | easypost_asendia_us_epaq_elite_ddp | ePAQEliteDDP |
-    | easypost_asendia_us_epaq_elite_ddp_oversized | ePAQEliteDDPOversized |
-    | easypost_asendia_us_epaq_elite_dpd | ePAQEliteDPD |
-    | easypost_asendia_us_epaq_elite_direct_access_canada_ddp | ePAQEliteDirectAccessCanadaDDP |
-    | easypost_asendia_us_epaq_elite_oversized | ePAQEliteOversized |
-    | easypost_asendia_us_epaq_plus | ePAQPlus |
-    | easypost_asendia_us_epaq_plus_custom | ePAQPlusCustom |
-    | easypost_asendia_us_epaq_plus_customs_prepaid | ePAQPlusCustomsPrepaid |
-    | easypost_asendia_us_epaq_plus_dap | ePAQPlusDAP |
-    | easypost_asendia_us_epaq_plus_ddp | ePAQPlusDDP |
-    | easypost_asendia_us_epaq_plus_economy | ePAQPlusEconomy |
-    | easypost_asendia_us_epaq_plus_wholesale | ePAQPlusWholesale |
-    | easypost_asendia_us_epaq_pluse_packet | ePAQPlusePacket |
-    | easypost_asendia_us_epaq_pluse_packet_canada_customs_pre_paid | ePAQPlusePacketCanadaCustomsPrePaid |
-    | easypost_asendia_us_epaq_pluse_packet_canada_ddp | ePAQPlusePacketCanadaDDP |
-    | easypost_asendia_us_epaq_returns_domestic | ePAQReturnsDomestic |
-    | easypost_asendia_us_epaq_returns_international | ePAQReturnsInternational |
-    | easypost_asendia_us_epaq_select | ePAQSelect |
-    | easypost_asendia_us_epaq_select_custom | ePAQSelectCustom |
-    | easypost_asendia_us_epaq_select_customs_prepaid_by_shopper | ePAQSelectCustomsPrepaidByShopper |
-    | easypost_asendia_us_epaq_select_dap | ePAQSelectDAP |
-    | easypost_asendia_us_epaq_select_ddp | ePAQSelectDDP |
-    | easypost_asendia_us_epaq_select_ddp_direct_access | ePAQSelectDDPDirectAccess |
-    | easypost_asendia_us_epaq_select_direct_access | ePAQSelectDirectAccess |
-    | easypost_asendia_us_epaq_select_direct_access_canada_ddp | ePAQSelectDirectAccessCanadaDDP |
-    | easypost_asendia_us_epaq_select_economy | ePAQSelectEconomy |
-    | easypost_asendia_us_epaq_select_oversized | ePAQSelectOversized |
-    | easypost_asendia_us_epaq_select_oversized_ddp | ePAQSelectOversizedDDP |
-    | easypost_asendia_us_epaq_select_pmei | ePAQSelectPMEI |
-    | easypost_asendia_us_epaq_select_pmei_canada_customs_pre_paid | ePAQSelectPMEICanadaCustomsPrePaid |
-    | easypost_asendia_us_epaq_select_pmeipc_postage | ePAQSelectPMEIPCPostage |
-    | easypost_asendia_us_epaq_select_pmi | ePAQSelectPMI |
-    | easypost_asendia_us_epaq_select_pmi_canada_customs_prepaid | ePAQSelectPMICanadaCustomsPrepaid |
-    | easypost_asendia_us_epaq_select_pmi_canada_ddp | ePAQSelectPMICanadaDDP |
-    | easypost_asendia_us_epaq_select_pmi_non_presort | ePAQSelectPMINonPresort |
-    | easypost_asendia_us_epaq_select_pmipc_postage | ePAQSelectPMIPCPostage |
-    | easypost_asendia_us_epaq_standard | ePAQStandard |
-    | easypost_asendia_us_epaq_standard_custom | ePAQStandardCustom |
-    | easypost_asendia_us_epaq_standard_economy | ePAQStandardEconomy |
-    | easypost_asendia_us_epaq_standard_ipa | ePAQStandardIPA |
-    | easypost_asendia_us_epaq_standard_isal | ePAQStandardISAL |
-    | easypost_asendia_us_epaq_select_pmei_non_presort | ePaqSelectPMEINonPresort |
-    | easypost_australiapost_express_post | ExpressPost |
-    | easypost_australiapost_express_post_signature | ExpressPostSignature |
-    | easypost_australiapost_parcel_post | ParcelPost |
-    | easypost_australiapost_parcel_post_signature | ParcelPostSignature |
-    | easypost_australiapost_parcel_post_extra | ParcelPostExtra |
-    | easypost_australiapost_parcel_post_wine_plus_signature | ParcelPostWinePlusSignature |
-    | easypost_axlehire_delivery | AxleHireDelivery |
-    | easypost_better_trucks_next_day | NEXT_DAY |
-    | easypost_bond_standard | Standard |
-    | easypost_canadapost_regular_parcel | RegularParcel |
-    | easypost_canadapost_expedited_parcel | ExpeditedParcel |
-    | easypost_canadapost_xpresspost | Xpresspost |
-    | easypost_canadapost_xpresspost_certified | XpresspostCertified |
-    | easypost_canadapost_priority | Priority |
-    | easypost_canadapost_library_books | LibraryBooks |
-    | easypost_canadapost_expedited_parcel_usa | ExpeditedParcelUSA |
-    | easypost_canadapost_priority_worldwide_envelope_usa | PriorityWorldwideEnvelopeUSA |
-    | easypost_canadapost_priority_worldwide_pak_usa | PriorityWorldwidePakUSA |
-    | easypost_canadapost_priority_worldwide_parcel_usa | PriorityWorldwideParcelUSA |
-    | easypost_canadapost_small_packet_usa_air | SmallPacketUSAAir |
-    | easypost_canadapost_tracked_packet_usa | TrackedPacketUSA |
-    | easypost_canadapost_tracked_packet_usalvm | TrackedPacketUSALVM |
-    | easypost_canadapost_xpresspost_usa | XpresspostUSA |
-    | easypost_canadapost_xpresspost_international | XpresspostInternational |
-    | easypost_canadapost_international_parcel_air | InternationalParcelAir |
-    | easypost_canadapost_international_parcel_surface | InternationalParcelSurface |
-    | easypost_canadapost_priority_worldwide_envelope_intl | PriorityWorldwideEnvelopeIntl |
-    | easypost_canadapost_priority_worldwide_pak_intl | PriorityWorldwidePakIntl |
-    | easypost_canadapost_priority_worldwide_parcel_intl | PriorityWorldwideParcelIntl |
-    | easypost_canadapost_small_packet_international_air | SmallPacketInternationalAir |
-    | easypost_canadapost_small_packet_international_surface | SmallPacketInternationalSurface |
-    | easypost_canadapost_tracked_packet_international | TrackedPacketInternational |
-    | easypost_canpar_ground | Ground |
-    | easypost_canpar_select_letter | SelectLetter |
-    | easypost_canpar_select_pak | SelectPak |
-    | easypost_canpar_select | Select |
-    | easypost_canpar_overnight_letter | OvernightLetter |
-    | easypost_canpar_overnight_pak | OvernightPak |
-    | easypost_canpar_overnight | Overnight |
-    | easypost_canpar_select_usa | SelectUSA |
-    | easypost_canpar_usa_pak | USAPak |
-    | easypost_canpar_usa_letter | USALetter |
-    | easypost_canpar_usa | USA |
-    | easypost_canpar_international | International |
-    | easypost_cdl_distribution | DISTRIBUTION |
-    | easypost_cdl_same_day | Same Day |
-    | easypost_courier_express_basic_parcel | BASIC_PARCEL |
-    | easypost_couriersplease_domestic_priority_signature | DomesticPrioritySignature |
-    | easypost_couriersplease_domestic_priority | DomesticPriority |
-    | easypost_couriersplease_domestic_off_peak_signature | DomesticOffPeakSignature |
-    | easypost_couriersplease_domestic_off_peak | DomesticOffPeak |
-    | easypost_couriersplease_gold_domestic_signature | GoldDomesticSignature |
-    | easypost_couriersplease_gold_domestic | GoldDomestic |
-    | easypost_couriersplease_australian_city_express_signature | AustralianCityExpressSignature |
-    | easypost_couriersplease_australian_city_express | AustralianCityExpress |
-    | easypost_couriersplease_domestic_saver_signature | DomesticSaverSignature |
-    | easypost_couriersplease_domestic_saver | DomesticSaver |
-    | easypost_couriersplease_road_express | RoadExpress |
-    | easypost_couriersplease_5_kg_satchel | 5KgSatchel |
-    | easypost_couriersplease_3_kg_satchel | 3KgSatchel |
-    | easypost_couriersplease_1_kg_satchel | 1KgSatchel |
-    | easypost_couriersplease_5_kg_satchel_atl | 5KgSatchelATL |
-    | easypost_couriersplease_3_kg_satchel_atl | 3KgSatchelATL |
-    | easypost_couriersplease_1_kg_satchel_atl | 1KgSatchelATL |
-    | easypost_couriersplease_500_gram_satchel | 500GramSatchel |
-    | easypost_couriersplease_500_gram_satchel_atl | 500GramSatchelATL |
-    | easypost_couriersplease_25_kg_parcel | 25KgParcel |
-    | easypost_couriersplease_10_kg_parcel | 10KgParcel |
-    | easypost_couriersplease_5_kg_parcel | 5KgParcel |
-    | easypost_couriersplease_3_kg_parcel | 3KgParcel |
-    | easypost_couriersplease_1_kg_parcel | 1KgParcel |
-    | easypost_couriersplease_500_gram_parcel | 500GramParcel |
-    | easypost_couriersplease_500_gram_parcel_atl | 500GramParcelATL |
-    | easypost_couriersplease_express_international_priority | ExpressInternationalPriority |
-    | easypost_couriersplease_international_saver | InternationalSaver |
-    | easypost_couriersplease_international_express_import | InternationalExpressImport |
-    | easypost_couriersplease_domestic_tracked | DomesticTracked |
-    | easypost_couriersplease_international_economy | InternationalEconomy |
-    | easypost_couriersplease_international_standard | InternationalStandard |
-    | easypost_couriersplease_international_express | InternationalExpress |
-    | easypost_deutschepost_packet_plus | PacketPlus |
-    | easypost_deutschepost_uk_priority_packet_plus | PriorityPacketPlus |
-    | easypost_deutschepost_uk_priority_packet | PriorityPacket |
-    | easypost_deutschepost_uk_priority_packet_tracked | PriorityPacketTracked |
-    | easypost_deutschepost_uk_business_mail_registered | BusinessMailRegistered |
-    | easypost_deutschepost_uk_standard_packet | StandardPacket |
-    | easypost_deutschepost_uk_business_mail_standard | BusinessMailStandard |
-    | easypost_dhl_ecom_asia_packet | Packet |
-    | easypost_dhl_ecom_asia_parcel_direct | ParcelDirect |
-    | easypost_dhl_ecom_asia_parcel_direct_expedited | ParcelDirectExpedited |
-    | easypost_dhl_ecom_parcel_expedited | DHLParcelExpedited |
-    | easypost_dhl_ecom_parcel_expedited_max | DHLParcelExpeditedMax |
-    | easypost_dhl_ecom_parcel_ground | DHLParcelGround |
-    | easypost_dhl_ecom_bpm_expedited | DHLBPMExpedited |
-    | easypost_dhl_ecom_bpm_ground | DHLBPMGround |
-    | easypost_dhl_ecom_parcel_international_direct | DHLParcelInternationalDirect |
-    | easypost_dhl_ecom_parcel_international_standard | DHLParcelInternationalStandard |
-    | easypost_dhl_ecom_packet_international | DHLPacketInternational |
-    | easypost_dhl_ecom_parcel_international_direct_priority | DHLParcelInternationalDirectPriority |
-    | easypost_dhl_ecom_parcel_international_direct_standard | DHLParcelInternationalDirectStandard |
-    | easypost_dhl_express_break_bulk_economy | BreakBulkEconomy |
-    | easypost_dhl_express_break_bulk_express | BreakBulkExpress |
-    | easypost_dhl_express_domestic_economy_select | DomesticEconomySelect |
-    | easypost_dhl_express_domestic_express | DomesticExpress |
-    | easypost_dhl_express_domestic_express1030 | DomesticExpress1030 |
-    | easypost_dhl_express_domestic_express1200 | DomesticExpress1200 |
-    | easypost_dhl_express_economy_select | EconomySelect |
-    | easypost_dhl_express_economy_select_non_doc | EconomySelectNonDoc |
-    | easypost_dhl_express_euro_pack | EuroPack |
-    | easypost_dhl_express_europack_non_doc | EuropackNonDoc |
-    | easypost_dhl_express_express1030 | Express1030 |
-    | easypost_dhl_express_express1030_non_doc | Express1030NonDoc |
-    | easypost_dhl_express_express1200_non_doc | Express1200NonDoc |
-    | easypost_dhl_express_express1200 | Express1200 |
-    | easypost_dhl_express_express900 | Express900 |
-    | easypost_dhl_express_express900_non_doc | Express900NonDoc |
-    | easypost_dhl_express_express_easy | ExpressEasy |
-    | easypost_dhl_express_express_easy_non_doc | ExpressEasyNonDoc |
-    | easypost_dhl_express_express_envelope | ExpressEnvelope |
-    | easypost_dhl_express_express_worldwide | ExpressWorldwide |
-    | easypost_dhl_express_express_worldwide_b2_c | ExpressWorldwideB2C |
-    | easypost_dhl_express_express_worldwide_b2_c_non_doc | ExpressWorldwideB2CNonDoc |
-    | easypost_dhl_express_express_worldwide_ecx | ExpressWorldwideECX |
-    | easypost_dhl_express_express_worldwide_non_doc | ExpressWorldwideNonDoc |
-    | easypost_dhl_express_freight_worldwide | FreightWorldwide |
-    | easypost_dhl_express_globalmail_business | GlobalmailBusiness |
-    | easypost_dhl_express_jet_line | JetLine |
-    | easypost_dhl_express_jumbo_box | JumboBox |
-    | easypost_dhl_express_logistics_services | LogisticsServices |
-    | easypost_dhl_express_same_day | SameDay |
-    | easypost_dhl_express_secure_line | SecureLine |
-    | easypost_dhl_express_sprint_line | SprintLine |
-    | easypost_dpd_classic | DPDCLASSIC |
-    | easypost_dpd_8_30 | DPD8:30 |
-    | easypost_dpd_10_00 | DPD10:00 |
-    | easypost_dpd_12_00 | DPD12:00 |
-    | easypost_dpd_18_00 | DPD18:00 |
-    | easypost_dpd_express | DPDEXPRESS |
-    | easypost_dpd_parcelletter | DPDPARCELLETTER |
-    | easypost_dpd_parcelletterplus | DPDPARCELLETTERPLUS |
-    | easypost_dpd_internationalmail | DPDINTERNATIONALMAIL |
-    | easypost_dpd_uk_air_express_international_air | AirExpressInternationalAir |
-    | easypost_dpd_uk_air_classic_international_air | AirClassicInternationalAir |
-    | easypost_dpd_uk_parcel_sunday | ParcelSunday |
-    | easypost_dpd_uk_freight_parcel_sunday | FreightParcelSunday |
-    | easypost_dpd_uk_pallet_sunday | PalletSunday |
-    | easypost_dpd_uk_pallet_dpd_classic | PalletDpdClassic |
-    | easypost_dpd_uk_expresspak_dpd_classic | ExpresspakDpdClassic |
-    | easypost_dpd_uk_expresspak_sunday | ExpresspakSunday |
-    | easypost_dpd_uk_parcel_dpd_classic | ParcelDpdClassic |
-    | easypost_dpd_uk_parcel_dpd_two_day | ParcelDpdTwoDay |
-    | easypost_dpd_uk_parcel_dpd_next_day | ParcelDpdNextDay |
-    | easypost_dpd_uk_parcel_dpd12 | ParcelDpd12 |
-    | easypost_dpd_uk_parcel_dpd10 | ParcelDpd10 |
-    | easypost_dpd_uk_parcel_return_to_shop | ParcelReturnToShop |
-    | easypost_dpd_uk_parcel_saturday | ParcelSaturday |
-    | easypost_dpd_uk_parcel_saturday12 | ParcelSaturday12 |
-    | easypost_dpd_uk_parcel_saturday10 | ParcelSaturday10 |
-    | easypost_dpd_uk_parcel_sunday12 | ParcelSunday12 |
-    | easypost_dpd_uk_freight_parcel_dpd_classic | FreightParcelDpdClassic |
-    | easypost_dpd_uk_freight_parcel_sunday12 | FreightParcelSunday12 |
-    | easypost_dpd_uk_expresspak_dpd_next_day | ExpresspakDpdNextDay |
-    | easypost_dpd_uk_expresspak_dpd12 | ExpresspakDpd12 |
-    | easypost_dpd_uk_expresspak_dpd10 | ExpresspakDpd10 |
-    | easypost_dpd_uk_expresspak_saturday | ExpresspakSaturday |
-    | easypost_dpd_uk_expresspak_saturday12 | ExpresspakSaturday12 |
-    | easypost_dpd_uk_expresspak_saturday10 | ExpresspakSaturday10 |
-    | easypost_dpd_uk_expresspak_sunday12 | ExpresspakSunday12 |
-    | easypost_dpd_uk_pallet_sunday12 | PalletSunday12 |
-    | easypost_dpd_uk_pallet_dpd_two_day | PalletDpdTwoDay |
-    | easypost_dpd_uk_pallet_dpd_next_day | PalletDpdNextDay |
-    | easypost_dpd_uk_pallet_dpd12 | PalletDpd12 |
-    | easypost_dpd_uk_pallet_dpd10 | PalletDpd10 |
-    | easypost_dpd_uk_pallet_saturday | PalletSaturday |
-    | easypost_dpd_uk_pallet_saturday12 | PalletSaturday12 |
-    | easypost_dpd_uk_pallet_saturday10 | PalletSaturday10 |
-    | easypost_dpd_uk_freight_parcel_dpd_two_day | FreightParcelDpdTwoDay |
-    | easypost_dpd_uk_freight_parcel_dpd_next_day | FreightParcelDpdNextDay |
-    | easypost_dpd_uk_freight_parcel_dpd12 | FreightParcelDpd12 |
-    | easypost_dpd_uk_freight_parcel_dpd10 | FreightParcelDpd10 |
-    | easypost_dpd_uk_freight_parcel_saturday | FreightParcelSaturday |
-    | easypost_dpd_uk_freight_parcel_saturday12 | FreightParcelSaturday12 |
-    | easypost_dpd_uk_freight_parcel_saturday10 | FreightParcelSaturday10 |
-    | easypost_epost_courier_service_ddp | CourierServiceDDP |
-    | easypost_epost_courier_service_ddu | CourierServiceDDU |
-    | easypost_epost_domestic_economy_parcel | DomesticEconomyParcel |
-    | easypost_epost_domestic_parcel_bpm | DomesticParcelBPM |
-    | easypost_epost_domestic_priority_parcel | DomesticPriorityParcel |
-    | easypost_epost_domestic_priority_parcel_bpm | DomesticPriorityParcelBPM |
-    | easypost_epost_emi_service | EMIService |
-    | easypost_epost_economy_parcel_service | EconomyParcelService |
-    | easypost_epost_ipa_service | IPAService |
-    | easypost_epost_isal_service | ISALService |
-    | easypost_epost_pmi_service | PMIService |
-    | easypost_epost_priority_parcel_ddp | PriorityParcelDDP |
-    | easypost_epost_priority_parcel_ddu | PriorityParcelDDU |
-    | easypost_epost_priority_parcel_delivery_confirmation_ddp | PriorityParcelDeliveryConfirmationDDP |
-    | easypost_epost_priority_parcel_delivery_confirmation_ddu | PriorityParcelDeliveryConfirmationDDU |
-    | easypost_epost_epacket_service | ePacketService |
-    | easypost_estafeta_next_day_by930 | NextDayBy930 |
-    | easypost_estafeta_next_day_by1130 | NextDayBy1130 |
-    | easypost_estafeta_next_day | NextDay |
-    | easypost_estafeta_two_day | TwoDay |
-    | easypost_estafeta_ltl | LTL |
-    | easypost_fastway_parcel | Parcel |
-    | easypost_fastway_satchel | Satchel |
-    | easypost_fedex_ground | FEDEX_GROUND |
-    | easypost_fedex_2_day | FEDEX_2_DAY |
-    | easypost_fedex_2_day_am | FEDEX_2_DAY_AM |
-    | easypost_fedex_express_saver | FEDEX_EXPRESS_SAVER |
-    | easypost_fedex_standard_overnight | STANDARD_OVERNIGHT |
-    | easypost_fedex_first_overnight | FIRST_OVERNIGHT |
-    | easypost_fedex_priority_overnight | PRIORITY_OVERNIGHT |
-    | easypost_fedex_international_economy | INTERNATIONAL_ECONOMY |
-    | easypost_fedex_international_first | INTERNATIONAL_FIRST |
-    | easypost_fedex_international_priority | INTERNATIONAL_PRIORITY |
-    | easypost_fedex_ground_home_delivery | GROUND_HOME_DELIVERY |
-    | easypost_fedex_crossborder_cbec | CBEC |
-    | easypost_fedex_crossborder_cbecl | CBECL |
-    | easypost_fedex_crossborder_cbecp | CBECP |
-    | easypost_fedex_sameday_city_economy_service | EconomyService |
-    | easypost_fedex_sameday_city_standard_service | StandardService |
-    | easypost_fedex_sameday_city_priority_service | PriorityService |
-    | easypost_fedex_sameday_city_last_mile | LastMile |
-    | easypost_fedex_smart_post | SMART_POST |
-    | easypost_globegistics_pmei | PMEI |
-    | easypost_globegistics_ecom_domestic | eComDomestic |
-    | easypost_globegistics_ecom_europe | eComEurope |
-    | easypost_globegistics_ecom_express | eComExpress |
-    | easypost_globegistics_ecom_extra | eComExtra |
-    | easypost_globegistics_ecom_ipa | eComIPA |
-    | easypost_globegistics_ecom_isal | eComISAL |
-    | easypost_globegistics_ecom_pmei_duty_paid | eComPMEIDutyPaid |
-    | easypost_globegistics_ecom_pmi_duty_paid | eComPMIDutyPaid |
-    | easypost_globegistics_ecom_packet | eComPacket |
-    | easypost_globegistics_ecom_packet_ddp | eComPacketDDP |
-    | easypost_globegistics_ecom_priority | eComPriority |
-    | easypost_globegistics_ecom_standard | eComStandard |
-    | easypost_globegistics_ecom_tracked_ddp | eComTrackedDDP |
-    | easypost_globegistics_ecom_tracked_ddu | eComTrackedDDU |
-    | easypost_gso_early_priority_overnight | EarlyPriorityOvernight |
-    | easypost_gso_priority_overnight | PriorityOvernight |
-    | easypost_gso_california_parcel_service | CaliforniaParcelService |
-    | easypost_gso_saturday_delivery_service | SaturdayDeliveryService |
-    | easypost_gso_early_saturday_service | EarlySaturdayService |
-    | easypost_hermes_domestic_delivery | DomesticDelivery |
-    | easypost_hermes_domestic_delivery_signed | DomesticDeliverySigned |
-    | easypost_hermes_international_delivery | InternationalDelivery |
-    | easypost_hermes_international_delivery_signed | InternationalDeliverySigned |
-    | easypost_interlink_air_classic_international_air | InterlinkAirClassicInternationalAir |
-    | easypost_interlink_air_express_international_air | InterlinkAirExpressInternationalAir |
-    | easypost_interlink_expresspak1_by10_30 | InterlinkExpresspak1By10:30 |
-    | easypost_interlink_expresspak1_by12 | InterlinkExpresspak1By12 |
-    | easypost_interlink_expresspak1_next_day | InterlinkExpresspak1NextDay |
-    | easypost_interlink_expresspak1_saturday | InterlinkExpresspak1Saturday |
-    | easypost_interlink_expresspak1_saturday_by10_30 | InterlinkExpresspak1SaturdayBy10:30 |
-    | easypost_interlink_expresspak1_saturday_by12 | InterlinkExpresspak1SaturdayBy12 |
-    | easypost_interlink_expresspak1_sunday | InterlinkExpresspak1Sunday |
-    | easypost_interlink_expresspak1_sunday_by12 | InterlinkExpresspak1SundayBy12 |
-    | easypost_interlink_expresspak5_by10 | InterlinkExpresspak5By10 |
-    | easypost_interlink_expresspak5_by10_30 | InterlinkExpresspak5By10:30 |
-    | easypost_interlink_expresspak5_by12 | InterlinkExpresspak5By12 |
-    | easypost_interlink_expresspak5_next_day | InterlinkExpresspak5NextDay |
-    | easypost_interlink_expresspak5_saturday | InterlinkExpresspak5Saturday |
-    | easypost_interlink_expresspak5_saturday_by10 | InterlinkExpresspak5SaturdayBy10 |
-    | easypost_interlink_expresspak5_saturday_by10_30 | InterlinkExpresspak5SaturdayBy10:30 |
-    | easypost_interlink_expresspak5_saturday_by12 | InterlinkExpresspak5SaturdayBy12 |
-    | easypost_interlink_expresspak5_sunday | InterlinkExpresspak5Sunday |
-    | easypost_interlink_expresspak5_sunday_by12 | InterlinkExpresspak5SundayBy12 |
-    | easypost_interlink_freight_by10 | InterlinkFreightBy10 |
-    | easypost_interlink_freight_by12 | InterlinkFreightBy12 |
-    | easypost_interlink_freight_next_day | InterlinkFreightNextDay |
-    | easypost_interlink_freight_saturday | InterlinkFreightSaturday |
-    | easypost_interlink_freight_saturday_by10 | InterlinkFreightSaturdayBy10 |
-    | easypost_interlink_freight_saturday_by12 | InterlinkFreightSaturdayBy12 |
-    | easypost_interlink_freight_sunday | InterlinkFreightSunday |
-    | easypost_interlink_freight_sunday_by12 | InterlinkFreightSundayBy12 |
-    | easypost_interlink_parcel_by10 | InterlinkParcelBy10 |
-    | easypost_interlink_parcel_by10_30 | InterlinkParcelBy10:30 |
-    | easypost_interlink_parcel_by12 | InterlinkParcelBy12 |
-    | easypost_interlink_parcel_dpd_europe_by_road | InterlinkParcelDpdEuropeByRoad |
-    | easypost_interlink_parcel_next_day | InterlinkParcelNextDay |
-    | easypost_interlink_parcel_return | InterlinkParcelReturn |
-    | easypost_interlink_parcel_return_to_shop | InterlinkParcelReturnToShop |
-    | easypost_interlink_parcel_saturday | InterlinkParcelSaturday |
-    | easypost_interlink_parcel_saturday_by10 | InterlinkParcelSaturdayBy10 |
-    | easypost_interlink_parcel_saturday_by10_30 | InterlinkParcelSaturdayBy10:30 |
-    | easypost_interlink_parcel_saturday_by12 | InterlinkParcelSaturdayBy12 |
-    | easypost_interlink_parcel_ship_to_shop | InterlinkParcelShipToShop |
-    | easypost_interlink_parcel_sunday | InterlinkParcelSunday |
-    | easypost_interlink_parcel_sunday_by12 | InterlinkParcelSundayBy12 |
-    | easypost_interlink_parcel_two_day | InterlinkParcelTwoDay |
-    | easypost_interlink_pickup_parcel_dpd_europe_by_road | InterlinkPickupParcelDpdEuropeByRoad |
-    | easypost_lasership_weekend | Weekend |
-    | easypost_loomis_ground | LoomisGround |
-    | easypost_loomis_express1800 | LoomisExpress1800 |
-    | easypost_loomis_express1200 | LoomisExpress1200 |
-    | easypost_loomis_express900 | LoomisExpress900 |
-    | easypost_lso_ground_early | GroundEarly |
-    | easypost_lso_ground_basic | GroundBasic |
-    | easypost_lso_priority_basic | PriorityBasic |
-    | easypost_lso_priority_early | PriorityEarly |
-    | easypost_lso_priority_saturday | PrioritySaturday |
-    | easypost_lso_priority2nd_day | Priority2ndDay |
-    | easypost_newgistics_parcel_select | ParcelSelect |
-    | easypost_newgistics_parcel_select_lightweight | ParcelSelectLightweight |
-    | easypost_newgistics_express | Express |
-    | easypost_newgistics_first_class_mail | FirstClassMail |
-    | easypost_newgistics_priority_mail | PriorityMail |
-    | easypost_newgistics_bound_printed_matter | BoundPrintedMatter |
-    | easypost_ontrac_sunrise | Sunrise |
-    | easypost_ontrac_gold | Gold |
-    | easypost_ontrac_on_trac_ground | OnTracGround |
-    | easypost_ontrac_palletized_freight | PalletizedFreight |
-    | easypost_osm_first | First |
-    | easypost_osm_expedited | Expedited |
-    | easypost_osm_bpm | BPM |
-    | easypost_osm_media_mail | MediaMail |
-    | easypost_osm_marketing_parcel | MarketingParcel |
-    | easypost_osm_marketing_parcel_tracked | MarketingParcelTracked |
-    | easypost_parcll_economy_west | Economy West |
-    | easypost_parcll_economy_east | Economy East |
-    | easypost_parcll_economy_central | Economy Central |
-    | easypost_parcll_economy_northeast | Economy Northeast |
-    | easypost_parcll_economy_south | Economy South |
-    | easypost_parcll_expedited_west | Expedited West |
-    | easypost_parcll_expedited_northeast | Expedited Northeast |
-    | easypost_parcll_regional_west | Regional West |
-    | easypost_parcll_regional_east | Regional East |
-    | easypost_parcll_regional_central | Regional Central |
-    | easypost_parcll_regional_northeast | Regional Northeast |
-    | easypost_parcll_regional_south | Regional South |
-    | easypost_parcll_us_to_canada_economy_west | US to Canada Economy West |
-    | easypost_parcll_us_to_canada_economy_central | US to Canada Economy Central |
-    | easypost_parcll_us_to_canada_economy_northeast | US to Canada Economy Northeast |
-    | easypost_parcll_us_to_europe_economy_west | US to Europe Economy West |
-    | easypost_parcll_us_to_europe_economy_northeast | US to Europe Economy Northeast |
-    | easypost_purolator_express | PurolatorExpress |
-    | easypost_purolator_express12_pm | PurolatorExpress12PM |
-    | easypost_purolator_express_pack12_pm | PurolatorExpressPack12PM |
-    | easypost_purolator_express_box12_pm | PurolatorExpressBox12PM |
-    | easypost_purolator_express_envelope12_pm | PurolatorExpressEnvelope12PM |
-    | easypost_purolator_express1030_am | PurolatorExpress1030AM |
-    | easypost_purolator_express9_am | PurolatorExpress9AM |
-    | easypost_purolator_express_box | PurolatorExpressBox |
-    | easypost_purolator_express_box1030_am | PurolatorExpressBox1030AM |
-    | easypost_purolator_express_box9_am | PurolatorExpressBox9AM |
-    | easypost_purolator_express_box_evening | PurolatorExpressBoxEvening |
-    | easypost_purolator_express_box_international | PurolatorExpressBoxInternational |
-    | easypost_purolator_express_box_international1030_am | PurolatorExpressBoxInternational1030AM |
-    | easypost_purolator_express_box_international1200 | PurolatorExpressBoxInternational1200 |
-    | easypost_purolator_express_box_international9_am | PurolatorExpressBoxInternational9AM |
-    | easypost_purolator_express_box_us | PurolatorExpressBoxUS |
-    | easypost_purolator_express_box_us1030_am | PurolatorExpressBoxUS1030AM |
-    | easypost_purolator_express_box_us1200 | PurolatorExpressBoxUS1200 |
-    | easypost_purolator_express_box_us9_am | PurolatorExpressBoxUS9AM |
-    | easypost_purolator_express_envelope | PurolatorExpressEnvelope |
-    | easypost_purolator_express_envelope1030_am | PurolatorExpressEnvelope1030AM |
-    | easypost_purolator_express_envelope9_am | PurolatorExpressEnvelope9AM |
-    | easypost_purolator_express_envelope_evening | PurolatorExpressEnvelopeEvening |
-    | easypost_purolator_express_envelope_international | PurolatorExpressEnvelopeInternational |
-    | easypost_purolator_express_envelope_international1030_am | PurolatorExpressEnvelopeInternational1030AM |
-    | easypost_purolator_express_envelope_international1200 | PurolatorExpressEnvelopeInternational1200 |
-    | easypost_purolator_express_envelope_international9_am | PurolatorExpressEnvelopeInternational9AM |
-    | easypost_purolator_express_envelope_us | PurolatorExpressEnvelopeUS |
-    | easypost_purolator_express_envelope_us1030_am | PurolatorExpressEnvelopeUS1030AM |
-    | easypost_purolator_express_envelope_us1200 | PurolatorExpressEnvelopeUS1200 |
-    | easypost_purolator_express_envelope_us9_am | PurolatorExpressEnvelopeUS9AM |
-    | easypost_purolator_express_evening | PurolatorExpressEvening |
-    | easypost_purolator_express_international | PurolatorExpressInternational |
-    | easypost_purolator_express_international1030_am | PurolatorExpressInternational1030AM |
-    | easypost_purolator_express_international1200 | PurolatorExpressInternational1200 |
-    | easypost_purolator_express_international9_am | PurolatorExpressInternational9AM |
-    | easypost_purolator_express_pack | PurolatorExpressPack |
-    | easypost_purolator_express_pack1030_am | PurolatorExpressPack1030AM |
-    | easypost_purolator_express_pack9_am | PurolatorExpressPack9AM |
-    | easypost_purolator_express_pack_evening | PurolatorExpressPackEvening |
-    | easypost_purolator_express_pack_international | PurolatorExpressPackInternational |
-    | easypost_purolator_express_pack_international1030_am | PurolatorExpressPackInternational1030AM |
-    | easypost_purolator_express_pack_international1200 | PurolatorExpressPackInternational1200 |
-    | easypost_purolator_express_pack_international9_am | PurolatorExpressPackInternational9AM |
-    | easypost_purolator_express_pack_us | PurolatorExpressPackUS |
-    | easypost_purolator_express_pack_us1030_am | PurolatorExpressPackUS1030AM |
-    | easypost_purolator_express_pack_us1200 | PurolatorExpressPackUS1200 |
-    | easypost_purolator_express_pack_us9_am | PurolatorExpressPackUS9AM |
-    | easypost_purolator_express_us | PurolatorExpressUS |
-    | easypost_purolator_express_us1030_am | PurolatorExpressUS1030AM |
-    | easypost_purolator_express_us1200 | PurolatorExpressUS1200 |
-    | easypost_purolator_express_us9_am | PurolatorExpressUS9AM |
-    | easypost_purolator_ground | PurolatorGround |
-    | easypost_purolator_ground1030_am | PurolatorGround1030AM |
-    | easypost_purolator_ground9_am | PurolatorGround9AM |
-    | easypost_purolator_ground_distribution | PurolatorGroundDistribution |
-    | easypost_purolator_ground_evening | PurolatorGroundEvening |
-    | easypost_purolator_ground_regional | PurolatorGroundRegional |
-    | easypost_purolator_ground_us | PurolatorGroundUS |
-    | easypost_royalmail_international_signed | InternationalSigned |
-    | easypost_royalmail_international_tracked | InternationalTracked |
-    | easypost_royalmail_international_tracked_and_signed | InternationalTrackedAndSigned |
-    | easypost_royalmail_1st_class | 1stClass |
-    | easypost_royalmail_1st_class_signed_for | 1stClassSignedFor |
-    | easypost_royalmail_2nd_class | 2ndClass |
-    | easypost_royalmail_2nd_class_signed_for | 2ndClassSignedFor |
-    | easypost_royalmail_royal_mail24 | RoyalMail24 |
-    | easypost_royalmail_royal_mail24_signed_for | RoyalMail24SignedFor |
-    | easypost_royalmail_royal_mail48 | RoyalMail48 |
-    | easypost_royalmail_royal_mail48_signed_for | RoyalMail48SignedFor |
-    | easypost_royalmail_special_delivery_guaranteed1pm | SpecialDeliveryGuaranteed1pm |
-    | easypost_royalmail_special_delivery_guaranteed9am | SpecialDeliveryGuaranteed9am |
-    | easypost_royalmail_standard_letter1st_class | StandardLetter1stClass |
-    | easypost_royalmail_standard_letter1st_class_signed_for | StandardLetter1stClassSignedFor |
-    | easypost_royalmail_standard_letter2nd_class | StandardLetter2ndClass |
-    | easypost_royalmail_standard_letter2nd_class_signed_for | StandardLetter2ndClassSignedFor |
-    | easypost_royalmail_tracked24 | Tracked24 |
-    | easypost_royalmail_tracked24_high_volume | Tracked24HighVolume |
-    | easypost_royalmail_tracked24_high_volume_signature | Tracked24HighVolumeSignature |
-    | easypost_royalmail_tracked24_signature | Tracked24Signature |
-    | easypost_royalmail_tracked48 | Tracked48 |
-    | easypost_royalmail_tracked48_high_volume | Tracked48HighVolume |
-    | easypost_royalmail_tracked48_high_volume_signature | Tracked48HighVolumeSignature |
-    | easypost_royalmail_tracked48_signature | Tracked48Signature |
-    | easypost_seko_ecommerce_standard_tracked | eCommerce Standard Tracked |
-    | easypost_seko_ecommerce_express_tracked | eCommerce Express Tracked |
-    | easypost_seko_domestic_express | Domestic Express |
-    | easypost_seko_domestic_standard | Domestic Standard |
-    | easypost_sendle_easy | Easy |
-    | easypost_sendle_pro | Pro |
-    | easypost_sendle_plus | Plus |
-    | easypost_sfexpress_international_standard_express_doc | International Standard Express - Doc |
-    | easypost_sfexpress_international_standard_express_parcel | International Standard Express - Parcel |
-    | easypost_sfexpress_international_economy_express_pilot | International Economy Express - Pilot |
-    | easypost_sfexpress_international_economy_express_doc | International Economy Express - Doc |
-    | easypost_speedee_delivery | SpeeDeeDelivery |
-    | easypost_startrack_express | StartrackExpress |
-    | easypost_startrack_premium | StartrackPremium |
-    | easypost_startrack_fixed_price_premium | StartrackFixedPricePremium |
-    | easypost_tforce_same_day_white_glove | SameDayWhiteGlove |
-    | easypost_tforce_next_day_white_glove | NextDayWhiteGlove |
-    | easypost_uds_delivery_service | DeliveryService |
-    | easypost_ups_standard | UPSStandard |
-    | easypost_ups_saver | UPSSaver |
-    | easypost_ups_express_plus | ExpressPlus |
-    | easypost_ups_next_day_air | NextDayAir |
-    | easypost_ups_next_day_air_saver | NextDayAirSaver |
-    | easypost_ups_next_day_air_early_am | NextDayAirEarlyAM |
-    | easypost_ups_2nd_day_air | 2ndDayAir |
-    | easypost_ups_2nd_day_air_am | 2ndDayAirAM |
-    | easypost_ups_3_day_select | 3DaySelect |
-    | easypost_ups_mail_expedited_mail_innovations | ExpeditedMailInnovations |
-    | easypost_ups_mail_priority_mail_innovations | PriorityMailInnovations |
-    | easypost_ups_mail_economy_mail_innovations | EconomyMailInnovations |
-    | easypost_usps_library_mail | LibraryMail |
-    | easypost_usps_first_class_mail_international | FirstClassMailInternational |
-    | easypost_usps_first_class_package_international_service | FirstClassPackageInternationalService |
-    | easypost_usps_priority_mail_international | PriorityMailInternational |
-    | easypost_usps_express_mail_international | ExpressMailInternational |
-    | easypost_veho_next_day | nextDay |
-    | easypost_veho_same_day | sameDay |
-
-    ### Easyship
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | easyship_aramex_parcel | Parcel |
-    | easyship_sfexpress_domestic | Domestic |
-    | easyship_hkpost_speedpost | Speedpost |
-    | easyship_hkpost_air_mail_tracking | Air Mail Tracking |
-    | easyship_hkpost_eexpress | EExpress |
-    | easyship_hkpost_air_parcel | Air Parcel  |
-    | easyship_sfexpress_mail | Mail  |
-    | easyship_hkpost_local_parcel | Local Parcel |
-    | easyship_ups_saver_net_battery | SaverNet Battery |
-    | easyship_ups_worldwide_saver | Worldwide Saver® |
-    | easyship_hkpost_air_parcel_xp | Air Parcel XP |
-    | easyship_singpost_airmail | Airmail |
-    | easyship_simplypost_express | Express |
-    | easyship_singpost_e_pack | ePack |
-    | easyship_usps_priority_mail_express | Priority Mail Express |
-    | easyship_usps_first_class_international | First Class International |
-    | easyship_usps_priority_mail_international_express | Priority Mail International Express |
-    | easyship_usps_priority_mail_international | Priority Mail International |
-    | easyship_fedex_international_priority | InternationalPriority |
-    | easyship_usps_ground_advantage | GroundAdvantage |
-    | easyship_usps_priority_mail | PriorityMail |
-    | easyship_ups_worldwide_express | Worldwide Express® |
-    | easyship_ups_ground | Ground |
-    | easyship_ups_worldwide_expedited | Worldwide Expedited® |
-    | easyship_fedex_international_economy | International Economy® |
-    | easyship_fedex_priority_overnight | Priority Overnight® |
-    | easyship_fedex_standard_overnight | Standard Overnight® |
-    | easyship_fedex_2_day_a_m | 2Day® A.M. |
-    | easyship_fedex_2_day | 2Day® |
-    | easyship_fedex_express_saver | Express Saver® |
-    | easyship_ups_next_day_air | Next Day Air® |
-    | easyship_ups_2nd_day_air | 2nd Day Air® |
-    | easyship_ups_3_day_select | 3DaySelect |
-    | easyship_ups_standard | Standard |
-    | easyship_usps_media | Media |
-    | easyship_sfexpress_standard_express | Standard Express |
-    | easyship_sfexpress_economy_express | Economy Express |
-    | easyship_global_post_global_post_economy | GlobalPost Economy |
-    | easyship_global_post_global_post_priority | GlobalPost Priority |
-    | easyship_singpost_speed_post_priority | SpeedPost Priority |
-    | easyship_skypostal_standard_private_delivery | Standard Private Delivery |
-    | easyship_tnt_1000_express | 1000Express |
-    | easyship_toll_express_parcel | Express Parcel |
-    | easyship_sendle_premium_international | Premium International |
-    | easyship_sendle_premium_domestic | PremiumDomestic |
-    | easyship_sendle_pro_domestic | Pro Domestic |
-    | easyship_quantium_e_pac | ePac |
-    | easyship_usps_pm_flat_rate | PM Flat Rate |
-    | easyship_usps_pmi_flat_rate | PMI Flat Rate |
-    | easyship_quantium_mail | Mail |
-    | easyship_quantium_international_mail | International Mail |
-    | easyship_apc_parcel_connect_expedited | ParcelConnect Expedited |
-    | easyship_aramex_epx | EPX |
-    | easyship_tnt_road_express | Road Express |
-    | easyship_tnt_overnight | Overnight |
-    | easyship_usps_pme_flat_rate | PME Flat Rate |
-    | easyship_usps_pmei_flat_rate | PMEI Flat Rate |
-    | easyship_easyship_cdek_russia | CDEK Russia |
-    | easyship_usps_pmei_flat_rate_padded_envelope | PMEI Flat Rate Padded Envelope |
-    | easyship_easyship_mate_bike_shipping_services | Mate Bike Shipping Services |
-    | easyship_dhl_express_documents | Documents |
-    | easyship_evri_uk_home_delivery | UK_HomeDelivery |
-    | easyship_evri_home_delivery | HomeDelivery |
-    | easyship_dpd_next_day | NextDay |
-    | easyship_dpd_classic_parcel | ClassicParcel |
-    | easyship_dpd_classic_expresspak | ClassicExpresspak |
-    | easyship_dpd_air_classic | AirClassic |
-    | easyship_singpost_speed_post_express | SpeedPostExpress |
-    | easyship_ups_expedited | Expedited |
-    | easyship_tnt_0900_express | 0900Express |
-    | easyship_tnt_1200_express | 1200Express |
-    | easyship_canadapost_domestic_regular_parcel | Domestic Regular Parcel |
-    | easyship_canadapost_domestic_expedited_parcel | Domestic Expedited Parcel |
-    | easyship_canadapost_domestic_xpresspost_domestic | Domestic Xpresspost Domestic |
-    | easyship_canadapost_domestic_priority | Domestic Priority |
-    | easyship_canadapost_usa_small_packet_air | USA Small Packet Air |
-    | easyship_canadapost_usa_expedited_parcel | USA Expedited Parcel |
-    | easyship_canadapost_usa_tracked_parcel | USA Tracked Parcel |
-    | easyship_canadapost_usa_xpresspost | USA Xpresspost |
-    | easyship_canadapost_international_xpresspost | International Xpresspost |
-    | easyship_canadapost_international_small_packet_air | International Small Packet Air |
-    | easyship_canadapost_international_tracked_packet | International Tracked Packet |
-    | easyship_canadapost_international_small_packet_surface | International Small Packet Surface |
-    | easyship_canadapost_international_parcel_surface | International Parcel Surface |
-    | easyship_canadapost_international_parcel_air | International Parcel Air |
-    | easyship_couriersplease_atl | ATL |
-    | easyship_couriersplease_signature | Signature |
-    | easyship_canpar_international | International |
-    | easyship_canpar_usa | USA |
-    | easyship_canpar_select_usa | Select USA |
-    | easyship_canpar_usa_pak | USA Pak |
-    | easyship_canpar_overnight_pak | Overnight Pak |
-    | easyship_canpar_select_pak | Select Pak |
-    | easyship_canpar_select | Select |
-    | easyship_ups_express_saver | ExpressSaver |
-    | easyship_ebay_send_sf_express_economy_express | SF Express Economy Express |
-    | easyship_ups_worldwide_express_plus | Worldwide Express Plus® |
-    | easyship_quantium_intl_priority | IntlPriority |
-    | easyship_ups_next_day_air_early | Next Day Air® Early |
-    | easyship_ups_next_day_air_saver | Next Day Air Saver® |
-    | easyship_ups_2nd_day_air_a_m | 2nd Day Air® A.M. |
-    | easyship_fedex_home_delivery | Home Delivery® |
-    | easyship_asendia_country_tracked | CountryTracked |
-    | easyship_asendia_fully_tracked | FullyTracked |
-    | easyship_dhl_express_express_dg | ExpressDG |
-    | easyship_fedex_international_priority_dg | InternationalPriorityDG |
-    | easyship_colissimo_expert | Expert |
-    | easyship_colissimo_access | Access |
-    | easyship_mondialrelay_international_home_delivery | InternationalHomeDelivery |
-    | easyship_fedex_economy | Economy |
-    | easyship_dhl_express_express1200 | Express1200 |
-    | easyship_dhl_express_express0900 | Express0900 |
-    | easyship_dhl_express_express1800 | Express1800 |
-    | easyship_dhl_express_express_worldwide | ExpressWorldwide |
-    | easyship_dhl_express_economy_select | EconomySelect |
-    | easyship_dhl_express_express1030_international | Express1030International |
-    | easyship_dhl_express_domestic_express0900 | DomesticExpress0900 |
-    | easyship_dhl_express_domestic_express1200 | DomesticExpress1200 |
-    | easyship_evri_lightand_large | LightandLarge |
-    | easyship_ninjavan_standard_deliveries | Standard Deliveries |
-    | easyship_couriersplease_parcel_tier2 | ParcelTier2 |
-    | easyship_skypostal_postal_packet_standard | Postal Packet Standard |
-    | easyship_easyshipdemo_basic | Basic |
-    | easyship_easyshipdemo_tracked | Tracked |
-    | easyship_easyshipdemo_battery | Battery |
-    | easyship_dhl_express_domestic_express | DomesticExpress |
-    | easyship_fedex_smart_post | SmartPost |
-    | easyship_fedex_international_connect_plus | InternationalConnectPlus |
-    | easyship_ups_saver_net | SaverNet |
-    | easyship_chronopost_chrono_classic | ChronoClassic |
-    | easyship_chronopost_chrono_express | ChronoExpress |
-    | easyship_chronopost_chrono10 | Chrono10 |
-    | easyship_chronopost_chrono13 | Chrono13 |
-    | easyship_chronopost_chrono18 | Chrono18 |
-    | easyship_omniparcel_parcel_expedited | Parcel Expedited |
-    | easyship_omniparcel_parcel_expedited_plus | Parcel Expedited Plus |
-    | easyship_evri_home_delivery_domestic | HomeDeliveryDomestic |
-    | easyship_evri_home_domestic_postable | HomeDomesticPostable |
-    | easyship_skypostal_packet_express | PacketExpress |
-    | easyship_parcelforce_express48_large | Express48Large |
-    | easyship_parcelforce_express24 | Express24 |
-    | easyship_parcelforce_express1000 | Express1000 |
-    | easyship_parcelforce_express_am | ExpressAM |
-    | easyship_parcelforce_express48 | Express48 |
-    | easyship_parcelforce_euro_economy | EuroEconomy |
-    | easyship_parcelforce_global_priority | GlobalPriority |
-    | easyship_fedex_cross_border_trakpak_worldwide_hermes | TrakpakWorldwideHermes |
-    | easyship_fedex_cross_border_trakpak_worldwide | TrakpakWorldwide |
-    | easyship_evri_home_domestic_postable_next_day | HomeDomesticPostableNextDay |
-    | easyship_dpd_express_pak_next_day | ExpressPakNextDay |
-    | easyship_dpd_classic_express_pak | ClassicExpressPak |
-    | easyship_evri_light_and_large | LightAndLarge |
-    | easyship_evri_home_delivery_domestic_next_day | Home Delivery Domestic NextDay |
-    | easyship_evri_home_delivery_eu | HomeDeliveryEU |
-    | easyship_asendia_epaq_plus | EpaqPlus |
-    | easyship_asendia_epaq_select | EpaqSelect |
-    | easyship_usps_lightweight_standard | LightweightStandard |
-    | easyship_usps_lightweight_economy | LightweightEconomy |
-    | easyship_ups_domestic_express_saver | DomesticExpressSaver |
-    | easyship_apg_e_packet | ePacket |
-    | easyship_apg_e_packet_plus | ePacketPlus |
-    | easyship_couriersplease_ecom_base_kilo | EComBaseKilo |
-    | easyship_couriersplease_stdatlbase_kilo | STDATLBaseKilo |
-    | easyship_nz_post_international_courier | InternationalCourier |
-    | easyship_nz_post_air_small_parcel | AirSmallParcel |
-    | easyship_nz_post_tracked_air_satchel | TrackedAirSatchel |
-    | easyship_nz_post_economy_parcel | Economy Parcel |
-    | easyship_nz_post_parcel_local | ParcelLocal |
-    | easyship_dhl_express_express_domestic | ExpressDomestic |
-    | easyship_alliedexpress_roadexpress | Roadexpress |
-    | easyship_flatexportrate_asendiae_paqselect | AsendiaePAQSelect |
-    | easyship_flatexportrate_asendia_country_tracked | AsendiaCountryTracked |
-    | easyship_singpost_nsaver | NSaver |
-    | easyship_colisprive_home | Home |
-    | easyship_osm_domestic_parcel | Domestic Parcel |
-    | easyship_malca_amit_door_to_door | Door To Door |
-    | easyship_ninjavan_next_day_deliveries | Next Day Deliveries |
-    | easyship_asendia_e_paqselect | ePAQSelect |
-    | easyship_dpd_classic | Classic |
-    | easyship_usps_priority_mail_signature | PriorityMailSignature |
-    | easyship_bringer_packet_standard | PacketStandard |
-    | easyship_bringer_prime | Prime |
-    | easyship_orangeds_expedited_ddp | ExpeditedDDP |
-    | easyship_orangeds_expedited_ddu | ExpeditedDDU |
-    | easyship_sendle_preferred | Preferred |
-    | easyship_ups_ground_saver | GroundSaver |
-    | easyship_ups_upsground_saver_us | UPSGroundSaverUS |
-    | easyship_passport_priority_delcon_dduewr | PriorityDelconDDUEWR |
-    | easyship_passport_priority_delcon_ddpewr | PriorityDelconDDPEWR |
-    | easyship_bringer_tracked_parcel | TrackedParcel |
-    | easyship_ups_express_early | ExpressEarly |
-    | easyship_ups_wolrdwide_express | WolrdwideExpress |
-
-    ### eShipper
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | eshipper_aramex_economy_document_express | eshipper_aramex_economy_document_express |
-    | eshipper_aramex_economy_parcel_express | eshipper_aramex_economy_parcel_express |
-    | eshipper_aramex_priority_letter_express | eshipper_aramex_priority_letter_express |
-    | eshipper_aramex_priority_parcel_express | eshipper_aramex_priority_parcel_express |
-    | eshipper_canadapost_air_parcel_intl | eshipper_canadapost_air_parcel_intl |
-    | eshipper_canadapost_expedited | eshipper_canadapost_expedited |
-    | eshipper_canadapost_expedited_parcel_usa | eshipper_canadapost_expedited_parcel_usa |
-    | eshipper_canadapost_priority_courier | eshipper_canadapost_priority_courier |
-    | eshipper_canadapost_regular | eshipper_canadapost_regular |
-    | eshipper_canadapost_small_packet | eshipper_canadapost_small_packet |
-    | eshipper_canadapost_small_packet_international_air | eshipper_canadapost_small_packet_international_air |
-    | eshipper_canadapost_small_packet_international_surface | eshipper_canadapost_small_packet_international_surface |
-    | eshipper_canadapost_surface_parcel_intl | eshipper_canadapost_surface_parcel_intl |
-    | eshipper_canadapost_xpress_post | eshipper_canadapost_xpress_post |
-    | eshipper_canadapost_xpress_post_intl | eshipper_canadapost_xpress_post_intl |
-    | eshipper_canadapost_xpress_post_usa | eshipper_canadapost_xpress_post_usa |
-    | eshipper_canpar_express_letter | eshipper_canpar_express_letter |
-    | eshipper_canpar_express_pak | eshipper_canpar_express_pak |
-    | eshipper_canpar_express_parcel | eshipper_canpar_express_parcel |
-    | eshipper_canpar_ground | eshipper_canpar_ground |
-    | eshipper_canpar_international | eshipper_canpar_international |
-    | eshipper_canpar_select_letter | eshipper_canpar_select_letter |
-    | eshipper_canpar_select_pak | eshipper_canpar_select_pak |
-    | eshipper_canpar_select_parcel | eshipper_canpar_select_parcel |
-    | eshipper_canpar_usa | eshipper_canpar_usa |
-    | eshipper_canpar_usa_select_letter | eshipper_canpar_usa_select_letter |
-    | eshipper_canpar_usa_select_pak | eshipper_canpar_usa_select_pak |
-    | eshipper_canpar_usa_select_parcel | eshipper_canpar_usa_select_parcel |
-    | eshipper_cpx_canada_post | eshipper_cpx_canada_post |
-    | eshipper_day_ross_ltl | eshipper_day_ross_ltl |
-    | eshipper_dhl_ground | eshipper_dhl_ground |
-    | eshipper_dhl_economy_select | eshipper_dhl_economy_select |
-    | eshipper_dhl_esi_export | eshipper_dhl_esi_export |
-    | eshipper_dhl_express_1030am | eshipper_dhl_express_1030am |
-    | eshipper_dhl_express_12pm | eshipper_dhl_express_12pm |
-    | eshipper_dhl_express_9am | eshipper_dhl_express_9am |
-    | eshipper_dhl_express_envelope | eshipper_dhl_express_envelope |
-    | eshipper_dhl_express_worldwide | eshipper_dhl_express_worldwide |
-    | eshipper_dhl_import_express | eshipper_dhl_import_express |
-    | eshipper_dhl_import_express_12pm | eshipper_dhl_import_express_12pm |
-    | eshipper_dhl_import_express_9am | eshipper_dhl_import_express_9am |
-    | eshipper_apex_v | eshipper_apex_v |
-    | eshipper_apex_trucking | eshipper_apex_trucking |
-    | eshipper_apex_trucking_v | eshipper_apex_trucking_v |
-    | eshipper_fastfrate_rail | eshipper_fastfrate_rail |
-    | eshipper_kindersley_expedited | eshipper_kindersley_expedited |
-    | eshipper_kindersley_rail | eshipper_kindersley_rail |
-    | eshipper_kindersley_regular | eshipper_kindersley_regular |
-    | eshipper_kindersley_road | eshipper_kindersley_road |
-    | eshipper_kingsway_road | eshipper_kingsway_road |
-    | eshipper_m_o_eastbound | eshipper_m_o_eastbound |
-    | eshipper_mo_rail | eshipper_mo_rail |
-    | eshipper_national_fastfreight_rail | eshipper_national_fastfreight_rail |
-    | eshipper_national_fastfreight_road | eshipper_national_fastfreight_road |
-    | eshipper_vitran_rail | eshipper_vitran_rail |
-    | eshipper_vitran_road | eshipper_vitran_road |
-    | eshipper_western_canada_rail | eshipper_western_canada_rail |
-    | eshipper_fedex_2day_freight | eshipper_fedex_2day_freight |
-    | eshipper_fedex_3day_freight | eshipper_fedex_3day_freight |
-    | eshipper_fedex_2nd_day | eshipper_fedex_2nd_day |
-    | eshipper_fedex_economy | eshipper_fedex_economy |
-    | eshipper_fedex_first_overnight | eshipper_fedex_first_overnight |
-    | eshipper_fedex_ground | eshipper_fedex_ground |
-    | eshipper_fedex_ground_us | eshipper_fedex_ground_us |
-    | eshipper_fedex_international_priority | eshipper_fedex_international_priority |
-    | eshipper_fedex_international_priority_express | eshipper_fedex_international_priority_express |
-    | eshipper_fedex_intl_economy | eshipper_fedex_intl_economy |
-    | eshipper_fedex_intl_economy_freight | eshipper_fedex_intl_economy_freight |
-    | eshipper_fedex_intl_priority | eshipper_fedex_intl_priority |
-    | eshipper_fedex_intl_priority_express | eshipper_fedex_intl_priority_express |
-    | eshipper_fedex_intl_priority_freight | eshipper_fedex_intl_priority_freight |
-    | eshipper_fedex_priority | eshipper_fedex_priority |
-    | eshipper_fedex_standard_overnight | eshipper_fedex_standard_overnight |
-    | eshipper_flash_bird_ground | eshipper_flash_bird_ground |
-    | eshipper_fleet_optics_ground | eshipper_fleet_optics_ground |
-    | eshipper_project44_a_duie_pyle | eshipper_project44_a_duie_pyle |
-    | eshipper_project44_aaa_cooper_transportation | eshipper_project44_aaa_cooper_transportation |
-    | eshipper_project44_aberdeen_express | eshipper_project44_aberdeen_express |
-    | eshipper_project44_abfs | eshipper_project44_abfs |
-    | eshipper_project44_averitt_express | eshipper_project44_averitt_express |
-    | eshipper_project44_brown_transfer_company | eshipper_project44_brown_transfer_company |
-    | eshipper_project44_central_freight_lines | eshipper_project44_central_freight_lines |
-    | eshipper_project44_central_transport | eshipper_project44_central_transport |
-    | eshipper_project44_chicago_suburban_express | eshipper_project44_chicago_suburban_express |
-    | eshipper_project44_clear_lane_freight | eshipper_project44_clear_lane_freight |
-    | eshipper_project44_con_way_freight | eshipper_project44_con_way_freight |
-    | eshipper_project44_crosscountry_courier | eshipper_project44_crosscountry_courier |
-    | eshipper_project44_day_ross | eshipper_project44_day_ross |
-    | eshipper_project44_day_ross_v | eshipper_project44_day_ross_v |
-    | eshipper_project44_dayton_freight_lines | eshipper_project44_dayton_freight_lines |
-    | eshipper_project44_dependable_highway_express | eshipper_project44_dependable_highway_express |
-    | eshipper_project44_dohrn_transfer_company | eshipper_project44_dohrn_transfer_company |
-    | eshipper_project44_dugan_truck_line | eshipper_project44_dugan_truck_line |
-    | eshipper_project44_estes_express_lines | eshipper_project44_estes_express_lines |
-    | eshipper_project44_expedited_freight_systems | eshipper_project44_expedited_freight_systems |
-    | eshipper_project44_fedex_freight_canada | eshipper_project44_fedex_freight_canada |
-    | eshipper_project44_fedex_freight_east | eshipper_project44_fedex_freight_east |
-    | eshipper_project44_fedex_freight_national_canada | eshipper_project44_fedex_freight_national_canada |
-    | eshipper_project44_fedex_freight_national_usa | eshipper_project44_fedex_freight_national_usa |
-    | eshipper_project44_fedex_freight_usa | eshipper_project44_fedex_freight_usa |
-    | eshipper_project44_fedex_national | eshipper_project44_fedex_national |
-    | eshipper_project44_forwardair | eshipper_project44_forwardair |
-    | eshipper_project44_frontline_freight | eshipper_project44_frontline_freight |
-    | eshipper_project44_holland_motor_express | eshipper_project44_holland_motor_express |
-    | eshipper_project44_lakeville_motor_express | eshipper_project44_lakeville_motor_express |
-    | eshipper_project44_manitoulin_tlx_inc | eshipper_project44_manitoulin_tlx_inc |
-    | eshipper_project44_midwest_motor_express | eshipper_project44_midwest_motor_express |
-    | eshipper_project44_monroe_transportation_services | eshipper_project44_monroe_transportation_services |
-    | eshipper_project44_n_m_transfer | eshipper_project44_n_m_transfer |
-    | eshipper_project44_new_england_motor_freight | eshipper_project44_new_england_motor_freight |
-    | eshipper_project44_new_penn_motor_express | eshipper_project44_new_penn_motor_express |
-    | eshipper_project44_pitt_ohio | eshipper_project44_pitt_ohio |
-    | eshipper_project44_polaris | eshipper_project44_polaris |
-    | eshipper_project44_purolator_freight | eshipper_project44_purolator_freight |
-    | eshipper_project44_r_l_carriers | eshipper_project44_r_l_carriers |
-    | eshipper_project44_roadrunner_transportation_services | eshipper_project44_roadrunner_transportation_services |
-    | eshipper_project44_saia_motor_freight | eshipper_project44_saia_motor_freight |
-    | eshipper_project44_southeastern_freight_lines | eshipper_project44_southeastern_freight_lines |
-    | eshipper_project44_southwestern_motor_transport | eshipper_project44_southwestern_motor_transport |
-    | eshipper_project44_standard_forwarding | eshipper_project44_standard_forwarding |
-    | eshipper_project44_total_transportation_distribution | eshipper_project44_total_transportation_distribution |
-    | eshipper_project44_tst_overland_express | eshipper_project44_tst_overland_express |
-    | eshipper_project44_ups | eshipper_project44_ups |
-    | eshipper_project44_usf_reddaway | eshipper_project44_usf_reddaway |
-    | eshipper_project44_valley_cartage | eshipper_project44_valley_cartage |
-    | eshipper_project44_vision_express_ltl | eshipper_project44_vision_express_ltl |
-    | eshipper_project44_ward_trucking | eshipper_project44_ward_trucking |
-    | eshipper_project44_xpo_logistics | eshipper_project44_xpo_logistics |
-    | eshipper_project44_xpress_global_systems | eshipper_project44_xpress_global_systems |
-    | eshipper_project44_yrc | eshipper_project44_yrc |
-    | eshipper_purolator_express | eshipper_purolator_express |
-    | eshipper_purolator_express_1030 | eshipper_purolator_express_1030 |
-    | eshipper_purolator_express_9am | eshipper_purolator_express_9am |
-    | eshipper_purolator_expresscheque | eshipper_purolator_expresscheque |
-    | eshipper_purolator_ground | eshipper_purolator_ground |
-    | eshipper_purolator_ground_1030 | eshipper_purolator_ground_1030 |
-    | eshipper_purolator_ground_9am | eshipper_purolator_ground_9am |
-    | eshipper_purolator | eshipper_purolator |
-    | eshipper_purolator_10_30 | eshipper_purolator_10_30 |
-    | eshipper_purolator_9am | eshipper_purolator_9am |
-    | eshipper_purolator_puropak | eshipper_purolator_puropak |
-    | eshipper_purolator_puropak_10_30 | eshipper_purolator_puropak_10_30 |
-    | eshipper_purolator_puropak_9am | eshipper_purolator_puropak_9am |
-    | eshipper_pyk_ground_advantage | eshipper_pyk_ground_advantage |
-    | eshipper_pyk_priority_mail | eshipper_pyk_priority_mail |
-    | eshipper_sameday_9_am_guaranteed | eshipper_sameday_9_am_guaranteed |
-    | eshipper_sameday_am_service | eshipper_sameday_am_service |
-    | eshipper_sameday_ground_service | eshipper_sameday_ground_service |
-    | eshipper_sameday_h1_deliver_to_curbside | eshipper_sameday_h1_deliver_to_curbside |
-    | eshipper_sameday_h4_delivery_to_curbside | eshipper_sameday_h4_delivery_to_curbside |
-    | eshipper_sameday_h5_delivery_to_room_of_choice_2_man | eshipper_sameday_h5_delivery_to_room_of_choice_2_man |
-    | eshipper_sameday_h6_delivery_packaging_removal_2_man | eshipper_sameday_h6_delivery_packaging_removal_2_man |
-    | eshipper_sameday_ltl_service | eshipper_sameday_ltl_service |
-    | eshipper_sameday_pm_service | eshipper_sameday_pm_service |
-    | eshipper_sameday_urgent_letter | eshipper_sameday_urgent_letter |
-    | eshipper_sameday_urgent_pac | eshipper_sameday_urgent_pac |
-    | eshipper_skip | eshipper_skip |
-    | eshipper_smarte_post_intl_dhl_parcel_international_direct_ngr | eshipper_smarte_post_intl_dhl_parcel_international_direct_ngr |
-    | eshipper_smarte_post_intl_global_mail_business_priority | eshipper_smarte_post_intl_global_mail_business_priority |
-    | eshipper_smarte_post_intl_global_mail_business_standard | eshipper_smarte_post_intl_global_mail_business_standard |
-    | eshipper_smarte_post_intl_global_mail_packet_plus_priority | eshipper_smarte_post_intl_global_mail_packet_plus_priority |
-    | eshipper_smarte_post_intl_global_mail_packet_priority | eshipper_smarte_post_intl_global_mail_packet_priority |
-    | eshipper_smarte_post_intl_global_mail_packet_standard | eshipper_smarte_post_intl_global_mail_packet_standard |
-    | eshipper_smarte_post_intl_global_mail_parcel_direct_priority_yyz | eshipper_smarte_post_intl_global_mail_parcel_direct_priority_yyz |
-    | eshipper_smarte_post_intl_global_mail_parcel_direct_standard_yyz | eshipper_smarte_post_intl_global_mail_parcel_direct_standard_yyz |
-    | eshipper_smarte_post_intl_global_mail_parcel_priority | eshipper_smarte_post_intl_global_mail_parcel_priority |
-    | eshipper_smarte_post_intl_global_mail_parcel_standard | eshipper_smarte_post_intl_global_mail_parcel_standard |
-    | eshipper_ups_expedited | eshipper_ups_expedited |
-    | eshipper_ups_express | eshipper_ups_express |
-    | eshipper_ups_express_early_am | eshipper_ups_express_early_am |
-    | eshipper_ups_ground | eshipper_ups_ground |
-    | eshipper_ups_second_day_air_a_m | eshipper_ups_second_day_air_a_m |
-    | eshipper_ups_standard | eshipper_ups_standard |
-    | eshipper_ups_three_day_select | eshipper_ups_three_day_select |
-    | eshipper_ups_saver | eshipper_ups_saver |
-    | eshipper_ups_worldwide_expedited | eshipper_ups_worldwide_expedited |
-    | eshipper_ups_worldwide_express | eshipper_ups_worldwide_express |
-    | eshipper_ups_worldwide_express_plus | eshipper_ups_worldwide_express_plus |
-    | eshipper_usps_first_class_package_return_service | eshipper_usps_first_class_package_return_service |
-    | eshipper_usps_library_mail | eshipper_usps_library_mail |
-    | eshipper_usps_media_mail | eshipper_usps_media_mail |
-    | eshipper_usps_parcel_select | eshipper_usps_parcel_select |
-    | eshipper_usps_pbx | eshipper_usps_pbx |
-    | eshipper_usps_pbx_lightweight | eshipper_usps_pbx_lightweight |
-    | eshipper_usps_priority_mail | eshipper_usps_priority_mail |
-    | eshipper_usps_priority_mail_express | eshipper_usps_priority_mail_express |
-    | eshipper_usps_priority_mail_open_and_distribute | eshipper_usps_priority_mail_open_and_distribute |
-    | eshipper_usps_priority_mail_return_service | eshipper_usps_priority_mail_return_service |
-    | eshipper_usps_retail_ground_formerly_standard_post | eshipper_usps_retail_ground_formerly_standard_post |
-    | eshipper_project44_abf_freight | eshipper_project44_abf_freight |
-    | eshipper_canada_worldwide_next_flight_out | eshipper_canada_worldwide_next_flight_out |
-    | eshipper_project44_conway_freight | eshipper_project44_conway_freight |
-    | eshipper_day_and_ross | eshipper_day_and_ross |
-    | eshipper_day_ross_r_and_l | eshipper_day_ross_r_and_l |
-    | eshipper_project44_daylight_transport | eshipper_project44_daylight_transport |
-    | eshipper_smarte_post_int_l_dhl_packet_international | eshipper_smarte_post_int_l_dhl_packet_international |
-    | eshipper_smarte_post_int_l_dhl_parcel_international_direct | eshipper_smarte_post_int_l_dhl_parcel_international_direct |
-    | eshipper_smarte_post_int_l_dhl_parcel_international_standard | eshipper_smarte_post_int_l_dhl_parcel_international_standard |
-    | eshipper_envoi_same_day_delivery | eshipper_envoi_same_day_delivery |
-    | eshipper_smarte_post_dom_expedited | eshipper_smarte_post_dom_expedited |
-    | eshipper_fedex_freight_economy | eshipper_fedex_freight_economy |
-    | eshipper_fedex_freight_priority | eshipper_fedex_freight_priority |
-    | eshipper_fedex_international_connect_plus | eshipper_fedex_international_connect_plus |
-    | eshipper_project44_forward_air | eshipper_project44_forward_air |
-    | eshipper_sameday_h3_delivery_packaging_removal | eshipper_sameday_h3_delivery_packaging_removal |
-    | eshipper_project44_jp_express | eshipper_project44_jp_express |
-    | eshipper_mainliner_road | eshipper_mainliner_road |
-    | eshipper_project44_mountain_valley_express | eshipper_project44_mountain_valley_express |
-    | eshipper_project44_oak_harbor_freight | eshipper_project44_oak_harbor_freight |
-    | eshipper_project44_old_dominion_freight | eshipper_project44_old_dominion_freight |
-    | eshipper_purolator_puroletter | eshipper_purolator_puroletter |
-    | eshipper_purolator_puroletter_10_30 | eshipper_purolator_puroletter_10_30 |
-    | eshipper_purolator_puroletter_9am | eshipper_purolator_puroletter_9am |
-    | eshipper_project44_rl_carriers | eshipper_project44_rl_carriers |
-    | eshipper_project44_saia_ltl_freight | eshipper_project44_saia_ltl_freight |
-    | eshipper_speedy | eshipper_speedy |
-    | eshipper_tforce_freight_ltl | eshipper_tforce_freight_ltl |
-    | eshipper_tforce_freight_ltl_guaranteed | eshipper_tforce_freight_ltl_guaranteed |
-    | eshipper_tforce_freight_ltl_guaranteed_a_m | eshipper_tforce_freight_ltl_guaranteed_a_m |
-    | eshipper_tforce_standard_ltl | eshipper_tforce_standard_ltl |
-    | eshipper_ups | eshipper_ups |
-    | eshipper_ups_freight | eshipper_ups_freight |
-    | eshipper_ups_freight_canada | eshipper_ups_freight_canada |
-    | eshipper_ods_usps_light_weight_parcel_budget | eshipper_ods_usps_light_weight_parcel_budget |
-    | eshipper_ods_usps_light_weight_parcel_expedited | eshipper_ods_usps_light_weight_parcel_expedited |
-    | eshipper_ods_usps_parcel_select_budget | eshipper_ods_usps_parcel_select_budget |
-    | eshipper_ods_usps_parcel_select_expedited | eshipper_ods_usps_parcel_select_expedited |
-    | eshipper_smarte_post_dom_xpresspost | eshipper_smarte_post_dom_xpresspost |
-
     ### FedEx
     | Code         | Service Name |
     | ------------ | ------------ |
@@ -15036,63 +13415,6 @@ tags:
     | fedex_next_day_end_of_day | FEDEX_NEXT_DAY_END_OF_DAY |
     | fedex_distance_deferred | FEDEX_DISTANCE_DEFERRED |
 
-    ### Freightcom
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | freightcom_all | 0 |
-    | freightcom_usf_holland | 1911 |
-    | freightcom_central_transport | 2029 |
-    | freightcom_estes | 2107 |
-    | freightcom_canpar_ground | 3400 |
-    | freightcom_canpar_select | 3404 |
-    | freightcom_canpar_overnight | 3407 |
-    | freightcom_dicom_ground | 3700 |
-    | freightcom_purolator_ground | 4000 |
-    | freightcom_purolator_express | 4003 |
-    | freightcom_purolator_express_9_am | 4004 |
-    | freightcom_purolator_express_10_30_am | 4005 |
-    | freightcom_purolator_ground_us | 4016 |
-    | freightcom_purolator_express_us | 4015 |
-    | freightcom_purolator_express_us_9_am | 4013 |
-    | freightcom_purolator_express_us_10_30_am | 4014 |
-    | freightcom_fedex_express_saver | 4100 |
-    | freightcom_fedex_ground | 4101 |
-    | freightcom_fedex_2day | 4102 |
-    | freightcom_fedex_priority_overnight | 4104 |
-    | freightcom_fedex_standard_overnight | 4105 |
-    | freightcom_fedex_first_overnight | 4106 |
-    | freightcom_fedex_international_priority | 4108 |
-    | freightcom_fedex_international_economy | 4109 |
-    | freightcom_ups_standard | 4600 |
-    | freightcom_ups_expedited | 4601 |
-    | freightcom_ups_express_saver | 4602 |
-    | freightcom_ups_express | 4603 |
-    | freightcom_ups_express_early | 4604 |
-    | freightcom_ups_3day_select | 4605 |
-    | freightcom_ups_worldwide_expedited | 4606 |
-    | freightcom_ups_worldwide_express | 4607 |
-    | freightcom_ups_worldwide_express_plus | 4608 |
-    | freightcom_ups_worldwide_express_saver | 4609 |
-    | freightcom_dhl_express_easy | 5202 |
-    | freightcom_dhl_express_10_30 | 5208 |
-    | freightcom_dhl_express_worldwide | 5211 |
-    | freightcom_dhl_express_12_00 | 5215 |
-    | freightcom_dhl_economy_select | 5216 |
-    | freightcom_dhl_ecommerce_am_service | 5706 |
-    | freightcom_dhl_ecommerce_ground_service | 5707 |
-    | freightcom_canadapost_regular_parcel | 6301 |
-    | freightcom_canadapost_expedited_parcel | 6300 |
-    | freightcom_canadapost_xpresspost | 6303 |
-    | freightcom_canadapost_priority | 6302 |
-
-    ### GEODIS
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | geodis_EXP | EXP |
-    | geodis_MES | MES |
-    | geodis_express_france | NTX |
-    | geodis_retour_trans_fr_messagerie_plus | ENL |
-
     ### GLS Group
     | Code         | Service Name |
     | ------------ | ------------ |
@@ -15101,23 +13423,6 @@ tags:
     | gls_guaranteed24 | GUARANTEED24 |
     | gls_business_parcel | BUSINESSPARCEL |
     | gls_euro_business_parcel | EUROBUSINESSPARCEL |
-
-    ### HayPost
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | letter_ordered | 88 |
-    | letter_simple | 79 |
-    | letter_valued | 89 |
-    | package_ordered | 93 |
-    | package_simple | 92 |
-    | package_valued | 100 |
-    | parcel_simple | 94 |
-    | parcel_valued | 95 |
-    | postcard_ordered | 91 |
-    | postcard_simple | 90 |
-    | sekogram_simple | 96 |
-    | sprint_simple | 97 |
-    | yes_ordered_value | 99 |
 
     ### Hermes
     | Code         | Service Name |
@@ -15147,11 +13452,6 @@ tags:
     | Code         | Service Name |
     | ------------ | ------------ |
     | laposte_standard_service | La Poste Standard Service |
-
-    ### Locate2u
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | locate2u_local_delivery | Locate2u Local Delivery |
 
     ### MyDHL Express
     | Code         | Service Name |
@@ -15269,210 +13569,6 @@ tags:
     | purolator_express_international_box_10_30_am | PurolatorExpressInternationalBox10:30AM |
     | purolator_express_international_box_12_00 | PurolatorExpressInternationalBox12:00 |
 
-    ### Roadie
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | roadie_local_delivery | Roadie Local Delivery |
-
-    ### SAPIENT
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | sapient_royal_mail_hm_forces_mail | BF1 |
-    | sapient_royal_mail_hm_forces_signed_for | BF2 |
-    | sapient_royal_mail_hm_forces_special_delivery_500 | BF7 |
-    | sapient_royal_mail_hm_forces_special_delivery_1000 | BF8 |
-    | sapient_royal_mail_hm_forces_special_delivery_2500 | BF9 |
-    | sapient_royal_mail_international_business_personal_correspondence_max_sort_residue_ll | BG1 |
-    | sapient_royal_mail_international_business_mail_ll_max_sort_residue_standard | BG2 |
-    | sapient_royal_mail_international_business_personal_correspondence_max_sort_residue_l | BP1 |
-    | sapient_royal_mail_international_business_mail_l_max_sort_residue_standard | BP2 |
-    | sapient_royal_mail_international_business_printed_matter_packet | BPI |
-    | sapient_royal_mail_1st_class | BPL1 |
-    | sapient_royal_mail_2nd_class | BPL2 |
-    | sapient_royal_mail_1st_class_signed_for | BPR1 |
-    | sapient_royal_mail_2nd_class_signed_for | BPR2 |
-    | sapient_royal_mail_international_business_parcel_priority_country_priced_boxable | BXB |
-    | sapient_royal_mail_international_business_parcel_tracked_country_priced_boxable_extra_comp | BXC |
-    | sapient_royal_mail_international_business_parcel_priority_country_priced_boxable_ddp | BXD |
-    | sapient_royal_mail_international_business_parcel_tracked_country_priced_boxable_ddp | BXE |
-    | sapient_royal_mail_international_business_parcel_tracked_country_priced_boxable | BXF |
-    | sapient_royal_mail_24_standard_signed_for_parcel_daily_rate_service | CRL1 |
-    | sapient_royal_mail_48_standard_signed_for_parcel_daily_rate_service | CRL2 |
-    | sapient_royal_mail_international_business_parcels_zero_sort_priority | DE4 |
-    | sapient_royal_mail_international_business_parcels_zero_sort_priority_DE | DE6 |
-    | sapient_royal_mail_de_import_standard_24_parcel | DEA |
-    | sapient_royal_mail_de_import_standard_24_parcel_DE | DEB |
-    | sapient_royal_mail_de_import_standard_24_ll | DEC |
-    | sapient_royal_mail_de_import_standard_48_ll | DED |
-    | sapient_royal_mail_de_import_to_eu_tracked_signed_ll | DEE |
-    | sapient_royal_mail_de_import_to_eu_max_sort_ll | DEG |
-    | sapient_royal_mail_de_import_to_eu_tracked_parcel | DEI |
-    | sapient_royal_mail_de_import_to_eu_tracked_signed_parcel | DEJ |
-    | sapient_royal_mail_de_import_to_eu_tracked_high_vol_ll | DEK |
-    | sapient_royal_mail_de_import_to_eu_max_sort_parcel | DEM |
-    | sapient_royal_mail_international_business_mail_ll_country_priced_priority | DG4 |
-    | sapient_royal_mail_international_business_personal_correspondence_l_priority_untracked | DP3 |
-    | sapient_royal_mail_international_business_mail_ll_country_sort_priority | DP6 |
-    | sapient_royal_mail_international_business_parcels | DW1 |
-    | sapient_royal_mail_international_business_parcels_tracked_country_priced_extra_territorial_office_of_exchange | ETA |
-    | sapient_royal_mail_international_business_parcels_tracked_signed_country_priced_extra_territorial_office_of_exchange | ETB |
-    | sapient_royal_mail_international_business_parcels_zero_sort_priority_extra_territorial_office_of_exchange | ETC |
-    | sapient_royal_mail_international_business_mail_tracked_ll_country_priced_extra_territorial_office_of_exchange | ETD |
-    | sapient_royal_mail_international_business_mail_tracked_signed_ll_country_priced_extra_territorial_office_of_exchange | ETE |
-    | sapient_royal_mail_international_business_mail_ll_country_priced_priority_extra_territorial_office_of_exchange | ETF |
-    | sapient_royal_mail_international_tracked_parcels_0_30kg_extra_territorial_office_of_exchange_e | ETG |
-    | sapient_royal_mail_international_tracked_parcels_0_30kg_extra_comp_extra_territorial_office_of_exchange_e | ETH |
-    | sapient_royal_mail_international_tracked_parcels_0_30kg_extra_territorial_office_of_exchange_c | ETI |
-    | sapient_royal_mail_international_tracked_parcels_0_30kg_extra_comp_extra_territorial_office_of_exchange_c | ETJ |
-    | sapient_royal_mail_international_business_personal_correspondence_l_priority_untracked_extra_territorial_office_of_exchange | ETK |
-    | sapient_royal_mail_international_business_personal_correspondence_l_tracked_high_vol_country_priced_extra_territorial_office_of_exchange | ETL |
-    | sapient_royal_mail_international_business_personal_correspondence_l_tracked_signed_high_vol_country_priced_extra_territorial_office_of_exchange | ETM |
-    | sapient_royal_mail_international_business_personal_correspondence_signed_l_high_vol_country_priced_extra_territorial_office_of_exchange | ETN |
-    | sapient_royal_mail_international_business_personal_correspondence_ll_country_sort_priority_extra_territorial_office_of_exchange | ETO |
-    | sapient_royal_mail_international_business_personal_correspondence_tracked_ll_high_vol_extra_comp_country_priced_extra_territorial_office_of_exchange | ETP |
-    | sapient_royal_mail_international_business_personal_correspondence_tracked_signed_ll_high_vol_extra_comp_country_priced_extra_territorial_office_of_exchange | ETQ |
-    | sapient_royal_mail_international_business_personal_correspondence_signed_ll_extra_compensation_country_priced_extra_territorial_office_of_exchange | ETR |
-    | sapient_royal_mail_24_standard_signed_for_large_letter_flat_rate_service | FS1 |
-    | sapient_royal_mail_48_standard_signed_for_large_letter_flat_rate_service | FS2 |
-    | sapient_royal_mail_24_presorted_ll | FS7 |
-    | sapient_royal_mail_48_presorted_ll | FS8 |
-    | sapient_royal_mail_international_tracked_parcels_0_30kg | HVB |
-    | sapient_royal_mail_international_business_tracked_express_npc | HVD |
-    | sapient_royal_mail_international_tracked_parcels_0_30kg_extra_comp | HVE |
-    | sapient_royal_mail_international_tracked_parcels_0_30kg_c_prio | HVK |
-    | sapient_royal_mail_international_tracked_parcels_0_30kg_xcomp_c_prio | HVL |
-    | sapient_royal_mail_international_business_parcels_zone_sort_priority_service | IE1 |
-    | sapient_royal_mail_international_business_mail_large_letter_zone_sort_priority | IG1 |
-    | sapient_royal_mail_international_business_mail_large_letter_zone_sort_priority_machine | IG4 |
-    | sapient_royal_mail_international_business_mail_letters_zone_sort_priority | IP1 |
-    | sapient_royal_mail_import_de_tracked_returns_24 | ITA |
-    | sapient_royal_mail_import_de_tracked_returns_48 | ITB |
-    | sapient_royal_mail_import_de_tracked_24_letter_boxable_high_volume | ITC |
-    | sapient_royal_mail_import_de_tracked_48_letter_boxable_high_volume | ITD |
-    | sapient_royal_mail_import_de_tracked_48_letter_boxable | ITE |
-    | sapient_royal_mail_import_de_tracked_24_letter_boxable | ITF |
-    | sapient_royal_mail_import_de_tracked_48_high_volume | ITL |
-    | sapient_royal_mail_import_de_tracked_24_high_volume | ITM |
-    | sapient_royal_mail_import_de_tracked_24 | ITN |
-    | sapient_royal_mail_de_import_to_eu_signed_parcel | ITR |
-    | sapient_royal_mail_import_de_tracked_48 | ITS |
-    | sapient_royal_mail_international_business_parcels_print_direct_priority | MB1 |
-    | sapient_royal_mail_international_business_parcels_print_direct_standard | MB2 |
-    | sapient_royal_mail_international_business_parcels_signed_extra_compensation_country_priced | MP0 |
-    | sapient_royal_mail_international_business_parcels_tracked_zone_sort | MP1 |
-    | sapient_royal_mail_international_business_parcels_tracked_extra_comp_zone_sort | MP4 |
-    | sapient_royal_mail_international_business_parcels_signed_zone_sort | MP5 |
-    | sapient_royal_mail_international_business_parcels_signed_extra_compensation_zone_sort | MP6 |
-    | sapient_royal_mail_international_business_parcels_tracked_country_priced | MP7 |
-    | sapient_royal_mail_international_business_parcels_tracked_extra_comp_country_priced | MP8 |
-    | sapient_royal_mail_international_business_parcels_signed_country_priced | MP9 |
-    | sapient_royal_mail_international_business_mail_tracked_high_vol_country_priced | MPL |
-    | sapient_royal_mail_international_business_mail_tracked_signed_high_vol_country_priced | MPM |
-    | sapient_royal_mail_international_business_mail_signed_high_vol_country_priced | MPN |
-    | sapient_royal_mail_international_business_mail_tracked_high_vol_extra_comp_country_priced | MPO |
-    | sapient_royal_mail_international_business_mail_tracked_signed_high_vol_extra_comp_country_priced | MPP |
-    | sapient_royal_mail_international_business_parcel_tracked_boxable_country_priced | MPR |
-    | sapient_royal_mail_international_business_parcels_tracked_signed_zone_sort | MTA |
-    | sapient_royal_mail_international_business_parcels_tracked_signed_extra_compensation_zone_sort | MTB |
-    | sapient_royal_mail_international_business_mail_tracked_signed_zone_sort | MTC |
-    | sapient_royal_mail_international_business_parcels_tracked_signed_country_priced | MTE |
-    | sapient_royal_mail_international_business_parcels_tracked_signed_extra_compensation_country_priced | MTF |
-    | sapient_royal_mail_international_business_mail_tracked_signed_country_priced | MTG |
-    | sapient_royal_mail_international_business_mail_tracked_zone_sort | MTI |
-    | sapient_royal_mail_international_business_mail_tracked_country_priced | MTK |
-    | sapient_royal_mail_international_business_mail_signed_zone_sort | MTM |
-    | sapient_royal_mail_international_business_mail_signed_country_priced | MTO |
-    | sapient_royal_mail_international_business_mail_signed_extra_compensation_country_priced | MTP |
-    | sapient_royal_mail_international_business_parcels_tracked_direct_ireland_country | MTS |
-    | sapient_royal_mail_international_business_parcels_tracked_signed_ddp | MTV |
-    | sapient_royal_mail_international_standard_on_account | OLA |
-    | sapient_royal_mail_international_economy_on_account | OLS |
-    | sapient_royal_mail_international_signed_on_account | OSA |
-    | sapient_royal_mail_international_signed_on_account_extra_comp | OSB |
-    | sapient_royal_mail_international_tracked_on_account | OTA |
-    | sapient_royal_mail_international_tracked_on_account_extra_comp | OTB |
-    | sapient_royal_mail_international_tracked_signed_on_account | OTC |
-    | sapient_royal_mail_international_tracked_signed_on_account_extra_comp | OTD |
-    | sapient_royal_mail_48_ll_flat_rate | PK0 |
-    | sapient_royal_mail_24_standard_signed_for_parcel_sort8_flat_rate_service | PK1 |
-    | sapient_royal_mail_48_standard_signed_for_parcel_sort8_flat_rate_service | PK2 |
-    | sapient_royal_mail_24_standard_signed_for_parcel_sort8_daily_rate_service | PK3 |
-    | sapient_royal_mail_48_standard_signed_for_parcel_sort8_daily_rate_service | PK4 |
-    | sapient_royal_mail_24_presorted_p | PK7 |
-    | sapient_royal_mail_48_presorted_p | PK8 |
-    | sapient_royal_mail_24_ll_flat_rate | PK9 |
-    | sapient_royal_mail_rm24_presorted_p_annual_flat_rate | PKB |
-    | sapient_royal_mail_rm48_presorted_p_annual_flat_rate | PKD |
-    | sapient_royal_mail_rm48_presorted_ll_annual_flat_rate | PKK |
-    | sapient_royal_mail_rm24_presorted_ll_annual_flat_rate | PKM |
-    | sapient_royal_mail_24_standard_signed_for_packetpost_flat_rate_service | PPF1 |
-    | sapient_royal_mail_48_standard_signed_for_packetpost_flat_rate_service | PPF2 |
-    | sapient_royal_mail_parcelpost_flat_rate_annual | PPJ1 |
-    | sapient_royal_mail_parcelpost_flat_rate_annual_PPJ | PPJ2 |
-    | sapient_royal_mail_rm24_ll_annual_flat_rate | PPS |
-    | sapient_royal_mail_rm48_ll_annual_flat_rate | PPT |
-    | sapient_royal_mail_international_business_personal_correspondence_max_sort_l | PS5 |
-    | sapient_royal_mail_international_business_mail_large_letter_max_sort_priority_service | PS7 |
-    | sapient_royal_mail_international_business_mail_letters_max_sort_standard | PSA |
-    | sapient_royal_mail_international_business_mail_large_letter_max_sort_standard_service | PSB |
-    | sapient_royal_mail_48_sort8p_annual_flat_rate | RM0 |
-    | sapient_royal_mail_24_ll_daily_rate | RM1 |
-    | sapient_royal_mail_24_p_daily_rate | RM2 |
-    | sapient_royal_mail_48_ll_daily_rate | RM3 |
-    | sapient_royal_mail_48_p_daily_rate | RM4 |
-    | sapient_royal_mail_24_p_flat_rate | RM5 |
-    | sapient_royal_mail_48_p_flat_rate | RM6 |
-    | sapient_royal_mail_24_sort8_ll_annual_flat_rate | RM7 |
-    | sapient_royal_mail_24_sort8_p_annual_flat_rate | RM8 |
-    | sapient_royal_mail_48_sort8_ll_annual_flat_rate | RM9 |
-    | sapient_royal_mail_special_delivery_guaranteed_by_1pm_750 | SD1 |
-    | sapient_royal_mail_special_delivery_guaranteed_by_1pm_1000 | SD2 |
-    | sapient_royal_mail_special_delivery_guaranteed_by_1pm_2500 | SD3 |
-    | sapient_royal_mail_special_delivery_guaranteed_by_9am_750 | SD4 |
-    | sapient_royal_mail_special_delivery_guaranteed_by_9am_1000 | SD5 |
-    | sapient_royal_mail_special_delivery_guaranteed_by_9am_2500 | SD6 |
-    | sapient_royal_mail_special_delivery_guaranteed_by_1pm_id_750 | SDA |
-    | sapient_royal_mail_special_delivery_guaranteed_by_1pm_id_1000 | SDB |
-    | sapient_royal_mail_special_delivery_guaranteed_by_1pm_id_2500 | SDC |
-    | sapient_royal_mail_special_delivery_guaranteed_by_9am_id_750 | SDE |
-    | sapient_royal_mail_special_delivery_guaranteed_by_9am_id_1000 | SDF |
-    | sapient_royal_mail_special_delivery_guaranteed_by_9am_id_2500 | SDG |
-    | sapient_royal_mail_special_delivery_guaranteed_by_1pm_age_750 | SDH |
-    | sapient_royal_mail_special_delivery_guaranteed_by_1pm_age_1000 | SDJ |
-    | sapient_royal_mail_special_delivery_guaranteed_by_1pm_age_2500 | SDK |
-    | sapient_royal_mail_special_delivery_guaranteed_by_9am_age_750 | SDM |
-    | sapient_royal_mail_special_delivery_guaranteed_by_9am_age_1000 | SDN |
-    | sapient_royal_mail_special_delivery_guaranteed_by_9am_age_2500 | SDQ |
-    | sapient_royal_mail_special_delivery_guaranteed_age_750 | SDV |
-    | sapient_royal_mail_special_delivery_guaranteed_age_1000 | SDW |
-    | sapient_royal_mail_special_delivery_guaranteed_age_2500 | SDX |
-    | sapient_royal_mail_special_delivery_guaranteed_id_750 | SDY |
-    | sapient_royal_mail_special_delivery_guaranteed_id_1000 | SDZ |
-    | sapient_royal_mail_special_delivery_guaranteed_id_2500 | SEA |
-    | sapient_royal_mail_special_delivery_guaranteed_750 | SEB |
-    | sapient_royal_mail_special_delivery_guaranteed_1000 | SEC |
-    | sapient_royal_mail_special_delivery_guaranteed_2500 | SED |
-    | sapient_royal_mail_1st_class_standard_signed_for_letters_daily_rate_service | STL1 |
-    | sapient_royal_mail_2nd_class_standard_signed_for_letters_daily_rate_service | STL2 |
-    | sapient_royal_mail_tracked_24_high_volume_signature_age | TPA |
-    | sapient_royal_mail_tracked_48_high_volume_signature_age | TPB |
-    | sapient_royal_mail_tracked_24_signature_age | TPC |
-    | sapient_royal_mail_tracked_48_signature_age | TPD |
-    | sapient_royal_mail_tracked_48_high_volume_signature_no_signature | TPL |
-    | sapient_royal_mail_tracked_24_high_volume_signature_no_signature | TPM |
-    | sapient_royal_mail_tracked_24_signature_no_signature | TPN |
-    | sapient_royal_mail_tracked_48_signature_no_signature | TPS |
-    | sapient_royal_mail_tracked_letter_boxable_48_high_volume_signature_no_signature | TRL |
-    | sapient_royal_mail_tracked_letter_boxable_24_high_volume_signature_no_signature | TRM |
-    | sapient_royal_mail_tracked_letter_boxable_24_signature_no_signature | TRN |
-    | sapient_royal_mail_tracked_letter_boxable_48_signature_no_signature | TRS |
-    | sapient_royal_mail_tracked_returns_24 | TSN |
-    | sapient_royal_mail_tracked_returns_48 | TSS |
-    | sapient_royal_mail_international_business_parcels_zero_sort_priority_WE | WE1 |
-    | sapient_royal_mail_international_business_mail_large_letter_zero_sort_priority | WG1 |
-    | sapient_royal_mail_international_business_mail_large_letter_zero_sort_priority_machine | WG4 |
-    | sapient_royal_mail_international_business_mail_letters_zero_sort_priority | WP1 |
-
     ### SEKO Logistics
     | Code         | Service Name |
     | ------------ | ------------ |
@@ -15489,21 +13585,13 @@ tags:
     | sendle_standard_dropoff | STANDARD-DROPOFF |
     | sendle_express_pickup | EXPRESS-PICKUP |
 
-    ### ShipEngine
+    ### SmartKargo
     | Code         | Service Name |
     | ------------ | ------------ |
-    | shipengine_auto | ShipEngine Auto-Select |
-    | usps_ground_advantage | USPS Ground Advantage |
-    | usps_priority_mail | USPS Priority Mail |
-    | usps_priority_mail_express | USPS Priority Mail Express |
-    | fedex_ground | FedEx Ground |
-    | fedex_2day | FedEx 2Day |
-    | fedex_standard_overnight | FedEx Standard Overnight |
-    | ups_ground | UPS Ground |
-    | ups_3_day_select | UPS 3 Day Select |
-    | ups_2nd_day_air | UPS 2nd Day Air |
-    | ups_next_day_air | UPS Next Day Air |
-    | shipengine_ups_ups_ground | UPS Ground via ShipEngine |
+    | smartkargo_express | EXP |
+    | smartkargo_priority | EPR |
+    | smartkargo_standard | EST |
+    | smartkargo_economy | ECL |
 
     ### Spring
     | Code         | Service Name |
@@ -15577,22 +13665,6 @@ tags:
     | teleship_standard_pickup | TELESHIP-STANDARD-PICKUP |
     | teleship_postal_dropoff | TELESHIP-POSTAL-DROPOFF |
     | teleship_postal_pickup | TELESHIP-POSTAL-PICKUP |
-
-    ### TGE
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | tge_freight_service | X |
-
-    ### TNT
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | tnt_special_express | 1N |
-    | tnt_9_00_express | 09N |
-    | tnt_10_00_express | 10N |
-    | tnt_12_00_express | 12N |
-    | tnt_express | EX |
-    | tnt_economy_express | 48N |
-    | tnt_global_express | 15N |
 
     ### UPS
     | Code         | Service Name |
@@ -15685,13 +13757,6 @@ tags:
     | usps_global_express_guaranteed | GLOBAL_EXPRESS_GUARANTEED |
     | usps_all | ALL |
 
-    ### Zoom2u
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | zoom2u_VIP | VIP |
-    | zoom2u_3_hour | 3 hour |
-    | zoom2u_same_day | Same day |
-
 
     ---
     ## Parcel Templates
@@ -15735,19 +13800,6 @@ tags:
     | purolator_express_envelope | 12.5 x 16 x 1.5 in |
     | purolator_express_pack | 12.5 x 16 x 1.0 in |
     | purolator_express_box | 18 x 12 x 3.5 in |
-
-    ### TNT
-    | Code         | Dimensions   |
-    | ------------ | ------------ |
-    | tnt_envelope_doc | 35.0 x 1.0 x 27.5 cm |
-    | tnt_satchel_bag1 | 40.0 x 1.0 x 30.0 cm |
-    | tnt_satchel_bag2 | 47.5 x 1.0 x 38.0 cm |
-    | tnt_box_B | 29.5 x 19.0 x 40.0 cm |
-    | tnt_box_C | 29.5 x 29.0 x 40.0 cm |
-    | tnt_box_D | 39.5 x 29.0 x 50.0 cm |
-    | tnt_box_E | 39.5 x 49.5 x 44.0 cm |
-    | tnt_medpack_ambient | 18.0 x 12.0 x 23.0 cm |
-    | tnt_medpack_fronzen_10 | 37.0 x 35.5 x 40.0 cm |
 
     ### UPS
     | Code         | Dimensions   |

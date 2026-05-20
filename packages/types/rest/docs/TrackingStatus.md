@@ -17,6 +17,8 @@ Name | Type | Description | Notes
 **estimated_delivery** | **string** | The delivery estimated date | [optional] [default to undefined]
 **meta** | **{ [key: string]: any; }** | provider specific metadata | [optional] [default to undefined]
 **object_type** | **string** | Specifies the object type | [optional] [default to 'tracker']
+**is_archived** | **boolean** | Indicates whether this tracker is archived. | [optional] [default to false]
+**archived_at** | **string** | Timestamp when the tracker was archived. | [optional] [default to undefined]
 **metadata** | **{ [key: string]: any; }** | User metadata for the tracker | [optional] [default to undefined]
 **messages** | [**Array&lt;Message&gt;**](Message.md) | The list of note or warning messages | [optional] [default to undefined]
 **delivery_image_url** | **string** | The shipment invoice URL | [optional] [default to undefined]
@@ -40,6 +42,8 @@ const instance: TrackingStatus = {
     estimated_delivery,
     meta,
     object_type,
+    is_archived,
+    archived_at,
     metadata,
     messages,
     delivery_image_url,

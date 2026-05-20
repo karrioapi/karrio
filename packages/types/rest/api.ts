@@ -18,7 +18,7 @@ import type { AxiosPromise, AxiosInstance, AxiosRequestConfig } from 'axios';
 import globalAxios from 'axios';
 // Some imports not used depending on template conditions
 // @ts-ignore
-import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObject, setBearerAuthToObject, setOAuthToObject, setSearchParams, serializeDataIfNeeded, toPathString, createRequestFunction } from './common';
+import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObject, setBearerAuthToObject, setOAuthToObject, setSearchParams, serializeDataIfNeeded, toPathString, createRequestFunction, replaceWithSerializableTypeIfNeeded } from './common';
 import type { RequestArgs } from './base';
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, BaseAPI, RequiredError, operationServerMap } from './base';
@@ -360,7 +360,7 @@ export const AddressCountryCodeEnum = {
     Im: 'IM',
     Bl: 'BL',
     Mf: 'MF',
-    Sx: 'SX'
+    Sx: 'SX',
 } as const;
 
 export type AddressCountryCodeEnum = typeof AddressCountryCodeEnum[keyof typeof AddressCountryCodeEnum];
@@ -676,7 +676,7 @@ export const AddressDataCountryCodeEnum = {
     Im: 'IM',
     Bl: 'BL',
     Mf: 'MF',
-    Sx: 'SX'
+    Sx: 'SX',
 } as const;
 
 export type AddressDataCountryCodeEnum = typeof AddressDataCountryCodeEnum[keyof typeof AddressDataCountryCodeEnum];
@@ -697,25 +697,10 @@ export interface AddressValidation {
      */
     'meta'?: { [key: string]: any; } | null;
 }
-export interface Aramex {
-    'username': string;
-    'password': string;
-    'account_pin': string;
-    'account_entity': string;
-    'account_number': string;
-    'account_country_code': string;
-}
 export interface Asendia {
     'username': string;
     'password': string;
     'customer_id'?: string | null;
-    'account_country_code'?: string | null;
-}
-export interface AsendiaUs {
-    'username': string;
-    'password': string;
-    'api_key': string;
-    'account_number'?: string | null;
     'account_country_code'?: string | null;
 }
 export interface Australiapost {
@@ -744,7 +729,7 @@ export const BatchObjectStatusEnum = {
     Running: 'running',
     Failed: 'failed',
     Completed: 'completed',
-    CompletedWithErrors: 'completed_with_errors'
+    CompletedWithErrors: 'completed_with_errors',
 } as const;
 
 export type BatchObjectStatusEnum = typeof BatchObjectStatusEnum[keyof typeof BatchObjectStatusEnum];
@@ -767,7 +752,7 @@ export const BatchOperationStatusEnum = {
     Running: 'running',
     Failed: 'failed',
     Completed: 'completed',
-    CompletedWithErrors: 'completed_with_errors'
+    CompletedWithErrors: 'completed_with_errors',
 } as const;
 
 export type BatchOperationStatusEnum = typeof BatchOperationStatusEnum[keyof typeof BatchOperationStatusEnum];
@@ -775,7 +760,8 @@ export const BatchOperationResourceTypeEnum = {
     Orders: 'orders',
     Shipments: 'shipments',
     Trackers: 'trackers',
-    Billing: 'billing'
+    Billing: 'billing',
+    RateSheet: 'rate_sheet',
 } as const;
 
 export type BatchOperationResourceTypeEnum = typeof BatchOperationResourceTypeEnum[keyof typeof BatchOperationResourceTypeEnum];
@@ -812,7 +798,7 @@ export interface BatchWebhookResendRequest {
 
 export const BatchWebhookResendRequestObjectTypeEnum = {
     Tracker: 'tracker',
-    Shipment: 'shipment'
+    Shipment: 'shipment',
 } as const;
 
 export type BatchWebhookResendRequestObjectTypeEnum = typeof BatchWebhookResendRequestObjectTypeEnum[keyof typeof BatchWebhookResendRequestObjectTypeEnum];
@@ -832,16 +818,11 @@ export interface BatchWebhookResource {
 
 export const BatchWebhookResourceStatusEnum = {
     Queued: 'queued',
-    Failed: 'failed'
+    Failed: 'failed',
 } as const;
 
 export type BatchWebhookResourceStatusEnum = typeof BatchWebhookResourceStatusEnum[keyof typeof BatchWebhookResourceStatusEnum];
 
-export interface Boxknight {
-    'username': string;
-    'password': string;
-    'account_country_code'?: string | null;
-}
 export interface Bpost {
     'account_id': string;
     'passphrase': string;
@@ -861,27 +842,10 @@ export interface Canadapost {
 
 export const CanadapostLanguageEnum = {
     En: 'en',
-    Fr: 'fr'
+    Fr: 'fr',
 } as const;
 
 export type CanadapostLanguageEnum = typeof CanadapostLanguageEnum[keyof typeof CanadapostLanguageEnum];
-
-export interface Canpar {
-    'username': string;
-    'password': string;
-    /**
-     * Indicates a language string
-     */
-    'language'?: CanparLanguageEnum;
-    'account_country_code'?: string | null;
-}
-
-export const CanparLanguageEnum = {
-    En: 'en',
-    Fr: 'fr'
-} as const;
-
-export type CanparLanguageEnum = typeof CanparLanguageEnum[keyof typeof CanparLanguageEnum];
 
 /**
  * Response serializer for carrier connections.  Note: Credentials are write-only and never returned in API responses. Use CarrierConnectionData for create and CarrierConnectionUpdateData for update.
@@ -934,57 +898,35 @@ export interface CarrierConnection {
 }
 
 export const CarrierConnectionCarrierNameEnum = {
-    Aramex: 'aramex',
     Asendia: 'asendia',
-    AsendiaUs: 'asendia_us',
     Australiapost: 'australiapost',
-    Boxknight: 'boxknight',
     Bpost: 'bpost',
     Canadapost: 'canadapost',
-    Canpar: 'canpar',
     Chronopost: 'chronopost',
-    Colissimo: 'colissimo',
     DhlExpress: 'dhl_express',
     DhlParcelDe: 'dhl_parcel_de',
     DhlPoland: 'dhl_poland',
     DhlUniversal: 'dhl_universal',
-    Dicom: 'dicom',
     Dpd: 'dpd',
     DpdMeta: 'dpd_meta',
-    Dtdc: 'dtdc',
-    Easypost: 'easypost',
-    Easyship: 'easyship',
-    Eshipper: 'eshipper',
     Fedex: 'fedex',
-    Freightcom: 'freightcom',
     Generic: 'generic',
-    Geodis: 'geodis',
     Gls: 'gls',
-    HayPost: 'hay_post',
     Hermes: 'hermes',
     Landmark: 'landmark',
     Laposte: 'laposte',
-    Locate2u: 'locate2u',
     Mydhl: 'mydhl',
-    Nationex: 'nationex',
     Parcelone: 'parcelone',
     Postat: 'postat',
     Purolator: 'purolator',
-    Roadie: 'roadie',
-    Royalmail: 'royalmail',
-    Sapient: 'sapient',
     Seko: 'seko',
     Sendle: 'sendle',
-    Shipengine: 'shipengine',
+    Smartkargo: 'smartkargo',
     Spring: 'spring',
     Teleship: 'teleship',
-    Tge: 'tge',
-    Tnt: 'tnt',
     Ups: 'ups',
     Usps: 'usps',
     UspsInternational: 'usps_international',
-    Veho: 'veho',
-    Zoom2u: 'zoom2u'
 } as const;
 
 export type CarrierConnectionCarrierNameEnum = typeof CarrierConnectionCarrierNameEnum[keyof typeof CarrierConnectionCarrierNameEnum];
@@ -1021,57 +963,35 @@ export interface CarrierConnectionData {
 }
 
 export const CarrierConnectionDataCarrierNameEnum = {
-    Aramex: 'aramex',
     Asendia: 'asendia',
-    AsendiaUs: 'asendia_us',
     Australiapost: 'australiapost',
-    Boxknight: 'boxknight',
     Bpost: 'bpost',
     Canadapost: 'canadapost',
-    Canpar: 'canpar',
     Chronopost: 'chronopost',
-    Colissimo: 'colissimo',
     DhlExpress: 'dhl_express',
     DhlParcelDe: 'dhl_parcel_de',
     DhlPoland: 'dhl_poland',
     DhlUniversal: 'dhl_universal',
-    Dicom: 'dicom',
     Dpd: 'dpd',
     DpdMeta: 'dpd_meta',
-    Dtdc: 'dtdc',
-    Easypost: 'easypost',
-    Easyship: 'easyship',
-    Eshipper: 'eshipper',
     Fedex: 'fedex',
-    Freightcom: 'freightcom',
     Generic: 'generic',
-    Geodis: 'geodis',
     Gls: 'gls',
-    HayPost: 'hay_post',
     Hermes: 'hermes',
     Landmark: 'landmark',
     Laposte: 'laposte',
-    Locate2u: 'locate2u',
     Mydhl: 'mydhl',
-    Nationex: 'nationex',
     Parcelone: 'parcelone',
     Postat: 'postat',
     Purolator: 'purolator',
-    Roadie: 'roadie',
-    Royalmail: 'royalmail',
-    Sapient: 'sapient',
     Seko: 'seko',
     Sendle: 'sendle',
-    Shipengine: 'shipengine',
+    Smartkargo: 'smartkargo',
     Spring: 'spring',
     Teleship: 'teleship',
-    Tge: 'tge',
-    Tnt: 'tnt',
     Ups: 'ups',
     Usps: 'usps',
     UspsInternational: 'usps_international',
-    Veho: 'veho',
-    Zoom2u: 'zoom2u'
 } as const;
 
 export type CarrierConnectionDataCarrierNameEnum = typeof CarrierConnectionDataCarrierNameEnum[keyof typeof CarrierConnectionDataCarrierNameEnum];
@@ -1118,64 +1038,42 @@ export interface CarrierDetails {
 }
 
 export const CarrierDetailsCarrierNameEnum = {
-    Aramex: 'aramex',
     Asendia: 'asendia',
-    AsendiaUs: 'asendia_us',
     Australiapost: 'australiapost',
-    Boxknight: 'boxknight',
     Bpost: 'bpost',
     Canadapost: 'canadapost',
-    Canpar: 'canpar',
     Chronopost: 'chronopost',
-    Colissimo: 'colissimo',
     DhlExpress: 'dhl_express',
     DhlParcelDe: 'dhl_parcel_de',
     DhlPoland: 'dhl_poland',
     DhlUniversal: 'dhl_universal',
-    Dicom: 'dicom',
     Dpd: 'dpd',
     DpdMeta: 'dpd_meta',
-    Dtdc: 'dtdc',
-    Easypost: 'easypost',
-    Easyship: 'easyship',
-    Eshipper: 'eshipper',
     Fedex: 'fedex',
-    Freightcom: 'freightcom',
     Generic: 'generic',
-    Geodis: 'geodis',
     Gls: 'gls',
-    HayPost: 'hay_post',
     Hermes: 'hermes',
     Landmark: 'landmark',
     Laposte: 'laposte',
-    Locate2u: 'locate2u',
     Mydhl: 'mydhl',
-    Nationex: 'nationex',
     Parcelone: 'parcelone',
     Postat: 'postat',
     Purolator: 'purolator',
-    Roadie: 'roadie',
-    Royalmail: 'royalmail',
-    Sapient: 'sapient',
     Seko: 'seko',
     Sendle: 'sendle',
-    Shipengine: 'shipengine',
+    Smartkargo: 'smartkargo',
     Spring: 'spring',
     Teleship: 'teleship',
-    Tge: 'tge',
-    Tnt: 'tnt',
     Ups: 'ups',
     Usps: 'usps',
     UspsInternational: 'usps_international',
-    Veho: 'veho',
-    Zoom2u: 'zoom2u'
 } as const;
 
 export type CarrierDetailsCarrierNameEnum = typeof CarrierDetailsCarrierNameEnum[keyof typeof CarrierDetailsCarrierNameEnum];
 export const CarrierDetailsIntegrationStatusEnum = {
     InDevelopment: 'in-development',
     Beta: 'beta',
-    ProductionReady: 'production-ready'
+    ProductionReady: 'production-ready',
 } as const;
 
 export type CarrierDetailsIntegrationStatusEnum = typeof CarrierDetailsIntegrationStatusEnum[keyof typeof CarrierDetailsIntegrationStatusEnum];
@@ -1211,17 +1109,11 @@ export interface Chronopost {
 
 export const ChronopostLanguageEnum = {
     EnGb: 'en_GB',
-    FrFr: 'fr_FR'
+    FrFr: 'fr_FR',
 } as const;
 
 export type ChronopostLanguageEnum = typeof ChronopostLanguageEnum[keyof typeof ChronopostLanguageEnum];
 
-export interface Colissimo {
-    'password': string;
-    'contract_number': string;
-    'laposte_api_key'?: string | null;
-    'account_country_code'?: string | null;
-}
 export interface Commodity {
     /**
      * A unique identifier
@@ -1305,7 +1197,7 @@ export const CommodityWeightUnitEnum = {
     Kg: 'KG',
     Lb: 'LB',
     Oz: 'OZ',
-    G: 'G'
+    G: 'G',
 } as const;
 
 export type CommodityWeightUnitEnum = typeof CommodityWeightUnitEnum[keyof typeof CommodityWeightUnitEnum];
@@ -1453,7 +1345,7 @@ export const CommodityValueCurrencyEnum = {
     Vuv: 'VUV',
     Wst: 'WST',
     Yer: 'YER',
-    Zar: 'ZAR'
+    Zar: 'ZAR',
 } as const;
 
 export type CommodityValueCurrencyEnum = typeof CommodityValueCurrencyEnum[keyof typeof CommodityValueCurrencyEnum];
@@ -1697,7 +1589,7 @@ export const CommodityOriginCountryEnum = {
     Im: 'IM',
     Bl: 'BL',
     Mf: 'MF',
-    Sx: 'SX'
+    Sx: 'SX',
 } as const;
 
 export type CommodityOriginCountryEnum = typeof CommodityOriginCountryEnum[keyof typeof CommodityOriginCountryEnum];
@@ -1777,7 +1669,7 @@ export const CommodityDataWeightUnitEnum = {
     Kg: 'KG',
     Lb: 'LB',
     Oz: 'OZ',
-    G: 'G'
+    G: 'G',
 } as const;
 
 export type CommodityDataWeightUnitEnum = typeof CommodityDataWeightUnitEnum[keyof typeof CommodityDataWeightUnitEnum];
@@ -1925,7 +1817,7 @@ export const CommodityDataValueCurrencyEnum = {
     Vuv: 'VUV',
     Wst: 'WST',
     Yer: 'YER',
-    Zar: 'ZAR'
+    Zar: 'ZAR',
 } as const;
 
 export type CommodityDataValueCurrencyEnum = typeof CommodityDataValueCurrencyEnum[keyof typeof CommodityDataValueCurrencyEnum];
@@ -2169,7 +2061,7 @@ export const CommodityDataOriginCountryEnum = {
     Im: 'IM',
     Bl: 'BL',
     Mf: 'MF',
-    Sx: 'SX'
+    Sx: 'SX',
 } as const;
 
 export type CommodityDataOriginCountryEnum = typeof CommodityDataOriginCountryEnum[keyof typeof CommodityDataOriginCountryEnum];
@@ -2177,7 +2069,7 @@ export type CommodityDataOriginCountryEnum = typeof CommodityDataOriginCountryEn
 /**
  * @type ConnectionCredentialsField
  */
-export type ConnectionCredentialsField = Aramex | Asendia | AsendiaUs | Australiapost | Boxknight | Bpost | Canadapost | Canpar | Chronopost | Colissimo | DhlExpress | DhlParcelDe | DhlPoland | DhlUniversal | Dicom | Dpd | DpdMeta | Dtdc | Easypost | Easyship | Eshipper | Fedex | Freightcom | Generic | Geodis | Gls | HayPost | Hermes | Landmark | Laposte | Locate2u | Mydhl | Nationex | Parcelone | Postat | Purolator | Roadie | Royalmail | Sapient | Seko | Sendle | Shipengine | Spring | Teleship | Tge | Tnt | Ups | Usps | UspsInternational | Veho | Zoom2u;
+export type ConnectionCredentialsField = Asendia | Australiapost | Bpost | Canadapost | Chronopost | DhlExpress | DhlParcelDe | DhlPoland | DhlUniversal | Dpd | DpdMeta | Fedex | Generic | Gls | Hermes | Landmark | Laposte | Mydhl | Parcelone | Postat | Purolator | Seko | Sendle | Smartkargo | Spring | Teleship | Ups | Usps | UspsInternational;
 
 export interface CustomsData {
     /**
@@ -2228,7 +2120,7 @@ export const CustomsDataContentTypeEnum = {
     Merchandise: 'merchandise',
     ReturnMerchandise: 'return_merchandise',
     Other: 'other',
-    Empty: ''
+    Empty: '',
 } as const;
 
 export type CustomsDataContentTypeEnum = typeof CustomsDataContentTypeEnum[keyof typeof CustomsDataContentTypeEnum];
@@ -2246,7 +2138,7 @@ export const CustomsDataIncotermEnum = {
     Exw: 'EXW',
     Fas: 'FAS',
     Fca: 'FCA',
-    Fob: 'FOB'
+    Fob: 'FOB',
 } as const;
 
 export type CustomsDataIncotermEnum = typeof CustomsDataIncotermEnum[keyof typeof CustomsDataIncotermEnum];
@@ -2282,17 +2174,11 @@ export interface DhlUniversal {
 
 export const DhlUniversalLanguageEnum = {
     En: 'en',
-    De: 'de'
+    De: 'de',
 } as const;
 
 export type DhlUniversalLanguageEnum = typeof DhlUniversalLanguageEnum[keyof typeof DhlUniversalLanguageEnum];
 
-export interface Dicom {
-    'username': string;
-    'password': string;
-    'billing_account'?: string | null;
-    'account_country_code'?: string | null;
-}
 export interface DocumentData {
     /**
      * The template name. **Required if template is not provided.**
@@ -2397,7 +2283,7 @@ export interface DocumentTemplate {
 export const DocumentTemplateRelatedObjectEnum = {
     Shipment: 'shipment',
     Order: 'order',
-    Other: 'other'
+    Other: 'other',
 } as const;
 
 export type DocumentTemplateRelatedObjectEnum = typeof DocumentTemplateRelatedObjectEnum[keyof typeof DocumentTemplateRelatedObjectEnum];
@@ -2440,7 +2326,7 @@ export interface DocumentTemplateData {
 export const DocumentTemplateDataRelatedObjectEnum = {
     Shipment: 'shipment',
     Order: 'order',
-    Other: 'other'
+    Other: 'other',
 } as const;
 
 export type DocumentTemplateDataRelatedObjectEnum = typeof DocumentTemplateDataRelatedObjectEnum[keyof typeof DocumentTemplateDataRelatedObjectEnum];
@@ -2533,13 +2419,6 @@ export interface DpdMeta {
     'customer_sub_account_number'?: string | null;
     'account_country_code'?: string | null;
 }
-export interface Dtdc {
-    'api_key': string;
-    'customer_code': string;
-    'username'?: string | null;
-    'password'?: string | null;
-    'account_country_code'?: string | null;
-}
 export interface Duty {
     /**
      * The duty payer
@@ -2563,7 +2442,7 @@ export const DutyPaidByEnum = {
     Sender: 'sender',
     Recipient: 'recipient',
     ThirdParty: 'third_party',
-    Empty: ''
+    Empty: '',
 } as const;
 
 export type DutyPaidByEnum = typeof DutyPaidByEnum[keyof typeof DutyPaidByEnum];
@@ -2712,19 +2591,11 @@ export const DutyCurrencyEnum = {
     Wst: 'WST',
     Yer: 'YER',
     Zar: 'ZAR',
-    Empty: ''
+    Empty: '',
 } as const;
 
 export type DutyCurrencyEnum = typeof DutyCurrencyEnum[keyof typeof DutyCurrencyEnum];
 
-export interface Easypost {
-    'api_key': string;
-    'account_country_code'?: string | null;
-}
-export interface Easyship {
-    'access_token': string;
-    'account_country_code'?: string | null;
-}
 export interface ErrorMessages {
     /**
      * The list of error messages
@@ -2737,22 +2608,12 @@ export interface ErrorResponse {
      */
     'errors'?: Array<APIError>;
 }
-export interface Eshipper {
-    'principal': string;
-    'credential': string;
-    'account_country_code'?: string | null;
-}
 export interface Fedex {
     'api_key'?: string | null;
     'secret_key'?: string | null;
     'account_number'?: string | null;
     'track_api_key'?: string | null;
     'track_secret_key'?: string | null;
-    'account_country_code'?: string | null;
-}
-export interface Freightcom {
-    'username': string;
-    'password': string;
     'account_country_code'?: string | null;
 }
 export interface GeneratedDocument {
@@ -2779,35 +2640,10 @@ export interface Generic {
     'account_country_code'?: string | null;
     'account_number'?: string | null;
 }
-export interface Geodis {
-    'api_key': string;
-    'identifier': string;
-    'code_client'?: string | null;
-    /**
-     * Indicates a language string
-     */
-    'language'?: GeodisLanguageEnum;
-    'account_country_code'?: string | null;
-}
-
-export const GeodisLanguageEnum = {
-    Fr: 'fr',
-    En: 'en'
-} as const;
-
-export type GeodisLanguageEnum = typeof GeodisLanguageEnum[keyof typeof GeodisLanguageEnum];
-
 export interface Gls {
     'client_id': string;
     'client_secret': string;
     'contact_id'?: string | null;
-    'account_country_code'?: string | null;
-}
-export interface HayPost {
-    'username': string;
-    'password': string;
-    'customer_id': string;
-    'customer_type': string;
     'account_country_code'?: string | null;
 }
 export interface Hermes {
@@ -2846,7 +2682,7 @@ export interface Laposte {
 
 export const LaposteLangEnum = {
     FrFr: 'fr_FR',
-    EnUs: 'en_US'
+    EnUs: 'en_US',
 } as const;
 
 export type LaposteLangEnum = typeof LaposteLangEnum[keyof typeof LaposteLangEnum];
@@ -2935,7 +2771,7 @@ export const LineItemWeightUnitEnum = {
     Kg: 'KG',
     Lb: 'LB',
     Oz: 'OZ',
-    G: 'G'
+    G: 'G',
 } as const;
 
 export type LineItemWeightUnitEnum = typeof LineItemWeightUnitEnum[keyof typeof LineItemWeightUnitEnum];
@@ -3083,7 +2919,7 @@ export const LineItemValueCurrencyEnum = {
     Vuv: 'VUV',
     Wst: 'WST',
     Yer: 'YER',
-    Zar: 'ZAR'
+    Zar: 'ZAR',
 } as const;
 
 export type LineItemValueCurrencyEnum = typeof LineItemValueCurrencyEnum[keyof typeof LineItemValueCurrencyEnum];
@@ -3327,16 +3163,11 @@ export const LineItemOriginCountryEnum = {
     Im: 'IM',
     Bl: 'BL',
     Mf: 'MF',
-    Sx: 'SX'
+    Sx: 'SX',
 } as const;
 
 export type LineItemOriginCountryEnum = typeof LineItemOriginCountryEnum[keyof typeof LineItemOriginCountryEnum];
 
-export interface Locate2u {
-    'client_id'?: string | null;
-    'client_secret'?: string | null;
-    'account_country_code'?: string | null;
-}
 export interface Manifest {
     /**
      * A unique manifest identifier
@@ -3519,24 +3350,6 @@ export interface Mydhl {
     'account_number'?: string | null;
     'account_country_code'?: string | null;
 }
-export interface Nationex {
-    'api_key': string;
-    'customer_id': string;
-    'billing_account'?: string | null;
-    /**
-     * Indicates a language string
-     */
-    'language'?: NationexLanguageEnum;
-    'account_country_code'?: string | null;
-}
-
-export const NationexLanguageEnum = {
-    En: 'en',
-    Fr: 'fr'
-} as const;
-
-export type NationexLanguageEnum = typeof NationexLanguageEnum[keyof typeof NationexLanguageEnum];
-
 export interface Operation {
     /**
      * Operation performed
@@ -3584,6 +3397,14 @@ export interface Order {
      * Specifies the object type
      */
     'object_type'?: string;
+    /**
+     * Indicates whether this order is archived.
+     */
+    'is_archived'?: boolean;
+    /**
+     * Timestamp when the order was archived.
+     */
+    'archived_at'?: string | null;
     /**
      * The source\' order id.
      */
@@ -3647,7 +3468,7 @@ export const OrderStatusEnum = {
     Cancelled: 'cancelled',
     Fulfilled: 'fulfilled',
     Delivered: 'delivered',
-    Partial: 'partial'
+    Partial: 'partial',
 } as const;
 
 export type OrderStatusEnum = typeof OrderStatusEnum[keyof typeof OrderStatusEnum];
@@ -3785,13 +3606,13 @@ export const ParcelWeightUnitEnum = {
     Kg: 'KG',
     Lb: 'LB',
     Oz: 'OZ',
-    G: 'G'
+    G: 'G',
 } as const;
 
 export type ParcelWeightUnitEnum = typeof ParcelWeightUnitEnum[keyof typeof ParcelWeightUnitEnum];
 export const ParcelDimensionUnitEnum = {
     Cm: 'CM',
-    In: 'IN'
+    In: 'IN',
 } as const;
 
 export type ParcelDimensionUnitEnum = typeof ParcelDimensionUnitEnum[keyof typeof ParcelDimensionUnitEnum];
@@ -3867,13 +3688,13 @@ export const ParcelDataWeightUnitEnum = {
     Kg: 'KG',
     Lb: 'LB',
     Oz: 'OZ',
-    G: 'G'
+    G: 'G',
 } as const;
 
 export type ParcelDataWeightUnitEnum = typeof ParcelDataWeightUnitEnum[keyof typeof ParcelDataWeightUnitEnum];
 export const ParcelDataDimensionUnitEnum = {
     Cm: 'CM',
-    In: 'IN'
+    In: 'IN',
 } as const;
 
 export type ParcelDataDimensionUnitEnum = typeof ParcelDataDimensionUnitEnum[keyof typeof ParcelDataDimensionUnitEnum];
@@ -4202,7 +4023,7 @@ export const PatchedAddressDataCountryCodeEnum = {
     Im: 'IM',
     Bl: 'BL',
     Mf: 'MF',
-    Sx: 'SX'
+    Sx: 'SX',
 } as const;
 
 export type PatchedAddressDataCountryCodeEnum = typeof PatchedAddressDataCountryCodeEnum[keyof typeof PatchedAddressDataCountryCodeEnum];
@@ -4239,57 +4060,35 @@ export interface PatchedCarrierConnectionData {
 }
 
 export const PatchedCarrierConnectionDataCarrierNameEnum = {
-    Aramex: 'aramex',
     Asendia: 'asendia',
-    AsendiaUs: 'asendia_us',
     Australiapost: 'australiapost',
-    Boxknight: 'boxknight',
     Bpost: 'bpost',
     Canadapost: 'canadapost',
-    Canpar: 'canpar',
     Chronopost: 'chronopost',
-    Colissimo: 'colissimo',
     DhlExpress: 'dhl_express',
     DhlParcelDe: 'dhl_parcel_de',
     DhlPoland: 'dhl_poland',
     DhlUniversal: 'dhl_universal',
-    Dicom: 'dicom',
     Dpd: 'dpd',
     DpdMeta: 'dpd_meta',
-    Dtdc: 'dtdc',
-    Easypost: 'easypost',
-    Easyship: 'easyship',
-    Eshipper: 'eshipper',
     Fedex: 'fedex',
-    Freightcom: 'freightcom',
     Generic: 'generic',
-    Geodis: 'geodis',
     Gls: 'gls',
-    HayPost: 'hay_post',
     Hermes: 'hermes',
     Landmark: 'landmark',
     Laposte: 'laposte',
-    Locate2u: 'locate2u',
     Mydhl: 'mydhl',
-    Nationex: 'nationex',
     Parcelone: 'parcelone',
     Postat: 'postat',
     Purolator: 'purolator',
-    Roadie: 'roadie',
-    Royalmail: 'royalmail',
-    Sapient: 'sapient',
     Seko: 'seko',
     Sendle: 'sendle',
-    Shipengine: 'shipengine',
+    Smartkargo: 'smartkargo',
     Spring: 'spring',
     Teleship: 'teleship',
-    Tge: 'tge',
-    Tnt: 'tnt',
     Ups: 'ups',
     Usps: 'usps',
     UspsInternational: 'usps_international',
-    Veho: 'veho',
-    Zoom2u: 'zoom2u'
 } as const;
 
 export type PatchedCarrierConnectionDataCarrierNameEnum = typeof PatchedCarrierConnectionDataCarrierNameEnum[keyof typeof PatchedCarrierConnectionDataCarrierNameEnum];
@@ -4369,7 +4168,7 @@ export const PatchedCommodityDataWeightUnitEnum = {
     Kg: 'KG',
     Lb: 'LB',
     Oz: 'OZ',
-    G: 'G'
+    G: 'G',
 } as const;
 
 export type PatchedCommodityDataWeightUnitEnum = typeof PatchedCommodityDataWeightUnitEnum[keyof typeof PatchedCommodityDataWeightUnitEnum];
@@ -4517,7 +4316,7 @@ export const PatchedCommodityDataValueCurrencyEnum = {
     Vuv: 'VUV',
     Wst: 'WST',
     Yer: 'YER',
-    Zar: 'ZAR'
+    Zar: 'ZAR',
 } as const;
 
 export type PatchedCommodityDataValueCurrencyEnum = typeof PatchedCommodityDataValueCurrencyEnum[keyof typeof PatchedCommodityDataValueCurrencyEnum];
@@ -4761,7 +4560,7 @@ export const PatchedCommodityDataOriginCountryEnum = {
     Im: 'IM',
     Bl: 'BL',
     Mf: 'MF',
-    Sx: 'SX'
+    Sx: 'SX',
 } as const;
 
 export type PatchedCommodityDataOriginCountryEnum = typeof PatchedCommodityDataOriginCountryEnum[keyof typeof PatchedCommodityDataOriginCountryEnum];
@@ -4804,7 +4603,7 @@ export interface PatchedDocumentTemplateData {
 export const PatchedDocumentTemplateDataRelatedObjectEnum = {
     Shipment: 'shipment',
     Order: 'order',
-    Other: 'other'
+    Other: 'other',
 } as const;
 
 export type PatchedDocumentTemplateDataRelatedObjectEnum = typeof PatchedDocumentTemplateDataRelatedObjectEnum[keyof typeof PatchedDocumentTemplateDataRelatedObjectEnum];
@@ -4880,13 +4679,13 @@ export const PatchedParcelDataWeightUnitEnum = {
     Kg: 'KG',
     Lb: 'LB',
     Oz: 'OZ',
-    G: 'G'
+    G: 'G',
 } as const;
 
 export type PatchedParcelDataWeightUnitEnum = typeof PatchedParcelDataWeightUnitEnum[keyof typeof PatchedParcelDataWeightUnitEnum];
 export const PatchedParcelDataDimensionUnitEnum = {
     Cm: 'CM',
-    In: 'IN'
+    In: 'IN',
 } as const;
 
 export type PatchedParcelDataDimensionUnitEnum = typeof PatchedParcelDataDimensionUnitEnum[keyof typeof PatchedParcelDataDimensionUnitEnum];
@@ -4931,7 +4730,7 @@ export const PatchedWebhookDataEnabledEventsEnum = {
     BatchQueued: 'batch_queued',
     BatchFailed: 'batch_failed',
     BatchRunning: 'batch_running',
-    BatchCompleted: 'batch_completed'
+    BatchCompleted: 'batch_completed',
 } as const;
 
 export type PatchedWebhookDataEnabledEventsEnum = typeof PatchedWebhookDataEnabledEventsEnum[keyof typeof PatchedWebhookDataEnabledEventsEnum];
@@ -4954,7 +4753,7 @@ export interface Payment {
 export const PaymentPaidByEnum = {
     Sender: 'sender',
     Recipient: 'recipient',
-    ThirdParty: 'third_party'
+    ThirdParty: 'third_party',
 } as const;
 
 export type PaymentPaidByEnum = typeof PaymentPaidByEnum[keyof typeof PaymentPaidByEnum];
@@ -5103,7 +4902,7 @@ export const PaymentCurrencyEnum = {
     Wst: 'WST',
     Yer: 'YER',
     Zar: 'ZAR',
-    Empty: ''
+    Empty: '',
 } as const;
 
 export type PaymentCurrencyEnum = typeof PaymentCurrencyEnum[keyof typeof PaymentCurrencyEnum];
@@ -5117,6 +4916,14 @@ export interface Pickup {
      * Specifies the object type
      */
     'object_type'?: string;
+    /**
+     * Indicates whether this pickup is archived.
+     */
+    'is_archived'?: boolean;
+    /**
+     * Timestamp when the pickup was archived.
+     */
+    'archived_at'?: string | null;
     /**
      * The pickup carrier
      */
@@ -5203,14 +5010,14 @@ export const PickupStatusEnum = {
     Scheduled: 'scheduled',
     PickedUp: 'picked_up',
     Cancelled: 'cancelled',
-    Closed: 'closed'
+    Closed: 'closed',
 } as const;
 
 export type PickupStatusEnum = typeof PickupStatusEnum[keyof typeof PickupStatusEnum];
 export const PickupPickupTypeEnum = {
     OneTime: 'one_time',
     Daily: 'daily',
-    Recurring: 'recurring'
+    Recurring: 'recurring',
 } as const;
 
 export type PickupPickupTypeEnum = typeof PickupPickupTypeEnum[keyof typeof PickupPickupTypeEnum];
@@ -5297,7 +5104,7 @@ export interface PickupData {
 export const PickupDataPickupTypeEnum = {
     OneTime: 'one_time',
     Daily: 'daily',
-    Recurring: 'recurring'
+    Recurring: 'recurring',
 } as const;
 
 export type PickupDataPickupTypeEnum = typeof PickupDataPickupTypeEnum[keyof typeof PickupDataPickupTypeEnum];
@@ -5362,7 +5169,7 @@ export interface PickupRequest {
 export const PickupRequestPickupTypeEnum = {
     OneTime: 'one_time',
     Daily: 'daily',
-    Recurring: 'recurring'
+    Recurring: 'recurring',
 } as const;
 
 export type PickupRequestPickupTypeEnum = typeof PickupRequestPickupTypeEnum[keyof typeof PickupRequestPickupTypeEnum];
@@ -5439,7 +5246,7 @@ export interface PickupUpdateData {
 export const PickupUpdateDataPickupTypeEnum = {
     OneTime: 'one_time',
     Daily: 'daily',
-    Recurring: 'recurring'
+    Recurring: 'recurring',
 } as const;
 
 export type PickupUpdateDataPickupTypeEnum = typeof PickupUpdateDataPickupTypeEnum[keyof typeof PickupUpdateDataPickupTypeEnum];
@@ -5494,7 +5301,7 @@ export interface PickupUpdateRequest {
 export const PickupUpdateRequestPickupTypeEnum = {
     OneTime: 'one_time',
     Daily: 'daily',
-    Recurring: 'recurring'
+    Recurring: 'recurring',
 } as const;
 
 export type PickupUpdateRequestPickupTypeEnum = typeof PickupUpdateRequestPickupTypeEnum[keyof typeof PickupUpdateRequestPickupTypeEnum];
@@ -5525,7 +5332,7 @@ export interface Purolator {
 
 export const PurolatorLanguageEnum = {
     En: 'en',
-    Fr: 'fr'
+    Fr: 'fr',
 } as const;
 
 export type PurolatorLanguageEnum = typeof PurolatorLanguageEnum[keyof typeof PurolatorLanguageEnum];
@@ -5622,6 +5429,10 @@ export interface RateRequest {
      */
     'billing_address'?: AddressData | null;
     /**
+     * Indicates whether this is a return shipment rate request.
+     */
+    'is_return'?: boolean;
+    /**
      * The list of configured carriers you wish to get rates from.
      */
     'carrier_ids'?: Array<string> | null;
@@ -5664,7 +5475,7 @@ export const ResourceTokenRequestResourceTypeEnum = {
     Manifest: 'manifest',
     Order: 'order',
     Template: 'template',
-    Document: 'document'
+    Document: 'document',
 } as const;
 
 export type ResourceTokenRequestResourceTypeEnum = typeof ResourceTokenRequestResourceTypeEnum[keyof typeof ResourceTokenRequestResourceTypeEnum];
@@ -5675,7 +5486,7 @@ export const ResourceTokenRequestAccessEnum = {
     Render: 'render',
     BatchLabels: 'batch_labels',
     BatchInvoices: 'batch_invoices',
-    BatchManifests: 'batch_manifests'
+    BatchManifests: 'batch_manifests',
 } as const;
 
 export type ResourceTokenRequestAccessEnum = typeof ResourceTokenRequestAccessEnum[keyof typeof ResourceTokenRequestAccessEnum];
@@ -5683,7 +5494,7 @@ export const ResourceTokenRequestFormatEnum = {
     Pdf: 'pdf',
     Png: 'png',
     Zpl: 'zpl',
-    Gif: 'gif'
+    Gif: 'gif',
 } as const;
 
 export type ResourceTokenRequestFormatEnum = typeof ResourceTokenRequestFormatEnum[keyof typeof ResourceTokenRequestFormatEnum];
@@ -5702,36 +5513,6 @@ export interface ResourceTokenResponse {
      */
     'resource_urls': { [key: string]: string; };
 }
-export interface Roadie {
-    'api_key': string;
-    'account_country_code'?: string | null;
-}
-export interface Royalmail {
-    'client_id': string;
-    'client_secret': string;
-    'account_country_code'?: string | null;
-}
-export interface Sapient {
-    'client_id': string;
-    'client_secret': string;
-    'shipping_account_id': string;
-    /**
-     * Indicates a sapient_carrier_code string
-     */
-    'sapient_carrier_code'?: SapientSapientCarrierCodeEnum;
-    'account_country_code'?: string | null;
-}
-
-export const SapientSapientCarrierCodeEnum = {
-    Dx: 'DX',
-    Evri: 'EVRI',
-    Rm: 'RM',
-    Ups: 'UPS',
-    Yodel: 'YODEL'
-} as const;
-
-export type SapientSapientCarrierCodeEnum = typeof SapientSapientCarrierCodeEnum[keyof typeof SapientSapientCarrierCodeEnum];
-
 export interface Seko {
     'access_key': string;
     'account_country_code'?: string | null;
@@ -5739,12 +5520,6 @@ export interface Seko {
 export interface Sendle {
     'sendle_id': string;
     'api_key': string;
-    'account_country_code'?: string | null;
-}
-export interface Shipengine {
-    'api_key': string;
-    'carrier_ids'?: string | null;
-    'account_number'?: string | null;
     'account_country_code'?: string | null;
 }
 export interface Shipment {
@@ -5833,6 +5608,14 @@ export interface Shipment {
      */
     'messages'?: Array<Message>;
     /**
+     * Indicates whether this shipment is archived.
+     */
+    'is_archived'?: boolean;
+    /**
+     * Timestamp when the shipment was archived.
+     */
+    'archived_at'?: string | null;
+    /**
      * The current Shipment status
      */
     'status'?: ShipmentStatusEnum;
@@ -5898,7 +5681,7 @@ export const ShipmentLabelTypeEnum = {
     Pdf: 'PDF',
     Zpl: 'ZPL',
     Png: 'PNG',
-    Empty: ''
+    Empty: '',
 } as const;
 
 export type ShipmentLabelTypeEnum = typeof ShipmentLabelTypeEnum[keyof typeof ShipmentLabelTypeEnum];
@@ -5911,7 +5694,7 @@ export const ShipmentStatusEnum = {
     Delivered: 'delivered',
     NeedsAttention: 'needs_attention',
     OutForDelivery: 'out_for_delivery',
-    DeliveryFailed: 'delivery_failed'
+    DeliveryFailed: 'delivery_failed',
 } as const;
 
 export type ShipmentStatusEnum = typeof ShipmentStatusEnum[keyof typeof ShipmentStatusEnum];
@@ -6004,7 +5787,7 @@ export interface ShipmentData {
 export const ShipmentDataLabelTypeEnum = {
     Pdf: 'PDF',
     Zpl: 'ZPL',
-    Png: 'PNG'
+    Png: 'PNG',
 } as const;
 
 export type ShipmentDataLabelTypeEnum = typeof ShipmentDataLabelTypeEnum[keyof typeof ShipmentDataLabelTypeEnum];
@@ -6083,7 +5866,7 @@ export interface ShipmentDataReference {
 export const ShipmentDataReferenceLabelTypeEnum = {
     Pdf: 'PDF',
     Zpl: 'ZPL',
-    Png: 'PNG'
+    Png: 'PNG',
 } as const;
 
 export type ShipmentDataReferenceLabelTypeEnum = typeof ShipmentDataReferenceLabelTypeEnum[keyof typeof ShipmentDataReferenceLabelTypeEnum];
@@ -6118,7 +5901,7 @@ export interface ShipmentPurchaseData {
 export const ShipmentPurchaseDataLabelTypeEnum = {
     Pdf: 'PDF',
     Zpl: 'ZPL',
-    Png: 'PNG'
+    Png: 'PNG',
 } as const;
 
 export type ShipmentPurchaseDataLabelTypeEnum = typeof ShipmentPurchaseDataLabelTypeEnum[keyof typeof ShipmentPurchaseDataLabelTypeEnum];
@@ -6175,7 +5958,7 @@ export interface ShipmentUpdateData {
 export const ShipmentUpdateDataLabelTypeEnum = {
     Pdf: 'PDF',
     Zpl: 'ZPL',
-    Png: 'PNG'
+    Png: 'PNG',
 } as const;
 
 export type ShipmentUpdateDataLabelTypeEnum = typeof ShipmentUpdateDataLabelTypeEnum[keyof typeof ShipmentUpdateDataLabelTypeEnum];
@@ -6267,7 +6050,7 @@ export interface ShippingRequest {
 export const ShippingRequestLabelTypeEnum = {
     Pdf: 'PDF',
     Zpl: 'ZPL',
-    Png: 'PNG'
+    Png: 'PNG',
 } as const;
 
 export type ShippingRequestLabelTypeEnum = typeof ShippingRequestLabelTypeEnum[keyof typeof ShippingRequestLabelTypeEnum];
@@ -6358,6 +6141,14 @@ export interface ShippingResponse {
      */
     'messages'?: Array<Message>;
     /**
+     * Indicates whether this shipment is archived.
+     */
+    'is_archived'?: boolean;
+    /**
+     * Timestamp when the shipment was archived.
+     */
+    'archived_at'?: string | null;
+    /**
      * The current Shipment status
      */
     'status'?: ShippingResponseStatusEnum;
@@ -6415,7 +6206,7 @@ export const ShippingResponseLabelTypeEnum = {
     Pdf: 'PDF',
     Zpl: 'ZPL',
     Png: 'PNG',
-    Empty: ''
+    Empty: '',
 } as const;
 
 export type ShippingResponseLabelTypeEnum = typeof ShippingResponseLabelTypeEnum[keyof typeof ShippingResponseLabelTypeEnum];
@@ -6428,11 +6219,16 @@ export const ShippingResponseStatusEnum = {
     Delivered: 'delivered',
     NeedsAttention: 'needs_attention',
     OutForDelivery: 'out_for_delivery',
-    DeliveryFailed: 'delivery_failed'
+    DeliveryFailed: 'delivery_failed',
 } as const;
 
 export type ShippingResponseStatusEnum = typeof ShippingResponseStatusEnum[keyof typeof ShippingResponseStatusEnum];
 
+export interface Smartkargo {
+    'api_key': string;
+    'account_number': string;
+    'account_country_code'?: string | null;
+}
 export interface Spring {
     'api_key': string;
     'account_country_code'?: string | null;
@@ -6440,25 +6236,6 @@ export interface Spring {
 export interface Teleship {
     'client_id': string;
     'client_secret': string;
-    'account_country_code'?: string | null;
-}
-export interface Tge {
-    'username': string;
-    'password': string;
-    'api_key': string;
-    'toll_username': string;
-    'toll_password': string;
-    'my_toll_token': string;
-    'my_toll_identity': string;
-    'account_code'?: string | null;
-    'sscc_count'?: number;
-    'shipment_count'?: number;
-    'account_country_code'?: string | null;
-}
-export interface Tnt {
-    'username': string;
-    'password': string;
-    'account_number'?: string | null;
     'account_country_code'?: string | null;
 }
 export interface TokenObtainPair {
@@ -6530,6 +6307,14 @@ export interface TrackerDetails {
      */
     'object_type'?: string;
     /**
+     * Indicates whether this tracker is archived.
+     */
+    'is_archived'?: boolean;
+    /**
+     * Timestamp when the tracker was archived.
+     */
+    'archived_at'?: string | null;
+    /**
      * User metadata for the tracker
      */
     'metadata'?: { [key: string]: any; };
@@ -6551,7 +6336,7 @@ export const TrackerDetailsStatusEnum = {
     OutForDelivery: 'out_for_delivery',
     ReadyForPickup: 'ready_for_pickup',
     DeliveryFailed: 'delivery_failed',
-    ReturnToSender: 'return_to_sender'
+    ReturnToSender: 'return_to_sender',
 } as const;
 
 export type TrackerDetailsStatusEnum = typeof TrackerDetailsStatusEnum[keyof typeof TrackerDetailsStatusEnum];
@@ -6590,7 +6375,7 @@ export const TrackerEventInjectRequestStatusEnum = {
     OutForDelivery: 'out_for_delivery',
     ReadyForPickup: 'ready_for_pickup',
     DeliveryFailed: 'delivery_failed',
-    ReturnToSender: 'return_to_sender'
+    ReturnToSender: 'return_to_sender',
 } as const;
 
 export type TrackerEventInjectRequestStatusEnum = typeof TrackerEventInjectRequestStatusEnum[keyof typeof TrackerEventInjectRequestStatusEnum];
@@ -6639,50 +6424,34 @@ export interface TrackingData {
 }
 
 export const TrackingDataCarrierNameEnum = {
-    Aramex: 'aramex',
     Asendia: 'asendia',
-    AsendiaUs: 'asendia_us',
     Australiapost: 'australiapost',
-    Boxknight: 'boxknight',
     Bpost: 'bpost',
     Canadapost: 'canadapost',
-    Canpar: 'canpar',
     Chronopost: 'chronopost',
-    Colissimo: 'colissimo',
     DhlExpress: 'dhl_express',
     DhlParcelDe: 'dhl_parcel_de',
     DhlPoland: 'dhl_poland',
     DhlUniversal: 'dhl_universal',
-    Dicom: 'dicom',
     Dpd: 'dpd',
     DpdMeta: 'dpd_meta',
-    Dtdc: 'dtdc',
     Fedex: 'fedex',
     Generic: 'generic',
-    Geodis: 'geodis',
     Gls: 'gls',
-    HayPost: 'hay_post',
     Hermes: 'hermes',
     Landmark: 'landmark',
     Laposte: 'laposte',
-    Locate2u: 'locate2u',
     Mydhl: 'mydhl',
-    Nationex: 'nationex',
     Postat: 'postat',
     Purolator: 'purolator',
-    Roadie: 'roadie',
-    Royalmail: 'royalmail',
     Seko: 'seko',
     Sendle: 'sendle',
+    Smartkargo: 'smartkargo',
     Spring: 'spring',
     Teleship: 'teleship',
-    Tge: 'tge',
-    Tnt: 'tnt',
     Ups: 'ups',
     Usps: 'usps',
     UspsInternational: 'usps_international',
-    Veho: 'veho',
-    Zoom2u: 'zoom2u'
 } as const;
 
 export type TrackingDataCarrierNameEnum = typeof TrackingDataCarrierNameEnum[keyof typeof TrackingDataCarrierNameEnum];
@@ -6715,7 +6484,7 @@ export interface TrackingEvent {
     /**
      * The tracking event\'s description
      */
-    'description'?: string;
+    'description'?: string | null;
     /**
      * The tracking event\'s location
      */
@@ -6743,7 +6512,7 @@ export const TrackingEventStatusEnum = {
     ReadyForPickup: 'ready_for_pickup',
     DeliveryFailed: 'delivery_failed',
     ReturnToSender: 'return_to_sender',
-    Empty: ''
+    Empty: '',
 } as const;
 
 export type TrackingEventStatusEnum = typeof TrackingEventStatusEnum[keyof typeof TrackingEventStatusEnum];
@@ -6783,7 +6552,7 @@ export const TrackingEventReasonEnum = {
     SecurityIssue: 'security_issue',
     RegulatoryHold: 'regulatory_hold',
     Unknown: 'unknown',
-    Empty: ''
+    Empty: '',
 } as const;
 
 export type TrackingEventReasonEnum = typeof TrackingEventReasonEnum[keyof typeof TrackingEventReasonEnum];
@@ -6926,6 +6695,14 @@ export interface TrackingStatus {
      */
     'object_type'?: string;
     /**
+     * Indicates whether this tracker is archived.
+     */
+    'is_archived'?: boolean;
+    /**
+     * Timestamp when the tracker was archived.
+     */
+    'archived_at'?: string | null;
+    /**
      * User metadata for the tracker
      */
     'metadata'?: { [key: string]: any; };
@@ -6955,7 +6732,7 @@ export const TrackingStatusStatusEnum = {
     OutForDelivery: 'out_for_delivery',
     ReadyForPickup: 'ready_for_pickup',
     DeliveryFailed: 'delivery_failed',
-    ReturnToSender: 'return_to_sender'
+    ReturnToSender: 'return_to_sender',
 } as const;
 
 export type TrackingStatusStatusEnum = typeof TrackingStatusStatusEnum[keyof typeof TrackingStatusStatusEnum];
@@ -6983,7 +6760,7 @@ export interface Usps {
 export const UspsAccountTypeEnum = {
     Eps: 'EPS',
     Permit: 'PERMIT',
-    Meter: 'METER'
+    Meter: 'METER',
 } as const;
 
 export type UspsAccountTypeEnum = typeof UspsAccountTypeEnum[keyof typeof UspsAccountTypeEnum];
@@ -7005,16 +6782,11 @@ export interface UspsInternational {
 export const UspsInternationalAccountTypeEnum = {
     Eps: 'EPS',
     Permit: 'PERMIT',
-    Meter: 'METER'
+    Meter: 'METER',
 } as const;
 
 export type UspsInternationalAccountTypeEnum = typeof UspsInternationalAccountTypeEnum[keyof typeof UspsInternationalAccountTypeEnum];
 
-export interface Veho {
-    'api_key': string;
-    'account_number'?: string | null;
-    'account_country_code'?: string | null;
-}
 export interface VerifiedTokenObtainPair {
     'refresh': string;
     'access': string;
@@ -7083,7 +6855,7 @@ export const WebhookEnabledEventsEnum = {
     BatchQueued: 'batch_queued',
     BatchFailed: 'batch_failed',
     BatchRunning: 'batch_running',
-    BatchCompleted: 'batch_completed'
+    BatchCompleted: 'batch_completed',
 } as const;
 
 export type WebhookEnabledEventsEnum = typeof WebhookEnabledEventsEnum[keyof typeof WebhookEnabledEventsEnum];
@@ -7128,7 +6900,7 @@ export const WebhookDataEnabledEventsEnum = {
     BatchQueued: 'batch_queued',
     BatchFailed: 'batch_failed',
     BatchRunning: 'batch_running',
-    BatchCompleted: 'batch_completed'
+    BatchCompleted: 'batch_completed',
 } as const;
 
 export type WebhookDataEnabledEventsEnum = typeof WebhookDataEnabledEventsEnum[keyof typeof WebhookDataEnabledEventsEnum];
@@ -7142,10 +6914,6 @@ export interface WebhookList {
 export interface WebhookTestRequest {
     'payload'?: { [key: string]: any; };
     'event_id'?: string;
-}
-export interface Zoom2u {
-    'api_key': string;
-    'account_country_code'?: string | null;
 }
 
 /**
@@ -7172,8 +6940,8 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -7202,8 +6970,8 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -7344,9 +7112,8 @@ export const AddressesApiAxiosParamCreator = function (configuration?: Configura
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -7369,7 +7136,7 @@ export const AddressesApiAxiosParamCreator = function (configuration?: Configura
             // verify required parameter 'id' is not null or undefined
             assertParamExists('discard', 'id', id)
             const localVarPath = `/v1/addresses/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -7395,8 +7162,8 @@ export const AddressesApiAxiosParamCreator = function (configuration?: Configura
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -7439,8 +7206,8 @@ export const AddressesApiAxiosParamCreator = function (configuration?: Configura
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -7461,7 +7228,7 @@ export const AddressesApiAxiosParamCreator = function (configuration?: Configura
             // verify required parameter 'id' is not null or undefined
             assertParamExists('retrieve', 'id', id)
             const localVarPath = `/v1/addresses/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -7487,8 +7254,8 @@ export const AddressesApiAxiosParamCreator = function (configuration?: Configura
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -7510,7 +7277,7 @@ export const AddressesApiAxiosParamCreator = function (configuration?: Configura
             // verify required parameter 'id' is not null or undefined
             assertParamExists('update', 'id', id)
             const localVarPath = `/v1/addresses/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -7536,9 +7303,8 @@ export const AddressesApiAxiosParamCreator = function (configuration?: Configura
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -7803,9 +7569,8 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -7853,9 +7618,8 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -7889,9 +7653,8 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -7925,9 +7688,8 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -7961,9 +7723,8 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -7997,9 +7758,8 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -8326,9 +8086,8 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -8376,9 +8135,8 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -8426,9 +8184,8 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -8455,8 +8212,8 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
             // verify required parameter 'resourceType' is not null or undefined
             assertParamExists('exportFile', 'resourceType', resourceType)
             const localVarPath = `/v1/batches/data/export/{resource_type}.{export_format}`
-                .replace(`{${"export_format"}}`, encodeURIComponent(String(exportFormat)))
-                .replace(`{${"resource_type"}}`, encodeURIComponent(String(resourceType)));
+                .replace('{export_format}', encodeURIComponent(String(exportFormat)))
+                .replace('{resource_type}', encodeURIComponent(String(resourceType)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -8486,8 +8243,8 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
                 localVarQueryParameter['data_template'] = dataTemplate;
             }
 
+            localVarHeaderParameter['Accept'] = 'application/octet-stream,application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -8498,18 +8255,19 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
-         * Import csv, xls and xlsx data files for: `Beta`<br/> - trackers data - orders data - shipments data - billing data (soon)<br/><br/> **This operation will return a batch operation that you can poll to follow the import progression.**
+         * Import csv, xls and xlsx data files for: `Beta`<br/> - trackers data - orders data - shipments data - rate_sheet data (Excel/CSV)<br/><br/> **For rate_sheet imports, pass dry_run=true to validate and preview a diff without writing. For other resource types, a BatchOperation is returned.**
          * @summary Import data files
          * @param {File} [dataFile] 
          * @param {string} [dataTemplate] A data template slug to use for the import.&lt;br/&gt;         **When nothing is specified, the system default headers are expected.**         
          * @param {ImportFileResourceTypeEnum} [resourceType] The type of the resource to import
          * @param {string} [resourceType2] 
          * @param {string} [dataTemplate2] 
+         * @param {boolean} [dryRun] 
          * @param {File} [dataFile2] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        importFile: async (dataFile?: File, dataTemplate?: string, resourceType?: ImportFileResourceTypeEnum, resourceType2?: string, dataTemplate2?: string, dataFile2?: File, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        importFile: async (dataFile?: File, dataTemplate?: string, resourceType?: ImportFileResourceTypeEnum, resourceType2?: string, dataTemplate2?: string, dryRun?: boolean, dataFile2?: File, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/v1/batches/data/import`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -8553,18 +8311,21 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
             if (resourceType2 !== undefined) { 
                 localVarFormParams.append('resource_type', resourceType2 as any);
             }
-    
+
             if (dataTemplate2 !== undefined) { 
                 localVarFormParams.append('data_template', dataTemplate2 as any);
             }
-    
+
+            if (dryRun !== undefined) { 
+                localVarFormParams.append('dry_run', String(dryRun) as any);
+            }
+
             if (dataFile2 !== undefined) { 
                 localVarFormParams.append('data_file', dataFile2 as any);
             }
-    
-    
             localVarHeaderParameter['Content-Type'] = 'multipart/form-data';
-    
+            localVarHeaderParameter['Accept'] = 'application/json';
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -8608,8 +8369,8 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -8655,9 +8416,8 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -8680,7 +8440,7 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
             // verify required parameter 'id' is not null or undefined
             assertParamExists('retrieve', 'id', id)
             const localVarPath = `/v1/batches/operations/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -8706,8 +8466,8 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -8781,19 +8541,20 @@ export const BatchesApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * Import csv, xls and xlsx data files for: `Beta`<br/> - trackers data - orders data - shipments data - billing data (soon)<br/><br/> **This operation will return a batch operation that you can poll to follow the import progression.**
+         * Import csv, xls and xlsx data files for: `Beta`<br/> - trackers data - orders data - shipments data - rate_sheet data (Excel/CSV)<br/><br/> **For rate_sheet imports, pass dry_run=true to validate and preview a diff without writing. For other resource types, a BatchOperation is returned.**
          * @summary Import data files
          * @param {File} [dataFile] 
          * @param {string} [dataTemplate] A data template slug to use for the import.&lt;br/&gt;         **When nothing is specified, the system default headers are expected.**         
          * @param {ImportFileResourceTypeEnum} [resourceType] The type of the resource to import
          * @param {string} [resourceType2] 
          * @param {string} [dataTemplate2] 
+         * @param {boolean} [dryRun] 
          * @param {File} [dataFile2] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async importFile(dataFile?: File, dataTemplate?: string, resourceType?: ImportFileResourceTypeEnum, resourceType2?: string, dataTemplate2?: string, dataFile2?: File, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BatchOperation>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.importFile(dataFile, dataTemplate, resourceType, resourceType2, dataTemplate2, dataFile2, options);
+        async importFile(dataFile?: File, dataTemplate?: string, resourceType?: ImportFileResourceTypeEnum, resourceType2?: string, dataTemplate2?: string, dryRun?: boolean, dataFile2?: File, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<{ [key: string]: any; }>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.importFile(dataFile, dataTemplate, resourceType, resourceType2, dataTemplate2, dryRun, dataFile2, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['BatchesApi.importFile']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -8886,14 +8647,14 @@ export const BatchesApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.exportFile(requestParameters.exportFormat, requestParameters.resourceType, requestParameters.dataTemplate, options).then((request) => request(axios, basePath));
         },
         /**
-         * Import csv, xls and xlsx data files for: `Beta`<br/> - trackers data - orders data - shipments data - billing data (soon)<br/><br/> **This operation will return a batch operation that you can poll to follow the import progression.**
+         * Import csv, xls and xlsx data files for: `Beta`<br/> - trackers data - orders data - shipments data - rate_sheet data (Excel/CSV)<br/><br/> **For rate_sheet imports, pass dry_run=true to validate and preview a diff without writing. For other resource types, a BatchOperation is returned.**
          * @summary Import data files
          * @param {BatchesApiImportFileRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        importFile(requestParameters: BatchesApiImportFileRequest = {}, options?: AxiosRequestConfig): AxiosPromise<BatchOperation> {
-            return localVarFp.importFile(requestParameters.dataFile, requestParameters.dataTemplate, requestParameters.resourceType, requestParameters.resourceType2, requestParameters.dataTemplate2, requestParameters.dataFile2, options).then((request) => request(axios, basePath));
+        importFile(requestParameters: BatchesApiImportFileRequest = {}, options?: AxiosRequestConfig): AxiosPromise<{ [key: string]: any; }> {
+            return localVarFp.importFile(requestParameters.dataFile, requestParameters.dataTemplate, requestParameters.resourceType, requestParameters.resourceType2, requestParameters.dataTemplate2, requestParameters.dryRun, requestParameters.dataFile2, options).then((request) => request(axios, basePath));
         },
         /**
          * Retrieve all batch operations. `Beta`
@@ -8982,6 +8743,8 @@ export interface BatchesApiImportFileRequest {
 
     readonly dataTemplate2?: string
 
+    readonly dryRun?: boolean
+
     readonly dataFile2?: File
 }
 
@@ -9048,14 +8811,14 @@ export class BatchesApi extends BaseAPI {
     }
 
     /**
-     * Import csv, xls and xlsx data files for: `Beta`<br/> - trackers data - orders data - shipments data - billing data (soon)<br/><br/> **This operation will return a batch operation that you can poll to follow the import progression.**
+     * Import csv, xls and xlsx data files for: `Beta`<br/> - trackers data - orders data - shipments data - rate_sheet data (Excel/CSV)<br/><br/> **For rate_sheet imports, pass dry_run=true to validate and preview a diff without writing. For other resource types, a BatchOperation is returned.**
      * @summary Import data files
      * @param {BatchesApiImportFileRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     public importFile(requestParameters: BatchesApiImportFileRequest = {}, options?: AxiosRequestConfig) {
-        return BatchesApiFp(this.configuration).importFile(requestParameters.dataFile, requestParameters.dataTemplate, requestParameters.resourceType, requestParameters.resourceType2, requestParameters.dataTemplate2, requestParameters.dataFile2, options).then((request) => request(this.axios, this.basePath));
+        return BatchesApiFp(this.configuration).importFile(requestParameters.dataFile, requestParameters.dataTemplate, requestParameters.resourceType, requestParameters.resourceType2, requestParameters.dataTemplate2, requestParameters.dryRun, requestParameters.dataFile2, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -9094,22 +8857,25 @@ export class BatchesApi extends BaseAPI {
 export const ExportFileExportFormatEnum = {
     Billing: 'billing',
     Order: 'order',
+    RateSheet: 'rate_sheet',
     Shipment: 'shipment',
-    Trackers: 'trackers'
+    Trackers: 'trackers',
 } as const;
 export type ExportFileExportFormatEnum = typeof ExportFileExportFormatEnum[keyof typeof ExportFileExportFormatEnum];
 export const ExportFileResourceTypeEnum = {
     Billing: 'billing',
     Order: 'order',
+    RateSheet: 'rate_sheet',
     Shipment: 'shipment',
-    Trackers: 'trackers'
+    Trackers: 'trackers',
 } as const;
 export type ExportFileResourceTypeEnum = typeof ExportFileResourceTypeEnum[keyof typeof ExportFileResourceTypeEnum];
 export const ImportFileResourceTypeEnum = {
     Billing: 'billing',
     Order: 'order',
+    RateSheet: 'rate_sheet',
     Shipment: 'shipment',
-    Trackers: 'trackers'
+    Trackers: 'trackers',
 } as const;
 export type ImportFileResourceTypeEnum = typeof ImportFileResourceTypeEnum[keyof typeof ImportFileResourceTypeEnum];
 
@@ -9122,7 +8888,7 @@ export const CarriersApiAxiosParamCreator = function (configuration?: Configurat
         /**
          * Retrieve a carrier\'s details
          * @summary Get carrier details
-         * @param {string} carrierName The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;gls&#x60;, &#x60;hay_post&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} carrierName The unique carrier slug. &lt;br/&gt;Values: &#x60;asendia&#x60;, &#x60;australiapost&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;chronopost&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;fedex&#x60;, &#x60;generic&#x60;, &#x60;gls&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;mydhl&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;smartkargo&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -9130,7 +8896,7 @@ export const CarriersApiAxiosParamCreator = function (configuration?: Configurat
             // verify required parameter 'carrierName' is not null or undefined
             assertParamExists('getDetails', 'carrierName', carrierName)
             const localVarPath = `/v1/carriers/{carrier_name}`
-                .replace(`{${"carrier_name"}}`, encodeURIComponent(String(carrierName)));
+                .replace('{carrier_name}', encodeURIComponent(String(carrierName)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -9142,8 +8908,8 @@ export const CarriersApiAxiosParamCreator = function (configuration?: Configurat
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -9156,7 +8922,7 @@ export const CarriersApiAxiosParamCreator = function (configuration?: Configurat
         /**
          * Retrieve a carrier\'s options
          * @summary Get carrier options
-         * @param {string} carrierName The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;gls&#x60;, &#x60;hay_post&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} carrierName The unique carrier slug. &lt;br/&gt;Values: &#x60;asendia&#x60;, &#x60;australiapost&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;chronopost&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;fedex&#x60;, &#x60;generic&#x60;, &#x60;gls&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;mydhl&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;smartkargo&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -9164,7 +8930,7 @@ export const CarriersApiAxiosParamCreator = function (configuration?: Configurat
             // verify required parameter 'carrierName' is not null or undefined
             assertParamExists('getOptions', 'carrierName', carrierName)
             const localVarPath = `/v1/carriers/{carrier_name}/options`
-                .replace(`{${"carrier_name"}}`, encodeURIComponent(String(carrierName)));
+                .replace('{carrier_name}', encodeURIComponent(String(carrierName)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -9176,8 +8942,8 @@ export const CarriersApiAxiosParamCreator = function (configuration?: Configurat
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -9190,7 +8956,7 @@ export const CarriersApiAxiosParamCreator = function (configuration?: Configurat
         /**
          * Retrieve a carrier\'s services
          * @summary Get carrier services
-         * @param {string} carrierName The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;gls&#x60;, &#x60;hay_post&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} carrierName The unique carrier slug. &lt;br/&gt;Values: &#x60;asendia&#x60;, &#x60;australiapost&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;chronopost&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;fedex&#x60;, &#x60;generic&#x60;, &#x60;gls&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;mydhl&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;smartkargo&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -9198,7 +8964,7 @@ export const CarriersApiAxiosParamCreator = function (configuration?: Configurat
             // verify required parameter 'carrierName' is not null or undefined
             assertParamExists('getServices', 'carrierName', carrierName)
             const localVarPath = `/v1/carriers/{carrier_name}/services`
-                .replace(`{${"carrier_name"}}`, encodeURIComponent(String(carrierName)));
+                .replace('{carrier_name}', encodeURIComponent(String(carrierName)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -9210,8 +8976,8 @@ export const CarriersApiAxiosParamCreator = function (configuration?: Configurat
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -9224,10 +8990,11 @@ export const CarriersApiAxiosParamCreator = function (configuration?: Configurat
         /**
          * Returns the list of configured carriers
          * @summary List all carriers
+         * @param {string} [lang] Language code for translated labels (e.g., \&#39;de\&#39;, \&#39;en\&#39;).
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        list: async (lang?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/v1/carriers`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -9240,8 +9007,12 @@ export const CarriersApiAxiosParamCreator = function (configuration?: Configurat
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            if (lang !== undefined) {
+                localVarQueryParameter['lang'] = lang;
+            }
 
-    
+            localVarHeaderParameter['Accept'] = 'application/json';
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -9263,7 +9034,7 @@ export const CarriersApiFp = function(configuration?: Configuration) {
         /**
          * Retrieve a carrier\'s details
          * @summary Get carrier details
-         * @param {string} carrierName The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;gls&#x60;, &#x60;hay_post&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} carrierName The unique carrier slug. &lt;br/&gt;Values: &#x60;asendia&#x60;, &#x60;australiapost&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;chronopost&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;fedex&#x60;, &#x60;generic&#x60;, &#x60;gls&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;mydhl&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;smartkargo&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -9276,7 +9047,7 @@ export const CarriersApiFp = function(configuration?: Configuration) {
         /**
          * Retrieve a carrier\'s options
          * @summary Get carrier options
-         * @param {string} carrierName The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;gls&#x60;, &#x60;hay_post&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} carrierName The unique carrier slug. &lt;br/&gt;Values: &#x60;asendia&#x60;, &#x60;australiapost&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;chronopost&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;fedex&#x60;, &#x60;generic&#x60;, &#x60;gls&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;mydhl&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;smartkargo&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -9289,7 +9060,7 @@ export const CarriersApiFp = function(configuration?: Configuration) {
         /**
          * Retrieve a carrier\'s services
          * @summary Get carrier services
-         * @param {string} carrierName The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;gls&#x60;, &#x60;hay_post&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} carrierName The unique carrier slug. &lt;br/&gt;Values: &#x60;asendia&#x60;, &#x60;australiapost&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;chronopost&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;fedex&#x60;, &#x60;generic&#x60;, &#x60;gls&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;mydhl&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;smartkargo&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -9302,11 +9073,12 @@ export const CarriersApiFp = function(configuration?: Configuration) {
         /**
          * Returns the list of configured carriers
          * @summary List all carriers
+         * @param {string} [lang] Language code for translated labels (e.g., \&#39;de\&#39;, \&#39;en\&#39;).
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<CarrierDetails>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.list(options);
+        async list(lang?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<CarrierDetails>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(lang, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['CarriersApi.list']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -9353,11 +9125,12 @@ export const CarriersApiFactory = function (configuration?: Configuration, baseP
         /**
          * Returns the list of configured carriers
          * @summary List all carriers
+         * @param {CarriersApiListRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list(options?: AxiosRequestConfig): AxiosPromise<Array<CarrierDetails>> {
-            return localVarFp.list(options).then((request) => request(axios, basePath));
+        list(requestParameters: CarriersApiListRequest = {}, options?: AxiosRequestConfig): AxiosPromise<Array<CarrierDetails>> {
+            return localVarFp.list(requestParameters.lang, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -9367,7 +9140,7 @@ export const CarriersApiFactory = function (configuration?: Configuration, baseP
  */
 export interface CarriersApiGetDetailsRequest {
     /**
-     * The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;gls&#x60;, &#x60;hay_post&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+     * The unique carrier slug. &lt;br/&gt;Values: &#x60;asendia&#x60;, &#x60;australiapost&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;chronopost&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;fedex&#x60;, &#x60;generic&#x60;, &#x60;gls&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;mydhl&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;smartkargo&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;
      */
     readonly carrierName: string
 }
@@ -9377,7 +9150,7 @@ export interface CarriersApiGetDetailsRequest {
  */
 export interface CarriersApiGetOptionsRequest {
     /**
-     * The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;gls&#x60;, &#x60;hay_post&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+     * The unique carrier slug. &lt;br/&gt;Values: &#x60;asendia&#x60;, &#x60;australiapost&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;chronopost&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;fedex&#x60;, &#x60;generic&#x60;, &#x60;gls&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;mydhl&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;smartkargo&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;
      */
     readonly carrierName: string
 }
@@ -9387,9 +9160,19 @@ export interface CarriersApiGetOptionsRequest {
  */
 export interface CarriersApiGetServicesRequest {
     /**
-     * The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;gls&#x60;, &#x60;hay_post&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+     * The unique carrier slug. &lt;br/&gt;Values: &#x60;asendia&#x60;, &#x60;australiapost&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;chronopost&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;fedex&#x60;, &#x60;generic&#x60;, &#x60;gls&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;mydhl&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;smartkargo&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;
      */
     readonly carrierName: string
+}
+
+/**
+ * Request parameters for list operation in CarriersApi.
+ */
+export interface CarriersApiListRequest {
+    /**
+     * Language code for translated labels (e.g., \&#39;de\&#39;, \&#39;en\&#39;).
+     */
+    readonly lang?: string
 }
 
 /**
@@ -9432,11 +9215,12 @@ export class CarriersApi extends BaseAPI {
     /**
      * Returns the list of configured carriers
      * @summary List all carriers
+     * @param {CarriersApiListRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public list(options?: AxiosRequestConfig) {
-        return CarriersApiFp(this.configuration).list(options).then((request) => request(this.axios, this.basePath));
+    public list(requestParameters: CarriersApiListRequest = {}, options?: AxiosRequestConfig) {
+        return CarriersApiFp(this.configuration).list(requestParameters.lang, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -9483,9 +9267,8 @@ export const ConnectionsApiAxiosParamCreator = function (configuration?: Configu
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -9501,7 +9284,7 @@ export const ConnectionsApiAxiosParamCreator = function (configuration?: Configu
          * Retrieve all carrier connections
          * @summary List carrier connections
          * @param {boolean} [active] 
-         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;gls&#x60;, &#x60;hay_post&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;asendia&#x60;, &#x60;australiapost&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;chronopost&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;fedex&#x60;, &#x60;generic&#x60;, &#x60;gls&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;mydhl&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;smartkargo&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;
          * @param {string} [metadataKey] 
          * @param {string} [metadataValue] 
          * @param {boolean} [systemOnly] 
@@ -9555,8 +9338,8 @@ export const ConnectionsApiAxiosParamCreator = function (configuration?: Configu
                 localVarQueryParameter['system_only'] = systemOnly;
             }
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -9577,7 +9360,7 @@ export const ConnectionsApiAxiosParamCreator = function (configuration?: Configu
             // verify required parameter 'id' is not null or undefined
             assertParamExists('remove', 'id', id)
             const localVarPath = `/v1/connections/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -9603,8 +9386,8 @@ export const ConnectionsApiAxiosParamCreator = function (configuration?: Configu
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -9625,7 +9408,7 @@ export const ConnectionsApiAxiosParamCreator = function (configuration?: Configu
             // verify required parameter 'id' is not null or undefined
             assertParamExists('retrieve', 'id', id)
             const localVarPath = `/v1/connections/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -9651,8 +9434,8 @@ export const ConnectionsApiAxiosParamCreator = function (configuration?: Configu
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -9674,7 +9457,7 @@ export const ConnectionsApiAxiosParamCreator = function (configuration?: Configu
             // verify required parameter 'id' is not null or undefined
             assertParamExists('update', 'id', id)
             const localVarPath = `/v1/connections/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -9700,9 +9483,8 @@ export const ConnectionsApiAxiosParamCreator = function (configuration?: Configu
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -9740,7 +9522,7 @@ export const ConnectionsApiFp = function(configuration?: Configuration) {
          * Retrieve all carrier connections
          * @summary List carrier connections
          * @param {boolean} [active] 
-         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;gls&#x60;, &#x60;hay_post&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;asendia&#x60;, &#x60;australiapost&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;chronopost&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;fedex&#x60;, &#x60;generic&#x60;, &#x60;gls&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;mydhl&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;smartkargo&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;
          * @param {string} [metadataKey] 
          * @param {string} [metadataValue] 
          * @param {boolean} [systemOnly] 
@@ -9869,7 +9651,7 @@ export interface ConnectionsApiListRequest {
     readonly active?: boolean
 
     /**
-     * The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;gls&#x60;, &#x60;hay_post&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+     * The unique carrier slug. &lt;br/&gt;Values: &#x60;asendia&#x60;, &#x60;australiapost&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;chronopost&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;fedex&#x60;, &#x60;generic&#x60;, &#x60;gls&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;mydhl&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;smartkargo&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;
      */
     readonly carrierName?: string
 
@@ -10006,9 +9788,8 @@ export const DocumentsApiAxiosParamCreator = function (configuration?: Configura
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -10031,7 +9812,7 @@ export const DocumentsApiAxiosParamCreator = function (configuration?: Configura
             // verify required parameter 'id' is not null or undefined
             assertParamExists('discard', 'id', id)
             const localVarPath = `/v1/documents/templates/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -10057,8 +9838,8 @@ export const DocumentsApiAxiosParamCreator = function (configuration?: Configura
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -10102,9 +9883,8 @@ export const DocumentsApiAxiosParamCreator = function (configuration?: Configura
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -10149,8 +9929,8 @@ export const DocumentsApiAxiosParamCreator = function (configuration?: Configura
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -10171,7 +9951,7 @@ export const DocumentsApiAxiosParamCreator = function (configuration?: Configura
             // verify required parameter 'id' is not null or undefined
             assertParamExists('retrieve', 'id', id)
             const localVarPath = `/v1/documents/templates/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -10197,8 +9977,8 @@ export const DocumentsApiAxiosParamCreator = function (configuration?: Configura
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -10219,7 +9999,7 @@ export const DocumentsApiAxiosParamCreator = function (configuration?: Configura
             // verify required parameter 'id' is not null or undefined
             assertParamExists('retrieveUpload', 'id', id)
             const localVarPath = `/v1/documents/uploads/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -10245,8 +10025,8 @@ export const DocumentsApiAxiosParamCreator = function (configuration?: Configura
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -10268,7 +10048,7 @@ export const DocumentsApiAxiosParamCreator = function (configuration?: Configura
             // verify required parameter 'id' is not null or undefined
             assertParamExists('update', 'id', id)
             const localVarPath = `/v1/documents/templates/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -10294,9 +10074,8 @@ export const DocumentsApiAxiosParamCreator = function (configuration?: Configura
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -10344,9 +10123,8 @@ export const DocumentsApiAxiosParamCreator = function (configuration?: Configura
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -10410,8 +10188,8 @@ export const DocumentsApiAxiosParamCreator = function (configuration?: Configura
                 localVarQueryParameter['shipment_id'] = shipmentId;
             }
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -10858,9 +10636,8 @@ export const ManifestsApiAxiosParamCreator = function (configuration?: Configura
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -10883,7 +10660,7 @@ export const ManifestsApiAxiosParamCreator = function (configuration?: Configura
             // verify required parameter 'id' is not null or undefined
             assertParamExists('document', 'id', id)
             const localVarPath = `/v1/manifests/{id}/document`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -10909,8 +10686,8 @@ export const ManifestsApiAxiosParamCreator = function (configuration?: Configura
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -10923,7 +10700,7 @@ export const ManifestsApiAxiosParamCreator = function (configuration?: Configura
         /**
          * Retrieve all manifests.
          * @summary List manifests
-         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;gls&#x60;, &#x60;hay_post&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;asendia&#x60;, &#x60;australiapost&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;chronopost&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;fedex&#x60;, &#x60;generic&#x60;, &#x60;gls&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;mydhl&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;smartkargo&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;
          * @param {string} [createdAfter] 
          * @param {string} [createdBefore] 
          * @param {*} [options] Override http request option.
@@ -10972,8 +10749,8 @@ export const ManifestsApiAxiosParamCreator = function (configuration?: Configura
                     createdBefore;
             }
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -10994,7 +10771,7 @@ export const ManifestsApiAxiosParamCreator = function (configuration?: Configura
             // verify required parameter 'id' is not null or undefined
             assertParamExists('retrieve', 'id', id)
             const localVarPath = `/v1/manifests/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -11020,8 +10797,8 @@ export const ManifestsApiAxiosParamCreator = function (configuration?: Configura
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -11069,7 +10846,7 @@ export const ManifestsApiFp = function(configuration?: Configuration) {
         /**
          * Retrieve all manifests.
          * @summary List manifests
-         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;gls&#x60;, &#x60;hay_post&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;asendia&#x60;, &#x60;australiapost&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;chronopost&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;fedex&#x60;, &#x60;generic&#x60;, &#x60;gls&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;mydhl&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;smartkargo&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;
          * @param {string} [createdAfter] 
          * @param {string} [createdBefore] 
          * @param {*} [options] Override http request option.
@@ -11165,7 +10942,7 @@ export interface ManifestsApiDocumentRequest {
  */
 export interface ManifestsApiListRequest {
     /**
-     * The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;gls&#x60;, &#x60;hay_post&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+     * The unique carrier slug. &lt;br/&gt;Values: &#x60;asendia&#x60;, &#x60;australiapost&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;chronopost&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;fedex&#x60;, &#x60;generic&#x60;, &#x60;gls&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;mydhl&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;smartkargo&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;
      */
     readonly carrierName?: string
 
@@ -11238,7 +11015,7 @@ export class ManifestsApi extends BaseAPI {
 export const OrdersApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
-         * Cancel an order.
+         * Cancel an order.  ``pk`` can be either the karrio order ID or a ``request_id`` stored in ``order.meta[\"request_id\"]``.
          * @summary Cancel an order
          * @param {string} id 
          * @param {*} [options] Override http request option.
@@ -11248,7 +11025,7 @@ export const OrdersApiAxiosParamCreator = function (configuration?: Configuratio
             // verify required parameter 'id' is not null or undefined
             assertParamExists('cancel', 'id', id)
             const localVarPath = `/v1/orders/{id}/cancel`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -11274,8 +11051,8 @@ export const OrdersApiAxiosParamCreator = function (configuration?: Configuratio
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -11321,9 +11098,8 @@ export const OrdersApiAxiosParamCreator = function (configuration?: Configuratio
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -11347,7 +11123,7 @@ export const OrdersApiAxiosParamCreator = function (configuration?: Configuratio
             // verify required parameter 'id' is not null or undefined
             assertParamExists('dismiss', 'id', id)
             const localVarPath = `/v1/orders/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -11373,8 +11149,8 @@ export const OrdersApiAxiosParamCreator = function (configuration?: Configuratio
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -11417,8 +11193,8 @@ export const OrdersApiAxiosParamCreator = function (configuration?: Configuratio
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -11439,7 +11215,7 @@ export const OrdersApiAxiosParamCreator = function (configuration?: Configuratio
             // verify required parameter 'id' is not null or undefined
             assertParamExists('retrieve', 'id', id)
             const localVarPath = `/v1/orders/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -11465,8 +11241,8 @@ export const OrdersApiAxiosParamCreator = function (configuration?: Configuratio
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -11488,7 +11264,7 @@ export const OrdersApiAxiosParamCreator = function (configuration?: Configuratio
             // verify required parameter 'id' is not null or undefined
             assertParamExists('update', 'id', id)
             const localVarPath = `/v1/orders/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -11514,9 +11290,8 @@ export const OrdersApiAxiosParamCreator = function (configuration?: Configuratio
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -11538,7 +11313,7 @@ export const OrdersApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = OrdersApiAxiosParamCreator(configuration)
     return {
         /**
-         * Cancel an order.
+         * Cancel an order.  ``pk`` can be either the karrio order ID or a ``request_id`` stored in ``order.meta[\"request_id\"]``.
          * @summary Cancel an order
          * @param {string} id 
          * @param {*} [options] Override http request option.
@@ -11626,7 +11401,7 @@ export const OrdersApiFactory = function (configuration?: Configuration, basePat
     const localVarFp = OrdersApiFp(configuration)
     return {
         /**
-         * Cancel an order.
+         * Cancel an order.  ``pk`` can be either the karrio order ID or a ``request_id`` stored in ``order.meta[\"request_id\"]``.
          * @summary Cancel an order
          * @param {OrdersApiCancelRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
@@ -11730,7 +11505,7 @@ export interface OrdersApiUpdateRequest {
  */
 export class OrdersApi extends BaseAPI {
     /**
-     * Cancel an order.
+     * Cancel an order.  ``pk`` can be either the karrio order ID or a ``request_id`` stored in ``order.meta[\"request_id\"]``.
      * @summary Cancel an order
      * @param {OrdersApiCancelRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
@@ -11839,9 +11614,8 @@ export const ParcelsApiAxiosParamCreator = function (configuration?: Configurati
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -11864,7 +11638,7 @@ export const ParcelsApiAxiosParamCreator = function (configuration?: Configurati
             // verify required parameter 'id' is not null or undefined
             assertParamExists('discard', 'id', id)
             const localVarPath = `/v1/parcels/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -11890,8 +11664,8 @@ export const ParcelsApiAxiosParamCreator = function (configuration?: Configurati
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -11934,8 +11708,8 @@ export const ParcelsApiAxiosParamCreator = function (configuration?: Configurati
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -11956,7 +11730,7 @@ export const ParcelsApiAxiosParamCreator = function (configuration?: Configurati
             // verify required parameter 'id' is not null or undefined
             assertParamExists('retrieve', 'id', id)
             const localVarPath = `/v1/parcels/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -11982,8 +11756,8 @@ export const ParcelsApiAxiosParamCreator = function (configuration?: Configurati
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -12005,7 +11779,7 @@ export const ParcelsApiAxiosParamCreator = function (configuration?: Configurati
             // verify required parameter 'id' is not null or undefined
             assertParamExists('update', 'id', id)
             const localVarPath = `/v1/parcels/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -12031,9 +11805,8 @@ export const ParcelsApiAxiosParamCreator = function (configuration?: Configurati
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -12277,7 +12050,7 @@ export class ParcelsApi extends BaseAPI {
 export const PickupsApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
-         * Cancel a pickup of one or more shipments.
+         * Cancel a pickup of one or more shipments.  ``pk`` can be either the karrio pickup ID (``pck_…``) or a ``request_id`` stored in ``pickup.meta[\"request_id\"]``.
          * @summary Cancel a pickup
          * @param {string} id 
          * @param {PickupCancelData} [pickupCancelData] 
@@ -12288,7 +12061,7 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
             // verify required parameter 'id' is not null or undefined
             assertParamExists('cancel', 'id', id)
             const localVarPath = `/v1/pickups/{id}/cancel`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -12314,9 +12087,8 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -12364,9 +12136,8 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -12382,10 +12153,11 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
          * Retrieve all scheduled pickups.
          * @summary List shipment pickups
          * @param {string} [address] 
-         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;gls&#x60;, &#x60;hay_post&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;asendia&#x60;, &#x60;australiapost&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;chronopost&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;fedex&#x60;, &#x60;generic&#x60;, &#x60;gls&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;mydhl&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;smartkargo&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;
          * @param {string} [confirmationNumber] 
          * @param {string} [createdAfter] 
          * @param {string} [createdBefore] 
+         * @param {boolean} [isArchived] 
          * @param {string} [keyword] 
          * @param {string} [pickupDateAfter] 
          * @param {string} [pickupDateBefore] 
@@ -12394,7 +12166,7 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (address?: string, carrierName?: string, confirmationNumber?: string, createdAfter?: string, createdBefore?: string, keyword?: string, pickupDateAfter?: string, pickupDateBefore?: string, requestId?: string, status?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        list: async (address?: string, carrierName?: string, confirmationNumber?: string, createdAfter?: string, createdBefore?: string, isArchived?: boolean, keyword?: string, pickupDateAfter?: string, pickupDateBefore?: string, requestId?: string, status?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/v1/pickups`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -12445,6 +12217,10 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
                     createdBefore;
             }
 
+            if (isArchived !== undefined) {
+                localVarQueryParameter['is_archived'] = isArchived;
+            }
+
             if (keyword !== undefined) {
                 localVarQueryParameter['keyword'] = keyword;
             }
@@ -12469,8 +12245,8 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
                 localVarQueryParameter['status'] = status;
             }
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -12491,7 +12267,7 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
             // verify required parameter 'id' is not null or undefined
             assertParamExists('retrieve', 'id', id)
             const localVarPath = `/v1/pickups/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -12517,8 +12293,8 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -12543,7 +12319,7 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
             // verify required parameter 'pickupData' is not null or undefined
             assertParamExists('schedule', 'pickupData', pickupData)
             const localVarPath = `/v1/pickups/{carrier_name}/schedule`
-                .replace(`{${"carrier_name"}}`, encodeURIComponent(String(carrierName)));
+                .replace('{carrier_name}', encodeURIComponent(String(carrierName)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -12569,9 +12345,8 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -12597,7 +12372,7 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
             // verify required parameter 'pickupUpdateData' is not null or undefined
             assertParamExists('update', 'pickupUpdateData', pickupUpdateData)
             const localVarPath = `/v1/pickups/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -12623,9 +12398,8 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -12647,7 +12421,7 @@ export const PickupsApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = PickupsApiAxiosParamCreator(configuration)
     return {
         /**
-         * Cancel a pickup of one or more shipments.
+         * Cancel a pickup of one or more shipments.  ``pk`` can be either the karrio pickup ID (``pck_…``) or a ``request_id`` stored in ``pickup.meta[\"request_id\"]``.
          * @summary Cancel a pickup
          * @param {string} id 
          * @param {PickupCancelData} [pickupCancelData] 
@@ -12677,10 +12451,11 @@ export const PickupsApiFp = function(configuration?: Configuration) {
          * Retrieve all scheduled pickups.
          * @summary List shipment pickups
          * @param {string} [address] 
-         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;gls&#x60;, &#x60;hay_post&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;asendia&#x60;, &#x60;australiapost&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;chronopost&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;fedex&#x60;, &#x60;generic&#x60;, &#x60;gls&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;mydhl&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;smartkargo&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;
          * @param {string} [confirmationNumber] 
          * @param {string} [createdAfter] 
          * @param {string} [createdBefore] 
+         * @param {boolean} [isArchived] 
          * @param {string} [keyword] 
          * @param {string} [pickupDateAfter] 
          * @param {string} [pickupDateBefore] 
@@ -12689,8 +12464,8 @@ export const PickupsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(address?: string, carrierName?: string, confirmationNumber?: string, createdAfter?: string, createdBefore?: string, keyword?: string, pickupDateAfter?: string, pickupDateBefore?: string, requestId?: string, status?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PickupList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.list(address, carrierName, confirmationNumber, createdAfter, createdBefore, keyword, pickupDateAfter, pickupDateBefore, requestId, status, options);
+        async list(address?: string, carrierName?: string, confirmationNumber?: string, createdAfter?: string, createdBefore?: string, isArchived?: boolean, keyword?: string, pickupDateAfter?: string, pickupDateBefore?: string, requestId?: string, status?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PickupList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(address, carrierName, confirmationNumber, createdAfter, createdBefore, isArchived, keyword, pickupDateAfter, pickupDateBefore, requestId, status, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['PickupsApi.list']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -12747,7 +12522,7 @@ export const PickupsApiFactory = function (configuration?: Configuration, basePa
     const localVarFp = PickupsApiFp(configuration)
     return {
         /**
-         * Cancel a pickup of one or more shipments.
+         * Cancel a pickup of one or more shipments.  ``pk`` can be either the karrio pickup ID (``pck_…``) or a ``request_id`` stored in ``pickup.meta[\"request_id\"]``.
          * @summary Cancel a pickup
          * @param {PickupsApiCancelRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
@@ -12774,7 +12549,7 @@ export const PickupsApiFactory = function (configuration?: Configuration, basePa
          * @throws {RequiredError}
          */
         list(requestParameters: PickupsApiListRequest = {}, options?: AxiosRequestConfig): AxiosPromise<PickupList> {
-            return localVarFp.list(requestParameters.address, requestParameters.carrierName, requestParameters.confirmationNumber, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.keyword, requestParameters.pickupDateAfter, requestParameters.pickupDateBefore, requestParameters.requestId, requestParameters.status, options).then((request) => request(axios, basePath));
+            return localVarFp.list(requestParameters.address, requestParameters.carrierName, requestParameters.confirmationNumber, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.isArchived, requestParameters.keyword, requestParameters.pickupDateAfter, requestParameters.pickupDateBefore, requestParameters.requestId, requestParameters.status, options).then((request) => request(axios, basePath));
         },
         /**
          * Retrieve a scheduled pickup.
@@ -12833,7 +12608,7 @@ export interface PickupsApiListRequest {
     readonly address?: string
 
     /**
-     * The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;gls&#x60;, &#x60;hay_post&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+     * The unique carrier slug. &lt;br/&gt;Values: &#x60;asendia&#x60;, &#x60;australiapost&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;chronopost&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;fedex&#x60;, &#x60;generic&#x60;, &#x60;gls&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;mydhl&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;smartkargo&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;
      */
     readonly carrierName?: string
 
@@ -12842,6 +12617,8 @@ export interface PickupsApiListRequest {
     readonly createdAfter?: string
 
     readonly createdBefore?: string
+
+    readonly isArchived?: boolean
 
     readonly keyword?: string
 
@@ -12887,7 +12664,7 @@ export interface PickupsApiUpdateRequest {
  */
 export class PickupsApi extends BaseAPI {
     /**
-     * Cancel a pickup of one or more shipments.
+     * Cancel a pickup of one or more shipments.  ``pk`` can be either the karrio pickup ID (``pck_…``) or a ``request_id`` stored in ``pickup.meta[\"request_id\"]``.
      * @summary Cancel a pickup
      * @param {PickupsApiCancelRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
@@ -12916,7 +12693,7 @@ export class PickupsApi extends BaseAPI {
      * @throws {RequiredError}
      */
     public list(requestParameters: PickupsApiListRequest = {}, options?: AxiosRequestConfig) {
-        return PickupsApiFp(this.configuration).list(requestParameters.address, requestParameters.carrierName, requestParameters.confirmationNumber, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.keyword, requestParameters.pickupDateAfter, requestParameters.pickupDateBefore, requestParameters.requestId, requestParameters.status, options).then((request) => request(this.axios, this.basePath));
+        return PickupsApiFp(this.configuration).list(requestParameters.address, requestParameters.carrierName, requestParameters.confirmationNumber, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.isArchived, requestParameters.keyword, requestParameters.pickupDateAfter, requestParameters.pickupDateBefore, requestParameters.requestId, requestParameters.status, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -12997,9 +12774,8 @@ export const ProductsApiAxiosParamCreator = function (configuration?: Configurat
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -13022,7 +12798,7 @@ export const ProductsApiAxiosParamCreator = function (configuration?: Configurat
             // verify required parameter 'id' is not null or undefined
             assertParamExists('discard', 'id', id)
             const localVarPath = `/v1/products/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -13048,8 +12824,8 @@ export const ProductsApiAxiosParamCreator = function (configuration?: Configurat
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -13092,8 +12868,8 @@ export const ProductsApiAxiosParamCreator = function (configuration?: Configurat
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -13114,7 +12890,7 @@ export const ProductsApiAxiosParamCreator = function (configuration?: Configurat
             // verify required parameter 'id' is not null or undefined
             assertParamExists('retrieve', 'id', id)
             const localVarPath = `/v1/products/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -13140,8 +12916,8 @@ export const ProductsApiAxiosParamCreator = function (configuration?: Configurat
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -13163,7 +12939,7 @@ export const ProductsApiAxiosParamCreator = function (configuration?: Configurat
             // verify required parameter 'id' is not null or undefined
             assertParamExists('update', 'id', id)
             const localVarPath = `/v1/products/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -13189,9 +12965,8 @@ export const ProductsApiAxiosParamCreator = function (configuration?: Configurat
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -13470,9 +13245,8 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -13498,7 +13272,7 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
             // verify required parameter 'pickupCancelRequest' is not null or undefined
             assertParamExists('cancelPickup', 'pickupCancelRequest', pickupCancelRequest)
             const localVarPath = `/v1/proxy/pickups/{carrier_name}/cancel`
-                .replace(`{${"carrier_name"}}`, encodeURIComponent(String(carrierName)));
+                .replace('{carrier_name}', encodeURIComponent(String(carrierName)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -13524,9 +13298,8 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -13574,9 +13347,8 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -13624,9 +13396,8 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -13679,9 +13450,8 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
                 localVarQueryParameter['hub'] = hub;
             }
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -13707,7 +13477,7 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
             // verify required parameter 'pickupRequest' is not null or undefined
             assertParamExists('schedulePickup', 'pickupRequest', pickupRequest)
             const localVarPath = `/v1/proxy/pickups/{carrier_name}`
-                .replace(`{${"carrier_name"}}`, encodeURIComponent(String(carrierName)));
+                .replace('{carrier_name}', encodeURIComponent(String(carrierName)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -13733,9 +13503,8 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -13763,8 +13532,8 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
             // verify required parameter 'trackingNumber' is not null or undefined
             assertParamExists('trackShipment', 'trackingNumber', trackingNumber)
             const localVarPath = `/v1/proxy/tracking/{carrier_name}/{tracking_number}`
-                .replace(`{${"carrier_name"}}`, encodeURIComponent(String(carrierName)))
-                .replace(`{${"tracking_number"}}`, encodeURIComponent(String(trackingNumber)));
+                .replace('{carrier_name}', encodeURIComponent(String(carrierName)))
+                .replace('{tracking_number}', encodeURIComponent(String(trackingNumber)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -13794,8 +13563,8 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
                 localVarQueryParameter['hub'] = hub;
             }
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -13819,7 +13588,7 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
             // verify required parameter 'pickupUpdateRequest' is not null or undefined
             assertParamExists('updatePickup', 'pickupUpdateRequest', pickupUpdateRequest)
             const localVarPath = `/v1/proxy/pickups/{carrier_name}/update`
-                .replace(`{${"carrier_name"}}`, encodeURIComponent(String(carrierName)));
+                .replace('{carrier_name}', encodeURIComponent(String(carrierName)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -13845,9 +13614,8 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -13873,7 +13641,7 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
             // verify required parameter 'shipmentCancelRequest' is not null or undefined
             assertParamExists('voidLabel', 'shipmentCancelRequest', shipmentCancelRequest)
             const localVarPath = `/v1/proxy/shipping/{carrier_name}/cancel`
-                .replace(`{${"carrier_name"}}`, encodeURIComponent(String(carrierName)));
+                .replace('{carrier_name}', encodeURIComponent(String(carrierName)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -13899,9 +13667,8 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -14333,266 +14100,162 @@ export class ProxyApi extends BaseAPI {
 }
 
 export const CancelPickupCarrierNameEnum = {
-    Aramex: 'aramex',
     Asendia: 'asendia',
-    AsendiaUs: 'asendia_us',
     Australiapost: 'australiapost',
-    Boxknight: 'boxknight',
     Bpost: 'bpost',
     Canadapost: 'canadapost',
-    Canpar: 'canpar',
     Chronopost: 'chronopost',
-    Colissimo: 'colissimo',
     DhlExpress: 'dhl_express',
     DhlParcelDe: 'dhl_parcel_de',
     DhlPoland: 'dhl_poland',
     DhlUniversal: 'dhl_universal',
-    Dicom: 'dicom',
     Dpd: 'dpd',
     DpdMeta: 'dpd_meta',
-    Dtdc: 'dtdc',
-    Easypost: 'easypost',
-    Easyship: 'easyship',
-    Eshipper: 'eshipper',
     Fedex: 'fedex',
-    Freightcom: 'freightcom',
     Generic: 'generic',
-    Geodis: 'geodis',
     Gls: 'gls',
-    HayPost: 'hay_post',
     Hermes: 'hermes',
     Landmark: 'landmark',
     Laposte: 'laposte',
-    Locate2u: 'locate2u',
     Mydhl: 'mydhl',
-    Nationex: 'nationex',
     Parcelone: 'parcelone',
     Postat: 'postat',
     Purolator: 'purolator',
-    Roadie: 'roadie',
-    Royalmail: 'royalmail',
-    Sapient: 'sapient',
     Seko: 'seko',
     Sendle: 'sendle',
-    Shipengine: 'shipengine',
+    Smartkargo: 'smartkargo',
     Spring: 'spring',
     Teleship: 'teleship',
-    Tge: 'tge',
-    Tnt: 'tnt',
     Ups: 'ups',
     Usps: 'usps',
     UspsInternational: 'usps_international',
-    Veho: 'veho',
-    Zoom2u: 'zoom2u'
 } as const;
 export type CancelPickupCarrierNameEnum = typeof CancelPickupCarrierNameEnum[keyof typeof CancelPickupCarrierNameEnum];
 export const SchedulePickupCarrierNameEnum = {
-    Aramex: 'aramex',
     Asendia: 'asendia',
-    AsendiaUs: 'asendia_us',
     Australiapost: 'australiapost',
-    Boxknight: 'boxknight',
     Bpost: 'bpost',
     Canadapost: 'canadapost',
-    Canpar: 'canpar',
     Chronopost: 'chronopost',
-    Colissimo: 'colissimo',
     DhlExpress: 'dhl_express',
     DhlParcelDe: 'dhl_parcel_de',
     DhlPoland: 'dhl_poland',
     DhlUniversal: 'dhl_universal',
-    Dicom: 'dicom',
     Dpd: 'dpd',
     DpdMeta: 'dpd_meta',
-    Dtdc: 'dtdc',
-    Easypost: 'easypost',
-    Easyship: 'easyship',
-    Eshipper: 'eshipper',
     Fedex: 'fedex',
-    Freightcom: 'freightcom',
     Generic: 'generic',
-    Geodis: 'geodis',
     Gls: 'gls',
-    HayPost: 'hay_post',
     Hermes: 'hermes',
     Landmark: 'landmark',
     Laposte: 'laposte',
-    Locate2u: 'locate2u',
     Mydhl: 'mydhl',
-    Nationex: 'nationex',
     Parcelone: 'parcelone',
     Postat: 'postat',
     Purolator: 'purolator',
-    Roadie: 'roadie',
-    Royalmail: 'royalmail',
-    Sapient: 'sapient',
     Seko: 'seko',
     Sendle: 'sendle',
-    Shipengine: 'shipengine',
+    Smartkargo: 'smartkargo',
     Spring: 'spring',
     Teleship: 'teleship',
-    Tge: 'tge',
-    Tnt: 'tnt',
     Ups: 'ups',
     Usps: 'usps',
     UspsInternational: 'usps_international',
-    Veho: 'veho',
-    Zoom2u: 'zoom2u'
 } as const;
 export type SchedulePickupCarrierNameEnum = typeof SchedulePickupCarrierNameEnum[keyof typeof SchedulePickupCarrierNameEnum];
 export const TrackShipmentCarrierNameEnum = {
-    Aramex: 'aramex',
     Asendia: 'asendia',
-    AsendiaUs: 'asendia_us',
     Australiapost: 'australiapost',
-    Boxknight: 'boxknight',
     Bpost: 'bpost',
     Canadapost: 'canadapost',
-    Canpar: 'canpar',
     Chronopost: 'chronopost',
-    Colissimo: 'colissimo',
     DhlExpress: 'dhl_express',
     DhlParcelDe: 'dhl_parcel_de',
     DhlPoland: 'dhl_poland',
     DhlUniversal: 'dhl_universal',
-    Dicom: 'dicom',
     Dpd: 'dpd',
     DpdMeta: 'dpd_meta',
-    Dtdc: 'dtdc',
     Fedex: 'fedex',
     Generic: 'generic',
-    Geodis: 'geodis',
     Gls: 'gls',
-    HayPost: 'hay_post',
     Hermes: 'hermes',
     Landmark: 'landmark',
     Laposte: 'laposte',
-    Locate2u: 'locate2u',
     Mydhl: 'mydhl',
-    Nationex: 'nationex',
     Postat: 'postat',
     Purolator: 'purolator',
-    Roadie: 'roadie',
-    Royalmail: 'royalmail',
     Seko: 'seko',
     Sendle: 'sendle',
+    Smartkargo: 'smartkargo',
     Spring: 'spring',
     Teleship: 'teleship',
-    Tge: 'tge',
-    Tnt: 'tnt',
     Ups: 'ups',
     Usps: 'usps',
     UspsInternational: 'usps_international',
-    Veho: 'veho',
-    Zoom2u: 'zoom2u'
 } as const;
 export type TrackShipmentCarrierNameEnum = typeof TrackShipmentCarrierNameEnum[keyof typeof TrackShipmentCarrierNameEnum];
 export const UpdatePickupCarrierNameEnum = {
-    Aramex: 'aramex',
     Asendia: 'asendia',
-    AsendiaUs: 'asendia_us',
     Australiapost: 'australiapost',
-    Boxknight: 'boxknight',
     Bpost: 'bpost',
     Canadapost: 'canadapost',
-    Canpar: 'canpar',
     Chronopost: 'chronopost',
-    Colissimo: 'colissimo',
     DhlExpress: 'dhl_express',
     DhlParcelDe: 'dhl_parcel_de',
     DhlPoland: 'dhl_poland',
     DhlUniversal: 'dhl_universal',
-    Dicom: 'dicom',
     Dpd: 'dpd',
     DpdMeta: 'dpd_meta',
-    Dtdc: 'dtdc',
-    Easypost: 'easypost',
-    Easyship: 'easyship',
-    Eshipper: 'eshipper',
     Fedex: 'fedex',
-    Freightcom: 'freightcom',
     Generic: 'generic',
-    Geodis: 'geodis',
     Gls: 'gls',
-    HayPost: 'hay_post',
     Hermes: 'hermes',
     Landmark: 'landmark',
     Laposte: 'laposte',
-    Locate2u: 'locate2u',
     Mydhl: 'mydhl',
-    Nationex: 'nationex',
     Parcelone: 'parcelone',
     Postat: 'postat',
     Purolator: 'purolator',
-    Roadie: 'roadie',
-    Royalmail: 'royalmail',
-    Sapient: 'sapient',
     Seko: 'seko',
     Sendle: 'sendle',
-    Shipengine: 'shipengine',
+    Smartkargo: 'smartkargo',
     Spring: 'spring',
     Teleship: 'teleship',
-    Tge: 'tge',
-    Tnt: 'tnt',
     Ups: 'ups',
     Usps: 'usps',
     UspsInternational: 'usps_international',
-    Veho: 'veho',
-    Zoom2u: 'zoom2u'
 } as const;
 export type UpdatePickupCarrierNameEnum = typeof UpdatePickupCarrierNameEnum[keyof typeof UpdatePickupCarrierNameEnum];
 export const VoidLabelCarrierNameEnum = {
-    Aramex: 'aramex',
     Asendia: 'asendia',
-    AsendiaUs: 'asendia_us',
     Australiapost: 'australiapost',
-    Boxknight: 'boxknight',
     Bpost: 'bpost',
     Canadapost: 'canadapost',
-    Canpar: 'canpar',
     Chronopost: 'chronopost',
-    Colissimo: 'colissimo',
     DhlExpress: 'dhl_express',
     DhlParcelDe: 'dhl_parcel_de',
     DhlPoland: 'dhl_poland',
     DhlUniversal: 'dhl_universal',
-    Dicom: 'dicom',
     Dpd: 'dpd',
     DpdMeta: 'dpd_meta',
-    Dtdc: 'dtdc',
-    Easypost: 'easypost',
-    Easyship: 'easyship',
-    Eshipper: 'eshipper',
     Fedex: 'fedex',
-    Freightcom: 'freightcom',
     Generic: 'generic',
-    Geodis: 'geodis',
     Gls: 'gls',
-    HayPost: 'hay_post',
     Hermes: 'hermes',
     Landmark: 'landmark',
     Laposte: 'laposte',
-    Locate2u: 'locate2u',
     Mydhl: 'mydhl',
-    Nationex: 'nationex',
     Parcelone: 'parcelone',
     Postat: 'postat',
     Purolator: 'purolator',
-    Roadie: 'roadie',
-    Royalmail: 'royalmail',
-    Sapient: 'sapient',
     Seko: 'seko',
     Sendle: 'sendle',
-    Shipengine: 'shipengine',
+    Smartkargo: 'smartkargo',
     Spring: 'spring',
     Teleship: 'teleship',
-    Tge: 'tge',
-    Tnt: 'tnt',
     Ups: 'ups',
     Usps: 'usps',
     UspsInternational: 'usps_international',
-    Veho: 'veho',
-    Zoom2u: 'zoom2u'
 } as const;
 export type VoidLabelCarrierNameEnum = typeof VoidLabelCarrierNameEnum[keyof typeof VoidLabelCarrierNameEnum];
 
@@ -14603,7 +14266,7 @@ export type VoidLabelCarrierNameEnum = typeof VoidLabelCarrierNameEnum[keyof typ
 export const ShipmentsApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
-         * Void a shipment with the associated label.
+         * Void a shipment with the associated label.  ``pk`` can be either the karrio shipment ID (``shp_…``) or a ``request_id`` stored in ``shipment.meta[\"request_id\"]``. When multiple records share the same ``request_id`` the most recently created one is used.
          * @summary Cancel a shipment
          * @param {string} id 
          * @param {*} [options] Override http request option.
@@ -14613,7 +14276,7 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
             // verify required parameter 'id' is not null or undefined
             assertParamExists('cancel', 'id', id)
             const localVarPath = `/v1/shipments/{id}/cancel`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -14639,8 +14302,8 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -14686,9 +14349,8 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -14714,8 +14376,8 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
             // verify required parameter 'id' is not null or undefined
             assertParamExists('document', 'id', id)
             const localVarPath = `/v1/shipments/{id}/documents/{doc}`
-                .replace(`{${"doc"}}`, encodeURIComponent(String(doc)))
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{doc}', encodeURIComponent(String(doc)))
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -14741,8 +14403,8 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -14756,12 +14418,13 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
          * Retrieve all shipments.
          * @summary List all shipments
          * @param {string} [address] 
-         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;gls&#x60;, &#x60;hay_post&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;asendia&#x60;, &#x60;australiapost&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;chronopost&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;fedex&#x60;, &#x60;generic&#x60;, &#x60;gls&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;mydhl&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;smartkargo&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;
          * @param {string} [createdAfter] 
          * @param {string} [createdBefore] 
          * @param {boolean} [hasManifest] 
          * @param {boolean} [hasTracker] 
          * @param {string} [id] 
+         * @param {boolean} [isArchived] 
          * @param {boolean} [isReturn] 
          * @param {string} [keyword] 
          * @param {string} [metaKey] 
@@ -14779,7 +14442,7 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (address?: string, carrierName?: string, createdAfter?: string, createdBefore?: string, hasManifest?: boolean, hasTracker?: boolean, id?: string, isReturn?: boolean, keyword?: string, metaKey?: string, metaValue?: string, metadataKey?: string, metadataValue?: string, optionKey?: string, optionValue?: string, orderId?: string, reference?: string, requestId?: string, service?: string, status?: string, trackingNumber?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        list: async (address?: string, carrierName?: string, createdAfter?: string, createdBefore?: string, hasManifest?: boolean, hasTracker?: boolean, id?: string, isArchived?: boolean, isReturn?: boolean, keyword?: string, metaKey?: string, metaValue?: string, metadataKey?: string, metadataValue?: string, optionKey?: string, optionValue?: string, orderId?: string, reference?: string, requestId?: string, service?: string, status?: string, trackingNumber?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/v1/shipments`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -14838,6 +14501,10 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
                 localVarQueryParameter['id'] = id;
             }
 
+            if (isArchived !== undefined) {
+                localVarQueryParameter['is_archived'] = isArchived;
+            }
+
             if (isReturn !== undefined) {
                 localVarQueryParameter['is_return'] = isReturn;
             }
@@ -14894,8 +14561,8 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
                 localVarQueryParameter['tracking_number'] = trackingNumber;
             }
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -14917,7 +14584,7 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
             // verify required parameter 'id' is not null or undefined
             assertParamExists('purchase', 'id', id)
             const localVarPath = `/v1/shipments/{id}/purchase`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -14943,9 +14610,8 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -14969,7 +14635,7 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
             // verify required parameter 'id' is not null or undefined
             assertParamExists('rates', 'id', id)
             const localVarPath = `/v1/shipments/{id}/rates`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -14995,9 +14661,8 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -15020,7 +14685,7 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
             // verify required parameter 'id' is not null or undefined
             assertParamExists('retrieve', 'id', id)
             const localVarPath = `/v1/shipments/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -15046,8 +14711,8 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -15069,7 +14734,7 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
             // verify required parameter 'id' is not null or undefined
             assertParamExists('update', 'id', id)
             const localVarPath = `/v1/shipments/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -15095,9 +14760,8 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -15119,7 +14783,7 @@ export const ShipmentsApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = ShipmentsApiAxiosParamCreator(configuration)
     return {
         /**
-         * Void a shipment with the associated label.
+         * Void a shipment with the associated label.  ``pk`` can be either the karrio shipment ID (``shp_…``) or a ``request_id`` stored in ``shipment.meta[\"request_id\"]``. When multiple records share the same ``request_id`` the most recently created one is used.
          * @summary Cancel a shipment
          * @param {string} id 
          * @param {*} [options] Override http request option.
@@ -15162,12 +14826,13 @@ export const ShipmentsApiFp = function(configuration?: Configuration) {
          * Retrieve all shipments.
          * @summary List all shipments
          * @param {string} [address] 
-         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;gls&#x60;, &#x60;hay_post&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;asendia&#x60;, &#x60;australiapost&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;chronopost&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;fedex&#x60;, &#x60;generic&#x60;, &#x60;gls&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;mydhl&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;smartkargo&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;
          * @param {string} [createdAfter] 
          * @param {string} [createdBefore] 
          * @param {boolean} [hasManifest] 
          * @param {boolean} [hasTracker] 
          * @param {string} [id] 
+         * @param {boolean} [isArchived] 
          * @param {boolean} [isReturn] 
          * @param {string} [keyword] 
          * @param {string} [metaKey] 
@@ -15185,8 +14850,8 @@ export const ShipmentsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(address?: string, carrierName?: string, createdAfter?: string, createdBefore?: string, hasManifest?: boolean, hasTracker?: boolean, id?: string, isReturn?: boolean, keyword?: string, metaKey?: string, metaValue?: string, metadataKey?: string, metadataValue?: string, optionKey?: string, optionValue?: string, orderId?: string, reference?: string, requestId?: string, service?: string, status?: string, trackingNumber?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Shipment>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.list(address, carrierName, createdAfter, createdBefore, hasManifest, hasTracker, id, isReturn, keyword, metaKey, metaValue, metadataKey, metadataValue, optionKey, optionValue, orderId, reference, requestId, service, status, trackingNumber, options);
+        async list(address?: string, carrierName?: string, createdAfter?: string, createdBefore?: string, hasManifest?: boolean, hasTracker?: boolean, id?: string, isArchived?: boolean, isReturn?: boolean, keyword?: string, metaKey?: string, metaValue?: string, metadataKey?: string, metadataValue?: string, optionKey?: string, optionValue?: string, orderId?: string, reference?: string, requestId?: string, service?: string, status?: string, trackingNumber?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Shipment>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(address, carrierName, createdAfter, createdBefore, hasManifest, hasTracker, id, isArchived, isReturn, keyword, metaKey, metaValue, metadataKey, metadataValue, optionKey, optionValue, orderId, reference, requestId, service, status, trackingNumber, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['ShipmentsApi.list']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -15256,7 +14921,7 @@ export const ShipmentsApiFactory = function (configuration?: Configuration, base
     const localVarFp = ShipmentsApiFp(configuration)
     return {
         /**
-         * Void a shipment with the associated label.
+         * Void a shipment with the associated label.  ``pk`` can be either the karrio shipment ID (``shp_…``) or a ``request_id`` stored in ``shipment.meta[\"request_id\"]``. When multiple records share the same ``request_id`` the most recently created one is used.
          * @summary Cancel a shipment
          * @param {ShipmentsApiCancelRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
@@ -15293,7 +14958,7 @@ export const ShipmentsApiFactory = function (configuration?: Configuration, base
          * @throws {RequiredError}
          */
         list(requestParameters: ShipmentsApiListRequest = {}, options?: AxiosRequestConfig): AxiosPromise<Shipment> {
-            return localVarFp.list(requestParameters.address, requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.hasManifest, requestParameters.hasTracker, requestParameters.id, requestParameters.isReturn, requestParameters.keyword, requestParameters.metaKey, requestParameters.metaValue, requestParameters.metadataKey, requestParameters.metadataValue, requestParameters.optionKey, requestParameters.optionValue, requestParameters.orderId, requestParameters.reference, requestParameters.requestId, requestParameters.service, requestParameters.status, requestParameters.trackingNumber, options).then((request) => request(axios, basePath));
+            return localVarFp.list(requestParameters.address, requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.hasManifest, requestParameters.hasTracker, requestParameters.id, requestParameters.isArchived, requestParameters.isReturn, requestParameters.keyword, requestParameters.metaKey, requestParameters.metaValue, requestParameters.metadataKey, requestParameters.metadataValue, requestParameters.optionKey, requestParameters.optionValue, requestParameters.orderId, requestParameters.reference, requestParameters.requestId, requestParameters.service, requestParameters.status, requestParameters.trackingNumber, options).then((request) => request(axios, basePath));
         },
         /**
          * Select your preferred rates to buy a shipment label.
@@ -15368,7 +15033,7 @@ export interface ShipmentsApiListRequest {
     readonly address?: string
 
     /**
-     * The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;gls&#x60;, &#x60;hay_post&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+     * The unique carrier slug. &lt;br/&gt;Values: &#x60;asendia&#x60;, &#x60;australiapost&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;chronopost&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;fedex&#x60;, &#x60;generic&#x60;, &#x60;gls&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;mydhl&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;smartkargo&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;
      */
     readonly carrierName?: string
 
@@ -15381,6 +15046,8 @@ export interface ShipmentsApiListRequest {
     readonly hasTracker?: boolean
 
     readonly id?: string
+
+    readonly isArchived?: boolean
 
     readonly isReturn?: boolean
 
@@ -15453,7 +15120,7 @@ export interface ShipmentsApiUpdateRequest {
  */
 export class ShipmentsApi extends BaseAPI {
     /**
-     * Void a shipment with the associated label.
+     * Void a shipment with the associated label.  ``pk`` can be either the karrio shipment ID (``shp_…``) or a ``request_id`` stored in ``shipment.meta[\"request_id\"]``. When multiple records share the same ``request_id`` the most recently created one is used.
      * @summary Cancel a shipment
      * @param {ShipmentsApiCancelRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
@@ -15493,7 +15160,7 @@ export class ShipmentsApi extends BaseAPI {
      * @throws {RequiredError}
      */
     public list(requestParameters: ShipmentsApiListRequest = {}, options?: AxiosRequestConfig) {
-        return ShipmentsApiFp(this.configuration).list(requestParameters.address, requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.hasManifest, requestParameters.hasTracker, requestParameters.id, requestParameters.isReturn, requestParameters.keyword, requestParameters.metaKey, requestParameters.metaValue, requestParameters.metadataKey, requestParameters.metadataValue, requestParameters.optionKey, requestParameters.optionValue, requestParameters.orderId, requestParameters.reference, requestParameters.requestId, requestParameters.service, requestParameters.status, requestParameters.trackingNumber, options).then((request) => request(this.axios, this.basePath));
+        return ShipmentsApiFp(this.configuration).list(requestParameters.address, requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.hasManifest, requestParameters.hasTracker, requestParameters.id, requestParameters.isArchived, requestParameters.isReturn, requestParameters.keyword, requestParameters.metaKey, requestParameters.metaValue, requestParameters.metadataKey, requestParameters.metadataValue, requestParameters.optionKey, requestParameters.optionValue, requestParameters.orderId, requestParameters.reference, requestParameters.requestId, requestParameters.service, requestParameters.status, requestParameters.trackingNumber, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -15594,9 +15261,8 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
                 localVarQueryParameter['pending_pickup'] = pendingPickup;
             }
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -15627,8 +15293,8 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
             // verify required parameter 'trackingNumber' is not null or undefined
             assertParamExists('create', 'trackingNumber', trackingNumber)
             const localVarPath = `/v1/trackers/{carrier_name}/{tracking_number}`
-                .replace(`{${"carrier_name"}}`, encodeURIComponent(String(carrierName)))
-                .replace(`{${"tracking_number"}}`, encodeURIComponent(String(trackingNumber)));
+                .replace('{carrier_name}', encodeURIComponent(String(carrierName)))
+                .replace('{tracking_number}', encodeURIComponent(String(trackingNumber)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -15662,8 +15328,8 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
                 localVarQueryParameter['hub'] = hub;
             }
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -15687,7 +15353,7 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
             // verify required parameter 'trackerEventInjectRequest' is not null or undefined
             assertParamExists('inject', 'trackerEventInjectRequest', trackerEventInjectRequest)
             const localVarPath = `/v1/trackers/{tracker_id}/inject-events`
-                .replace(`{${"tracker_id"}}`, encodeURIComponent(String(trackerId)));
+                .replace('{tracker_id}', encodeURIComponent(String(trackerId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -15713,9 +15379,8 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -15730,9 +15395,10 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
         /**
          * Retrieve all shipment trackers.
          * @summary List all package trackers
-         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;gls&#x60;, &#x60;hay_post&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;asendia&#x60;, &#x60;australiapost&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;chronopost&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;fedex&#x60;, &#x60;generic&#x60;, &#x60;gls&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;mydhl&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;smartkargo&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;
          * @param {string} [createdAfter] 
          * @param {string} [createdBefore] 
+         * @param {boolean} [isArchived] 
          * @param {string} [keyword] 
          * @param {string} [requestId] 
          * @param {string} [status] Valid tracker status. &lt;br/&gt;Values: &#x60;pending&#x60;, &#x60;picked_up&#x60;, &#x60;unknown&#x60;, &#x60;on_hold&#x60;, &#x60;cancelled&#x60;, &#x60;delivered&#x60;, &#x60;in_transit&#x60;, &#x60;delivery_delayed&#x60;, &#x60;out_for_delivery&#x60;, &#x60;ready_for_pickup&#x60;, &#x60;delivery_failed&#x60;, &#x60;return_to_sender&#x60;
@@ -15740,7 +15406,7 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (carrierName?: string, createdAfter?: string, createdBefore?: string, keyword?: string, requestId?: string, status?: string, trackingNumber?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        list: async (carrierName?: string, createdAfter?: string, createdBefore?: string, isArchived?: boolean, keyword?: string, requestId?: string, status?: string, trackingNumber?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/v1/trackers`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -15783,6 +15449,10 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
                     createdBefore;
             }
 
+            if (isArchived !== undefined) {
+                localVarQueryParameter['is_archived'] = isArchived;
+            }
+
             if (keyword !== undefined) {
                 localVarQueryParameter['keyword'] = keyword;
             }
@@ -15799,8 +15469,8 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
                 localVarQueryParameter['tracking_number'] = trackingNumber;
             }
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -15811,17 +15481,17 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
             };
         },
         /**
-         * Discard a package tracker.
+         * Remove a package tracker by ID, tracking number, or request_id. The lookup tries the karrio tracker ID first, then tracking number, then falls back to request_id (most recent match).
          * @summary Discard a package tracker
-         * @param {string} idOrTrackingNumber 
+         * @param {string} identifier Tracker ID (trk_...), tracking number, or request_id
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        remove: async (idOrTrackingNumber: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'idOrTrackingNumber' is not null or undefined
-            assertParamExists('remove', 'idOrTrackingNumber', idOrTrackingNumber)
-            const localVarPath = `/v1/trackers/{id_or_tracking_number}`
-                .replace(`{${"id_or_tracking_number"}}`, encodeURIComponent(String(idOrTrackingNumber)));
+        remove: async (identifier: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'identifier' is not null or undefined
+            assertParamExists('remove', 'identifier', identifier)
+            const localVarPath = `/v1/trackers/{identifier}`
+                .replace('{identifier}', encodeURIComponent(String(identifier)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -15847,8 +15517,8 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -15859,17 +15529,17 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
             };
         },
         /**
-         * Retrieve a package tracker
+         * Retrieve a package tracker by ID or tracking number.
          * @summary Retrieves a package tracker
-         * @param {string} idOrTrackingNumber 
+         * @param {string} identifier Tracker ID (trk_...) or tracking number
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        retrieve: async (idOrTrackingNumber: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'idOrTrackingNumber' is not null or undefined
-            assertParamExists('retrieve', 'idOrTrackingNumber', idOrTrackingNumber)
-            const localVarPath = `/v1/trackers/{id_or_tracking_number}`
-                .replace(`{${"id_or_tracking_number"}}`, encodeURIComponent(String(idOrTrackingNumber)));
+        retrieve: async (identifier: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'identifier' is not null or undefined
+            assertParamExists('retrieve', 'identifier', identifier)
+            const localVarPath = `/v1/trackers/{identifier}`
+                .replace('{identifier}', encodeURIComponent(String(identifier)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -15895,8 +15565,8 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -15907,18 +15577,18 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
             };
         },
         /**
-         * Mixin to log requests
+         * Update a package tracker by ID.
          * @summary Update tracker data
-         * @param {string} idOrTrackingNumber 
+         * @param {string} identifier Tracker ID (trk_...)
          * @param {TrackerUpdateData} [trackerUpdateData] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        update: async (idOrTrackingNumber: string, trackerUpdateData?: TrackerUpdateData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'idOrTrackingNumber' is not null or undefined
-            assertParamExists('update', 'idOrTrackingNumber', idOrTrackingNumber)
-            const localVarPath = `/v1/trackers/{id_or_tracking_number}`
-                .replace(`{${"id_or_tracking_number"}}`, encodeURIComponent(String(idOrTrackingNumber)));
+        update: async (identifier: string, trackerUpdateData?: TrackerUpdateData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'identifier' is not null or undefined
+            assertParamExists('update', 'identifier', identifier)
+            const localVarPath = `/v1/trackers/{identifier}`
+                .replace('{identifier}', encodeURIComponent(String(identifier)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -15944,9 +15614,8 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -16016,9 +15685,10 @@ export const TrackersApiFp = function(configuration?: Configuration) {
         /**
          * Retrieve all shipment trackers.
          * @summary List all package trackers
-         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;gls&#x60;, &#x60;hay_post&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;asendia&#x60;, &#x60;australiapost&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;chronopost&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;fedex&#x60;, &#x60;generic&#x60;, &#x60;gls&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;mydhl&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;smartkargo&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;
          * @param {string} [createdAfter] 
          * @param {string} [createdBefore] 
+         * @param {boolean} [isArchived] 
          * @param {string} [keyword] 
          * @param {string} [requestId] 
          * @param {string} [status] Valid tracker status. &lt;br/&gt;Values: &#x60;pending&#x60;, &#x60;picked_up&#x60;, &#x60;unknown&#x60;, &#x60;on_hold&#x60;, &#x60;cancelled&#x60;, &#x60;delivered&#x60;, &#x60;in_transit&#x60;, &#x60;delivery_delayed&#x60;, &#x60;out_for_delivery&#x60;, &#x60;ready_for_pickup&#x60;, &#x60;delivery_failed&#x60;, &#x60;return_to_sender&#x60;
@@ -16026,48 +15696,48 @@ export const TrackersApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(carrierName?: string, createdAfter?: string, createdBefore?: string, keyword?: string, requestId?: string, status?: string, trackingNumber?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackerList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.list(carrierName, createdAfter, createdBefore, keyword, requestId, status, trackingNumber, options);
+        async list(carrierName?: string, createdAfter?: string, createdBefore?: string, isArchived?: boolean, keyword?: string, requestId?: string, status?: string, trackingNumber?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackerList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(carrierName, createdAfter, createdBefore, isArchived, keyword, requestId, status, trackingNumber, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['TrackersApi.list']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * Discard a package tracker.
+         * Remove a package tracker by ID, tracking number, or request_id. The lookup tries the karrio tracker ID first, then tracking number, then falls back to request_id (most recent match).
          * @summary Discard a package tracker
-         * @param {string} idOrTrackingNumber 
+         * @param {string} identifier Tracker ID (trk_...), tracking number, or request_id
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async remove(idOrTrackingNumber: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackingStatus>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.remove(idOrTrackingNumber, options);
+        async remove(identifier: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackingStatus>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.remove(identifier, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['TrackersApi.remove']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * Retrieve a package tracker
+         * Retrieve a package tracker by ID or tracking number.
          * @summary Retrieves a package tracker
-         * @param {string} idOrTrackingNumber 
+         * @param {string} identifier Tracker ID (trk_...) or tracking number
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async retrieve(idOrTrackingNumber: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackingStatus>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.retrieve(idOrTrackingNumber, options);
+        async retrieve(identifier: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackingStatus>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.retrieve(identifier, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['TrackersApi.retrieve']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * Mixin to log requests
+         * Update a package tracker by ID.
          * @summary Update tracker data
-         * @param {string} idOrTrackingNumber 
+         * @param {string} identifier Tracker ID (trk_...)
          * @param {TrackerUpdateData} [trackerUpdateData] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async update(idOrTrackingNumber: string, trackerUpdateData?: TrackerUpdateData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackingStatus>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.update(idOrTrackingNumber, trackerUpdateData, options);
+        async update(identifier: string, trackerUpdateData?: TrackerUpdateData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackingStatus>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.update(identifier, trackerUpdateData, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['TrackersApi.update']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -16120,37 +15790,37 @@ export const TrackersApiFactory = function (configuration?: Configuration, baseP
          * @throws {RequiredError}
          */
         list(requestParameters: TrackersApiListRequest = {}, options?: AxiosRequestConfig): AxiosPromise<TrackerList> {
-            return localVarFp.list(requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.keyword, requestParameters.requestId, requestParameters.status, requestParameters.trackingNumber, options).then((request) => request(axios, basePath));
+            return localVarFp.list(requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.isArchived, requestParameters.keyword, requestParameters.requestId, requestParameters.status, requestParameters.trackingNumber, options).then((request) => request(axios, basePath));
         },
         /**
-         * Discard a package tracker.
+         * Remove a package tracker by ID, tracking number, or request_id. The lookup tries the karrio tracker ID first, then tracking number, then falls back to request_id (most recent match).
          * @summary Discard a package tracker
          * @param {TrackersApiRemoveRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         remove(requestParameters: TrackersApiRemoveRequest, options?: AxiosRequestConfig): AxiosPromise<TrackingStatus> {
-            return localVarFp.remove(requestParameters.idOrTrackingNumber, options).then((request) => request(axios, basePath));
+            return localVarFp.remove(requestParameters.identifier, options).then((request) => request(axios, basePath));
         },
         /**
-         * Retrieve a package tracker
+         * Retrieve a package tracker by ID or tracking number.
          * @summary Retrieves a package tracker
          * @param {TrackersApiRetrieveRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         retrieve(requestParameters: TrackersApiRetrieveRequest, options?: AxiosRequestConfig): AxiosPromise<TrackingStatus> {
-            return localVarFp.retrieve(requestParameters.idOrTrackingNumber, options).then((request) => request(axios, basePath));
+            return localVarFp.retrieve(requestParameters.identifier, options).then((request) => request(axios, basePath));
         },
         /**
-         * Mixin to log requests
+         * Update a package tracker by ID.
          * @summary Update tracker data
          * @param {TrackersApiUpdateRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         update(requestParameters: TrackersApiUpdateRequest, options?: AxiosRequestConfig): AxiosPromise<TrackingStatus> {
-            return localVarFp.update(requestParameters.idOrTrackingNumber, requestParameters.trackerUpdateData, options).then((request) => request(axios, basePath));
+            return localVarFp.update(requestParameters.identifier, requestParameters.trackerUpdateData, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -16196,13 +15866,15 @@ export interface TrackersApiInjectRequest {
  */
 export interface TrackersApiListRequest {
     /**
-     * The unique carrier slug. &lt;br/&gt;Values: &#x60;aramex&#x60;, &#x60;asendia&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;dtdc&#x60;, &#x60;easypost&#x60;, &#x60;easyship&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;gls&#x60;, &#x60;hay_post&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;mydhl&#x60;, &#x60;nationex&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sapient&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;shipengine&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;veho&#x60;, &#x60;zoom2u&#x60;
+     * The unique carrier slug. &lt;br/&gt;Values: &#x60;asendia&#x60;, &#x60;australiapost&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;chronopost&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dpd&#x60;, &#x60;dpd_meta&#x60;, &#x60;fedex&#x60;, &#x60;generic&#x60;, &#x60;gls&#x60;, &#x60;hermes&#x60;, &#x60;landmark&#x60;, &#x60;laposte&#x60;, &#x60;mydhl&#x60;, &#x60;parcelone&#x60;, &#x60;postat&#x60;, &#x60;purolator&#x60;, &#x60;seko&#x60;, &#x60;sendle&#x60;, &#x60;smartkargo&#x60;, &#x60;spring&#x60;, &#x60;teleship&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;
      */
     readonly carrierName?: string
 
     readonly createdAfter?: string
 
     readonly createdBefore?: string
+
+    readonly isArchived?: boolean
 
     readonly keyword?: string
 
@@ -16220,21 +15892,30 @@ export interface TrackersApiListRequest {
  * Request parameters for remove operation in TrackersApi.
  */
 export interface TrackersApiRemoveRequest {
-    readonly idOrTrackingNumber: string
+    /**
+     * Tracker ID (trk_...), tracking number, or request_id
+     */
+    readonly identifier: string
 }
 
 /**
  * Request parameters for retrieve operation in TrackersApi.
  */
 export interface TrackersApiRetrieveRequest {
-    readonly idOrTrackingNumber: string
+    /**
+     * Tracker ID (trk_...) or tracking number
+     */
+    readonly identifier: string
 }
 
 /**
  * Request parameters for update operation in TrackersApi.
  */
 export interface TrackersApiUpdateRequest {
-    readonly idOrTrackingNumber: string
+    /**
+     * Tracker ID (trk_...)
+     */
+    readonly identifier: string
 
     readonly trackerUpdateData?: TrackerUpdateData
 }
@@ -16285,88 +15966,72 @@ export class TrackersApi extends BaseAPI {
      * @throws {RequiredError}
      */
     public list(requestParameters: TrackersApiListRequest = {}, options?: AxiosRequestConfig) {
-        return TrackersApiFp(this.configuration).list(requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.keyword, requestParameters.requestId, requestParameters.status, requestParameters.trackingNumber, options).then((request) => request(this.axios, this.basePath));
+        return TrackersApiFp(this.configuration).list(requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.isArchived, requestParameters.keyword, requestParameters.requestId, requestParameters.status, requestParameters.trackingNumber, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
-     * Discard a package tracker.
+     * Remove a package tracker by ID, tracking number, or request_id. The lookup tries the karrio tracker ID first, then tracking number, then falls back to request_id (most recent match).
      * @summary Discard a package tracker
      * @param {TrackersApiRemoveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     public remove(requestParameters: TrackersApiRemoveRequest, options?: AxiosRequestConfig) {
-        return TrackersApiFp(this.configuration).remove(requestParameters.idOrTrackingNumber, options).then((request) => request(this.axios, this.basePath));
+        return TrackersApiFp(this.configuration).remove(requestParameters.identifier, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
-     * Retrieve a package tracker
+     * Retrieve a package tracker by ID or tracking number.
      * @summary Retrieves a package tracker
      * @param {TrackersApiRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     public retrieve(requestParameters: TrackersApiRetrieveRequest, options?: AxiosRequestConfig) {
-        return TrackersApiFp(this.configuration).retrieve(requestParameters.idOrTrackingNumber, options).then((request) => request(this.axios, this.basePath));
+        return TrackersApiFp(this.configuration).retrieve(requestParameters.identifier, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
-     * Mixin to log requests
+     * Update a package tracker by ID.
      * @summary Update tracker data
      * @param {TrackersApiUpdateRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     public update(requestParameters: TrackersApiUpdateRequest, options?: AxiosRequestConfig) {
-        return TrackersApiFp(this.configuration).update(requestParameters.idOrTrackingNumber, requestParameters.trackerUpdateData, options).then((request) => request(this.axios, this.basePath));
+        return TrackersApiFp(this.configuration).update(requestParameters.identifier, requestParameters.trackerUpdateData, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
 export const CreateCarrierNameEnum = {
-    Aramex: 'aramex',
     Asendia: 'asendia',
-    AsendiaUs: 'asendia_us',
     Australiapost: 'australiapost',
-    Boxknight: 'boxknight',
     Bpost: 'bpost',
     Canadapost: 'canadapost',
-    Canpar: 'canpar',
     Chronopost: 'chronopost',
-    Colissimo: 'colissimo',
     DhlExpress: 'dhl_express',
     DhlParcelDe: 'dhl_parcel_de',
     DhlPoland: 'dhl_poland',
     DhlUniversal: 'dhl_universal',
-    Dicom: 'dicom',
     Dpd: 'dpd',
     DpdMeta: 'dpd_meta',
-    Dtdc: 'dtdc',
     Fedex: 'fedex',
     Generic: 'generic',
-    Geodis: 'geodis',
     Gls: 'gls',
-    HayPost: 'hay_post',
     Hermes: 'hermes',
     Landmark: 'landmark',
     Laposte: 'laposte',
-    Locate2u: 'locate2u',
     Mydhl: 'mydhl',
-    Nationex: 'nationex',
     Postat: 'postat',
     Purolator: 'purolator',
-    Roadie: 'roadie',
-    Royalmail: 'royalmail',
     Seko: 'seko',
     Sendle: 'sendle',
+    Smartkargo: 'smartkargo',
     Spring: 'spring',
     Teleship: 'teleship',
-    Tge: 'tge',
-    Tnt: 'tnt',
     Ups: 'ups',
     Usps: 'usps',
     UspsInternational: 'usps_international',
-    Veho: 'veho',
-    Zoom2u: 'zoom2u'
 } as const;
 export type CreateCarrierNameEnum = typeof CreateCarrierNameEnum[keyof typeof CreateCarrierNameEnum];
 
@@ -16412,9 +16077,8 @@ export const WebhooksApiAxiosParamCreator = function (configuration?: Configurat
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -16459,8 +16123,8 @@ export const WebhooksApiAxiosParamCreator = function (configuration?: Configurat
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -16481,7 +16145,7 @@ export const WebhooksApiAxiosParamCreator = function (configuration?: Configurat
             // verify required parameter 'id' is not null or undefined
             assertParamExists('remove', 'id', id)
             const localVarPath = `/v1/webhooks/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -16507,8 +16171,8 @@ export const WebhooksApiAxiosParamCreator = function (configuration?: Configurat
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -16529,7 +16193,7 @@ export const WebhooksApiAxiosParamCreator = function (configuration?: Configurat
             // verify required parameter 'id' is not null or undefined
             assertParamExists('retrieve', 'id', id)
             const localVarPath = `/v1/webhooks/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -16555,8 +16219,8 @@ export const WebhooksApiAxiosParamCreator = function (configuration?: Configurat
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
-    
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
@@ -16578,7 +16242,7 @@ export const WebhooksApiAxiosParamCreator = function (configuration?: Configurat
             // verify required parameter 'id' is not null or undefined
             assertParamExists('test', 'id', id)
             const localVarPath = `/v1/webhooks/{id}/test`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -16604,9 +16268,8 @@ export const WebhooksApiAxiosParamCreator = function (configuration?: Configurat
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -16630,7 +16293,7 @@ export const WebhooksApiAxiosParamCreator = function (configuration?: Configurat
             // verify required parameter 'id' is not null or undefined
             assertParamExists('update', 'id', id)
             const localVarPath = `/v1/webhooks/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+                .replace('{id}', encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -16656,9 +16319,8 @@ export const WebhooksApiAxiosParamCreator = function (configuration?: Configurat
             // authentication Token required
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
-
-    
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
