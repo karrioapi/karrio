@@ -7,6 +7,8 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **id** | **string** | A unique identifier | [optional] [default to undefined]
 **object_type** | **string** | Specifies the object type | [optional] [default to 'order']
+**is_archived** | **boolean** | Indicates whether this order is archived. | [optional] [default to false]
+**archived_at** | **string** | Timestamp when the order was archived. | [optional] [default to undefined]
 **order_id** | **string** | The source\&#39; order id. | [default to undefined]
 **order_date** | **string** | The order date. format: &#x60;YYYY-MM-DD&#x60; | [optional] [default to undefined]
 **source** | **string** | The order\&#39;s source. | [optional] [default to undefined]
@@ -30,6 +32,8 @@ import { Order } from './api';
 const instance: Order = {
     id,
     object_type,
+    is_archived,
+    archived_at,
     order_id,
     order_date,
     source,

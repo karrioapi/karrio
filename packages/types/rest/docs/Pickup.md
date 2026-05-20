@@ -7,6 +7,8 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **id** | **string** | A unique pickup identifier | [optional] [default to undefined]
 **object_type** | **string** | Specifies the object type | [optional] [default to 'pickup']
+**is_archived** | **boolean** | Indicates whether this pickup is archived. | [optional] [default to false]
+**archived_at** | **string** | Timestamp when the pickup was archived. | [optional] [default to undefined]
 **carrier_name** | **string** | The pickup carrier | [default to undefined]
 **carrier_id** | **string** | The pickup carrier configured name | [default to undefined]
 **confirmation_number** | **string** | The pickup confirmation identifier | [default to undefined]
@@ -36,6 +38,8 @@ import { Pickup } from './api';
 const instance: Pickup = {
     id,
     object_type,
+    is_archived,
+    archived_at,
     carrier_name,
     carrier_id,
     confirmation_number,
