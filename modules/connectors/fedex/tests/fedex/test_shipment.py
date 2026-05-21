@@ -335,7 +335,8 @@ ShipmentRequest = {
         "customsClearanceDetail": {
             "commercialInvoice": {
                 "customerReferences": [
-                    {"customerReferenceType": "INVOICE_NUMBER", "value": "123456789"}
+                    {"customerReferenceType": "INVOICE_NUMBER", "value": "123456789"},
+                    {"customerReferenceType": "CUSTOMER_REFERENCE", "value": "#Order 11111"},
                 ],
                 "originatorName": "Input Your Information",
                 "termsOfSale": "DDU",
@@ -418,6 +419,12 @@ ShipmentRequest = {
                     "units": "IN",
                     "width": 12.0,
                 },
+                "customerReferences": [
+                    {
+                        "customerReferenceType": "CUSTOMER_REFERENCE",
+                        "value": "#Order 11111",
+                    }
+                ],
                 "groupPackageCount": 1,
                 "packageSpecialServices": {},
                 "subPackagingType": "OTHER",
@@ -523,6 +530,12 @@ ShipmentPaidByRecipientRequest = {
                     "units": "IN",
                     "width": 12.0,
                 },
+                "customerReferences": [
+                    {
+                        "customerReferenceType": "CUSTOMER_REFERENCE",
+                        "value": "#Order 11111",
+                    }
+                ],
                 "groupPackageCount": 1,
                 "packageSpecialServices": {},
                 "subPackagingType": "OTHER",
@@ -594,7 +607,8 @@ MultiPieceShipmentRequest = {
         "customsClearanceDetail": {
             "commercialInvoice": {
                 "customerReferences": [
-                    {"customerReferenceType": "INVOICE_NUMBER", "value": "123456789"}
+                    {"customerReferenceType": "INVOICE_NUMBER", "value": "123456789"},
+                    {"customerReferenceType": "CUSTOMER_REFERENCE", "value": "#Order 11111"},
                 ],
                 "originatorName": "Input Your Information",
                 "termsOfSale": "DDU",
@@ -677,6 +691,12 @@ MultiPieceShipmentRequest = {
                     "units": "IN",
                     "width": 12,
                 },
+                "customerReferences": [
+                    {
+                        "customerReferenceType": "CUSTOMER_REFERENCE",
+                        "value": "#Order 11111",
+                    }
+                ],
                 "groupPackageCount": 1,
                 "packageSpecialServices": {},
                 "subPackagingType": "OTHER",
@@ -690,6 +710,12 @@ MultiPieceShipmentRequest = {
                     "units": "IN",
                     "width": 11,
                 },
+                "customerReferences": [
+                    {
+                        "customerReferenceType": "CUSTOMER_REFERENCE",
+                        "value": "#Order 11111",
+                    }
+                ],
                 "groupPackageCount": 1,
                 "packageSpecialServices": {},
                 "subPackagingType": "OTHER",

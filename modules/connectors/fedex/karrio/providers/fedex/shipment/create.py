@@ -10,6 +10,92 @@ import karrio.providers.fedex.utils as provider_utils
 import karrio.providers.fedex.units as provider_units
 
 
+CUSTOMER_REFERENCE_MAX_LENGTH = {
+    "CUSTOMER_REFERENCE": 40,
+    "DEPARTMENT_NUMBER": 30,
+    "INVOICE_NUMBER": 30,
+    "P_O_NUMBER": 30,
+    "RMA_ASSOCIATION": 20,
+}
+
+
+def _build_customer_reference(
+    reference_type: str,
+    value: typing.Optional[str],
+) -> typing.Optional[fedex.CustomerReferenceType]:
+    parsed_value = lib.text(
+        value,
+        max=CUSTOMER_REFERENCE_MAX_LENGTH.get(reference_type, 40),
+    )
+
+    if not any(parsed_value or ""):
+        return None
+
+    return fedex.CustomerReferenceType(
+        customerReferenceType=reference_type,
+        value=parsed_value,
+    )
+
+
+def _collect_customer_references(
+    payload: models.ShipmentRequest,
+    customs: models.Customs,
+    options: units.ShippingOptions,
+    package: typing.Optional[units.Package] = None,
+) -> typing.Dict[str, typing.List[fedex.CustomerReferenceType]]:
+    raw_options = payload.options or {}
+    invoice_number = lib.text(customs.invoice) or lib.text(options.invoice_number.state)
+
+    references = {
+        "CUSTOMER_REFERENCE": _build_customer_reference(
+            "CUSTOMER_REFERENCE",
+            payload.reference,
+        ),
+        "DEPARTMENT_NUMBER": _build_customer_reference(
+            "DEPARTMENT_NUMBER",
+            lib.text(
+                raw_options.get("fedex_department_number")
+                or raw_options.get("department_number")
+            ),
+        ),
+        "INVOICE_NUMBER": _build_customer_reference("INVOICE_NUMBER", invoice_number),
+        "P_O_NUMBER": _build_customer_reference(
+            "P_O_NUMBER",
+            lib.text(
+                package.reference_number if package is not None else None
+            )
+            or lib.text(raw_options.get("fedex_po_number") or raw_options.get("po_number")),
+        ),
+        "RMA_ASSOCIATION": _build_customer_reference(
+            "RMA_ASSOCIATION",
+            lib.text(
+                raw_options.get("fedex_rma_association")
+                or raw_options.get("rma_association")
+            ),
+        ),
+    }
+
+    return {
+        "commercial_invoice": [
+            reference
+            for key in ["INVOICE_NUMBER", "CUSTOMER_REFERENCE", "DEPARTMENT_NUMBER"]
+            for reference in [references[key]]
+            if reference is not None
+        ],
+        "package": [
+            reference
+            for key in [
+                "CUSTOMER_REFERENCE",
+                "DEPARTMENT_NUMBER",
+                "P_O_NUMBER",
+                "RMA_ASSOCIATION",
+            ]
+            for reference in [references[key]]
+            if reference is not None
+        ],
+    }
+
+
 def parse_shipment_response(
     _response: lib.Deserializable[typing.List[dict]],
     settings: provider_utils.Settings,
@@ -490,16 +576,11 @@ def shipment_request(
                             shipper.company_name or shipper.contact, max=35
                         ),
                         comments=None,
-                        customerReferences=(
-                            [
-                                fedex.CustomerReferenceType(
-                                    customerReferenceType="INVOICE_NUMBER",
-                                    value=customs.invoice,
-                                )
-                            ]
-                            if customs.invoice
-                            else []
-                        ),
+                        customerReferences=_collect_customer_references(
+                            payload,
+                            customs,
+                            options,
+                        )["commercial_invoice"],
                         taxesOrMiscellaneousCharge=None,
                         taxesOrMiscellaneousChargeType=None,
                         freightCharge=None,
@@ -714,7 +795,12 @@ def shipment_request(
                 fedex.RequestedPackageLineItemType(
                     sequenceNumber=None,
                     subPackagingType="OTHER",
-                    customerReferences=[],
+                    customerReferences=_collect_customer_references(
+                        payload,
+                        customs,
+                        options,
+                        package,
+                    )["package"],
                     declaredValue=fedex.TotalDeclaredValueType(
                         amount=lib.identity(
                             lib.to_money(package.total_value)
