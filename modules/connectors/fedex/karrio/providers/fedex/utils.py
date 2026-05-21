@@ -1,8 +1,11 @@
+import karrio.schemas.fedex.shipping_request as shipping_request
 import karrio.schemas.fedex.tracking_document_request as fedex
 import gzip
 import typing
 import karrio.lib as lib
 import karrio.core as core
+import karrio.core.models as models
+import karrio.core.units as units
 
 
 class Settings(core.Settings):
@@ -100,3 +103,92 @@ def state_code(address: lib.units.ComputedAddress) -> str:
         if address.state_code.lower() == "qc" and address.country_code == "CA"
         else address.state_code
     )
+
+
+# Max lengths sourced from FedEx API spec (vendor/ship-api.json, CustomerReference schema).
+# Note: CUSTOMER_REFERENCE allows 40 chars for Express but only 30 for Ground.
+# We use the conservative Ground limit (30) to ensure all service types work correctly.
+CUSTOMER_REFERENCE_MAX_LENGTH = {
+    "CUSTOMER_REFERENCE": 30,
+    "DEPARTMENT_NUMBER": 30,
+    "INVOICE_NUMBER": 30,
+    "P_O_NUMBER": 30,
+    "RMA_ASSOCIATION": 20,
+}
+
+
+def build_customer_reference(
+    reference_type: str,
+    value: typing.Optional[str],
+) -> typing.Optional[shipping_request.CustomerReferenceType]:
+    parsed_value = lib.text(
+        value,
+        max=CUSTOMER_REFERENCE_MAX_LENGTH.get(reference_type, 30),
+    )
+
+    if not any(parsed_value or ""):
+        return None
+
+    return shipping_request.CustomerReferenceType(
+        customerReferenceType=reference_type,
+        value=parsed_value,
+    )
+
+
+def collect_customer_references(
+    payload: models.ShipmentRequest,
+    customs: models.Customs,
+    options: units.ShippingOptions,
+    package: typing.Optional[units.Package] = None,
+) -> typing.Dict[str, typing.List[shipping_request.CustomerReferenceType]]:
+    raw_options = payload.options or {}
+    invoice_number = lib.text(customs.invoice) or lib.text(options.invoice_number.state)
+
+    references = {
+        "CUSTOMER_REFERENCE": build_customer_reference(
+            "CUSTOMER_REFERENCE",
+            payload.reference,
+        ),
+        "DEPARTMENT_NUMBER": build_customer_reference(
+            "DEPARTMENT_NUMBER",
+            lib.text(
+                raw_options.get("fedex_department_number")
+                or raw_options.get("department_number")
+            ),
+        ),
+        "INVOICE_NUMBER": build_customer_reference("INVOICE_NUMBER", invoice_number),
+        "P_O_NUMBER": build_customer_reference(
+            "P_O_NUMBER",
+            lib.text(
+                package.reference_number if package is not None else None
+            )
+            or lib.text(raw_options.get("fedex_po_number") or raw_options.get("po_number")),
+        ),
+        "RMA_ASSOCIATION": build_customer_reference(
+            "RMA_ASSOCIATION",
+            lib.text(
+                raw_options.get("fedex_rma_association")
+                or raw_options.get("rma_association")
+            ),
+        ),
+    }
+
+    return {
+        "commercial_invoice": [
+            reference
+            for key in ["INVOICE_NUMBER", "CUSTOMER_REFERENCE", "DEPARTMENT_NUMBER"]
+            for reference in [references[key]]
+            if reference is not None
+        ],
+        "package": [
+            reference
+            for key in [
+                "CUSTOMER_REFERENCE",
+                "DEPARTMENT_NUMBER",
+                "P_O_NUMBER",
+                "RMA_ASSOCIATION",
+            ]
+            for reference in [references[key]]
+            if reference is not None
+        ],
+    }
