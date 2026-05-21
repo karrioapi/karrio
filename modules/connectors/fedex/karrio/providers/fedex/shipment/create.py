@@ -713,7 +713,6 @@ def shipment_request(
                         payload,
                         customs,
                         options,
-                        package,
                     )["package"],
                     declaredValue=fedex.TotalDeclaredValueType(
                         amount=lib.identity(

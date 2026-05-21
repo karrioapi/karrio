@@ -139,11 +139,12 @@ def collect_customer_references(
     payload: models.ShipmentRequest,
     customs: models.Customs,
     options: units.ShippingOptions,
-    package: typing.Optional[units.Package] = None,
 ) -> typing.Dict[str, typing.List[shipping_request.CustomerReferenceType]]:
     raw_options = payload.options or {}
     invoice_number = lib.text(customs.invoice) or lib.text(options.invoice_number.state)
 
+    # NOTE: These references are sent via the option, but many don't current have a UI exposure.
+    #       would the label 'metadata' be a better fit for these values?
     references = {
         "CUSTOMER_REFERENCE": build_customer_reference(
             "CUSTOMER_REFERENCE",
@@ -159,10 +160,7 @@ def collect_customer_references(
         "INVOICE_NUMBER": build_customer_reference("INVOICE_NUMBER", invoice_number),
         "P_O_NUMBER": build_customer_reference(
             "P_O_NUMBER",
-            lib.text(
-                package.reference_number if package is not None else None
-            )
-            or lib.text(raw_options.get("fedex_po_number") or raw_options.get("po_number")),
+            lib.text(raw_options.get("fedex_po_number") or raw_options.get("po_number")),
         ),
         "RMA_ASSOCIATION": build_customer_reference(
             "RMA_ASSOCIATION",

@@ -114,26 +114,20 @@ class TestFedExCollectCustomerReferences(unittest.TestCase):
         types = [r.customerReferenceType for r in result["package"]]
         self.assertIn("CUSTOMER_REFERENCE", types)
 
-    def test_po_number_in_package_from_package_reference(self):
-        package = mock.MagicMock()
-        package.reference_number = "PO-456"
+    def test_package_reference_number_is_ignored_for_po_number(self):
         result = provider_utils.collect_customer_references(
             self._make_payload(),
             self._make_customs(),
             self._make_options(),
-            package,
         )
         types = [r.customerReferenceType for r in result["package"]]
-        self.assertIn("P_O_NUMBER", types)
+        self.assertNotIn("P_O_NUMBER", types)
 
     def test_po_number_falls_back_to_options(self):
-        package = mock.MagicMock()
-        package.reference_number = None
         result = provider_utils.collect_customer_references(
             self._make_payload(options={"fedex_po_number": "OPT-PO-999"}),
             self._make_customs(),
             self._make_options(),
-            package,
         )
         values = {r.customerReferenceType: r.value for r in result["package"]}
         self.assertIn("P_O_NUMBER", values)
