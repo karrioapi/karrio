@@ -84,6 +84,7 @@ OPTION_NAME_TRANSLATIONS = {
     "fedex_one_rate": _("FedEx One Rate"),
     "fedex_freight_guarantee": _("FedEx Freight Guarantee"),
     "fedex_saturday_delivery": _("FedEx Saturday Delivery"),
+    "fedex_pickup_type": _("FedEx Pickup Type"),
     "fedex_smart_post_hub_id": _("FedEx Smart Post Hub ID"),
     "fedex_smart_post_allowed_indicia": _("FedEx Smart Post Allowed Indicia"),
     "fedex_alcohol": _("FedEx Alcohol"),

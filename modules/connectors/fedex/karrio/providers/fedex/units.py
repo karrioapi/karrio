@@ -232,6 +232,14 @@ class PaymentType(lib.Enum):
     third_party = "THIRD_PARTY"
 
 
+class FedExPickupType(lib.StrEnum):
+    """How the shipper will tender the package to FedEx (Ship API / Rate API)."""
+
+    dropoff_at_fedex_location = "DROPOFF_AT_FEDEX_LOCATION"
+    contact_fedex_to_schedule = "CONTACT_FEDEX_TO_SCHEDULE"
+    use_scheduled_pickup = "USE_SCHEDULED_PICKUP"
+
+
 class ConnectionConfig(lib.Enum):
     label_type = lib.OptionEnum("label_type", LabelType)
     smart_post_hub_id = lib.OptionEnum("smart_post_hub_id")
@@ -327,6 +335,16 @@ class ShippingOption(lib.Enum):
     fedex_one_rate = lib.OptionEnum("FEDEX_ONE_RATE", bool)
     fedex_freight_guarantee = lib.OptionEnum("FREIGHT_GUARANTEE", bool)
     fedex_saturday_delivery = lib.OptionEnum("SATURDAY_DELIVERY", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    fedex_pickup_type = lib.OptionEnum(
+        "fedex_pickup_type",
+        str,
+        help=(
+            "How the shipper will tender the package to FedEx. "
+            "Valid values: DROPOFF_AT_FEDEX_LOCATION, CONTACT_FEDEX_TO_SCHEDULE, USE_SCHEDULED_PICKUP. "
+            "Defaults to DROPOFF_AT_FEDEX_LOCATION."
+        ),
+        meta=dict(category="DELIVERY_OPTIONS"),
+    )
     fedex_smart_post_hub_id = lib.OptionEnum("SMART_POST_HUB_ID")
     fedex_smart_post_allowed_indicia = lib.OptionEnum("SMART_POST_ALLOWED_INDICIA")
 

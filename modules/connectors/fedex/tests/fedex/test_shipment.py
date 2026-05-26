@@ -29,6 +29,36 @@ class TestFedExShipping(unittest.TestCase):
 
         self.assertEqual(request.serialize(), ShipmentRequest)
 
+    def test_create_shipment_request_with_use_scheduled_pickup(self):
+        request = gateway.mapper.create_shipment_request(
+            models.ShipmentRequest(
+                **{
+                    **ShipmentPayload,
+                    "options": {
+                        **ShipmentPayload["options"],
+                        "fedex_pickup_type": "USE_SCHEDULED_PICKUP",
+                    },
+                }
+            )
+        )
+
+        self.assertEqual(request.serialize(), ShipmentUseScheduledPickupRequest)
+
+    def test_create_shipment_request_with_contact_fedex_pickup(self):
+        request = gateway.mapper.create_shipment_request(
+            models.ShipmentRequest(
+                **{
+                    **ShipmentPayload,
+                    "options": {
+                        **ShipmentPayload["options"],
+                        "fedex_pickup_type": "CONTACT_FEDEX_TO_SCHEDULE",
+                    },
+                }
+            )
+        )
+
+        self.assertEqual(request.serialize(), ShipmentContactFedexPickupRequest)
+
     def test_create_shipment_request_paid_by_recipient(self):
         request = gateway.mapper.create_shipment_request(
             self.ShipmentPaidByRecipientRequest
@@ -478,6 +508,22 @@ ShipmentRequest = {
         "totalWeight": 20.0,
     },
     "shipAction": "CONFIRM",
+}
+
+ShipmentUseScheduledPickupRequest = {
+    **ShipmentRequest,
+    "requestedShipment": {
+        **ShipmentRequest["requestedShipment"],
+        "pickupType": "USE_SCHEDULED_PICKUP",
+    },
+}
+
+ShipmentContactFedexPickupRequest = {
+    **ShipmentRequest,
+    "requestedShipment": {
+        **ShipmentRequest["requestedShipment"],
+        "pickupType": "CONTACT_FEDEX_TO_SCHEDULE",
+    },
 }
 
 ShipmentPaidByRecipientRequest = {

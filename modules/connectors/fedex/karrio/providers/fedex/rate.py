@@ -211,7 +211,7 @@ def rate_request(
             preferredCurrency=default_currency,
             rateRequestType=request_types,
             shipDateStamp=lib.fdate(shipment_date, "%Y-%m-%d"),
-            pickupType="DROPOFF_AT_FEDEX_LOCATION",
+            pickupType=(options.fedex_pickup_type.state or "DROPOFF_AT_FEDEX_LOCATION"),
             requestedPackageLineItems=[
                 fedex.RequestedPackageLineItemType(
                     subPackagingType=lib.identity(
