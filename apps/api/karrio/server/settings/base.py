@@ -374,13 +374,7 @@ DATABASES = {
     }
 }
 
-# Speed up test suite: use fast MD5 hasher instead of bcrypt/PBKDF2
-# This only applies when running `manage.py test` — production is unaffected
-import sys as _sys
-if "test" in _sys.argv or "karrio" in _sys.argv[0]:
-    PASSWORD_HASHERS = [
-        "django.contrib.auth.hashers.MD5PasswordHasher",
-    ]
+TEST_RUNNER = "karrio.server.test_runner.KarrioTestRunner"
 
 if config("DATABASE_URL", default=None):
     db_from_env = dj_database_url.config(
