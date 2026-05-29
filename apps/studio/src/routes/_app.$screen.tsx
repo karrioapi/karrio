@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { ALL_ROUTES } from "~/lib/modes";
 import { getScreen } from "~/screens/registry";
@@ -15,5 +16,9 @@ export const Route = createFileRoute("/_app/$screen")({
 function ScreenRoute() {
   const { screen } = Route.useParams();
   const Screen = getScreen(screen);
-  return <Screen />;
+  return (
+    <Suspense fallback={<div className="page" data-testid="screen-loading"><div className="state-row">Loading…</div></div>}>
+      <Screen />
+    </Suspense>
+  );
 }
