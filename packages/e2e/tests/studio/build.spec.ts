@@ -82,10 +82,11 @@ test.describe("Build mode (D)", () => {
     await page.getByTestId("mcp-copy").click(); // should not throw
   });
 
-  test("Webhooks: row opens sheet with events", async ({ page }) => {
+  test("Webhooks: row opens edit form prefilled with events", async ({ page }) => {
     await page.goto("/webhooks");
     await page.getByTestId("webhook-row-wh_1").click();
-    await expect(page.getByTestId("webhook-sheet-body")).toContainText("shipment_purchased");
+    await expect(page.getByTestId("webhook-form")).toBeVisible();
+    await expect(page.getByTestId("wf-events")).toHaveValue(/shipment_purchased/);
   });
 
   test("API keys: live + test rows render", async ({ page }) => {

@@ -355,3 +355,48 @@ export function useDeleteProduct() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["products"] }),
   });
 }
+
+// === REST mutations (connections, webhooks) =================================
+import { restMutate } from "~/lib/karrio/client";
+
+export function useSaveWebhook() {
+  const ctx = useKarrioCtx();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (vars: { id?: string; data: Record<string, unknown> }) =>
+      vars.id
+        ? restMutate(ctx, "PATCH", `/v1/webhooks/${vars.id}`, vars.data)
+        : restMutate(ctx, "POST", "/v1/webhooks", vars.data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["webhooks"] }),
+  });
+}
+
+export function useDeleteWebhook() {
+  const ctx = useKarrioCtx();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => restMutate(ctx, "DELETE", `/v1/webhooks/${id}`),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["webhooks"] }),
+  });
+}
+
+export function useSaveConnection() {
+  const ctx = useKarrioCtx();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (vars: { id?: string; data: Record<string, unknown> }) =>
+      vars.id
+        ? restMutate(ctx, "PATCH", `/v1/connections/${vars.id}`, vars.data)
+        : restMutate(ctx, "POST", "/v1/connections", vars.data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["carrier-connections"] }),
+  });
+}
+
+export function useDeleteConnection() {
+  const ctx = useKarrioCtx();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => restMutate(ctx, "DELETE", `/v1/connections/${id}`),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["carrier-connections"] }),
+  });
+}
