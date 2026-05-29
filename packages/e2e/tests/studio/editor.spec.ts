@@ -33,4 +33,13 @@ test.describe("Editor + Assistant (D4/F1)", () => {
     await expect(page.getByTestId("editor-model")).toBeVisible();
     await expect(page.getByTestId("editor-mode")).toBeVisible();
   });
+
+  test("scaffold a connector generates the SDK extension file tree (F4)", async ({ page }) => {
+    await gotoStudio(page, "editor");
+    await page.getByTestId("editor-scaffold-input").fill("acme-express");
+    await page.getByTestId("editor-scaffold").click();
+    await expect(page.getByTestId("editor-files")).toContainText("karrio/providers/acme_express/rate.py");
+    await expect(page.getByTestId("editor-files")).toContainText("tests/acme_express/test_shipment.py");
+    await expect(page.getByTestId("editor-messages")).toContainText(/Scaffolded connector/i);
+  });
 });

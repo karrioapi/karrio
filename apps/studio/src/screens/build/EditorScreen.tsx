@@ -7,6 +7,27 @@ import { sendAssistantMessage } from "~/server/assistant";
 type Msg = { id: string; role: "user" | "assistant"; content: string };
 type Sess = { id: string; title: string; plugin: string };
 
+// Standard Karrio connector extension layout (mirrors `bin/cli sdk add-extension`).
+function connectorFiles(slug: string): string[] {
+  return [
+    `karrio/mappers/${slug}/__init__.py`,
+    `karrio/mappers/${slug}/mapper.py`,
+    `karrio/mappers/${slug}/proxy.py`,
+    `karrio/mappers/${slug}/settings.py`,
+    `karrio/providers/${slug}/__init__.py`,
+    `karrio/providers/${slug}/rate.py`,
+    `karrio/providers/${slug}/shipment/create.py`,
+    `karrio/providers/${slug}/shipment/cancel.py`,
+    `karrio/providers/${slug}/tracking.py`,
+    `karrio/providers/${slug}/error.py`,
+    `karrio/providers/${slug}/units.py`,
+    `karrio/schemas/${slug}/`,
+    `tests/${slug}/test_rate.py`,
+    `tests/${slug}/test_shipment.py`,
+    `tests/${slug}/test_tracking.py`,
+  ];
+}
+
 const FILES = ["__init__.py", "settings.py", "mapper.py", "providers/rate.py", "providers/tracking.py", "units.py"];
 
 export function EditorScreen() {
@@ -19,7 +40,22 @@ export function EditorScreen() {
   const [model, setModel] = useState("claude-opus-4-8");
   const [mode, setMode] = useState("agent");
   const [sending, setSending] = useState(false);
+  const [files, setFiles] = useState<string[]>(FILES);
+  const [scaffoldSlug, setScaffoldSlug] = useState("");
   const streamRef = useRef<HTMLDivElement>(null);
+
+  const scaffold = () => {
+    const slug = scaffoldSlug.trim().toLowerCase().replace(/[^a-z0-9_]+/g, "_");
+    if (!slug) return;
+    const generated = connectorFiles(slug);
+    setFiles(generated);
+    setSessions((s) => s.map((x) => (x.id === activeSession ? { ...x, title: `New carrier: ${slug}`, plugin: slug } : x)));
+    setMessages((m) => [
+      ...m,
+      { id: `s${Date.now()}`, role: "assistant", content: `Scaffolded connector **${slug}** — ${generated.length} files created from the Karrio SDK extension template (mappers, providers, schemas, tests). Describe ${slug}'s rate/label/tracking API and I'll fill them in.` },
+    ]);
+    setScaffoldSlug("");
+  };
 
   const send = async () => {
     const text = draft.trim();
@@ -112,8 +148,21 @@ export function EditorScreen() {
 
       <div className="editor-pane right">
         <div className="editor-pane-head">Files · {sessions.find((s) => s.id === activeSession)?.plugin}</div>
+        <div style={{ display: "flex", gap: 6, padding: "8px 8px 0" }}>
+          <input
+            className="field-input"
+            style={{ height: 26, fontSize: 12 }}
+            placeholder="carrier slug…"
+            value={scaffoldSlug}
+            onChange={(e) => setScaffoldSlug(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && scaffold()}
+            data-testid="editor-scaffold-input"
+            aria-label="Carrier slug to scaffold"
+          />
+          <button className="btn btn-sm" onClick={scaffold} data-testid="editor-scaffold">Scaffold</button>
+        </div>
         <div className="editor-pane-body" data-testid="editor-files">
-          {FILES.map((f) => (
+          {files.map((f) => (
             <div key={f} className="file-item" data-testid={`editor-file-${f.replace(/[^a-z]/gi, "")}`}>{f}</div>
           ))}
         </div>
