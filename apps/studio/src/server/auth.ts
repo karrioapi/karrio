@@ -36,7 +36,7 @@ async function tokenAuth(email: string, password: string) {
 }
 
 export const login = createServerFn({ method: "POST" })
-  .validator((data: unknown) => credentials.parse(data))
+  .inputValidator((data: unknown) => credentials.parse(data))
   .handler(async ({ data }) => {
     const result = await tokenAuth(data.email, data.password);
     if (!result?.token) {

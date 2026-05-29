@@ -105,6 +105,20 @@ export const Icon = {
   Pkg: (p: IconProps) => (
     <Ic {...p} d={<><path d="M3 7.5 12 3l9 4.5v9L12 21 3 16.5z" /><path d="M3 7.5 12 12l9-4.5M12 12v9" /></>} />
   ),
+  ChevronL: (p: IconProps) => <Ic {...p} d="m15 6-6 6 6 6" />,
+  Dots: (p: IconProps) => (
+    <Ic {...p} d={<><circle cx="5" cy="12" r="1" fill="currentColor" stroke="none" /><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none" /><circle cx="19" cy="12" r="1" fill="currentColor" stroke="none" /></>} />
+  ),
+  Print: (p: IconProps) => (
+    <Ic {...p} d={<><path d="M6 9V3h12v6" /><path d="M6 17H4a1 1 0 0 1-1-1v-5a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1h-2" /><rect x="6" y="14" width="12" height="7" rx="1" /></>} />
+  ),
+  Download: (p: IconProps) => <Ic {...p} d="M12 4v12m-5-5 5 5 5-5M5 21h14" />,
+  Sliders: (p: IconProps) => (
+    <Ic {...p} d={<><path d="M4 7h8M16 7h4" /><circle cx="14" cy="7" r="2" /><path d="M4 17h4M12 17h8" /><circle cx="10" cy="17" r="2" /></>} />
+  ),
+  Copy: (p: IconProps) => (
+    <Ic {...p} d={<><rect x="8" y="8" width="13" height="13" rx="1.5" /><path d="M16 8V5a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h3" /></>} />
+  ),
 };
 
 export type IconName = keyof typeof Icon;

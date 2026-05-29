@@ -378,3 +378,80 @@ input, textarea, select { font-family: inherit; color: inherit; }
 }
 .carrier-logo.sm { width: 20px; height: 20px; font-size: 7.5px; }
 .carrier-logo.lg { width: 40px; height: 40px; font-size: 12px; }
+
+/* ===================== Tabs ===================== */
+.tabs { display: flex; align-items: center; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 14px; overflow-x: auto; }
+.tab { padding: 8px 12px; font-size: 12.5px; color: var(--fg-muted); cursor: pointer; position: relative; white-space: nowrap; background: none; border: none; }
+.tab:hover { color: var(--fg); }
+.tab.active { color: var(--fg); font-weight: 500; }
+.tab.active::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: -1px; height: 2px; background: var(--accent); }
+.tab .count { color: var(--fg-subtle); margin-left: 5px; font-weight: 400; font-family: var(--font-mono); font-size: 11.5px; }
+
+/* ===================== Table toolbar / filter pills ===================== */
+.table-toolbar { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
+.filter-pill { height: 26px; padding: 0 9px; display: inline-flex; align-items: center; gap: 5px; background: var(--bg-elevated); border: 1px dashed var(--border-strong); border-radius: var(--r-md); font-size: 12px; color: var(--fg-muted); cursor: pointer; }
+.filter-pill:hover { border-style: solid; color: var(--fg); }
+.filter-pill .v { color: var(--fg); font-weight: 500; }
+
+/* ===================== Card + Table ===================== */
+.card { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--r-md); overflow: hidden; }
+.card-scroll { overflow-x: auto; }
+.table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.table thead th { text-align: left; font-size: 10.5px; font-weight: 600; color: var(--fg-subtle); text-transform: uppercase; letter-spacing: 0.05em; padding: 9px var(--row-px); border-bottom: 1px solid var(--border); background: var(--bg-elevated); white-space: nowrap; }
+.table tbody td { padding: var(--row-py) var(--row-px); border-bottom: 1px solid var(--border); vertical-align: middle; }
+.table tbody tr { cursor: pointer; }
+.table tbody tr:hover td { background: var(--bg-row-hover); }
+.table tbody tr.selected td { background: var(--accent-soft-bg); }
+.table tbody tr:last-child td { border-bottom: none; }
+.table .checkbox-cell { width: 28px; padding-right: 0; }
+.table .actions-cell { width: 36px; text-align: right; padding-right: 12px; }
+
+.svc-cell { display: flex; align-items: center; gap: 10px; }
+.svc-id { font-family: var(--font-mono); font-size: 12px; color: var(--fg); font-weight: 500; letter-spacing: -0.01em; }
+.svc-name { font-size: 11px; color: var(--fg-muted); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 500; margin-top: 2px; }
+.recipient-name { font-weight: 500; }
+.recipient-addr { font-size: 11.5px; color: var(--fg-muted); margin-top: 2px; }
+
+/* ===================== Status pills (angular) ===================== */
+.pill { display: inline-flex; align-items: center; gap: 5px; padding: 2px 7px 2px 6px; border-radius: var(--r-pill); font-size: 11px; font-weight: 500; white-space: nowrap; text-transform: lowercase; letter-spacing: 0.01em; }
+.pill::before { content: ""; width: 5px; height: 5px; border-radius: 999px; background: currentColor; }
+.pill.created, .pill.purchased { background: var(--blue-bg); color: var(--blue-fg); }
+.pill.delivered { background: var(--green-bg); color: var(--green-fg); }
+.pill.pending { background: var(--accent-soft-bg); color: var(--accent-soft-fg); }
+.pill.cancelled, .pill.draft, .pill.default { background: var(--grey-bg); color: var(--grey-fg); }
+.pill.exception, .pill.failed { background: var(--red-bg); color: var(--red-fg); }
+.pill.intransit { background: var(--amber-bg); color: var(--amber-fg); }
+
+.checkbox { width: 14px; height: 14px; border: 1.5px solid var(--border-strong); border-radius: var(--r-xs); background: var(--bg-input); cursor: pointer; display: inline-grid; place-items: center; }
+.checkbox.checked { background: var(--accent); border-color: var(--accent); }
+.mono { font-family: var(--font-mono); }
+.muted { color: var(--fg-muted); }
+.subtle { color: var(--fg-subtle); }
+.icon-action { width: 24px; height: 24px; display: inline-grid; place-items: center; color: var(--fg-subtle); border-radius: var(--r-sm); cursor: pointer; }
+.icon-action:hover { background: var(--bg-subtle); color: var(--fg); }
+.table-footer { display: flex; align-items: center; padding: 8px var(--row-px); font-size: 12px; color: var(--fg-muted); border-top: 1px solid var(--border); background: var(--bg-elevated); }
+.table-footer .right { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+.btn-sm { height: 24px; padding: 0 8px; font-size: 11.5px; }
+.state-row { padding: 40px; text-align: center; color: var(--fg-muted); font-size: 13px; }
+
+/* ===================== Sheet detail ===================== */
+.sheet-body-pad { padding: 4px 2px; }
+.section-head { font-size: 10.5px; font-weight: 600; color: var(--fg-subtle); text-transform: uppercase; letter-spacing: 0.06em; margin: 20px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+.section-head:first-child { margin-top: 0; }
+.kv-label { font-size: 11px; color: var(--fg-muted); }
+.kv-value { font-size: 12.5px; margin-top: 2px; }
+.addr-card { border: 1px solid var(--border); border-radius: var(--r-md); padding: 10px 12px; }
+.addr-card .lbl { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--fg-subtle); margin-bottom: 4px; }
+.addr-card .nm { font-weight: 500; font-size: 12.5px; }
+.addr-card .ln { font-size: 12px; color: var(--fg-muted); }
+
+/* ===================== Timeline ===================== */
+.timeline { padding-left: 4px; }
+.timeline .ev { display: grid; grid-template-columns: 14px 1fr auto; gap: 10px; padding: 7px 0; position: relative; }
+.timeline .ev::before { content: ""; position: absolute; left: 6px; top: 18px; bottom: -7px; width: 1px; background: var(--border); }
+.timeline .ev:last-child::before { display: none; }
+.timeline .ev .dot { width: 8px; height: 8px; border-radius: 999px; background: var(--bg-elevated); border: 2px solid var(--border-strong); margin-top: 6px; }
+.timeline .ev.done .dot { background: var(--accent); border-color: var(--accent); }
+.timeline .ev .what { font-size: 12.5px; font-weight: 500; }
+.timeline .ev .where { font-size: 11.5px; color: var(--fg-muted); }
+.timeline .ev .when { font-size: 11px; color: var(--fg-subtle); text-align: right; white-space: nowrap; font-family: var(--font-mono); }

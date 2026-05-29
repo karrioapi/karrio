@@ -9,11 +9,17 @@ export const STUDIO_NAV: Record<string, string[]> = {
 
 export const ALL_STUDIO_ROUTES = Object.values(STUDIO_NAV).flat();
 
-/** Navigate to a Studio screen by route and wait for the shell to render. */
+/**
+ * Navigate to a Studio screen by route and wait for the shell to render AND for
+ * the client to hydrate (SSR markup is interactive-looking before React attaches
+ * handlers, so we must wait before clicking). `networkidle` lets Vite connect and
+ * hydration settle.
+ */
 export async function gotoStudio(page: Page, route = "home"): Promise<void> {
   await page.goto(`/${route}`);
   await expect(page.getByTestId("sidebar")).toBeVisible();
   await expect(page.getByTestId(`screen-${route}`)).toBeVisible();
+  await page.waitForLoadState("networkidle");
 }
 
 /** Switch mode via the sidebar segmented control. */

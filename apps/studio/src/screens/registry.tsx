@@ -5,9 +5,11 @@
 import type { ComponentType } from "react";
 import { HomeScreen } from "~/screens/HomeScreen";
 import { Placeholder } from "~/screens/Placeholder";
+import { ShipmentsScreen } from "~/screens/ship/ShipmentsScreen";
 
 const REGISTRY: Record<string, ComponentType> = {
   home: HomeScreen,
+  shipments: ShipmentsScreen,
 };
 
 export function getScreen(route: string): ComponentType {

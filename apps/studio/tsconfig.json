@@ -13,7 +13,7 @@
     "noEmit": true,
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": false,
-    "types": ["vite/client"],
+    "types": ["vite/client", "node"],
     "baseUrl": ".",
     "paths": {
       "~/*": ["./src/*"]
