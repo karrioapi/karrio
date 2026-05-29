@@ -122,6 +122,13 @@ export const Icon = {
   External: (p: IconProps) => (
     <Ic {...p} d={<><path d="M14 3h7v7" /><path d="M21 3 10 14" /><path d="M21 14v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h6" /></>} />
   ),
+  Eye: (p: IconProps) => (
+    <Ic {...p} d={<><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" /><circle cx="12" cy="12" r="3" /></>} />
+  ),
+  EyeOff: (p: IconProps) => (
+    <Ic {...p} d={<><path d="M9.9 5a9 9 0 0 1 2.1-.2c6.5 0 10 7 10 7a18 18 0 0 1-2.4 3.4M6.6 6.6A18 18 0 0 0 2 12s3.5 7 10 7a9 9 0 0 0 5.4-1.6" /><path d="M9.5 9.5a3 3 0 0 0 4.2 4.2" /><path d="m3 3 18 18" /></>} />
+  ),
+  Check2: (p: IconProps) => <Ic {...p} d="m5 12 5 5L20 7" />,
 };
 
 export type IconName = keyof typeof Icon;
