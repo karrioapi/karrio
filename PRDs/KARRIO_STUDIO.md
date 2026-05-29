@@ -50,18 +50,20 @@ Decisions locked with the owner:
 | Decision | Choice |
 |----------|--------|
 | App strategy | **New app `apps/studio`**, phased cutover; `apps/dashboard` stays live until parity |
-| Data layer | **Studio-local DB (Drizzle)** for Studio-native state + **Karrio GraphQL/REST** (via `@karrio/hooks`) for shipping data |
-| Session 1 scope | Linear project + agent plan, this PRD, and the `apps/studio` foundation scaffold + Playwright harness |
+| Repo coupling | **Standalone app** — `apps/studio` is excluded from the turborepo workspaces, has its own `package-lock.json`/`node_modules`, and depends on **no** `@karrio/*` packages. Moves fast, avoids monorepo dependency/version conflicts, and keeps it out of root `npm ci`/`turbo build`. |
+| Data layer | **Pure Karrio backend passthrough** — ALL state (shipping data AND Studio-native state) persists on the Karrio backend via GraphQL/REST. Studio owns **no** database. Accessed through Studio's **own** fetch-based client + local types (not `@karrio/hooks`/`@karrio/types`). |
+| UI | **shadcn/ui + Tailwind CSS** (not `@karrio/ui`). Enterprise theme tokens in `globals.css`; bespoke shell keeps its ported CSS. |
+| Session 1+ scope | Linear project + agent plan, this PRD, the standalone `apps/studio` foundation + decoupled data layer + Playwright harness, then feature screens. |
 
 ## Open Questions & Decisions
 
 | # | Question | Decision | Rationale |
 |---|----------|----------|-----------|
 | 1 | Replace dashboard in place or build new? | Build `apps/studio` new, deprecate dashboard at parity | Keeps production dashboard running during the multi-phase migration |
-| 2 | Where does Studio-native state live? | Drizzle DB (Postgres in prod, SQLite in dev) for Studio-only entities; Karrio API for all shipping data | Avoids backend churn for app-config/agent/MCP state while keeping one source of truth for shipping |
+| 2 | Where does Studio-native state live? | **Karrio backend passthrough** — customization, agent, and MCP state persist as Karrio metafields/workspace-config (namespaced `studio.*`); shipping data via the Karrio API. Studio owns no DB. | Single source of truth; Studio stays a thin client; no separate DB to operate. Namespaced metafields avoid backend migrations to ship. |
 | 3 | Auth model | TanStack Start server functions proxy Karrio auth (JWT) + httpOnly session cookie; reuse Karrio `mutation token_auth`/refresh | Server-side session beats the dashboard's client NextAuth for SSR + security |
-| 4 | Component reuse | Reuse `@karrio/types`, `@karrio/lib`; introduce a Studio token/`@karrio/ui-studio` layer for the enterprise aesthetic | `@karrio/ui` is bulma/plex-styled; Studio aesthetic is distinct (sharp, dense, dark-default) |
-| 5 | Hooks reuse | `@karrio/hooks` is `"use client"` + NextAuth-coupled. Provide a Studio session adapter so hooks work under TanStack Start; net-new queries use server functions | Maximizes reuse of ~50 existing TanStack Query hooks |
+| 4 | Component/UI strategy | **Build on shadcn/ui + Tailwind** in Studio. Do **not** depend on `@karrio/ui` (Next/bulma-coupled). | Studio aesthetic is distinct (sharp, dense, dark-default); shadcn+Tailwind is framework-agnostic and fast. |
+| 5 | Data/hooks strategy | **Build a fresh, Next-free Karrio client + TanStack Query hooks inside Studio** (`src/lib/karrio/*`) with local types. Do **not** reuse `@karrio/hooks` (`"use client"` + NextAuth) or `@karrio/lib` (`next-runtime-env`, `next-auth`) or `@karrio/types` (workspace dep). | Standalone app can't use workspace deps; a clean fetch client avoids NextAuth coupling entirely and is simpler to reason about. |
 
 ## Problem Statement
 
@@ -77,31 +79,34 @@ operations, extensibility, and governance with an enterprise-grade, agent-native
 |------|------------------|
 | Feature parity with dashboard | Every Ship/Build/Govern screen below implemented and wired to live Karrio APIs |
 | Pixel-faithful enterprise UI | Design tokens from `styles.css` ported; sharp corners, 1px borders, dark-default, light theme |
-| Full-stack TanStack Start | SSR routing, server functions, server-side auth/session, Drizzle DB, forms (TanStack Form), monitoring |
+| Full-stack TanStack Start | SSR routing, server functions, server-side auth/session, forms (TanStack Form), monitoring |
 | New: Carrier/plugin Editor | Agent-first 3-pane IDE; scaffold + edit connectors via `@karrio/app-store`/SDK |
 | New: MCP management | Start/stop server, tools table, install snippets, client + invocation monitoring (ref `packages/mcp`, `PRDs/KARRIO_MCP_SERVER.md`) |
-| New: Agents | AI Assistant chat + agent sessions/runs, persisted in Studio DB |
+| New: Agents | AI Assistant chat + agent sessions/runs, persisted via Karrio metafields (`studio.agents.*`) |
 | Self-editable app | Theme/accent/density/font + layout customization persisted per user/org |
 | Full test coverage | Playwright spec per feature, run against live Karrio GraphQL+REST |
 | Tracked in Linear | Project with epics/issues mirroring the agent plan below |
 
 ## Existing Code Analysis
 
-| Asset | Location | Reuse plan |
-|-------|----------|-----------|
-| Karrio API client | `@karrio/types` `KarrioClient`, `packages/hooks/karrio.tsx` | Reuse client; replace NextAuth session with Studio server session |
-| Data hooks (~50) | `packages/hooks/*` (shipment, tracker, order, pickup, carrier-connections, apps, webhooks, api-keys, admin-*, workflows…) | Reuse via a Studio `ClientProvider` + session adapter |
-| Types | `@karrio/types` (`graphql/`, `rest/`, `base.ts`) | Reuse directly — never define inline |
-| Lib utils | `@karrio/lib` (`KARRIO_API`, `url$`, `getCookie`, auth, autocomplete) | Reuse directly |
-| App store / plugins | `packages/app-store`, `packages/mcp`, `plugins/` | Power Apps/Plugins/MCP screens + Editor scaffolding |
+Because Studio is **standalone** (no `@karrio/*` deps), these are studied as
+**reference/patterns**, not imported:
+
+| Asset | Location | Use |
+|-------|----------|-----|
+| Karrio API client | `@karrio/types` `KarrioClient`, `packages/hooks/karrio.tsx` | Reference for REST/GraphQL shapes; Studio ships its **own** fetch client (`src/lib/karrio/client.ts`) + local types |
+| Data hooks (~50) | `packages/hooks/*` (shipment, tracker, order, pickup, connections, apps, webhooks, api-keys, admin-*, workflows…) | Reference for query/endpoint patterns; reimplemented Next-free in `src/lib/karrio/hooks.ts` |
+| Endpoint/auth semantics | `@karrio/lib`, dashboard auth | Reference for `token_auth`, headers (`x-org-id`, `x-test-mode`); reimplemented in `src/server/auth.ts` + `src/lib/karrio/*` |
+| App store / plugins | `packages/app-store`, `packages/mcp`, `plugins/` | Power Apps/Plugins/MCP screens via the Karrio API |
 | MCP server | `packages/mcp`, `PRDs/KARRIO_MCP_SERVER.md`, `SPRINT_MCP.md` | Back the MCP management screen |
-| Playwright harness | `packages/e2e` (config, `helpers/auth.ts`, `auth.setup.ts`) | Extend with a `studio` project + per-feature specs |
+| Playwright harness | `packages/e2e` (config, `helpers/`, setup) | Extended with a `studio` project + per-feature specs |
 | Design handoff | `design_handoff_karrio_studio/prototype/studio/*` | Source of truth for tokens, IA, screen layouts, data shapes |
 
-**Key constraint:** `@karrio/hooks` files start with `"use client"` and read the
-NextAuth session via `useSyncedSession`. Studio provides a compatible session
-context so these hooks run unchanged inside client islands; SSR data + Studio-native
-entities go through TanStack Start **server functions** + Drizzle.
+**Key point:** Studio depends on **no** `@karrio/*` package. Its session lives in
+a small framework-agnostic context (`src/lib/karrio/session.tsx`); data hooks read
+a per-request `KarrioCtx` (base URL + token + org + test-mode). All state — shipping
+data AND Studio-native state — is persisted on the Karrio backend
+(metafields/workspace-config, `studio.*`) via the Studio client and server functions.
 
 ## Technical Design
 
@@ -123,27 +128,28 @@ entities go through TanStack Start **server functions** + Drizzle.
 │  ┌──────────────────────┐        ┌──────────────────────────────┐      │
 │  │ Server Functions      │        │ Client islands               │      │
 │  │ - auth/session (JWT)  │        │ - @karrio/hooks (TanStack Q)  │      │
-│  │ - Studio-native CRUD  │        │ - forms (TanStack Form)       │      │
-│  │ - agent/MCP/editor    │        │ - sheets/overlays/palette     │      │
+│  │ - SSR data loaders     │        │ - forms (TanStack Form)       │      │
+│  │ - agent/MCP proxy      │        │ - sheets/overlays/palette     │      │
 │  └─────────┬─────────────┘        └───────────────┬──────────────┘      │
 │            │                                       │                     │
 └────────────┼───────────────────────────────────────┼─────────────────────┘
-             │                                       │
-   ┌─────────▼──────────┐                 ┌──────────▼───────────────┐
-   │ Studio DB (Drizzle) │                 │  Karrio Backend           │
-   │ - app_config        │                 │  - GraphQL  (/graphql)     │
-   │ - layouts/tweaks    │                 │  - REST     (/v1/*)        │
-   │ - agent_sessions    │                 │  - auth (token_auth)       │
-   │ - agent_runs/msgs   │                 │  - MCP server (packages/mcp│
-   │ - mcp_servers       │                 │    + Django)               │
-   │ - mcp_clients       │                 └────────────────────────────┘
-   └────────────────────┘
+             └───────────────────┬───────────────────┘
+                                 │   (single source of truth — no Studio DB)
+                      ┌──────────▼───────────────────────────────┐
+                      │  Karrio Backend                            │
+                      │  - GraphQL (/graphql) · REST (/v1/*)        │
+                      │  - auth (token_auth)                        │
+                      │  - metafields / workspace_config:           │
+                      │      studio.customization · studio.agents   │
+                      │      · studio.mcp   (Studio-native state)   │
+                      │  - MCP server (packages/mcp + Django)       │
+                      └────────────────────────────────────────────┘
 ```
 
 ### Auth & session sequence
 
 ```
-Browser            Studio server fn         Karrio GraphQL        Studio DB
+Browser            Studio server fn         Karrio GraphQL       Karrio meta
   │  POST /login (email,pw)  │                    │                  │
   ├─────────────────────────▶│ mutation token_auth│                  │
   │                          ├───────────────────▶│                  │
@@ -157,11 +163,11 @@ Browser            Studio server fn         Karrio GraphQL        Studio DB
 
 | Concern | Choice |
 |---------|--------|
-| Framework | TanStack Start (Vite + TanStack Router, SSR + server functions) |
-| Data (shipping) | `@karrio/hooks` (TanStack Query) → Karrio GraphQL + REST |
-| Data (Studio-native) | Drizzle ORM (Postgres prod / SQLite dev) via server functions |
+| Framework | TanStack Start (Vite + TanStack Router, SSR + server functions); **standalone** (own lockfile, no `@karrio/*` deps) |
+| Data (shipping) | Studio's own fetch client + TanStack Query hooks (`src/lib/karrio/*`) → Karrio GraphQL + REST |
+| Data (Studio-native) | Karrio backend passthrough — metafields/workspace-config (`studio.*`); no Studio DB |
 | Forms | TanStack Form + Zod validation |
-| Styling | CSS custom properties ported from `styles.css` (+ Tailwind optional, tokens-first) |
+| UI / Styling | **shadcn/ui + Tailwind CSS** (`globals.css` theme tokens); bespoke shell CSS for the enterprise layout |
 | Auth | Server functions → Karrio `token_auth`/refresh; httpOnly session cookie |
 | Monitoring | Workbench overlay (logs/events/health/workers/tracing) wired to Karrio admin hooks + Sentry/PostHog (`instrumentation`) |
 | Tests | Playwright (`packages/e2e`, new `studio` project) |
@@ -187,7 +193,7 @@ Ship→`home`, Build→`apps`, Govern→`admin`.
 | Build | Apps + Sheet | `apps` | app-store, apps hook | AppsScreen, AppSheet, AppLauncher |
 | Build | Plugins + Sheet | `plugins` | plugins/registry | PluginsScreen, PluginSheet |
 | Build | MCP | `mcp` | `packages/mcp` + Django | McpScreen |
-| Build | Editor (agent IDE) | `editor` | Studio DB + SDK scaffold | EditorScreen |
+| Build | Editor (agent IDE) | `editor` | Karrio metafields (`studio.agents`) + SDK scaffold | EditorScreen |
 | Build | Workbench overlay | (overlay) | admin/log/event/health/worker/tracing | workbench.jsx |
 | Build | Webhooks | `webhooks` | webhook hook | screens-develop.jsx |
 | Build | API keys | `apikeys` | api-keys/api-token | screens-develop.jsx |
@@ -199,7 +205,7 @@ Ship→`home`, Build→`apps`, Govern→`admin`.
 | Govern | Settings | `settings` | workspace-config, user | SettingsScreen |
 | Cross | Auth flow | `/login…` | token_auth, register, verify, 2FA, reset | `auth.jsx` |
 | Cross | Command palette ⌘K | overlay | search hook | CommandPalette |
-| Cross | Tweaks panel | overlay | Studio DB app_config | tweaks-panel.jsx |
+| Cross | Tweaks panel | overlay | Karrio workspace-config / user metadata | tweaks-panel.jsx |
 
 ### Core reusable components (Studio UI layer)
 
@@ -212,7 +218,7 @@ Ship→`home`, Build→`apps`, Govern→`admin`.
 Ported verbatim from `styles.css`: accent `#8B5CF6`; radii xs2/sm3/md4/lg6/pill3;
 dark-default + light theme palettes; status colors; density variants
 (compact/regular/comfy); Inter / JetBrains Mono / IBM Plex Sans. Theme persists
-(`localStorage` + Studio DB), applied pre-render to avoid flash.
+(`localStorage` + Karrio workspace-config), applied pre-render to avoid flash.
 
 ## New Features
 
@@ -220,7 +226,7 @@ dark-default + light theme palettes; status colors; density variants
 Agent-first 3-pane IDE: **left** agent sessions, **center** Assistant chat (default)
 + closeable code tabs with inline AI diff (Apply/Reject), **right** plugin file tree.
 Scaffolds connectors using the SDK extension pattern (`./bin/cli sdk add-extension`)
-and `@karrio/app-store`, persisting sessions/runs/messages in Studio DB.
+and `@karrio/app-store`, persisting sessions/runs/messages via Karrio metafields (`studio.agents.*`).
 
 ### MCP management (`mcp`)
 Server status (start/stop, URL, stats), exposed-tools table, install snippets
@@ -229,12 +235,12 @@ backed by `packages/mcp` and the MCP server PRD.
 
 ### AI Assistant & Agents
 Assistant chat surface (Editor + ⌘K actions) backed by the Claude API; agent
-sessions/runs/messages persisted in Studio DB; @-context chips reference Studio
+sessions/runs/messages persisted via Karrio metafields (`studio.agents.*`); @-context chips reference Studio
 entities. Tool execution flows through the Karrio MCP server.
 
 ### Self-editable / customizable app
 Tweaks panel (accent/font/density/theme) + layout customization persisted per
-user/org in Studio DB; applied via CSS custom properties.
+user/org via Karrio workspace-config / user metadata; applied via CSS custom properties.
 
 ## Agent / Subagent Orchestration Plan (Linear)
 
@@ -248,8 +254,8 @@ Karrio Studio (Linear Project)
 │  ├─ A2 design tokens + global CSS (port styles.css)
 │  ├─ A3 app shell: Sidebar + Topbar + mode IA + routing
 │  ├─ A4 core components: Sheet, ActivityFeed, JsonView, Toast, Field, Icon, CarrierLogo
-│  ├─ A5 Studio DB (Drizzle) schema + migrations
-│  └─ A6 @karrio/hooks session adapter + ClientProvider
+│  ├─ A5 Studio-native state mapping (Karrio metafields `studio.*`)
+│  └─ A6 decoupled Karrio client + session context + data hooks (src/lib/karrio/*)
 ├─ EPIC B · Auth Agent
 │  ├─ B1 server-fn auth (token_auth/refresh) + httpOnly session
 │  ├─ B2 auth screens (sign in/up, verify, 2FA, forgot/reset, invite, change pw)
@@ -287,7 +293,7 @@ criteria, and a paired Playwright spec (EPIC I).
 | Phase | Agent(s) | Deliverable |
 |-------|----------|-------------|
 | 0 (this session) | Foundation A1–A4 (scaffold), I1 | `apps/studio` boots, shell + tokens, Playwright `studio` project |
-| 1 | A5–A6, B | Studio DB, hooks adapter, full auth |
+| 1 | A5–A6, B | Studio-native state mapping, decoupled Karrio client + hooks, full auth |
 | 2 | C | Ship mode parity, each screen + spec |
 | 3 | D | Build mode incl. MCP + Editor + Workbench |
 | 4 | E, G, H | Govern, customization, cross-cutting |
@@ -311,8 +317,9 @@ criteria, and a paired Playwright spec (EPIC I).
 
 | Risk | Mitigation |
 |------|-----------|
-| `@karrio/hooks` NextAuth coupling | Session adapter providing the same context shape under TanStack Start |
-| `@karrio/ui` aesthetic mismatch | New Studio token layer; reuse types/lib only, not bulma UI |
+| NextAuth/Next coupling in `@karrio/*` | Avoided entirely — Studio is standalone with its own fetch client + session context (no `@karrio/hooks`/`lib`) |
+| Drift from Karrio API types (local types) | Local types model only consumed fields; integration Playwright runs against the live API to catch drift |
+| Standalone app misses monorepo tooling | Self-contained config (own tsconfig/tailwind/lockfile); excluded from `npm ci`/`turbo`, so it can't break monorepo CI |
 | Scope (huge surface) | Phased per-agent delivery tracked in Linear; dashboard stays live |
 | TanStack Start maturity | Pin versions; isolate SSR/server-fn boundaries; lean on TanStack Query for data |
 | Agent/MCP security | Tool execution via MCP server with org scoping; no secrets in client |
@@ -321,4 +328,4 @@ criteria, and a paired Playwright spec (EPIC I).
 
 Studio ships alongside the dashboard. Cutover is per-mode behind a feature flag;
 rollback = route users back to `apps/dashboard`. No destructive backend changes —
-Studio-native state is additive (Drizzle DB), shipping data untouched.
+Studio-native state is additive (Karrio metafields, `studio.*`), shipping data untouched.

@@ -6,8 +6,11 @@ import {
 } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
+import { SessionProvider } from "~/lib/karrio/session";
 import { THEME_INIT_SCRIPT } from "~/lib/theme";
-import tokensCss from "~/styles/tokens.css?url";
+// Tailwind/shadcn theme first, then the bespoke enterprise shell CSS (overrides).
+import "~/styles/globals.css";
+import "~/styles/tokens.css";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -17,7 +20,6 @@ export const Route = createRootRoute({
       { title: "Karrio Studio" },
     ],
     links: [
-      { rel: "stylesheet", href: tokensCss },
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700&family=JetBrains+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap",
@@ -38,7 +40,9 @@ function RootComponent() {
   return (
     <RootDocument>
       <QueryClientProvider client={queryClient}>
-        <Outlet />
+        <SessionProvider>
+          <Outlet />
+        </SessionProvider>
       </QueryClientProvider>
     </RootDocument>
   );

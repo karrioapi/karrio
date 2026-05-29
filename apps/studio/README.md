@@ -5,6 +5,13 @@ Full-stack **TanStack Start** app that replaces the Next.js dashboard
 Govern modes, a self-editable UI, and net-new carrier-integration, Editor,
 Agent, and MCP-management surfaces.
 
+> **Standalone by design.** This app is intentionally **excluded from the
+> turborepo workspaces**. It has its own `package-lock.json`/`node_modules` and
+> depends on **no** `@karrio/*` package — UI is **shadcn/ui + Tailwind**, and
+> the Karrio API is consumed via a **self-contained fetch client + local types**
+> (`src/lib/karrio/*`). This keeps Studio fast-moving and isolated from monorepo
+> dependency/version conflicts, and out of root `npm ci` / `turbo build`.
+
 See [`PRDs/KARRIO_STUDIO.md`](../../PRDs/KARRIO_STUDIO.md) for the full design,
 the agent/subagent plan, and the testing strategy. Work is tracked in the
 **"Karrio Studio"** Linear project (epics = orchestrator agents, issues =
@@ -14,31 +21,37 @@ subagents).
 
 | Area | State |
 |------|-------|
-| TanStack Start app (Vite, SSR, file routes) | ✅ scaffolded |
-| Design tokens + global CSS (ported from handoff) | ✅ `src/styles/tokens.css` |
+| Standalone TanStack Start app (Vite, SSR, file routes) | ✅ |
+| Tailwind + shadcn theme (`globals.css`) + bespoke shell CSS | ✅ |
 | App shell: Sidebar + Topbar + mode IA + routing | ✅ |
-| Core components: `Sheet`, `Field`, `Icon`, `CarrierLogo` | ✅ (more in later phases) |
+| Core components: `Sheet`, `Field`, `Icon`, `CarrierLogo` | ✅ (shadcn primitives added per screen) |
 | Every IA route navigable (Placeholder + real Home) | ✅ `src/screens/` |
-| Studio-native DB schema (Drizzle) | ✅ `src/db/schema.ts` |
-| Server-side auth skeleton (Karrio `token_auth`) | ✅ `src/server/auth.ts` |
+| Decoupled Karrio client + session + hooks | ✅ `src/lib/karrio/*` |
+| Studio-native state contract (Karrio passthrough) | ✅ `src/lib/studio-state.ts` |
+| Server-side auth (Karrio `token_auth`) | ✅ `src/server/auth.ts` |
 | Playwright `studio` project + smoke specs | ✅ `packages/e2e/tests/studio/` |
 | Feature screens, auth UI, agents/MCP/editor, monitoring | ⏳ tracked in Linear |
 
 ## Architecture
 
-- **Shipping data** → reused `@karrio/hooks` (TanStack Query) over Karrio
-  GraphQL + REST. No data is duplicated.
-- **Studio-native state** (app config/tweaks, agent sessions, MCP config) →
-  Drizzle DB via TanStack Start server functions.
-- **Auth** → server functions proxy Karrio JWT auth into an httpOnly session
-  cookie used by SSR + the Karrio client.
+- **No `@karrio/*` deps.** Shipping data AND Studio-native state go through the
+  Karrio backend via Studio's own client (`src/lib/karrio/client.ts`) and
+  TanStack Query hooks (`src/lib/karrio/hooks.ts`), keyed by a `KarrioCtx`
+  (base URL + token + org + test-mode) from `src/lib/karrio/session.tsx`.
+- **Studio-native state** (customization, agents, MCP) → Karrio
+  metafields/workspace-config under `studio.*` (see `src/lib/studio-state.ts`).
+- **Auth** → server functions (`src/server/auth.ts`) proxy Karrio JWT auth into
+  an httpOnly session cookie.
+- **UI** → shadcn/ui + Tailwind (`src/styles/globals.css`, `src/lib/utils.ts`),
+  with bespoke CSS for the enterprise shell (`src/styles/tokens.css`).
 
 ## Develop
 
 ```bash
-cp .env.sample .env            # set KARRIO_API + DATABASE_URL
-npm install                    # from repo root (workspaces)
-npm run dev -w @karrio/studio  # → http://localhost:3003 (generates routeTree.gen.ts)
+cp .env.sample .env            # set KARRIO_API / VITE_KARRIO_API
+cd apps/studio                 # standalone — install here, NOT at repo root
+npm install
+npm run dev                    # → http://localhost:3003 (generates routeTree.gen.ts)
 ```
 
 ## Test
@@ -52,22 +65,28 @@ KARRIO_STUDIO_URL=http://localhost:3003 npx playwright test --project=studio
 ## Layout
 
 ```
-apps/studio/
-├── vite.config.ts            # TanStack Start plugin
-├── drizzle.config.ts
+apps/studio/                   # standalone (own lockfile/node_modules)
+├── vite.config.ts             # TanStack Start plugin
+├── tailwind.config.ts · postcss.config.js
 ├── src/
-│   ├── router.tsx            # createRouter (routeTree.gen.ts is generated)
+│   ├── router.tsx             # createRouter (routeTree.gen.ts is generated)
 │   ├── routes/
-│   │   ├── __root.tsx        # document, fonts, theme-init, QueryClient
-│   │   ├── index.tsx         # / → /home
-│   │   ├── _app.tsx          # shell layout (sidebar + topbar + shortcuts)
-│   │   └── _app.$screen.tsx  # screen dispatch (validates IA, 404s unknown)
-│   ├── screens/              # registry + Home + Placeholder
+│   │   ├── __root.tsx         # document, fonts, theme-init, QueryClient, Session
+│   │   ├── index.tsx          # / → /home
+│   │   ├── _app.tsx           # shell layout (sidebar + topbar + shortcuts)
+│   │   └── _app.$screen.tsx   # screen dispatch (validates IA, 404s unknown)
+│   ├── screens/               # registry + Home + Placeholder
 │   ├── components/
-│   │   ├── shell/            # Sidebar, Topbar
-│   │   └── ui/               # Sheet, Field, icons, CarrierLogo
-│   ├── lib/                  # modes (IA), theme
-│   ├── db/                   # Drizzle schema + client
-│   ├── server/               # auth server functions
-│   └── styles/tokens.css     # ported design tokens + shell/sheet CSS
+│   │   ├── shell/             # Sidebar, Topbar
+│   │   └── ui/                # Sheet, Field, icons, CarrierLogo (+ shadcn)
+│   ├── lib/
+│   │   ├── modes.ts           # Ship/Build/Govern IA
+│   │   ├── theme.ts           # theme + density prefs
+│   │   ├── utils.ts           # shadcn cn()
+│   │   ├── studio-state.ts    # Studio-native state contract (Karrio passthrough)
+│   │   └── karrio/            # env, client, types, session, hooks (decoupled)
+│   ├── server/                # auth server functions
+│   └── styles/
+│       ├── globals.css        # Tailwind + shadcn theme tokens
+│       └── tokens.css         # enterprise shell/sheet/table CSS
 ```

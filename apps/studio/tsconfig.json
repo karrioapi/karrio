@@ -1,4 +1,5 @@
 {
+  "comment": "Standalone — does NOT extend the monorepo 'tsconfig' package.",
   "compilerOptions": {
     "target": "ES2022",
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
@@ -11,11 +12,12 @@
     "resolveJsonModule": true,
     "noEmit": true,
     "allowImportingTsExtensions": true,
-    "verbatimModuleSyntax": true,
+    "verbatimModuleSyntax": false,
+    "types": ["vite/client"],
     "baseUrl": ".",
     "paths": {
       "~/*": ["./src/*"]
     }
   },
-  "include": ["src", "vite.config.ts", "drizzle.config.ts"]
+  "include": ["src", "vite.config.ts", "tailwind.config.ts"]
 }
