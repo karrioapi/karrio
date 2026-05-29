@@ -26,7 +26,10 @@ function LoginScreen() {
     try {
       const res = await login({ data: { email, password } });
       if (res.ok) {
-        navigate({ to: "/$screen", params: { screen: "home" } });
+        // Full navigation so the server session cookie is read fresh and the
+        // client session/data layer initializes authenticated (avoids a
+        // post-login client-nav waterfall where hooks stay unauthenticated).
+        window.location.assign("/home");
       } else {
         setError(res.errors?.[0]?.messages?.[0] ?? "Invalid email or password.");
       }

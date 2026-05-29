@@ -19,32 +19,27 @@ const credentials = z.object({
   password: z.string().min(1),
 });
 
+// Karrio auth is REST + simplejwt: POST /api/token → { access, refresh }.
 async function tokenAuth(email: string, password: string) {
-  const res = await fetch(`${KARRIO_API}/graphql`, {
+  const res = await fetch(`${KARRIO_API}/api/token`, {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({
-      query: `mutation($email: String!, $password: String!) {
-        token_auth(input: { email: $email, password: $password }) {
-          token refresh_token errors { field messages }
-        }
-      }`,
-      variables: { email, password },
-    }),
+    body: JSON.stringify({ email, password }),
   });
-  return (await res.json())?.data?.token_auth;
+  if (!res.ok) return null;
+  return (await res.json().catch(() => null)) as { access?: string; refresh?: string } | null;
 }
 
 export const login = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => credentials.parse(data))
   .handler(async ({ data }) => {
     const result = await tokenAuth(data.email, data.password);
-    if (!result?.token) {
-      return { ok: false as const, errors: result?.errors ?? [{ messages: ["Invalid credentials"] }] };
+    if (!result?.access) {
+      return { ok: false as const, errors: [{ messages: ["Invalid email or password."] }] };
     }
     const session: Session = {
-      access: result.token,
-      refresh: result.refresh_token,
+      access: result.access,
+      refresh: result.refresh ?? "",
       email: data.email,
     };
     setCookie(SESSION_COOKIE, JSON.stringify(session), {

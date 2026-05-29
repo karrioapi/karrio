@@ -506,6 +506,10 @@ input, textarea, select { font-family: inherit; color: inherit; }
   .kv-grid { grid-template-columns: 1fr; }
 }
 
+/* Generic two-column layout that stacks on mobile. */
+.two-col { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+@media (max-width: 768px) { .two-col { grid-template-columns: 1fr; } }
+
 /* ===================== Tiles (app/plugin cards) ===================== */
 .tile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
 .tile { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--r-md); padding: 14px; display: flex; flex-direction: column; gap: 10px; cursor: pointer; transition: border-color 0.12s; text-align: left; }

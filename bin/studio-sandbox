@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# =============================================================================
+# Karrio Studio — sandbox bring-up with provisioned sample data
+# =============================================================================
+# Stands up the Karrio API (SQLite) with a default admin user and seeds sample
+# data for every Studio feature (connections, addresses, parcels, products,
+# trackers, shipments, orders), then starts the API on :5002.
+#
+# Prereqs (one time): the Python env. Either:
+#   ./bin/install-dev                       # full official setup, OR
+#   uv venv .venv/karrio --python 3.12 && source .venv/karrio/bin/activate \
+#     && uv pip install -r requirements.server.dev.txt
+#
+# Usage:  ./bin/studio-sandbox            # migrate + seed + run API (:5002)
+#         ./bin/studio-sandbox --seed-only
+#
+# Then run Studio against it:
+#   npm run dev -w @karrio/studio          # http://localhost:3003
+#   KARRIO_LIVE=1 npx playwright test --project=studio-live -w packages/e2e
+# =============================================================================
+set -e
+cd "$(dirname "$0")/.."
+
+source bin/activate-env >/dev/null 2>&1 || { echo "Activate the Python env first (see header)."; exit 1; }
+[ -f .env ] || cp .env.sample .env
+
+echo "▶ migrating…"
+karrio migrate
+
+echo "▶ creating default admin (admin@example.com / demo)…"
+./bin/create-default-user || true
+
+echo "▶ seeding sample data…"
+cat apps/studio/sandbox/seed.py | karrio shell
+
+if [ "$1" == "--seed-only" ]; then
+  echo "✓ sandbox seeded."
+  exit 0
+fi
+
+echo "▶ starting Karrio API on :5002 …"
+karrio runserver 0.0.0.0:5002

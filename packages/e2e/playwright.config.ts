@@ -57,5 +57,16 @@ export default defineConfig({
         },
       },
     },
+    // Karrio Studio LIVE — integration specs that drive the real UI against a
+    // running, seeded Karrio backend (the sandbox). Real login (no inline auth).
+    // Gated: run with KARRIO_LIVE=1 against `bin/studio-sandbox`.
+    {
+      name: "studio-live",
+      testMatch: /studio-live\/.*\.spec\.ts/,
+      use: {
+        ...devices["Desktop Chrome"],
+        baseURL: process.env.KARRIO_STUDIO_URL || "http://localhost:3003",
+      },
+    },
   ],
 });

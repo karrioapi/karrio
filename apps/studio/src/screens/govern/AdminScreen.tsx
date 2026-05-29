@@ -32,7 +32,7 @@ export function AdminScreen() {
         ))}
       </div>
 
-      <div className="card">
+      <div className="card card-scroll">
         <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--border)", fontWeight: 600 }}>Plugin runtimes</div>
         <table className="table">
           <thead><tr><th>Plugin</th><th style={{ textAlign: "right" }}>Memory</th><th style={{ textAlign: "right" }}>Calls</th><th style={{ textAlign: "right" }}>p99</th></tr></thead>
