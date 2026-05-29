@@ -39,6 +39,7 @@ export function CommandPalette({
       { id: "new-shipment", label: "New shipment", kind: "action", run: () => onAction("shipment") },
       { id: "track", label: "Track a shipment", kind: "action", run: () => onAction("tracker") },
       { id: "toggle-theme", label: "Toggle theme", kind: "action", run: () => onAction("theme") },
+      { id: "appearance", label: "Customize appearance", kind: "action", run: () => onAction("appearance") },
       { id: "workbench", label: "Open Workbench", kind: "action", run: () => onAction("workbench") },
     ];
     // De-dupe nav routes that appear in multiple groups by id.

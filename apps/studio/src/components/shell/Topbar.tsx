@@ -21,6 +21,7 @@ export function Topbar({
   onPalette,
   onTestMode,
   onTheme,
+  onTweaks,
   onOpenWorkbench,
   onCreate,
 }: {
@@ -32,6 +33,7 @@ export function Topbar({
   onPalette: () => void;
   onTestMode: (on: boolean) => void;
   onTheme: () => void;
+  onTweaks: () => void;
   onOpenWorkbench: () => void;
   onCreate: (kind: CreateKind) => void;
 }) {
@@ -71,6 +73,9 @@ export function Topbar({
         </button>
         <button className="icon-btn" title="Toggle theme" onClick={onTheme} data-testid="theme-toggle">
           {theme === "dark" ? <Icon.Sun size={14} /> : <Icon.Moon size={14} />}
+        </button>
+        <button className="icon-btn" title="Customize appearance" onClick={onTweaks} data-testid="tweaks-trigger">
+          <Icon.Sliders size={14} />
         </button>
         <button className="icon-btn" title="Developer tools" onClick={onOpenWorkbench} data-testid="workbench-trigger">
           <Icon.Terminal size={14} />

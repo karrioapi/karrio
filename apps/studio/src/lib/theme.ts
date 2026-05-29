@@ -31,5 +31,62 @@ export function setSidebarCollapsed(collapsed: boolean): void {
   }
 }
 
-// Inline script injected pre-render in __root to avoid a theme flash.
-export const THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem('${THEME_KEY}')||'dark';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`;
+// --- Tweaks (accent / density / font) — G1–G3 -------------------------------
+export type FontStack = "Inter" | "IBM Plex" | "System";
+
+const ACCENT_KEY = "karrio-accent";
+const DENSITY_KEY = "karrio-density";
+const FONT_KEY = "karrio-font";
+
+export const ACCENTS = ["#8B5CF6", "#3B82F6", "#10B981", "#F97316", "#E11D48"] as const;
+
+const FONT_STACKS: Record<FontStack, string> = {
+  Inter: `"Inter", -apple-system, sans-serif`,
+  "IBM Plex": `"IBM Plex Sans", "Inter", sans-serif`,
+  System: `-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`,
+};
+
+function ls(key: string): string | null {
+  try {
+    return typeof localStorage !== "undefined" ? localStorage.getItem(key) : null;
+  } catch {
+    return null;
+  }
+}
+
+export const getAccent = () => ls(ACCENT_KEY) || ACCENTS[0];
+export const getDensity = () => (ls(DENSITY_KEY) as Density) || "regular";
+export const getFont = () => (ls(FONT_KEY) as FontStack) || "Inter";
+
+export function applyAccent(accent: string) {
+  if (typeof document !== "undefined") document.documentElement.style.setProperty("--accent", accent);
+  try {
+    localStorage.setItem(ACCENT_KEY, accent);
+  } catch {}
+}
+
+export function applyDensity(density: Density) {
+  if (typeof document !== "undefined") document.documentElement.dataset.density = density;
+  try {
+    localStorage.setItem(DENSITY_KEY, density);
+  } catch {}
+}
+
+export function applyFont(font: FontStack) {
+  if (typeof document !== "undefined") {
+    document.documentElement.style.setProperty("--font-sans", FONT_STACKS[font]);
+  }
+  try {
+    localStorage.setItem(FONT_KEY, font);
+  } catch {}
+}
+
+// Apply all persisted tweaks (call once on mount).
+export function applyStoredTweaks() {
+  applyAccent(getAccent());
+  applyDensity(getDensity());
+  applyFont(getFont());
+}
+
+// Inline script injected pre-render in __root to avoid a theme/tweak flash.
+export const THEME_INIT_SCRIPT = `(function(){try{var d=document.documentElement;d.setAttribute('data-theme',localStorage.getItem('${THEME_KEY}')||'dark');var a=localStorage.getItem('${ACCENT_KEY}');if(a)d.style.setProperty('--accent',a);var de=localStorage.getItem('${DENSITY_KEY}');if(de)d.dataset.density=de;}catch(e){}})();`;

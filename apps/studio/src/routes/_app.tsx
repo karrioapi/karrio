@@ -5,8 +5,10 @@ import { Sidebar } from "~/components/shell/Sidebar";
 import { Topbar, type CreateKind } from "~/components/shell/Topbar";
 import { CommandPalette } from "~/components/overlays/CommandPalette";
 import { Workbench } from "~/components/overlays/Workbench";
+import { TweaksPanel } from "~/components/overlays/TweaksPanel";
 import { MODE_DEFAULTS, routeMode, type Mode } from "~/lib/modes";
 import {
+  applyStoredTweaks,
   getSidebarCollapsed,
   getStoredTheme,
   setSidebarCollapsed as persistSidebar,
@@ -36,11 +38,13 @@ function AppLayout() {
   const [navOpen, setNavOpen] = useState(false); // mobile off-canvas drawer
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [workbenchOpen, setWorkbenchOpen] = useState(false);
+  const [tweaksOpen, setTweaksOpen] = useState(false);
 
   // Hydrate persisted prefs on the client (avoids SSR/localStorage mismatch).
   useEffect(() => {
     setTheme(getStoredTheme());
     setCollapsed(getSidebarCollapsed());
+    applyStoredTweaks();
   }, []);
 
   const go = useCallback(
@@ -121,6 +125,7 @@ function AppLayout() {
     (id: string) => {
       if (id === "theme") return toggleTheme();
       if (id === "workbench") return setWorkbenchOpen(true);
+      if (id === "appearance") return setTweaksOpen(true);
       onCreate(id as CreateKind);
     },
     [toggleTheme, onCreate],
@@ -142,6 +147,7 @@ function AppLayout() {
           onPalette={() => setPaletteOpen(true)}
           onTestMode={setTestMode}
           onTheme={toggleTheme}
+          onTweaks={() => setTweaksOpen(true)}
           onOpenWorkbench={() => setWorkbenchOpen(true)}
           onCreate={onCreate}
         />
@@ -149,6 +155,7 @@ function AppLayout() {
       </div>
       <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} onGo={go} onAction={onPaletteAction} />
       <Workbench open={workbenchOpen} onClose={() => setWorkbenchOpen(false)} />
+      <TweaksPanel open={tweaksOpen} onClose={() => setTweaksOpen(false)} theme={theme} onTheme={toggleTheme} />
     </div>
   );
 }
