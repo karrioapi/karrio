@@ -5,8 +5,10 @@ import {
   createRootRoute,
 } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SessionProvider } from "~/lib/karrio/session";
+import { ErrorBoundary } from "~/components/ErrorBoundary";
+import { initMonitoring } from "~/lib/monitoring";
 import { THEME_INIT_SCRIPT } from "~/lib/theme";
 // Tailwind/shadcn theme first, then the bespoke enterprise shell CSS (overrides).
 import "~/styles/globals.css";
@@ -43,11 +45,14 @@ function RootComponent() {
         defaultOptions: { queries: { staleTime: 30_000, retry: 1 } },
       }),
   );
+  useEffect(() => initMonitoring(), []);
   return (
     <RootDocument>
       <QueryClientProvider client={queryClient}>
         <SessionProvider>
-          <Outlet />
+          <ErrorBoundary>
+            <Outlet />
+          </ErrorBoundary>
         </SessionProvider>
       </QueryClientProvider>
     </RootDocument>
