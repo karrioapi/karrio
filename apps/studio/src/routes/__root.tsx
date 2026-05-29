@@ -18,6 +18,12 @@ export const Route = createRootRoute({
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Karrio Studio" },
+      {
+        name: "description",
+        content:
+          "Karrio Studio — ship, build, and govern multi-carrier logistics from one agent-friendly workspace.",
+      },
+      { name: "theme-color", content: "#0b0b0e" },
     ],
     links: [
       {
