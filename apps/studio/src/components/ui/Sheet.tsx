@@ -1,7 +1,12 @@
-// Sheet.tsx — the workhorse right drawer. Build ALL detail/create/edit views
-// on this. Supports sm/md/lg widths, fullscreen expand, ESC/backdrop close.
-import { useEffect, type ReactNode } from "react";
+// Sheet.tsx — the workhorse right drawer. Build ALL detail/create/edit views on
+// this. sm/md/lg widths, fullscreen, ESC/backdrop close, and accessible focus
+// management: focus moves in on open, is trapped while open, restored on close,
+// and the closed sheet is `inert` so it's not tab-reachable.
+import { useEffect, useRef, type ReactNode } from "react";
 import { Icon } from "~/components/ui/icons";
+
+const FOCUSABLE =
+  'button:not([disabled]),[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
 
 export type SheetProps = {
   open: boolean;
@@ -30,6 +35,10 @@ export function Sheet({
   footer,
   children,
 }: SheetProps) {
+  const ref = useRef<HTMLElement>(null);
+  const restoreTo = useRef<HTMLElement | null>(null);
+
+  // ESC to close.
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -39,6 +48,38 @@ export function Sheet({
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
+  // Focus management + inert.
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (open) {
+      restoreTo.current = (document.activeElement as HTMLElement) ?? null;
+      el.inert = false;
+      const focusables = el.querySelectorAll<HTMLElement>(FOCUSABLE);
+      (focusables[0] ?? el).focus({ preventScroll: true });
+    } else {
+      el.inert = true;
+      restoreTo.current?.focus?.({ preventScroll: true });
+    }
+  }, [open]);
+
+  const onKeyDownTrap = (e: React.KeyboardEvent) => {
+    if (e.key !== "Tab" || !ref.current) return;
+    const f = Array.from(ref.current.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
+      (n) => n.offsetParent !== null,
+    );
+    if (f.length === 0) return;
+    const first = f[0];
+    const last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  };
+
   return (
     <>
       <div
@@ -46,8 +87,10 @@ export function Sheet({
         style={{ pointerEvents: open ? "auto" : "none" }}
         onClick={onClose}
         data-testid="sheet-backdrop"
+        aria-hidden="true"
       />
       <aside
+        ref={ref}
         className={
           "sheet" +
           (size ? " " + size : "") +
@@ -56,8 +99,10 @@ export function Sheet({
         }
         role="dialog"
         aria-modal="true"
-        aria-hidden={!open}
+        aria-label={typeof title === "string" ? title : crumb}
+        onKeyDown={onKeyDownTrap}
         data-testid="sheet"
+        tabIndex={-1}
       >
         <div className="sheet-head">
           <div style={{ minWidth: 0 }}>
@@ -68,11 +113,11 @@ export function Sheet({
           <div className="sheet-head-right">
             {headRight}
             {onToggleFullscreen && (
-              <button className="icon-btn" title="Expand" onClick={onToggleFullscreen}>
+              <button className="icon-btn" title="Expand" aria-label="Toggle fullscreen" onClick={onToggleFullscreen}>
                 <Icon.Workspace size={14} />
               </button>
             )}
-            <button className="icon-btn" title="Close" onClick={onClose} data-testid="sheet-close">
+            <button className="icon-btn" title="Close" aria-label="Close" onClick={onClose} data-testid="sheet-close">
               <Icon.X size={14} />
             </button>
           </div>
@@ -84,13 +129,7 @@ export function Sheet({
   );
 }
 
-export function Field({
-  label,
-  children,
-}: {
-  label: string;
-  children: ReactNode;
-}) {
+export function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <label className="field">
       <span className="field-label">{label}</span>

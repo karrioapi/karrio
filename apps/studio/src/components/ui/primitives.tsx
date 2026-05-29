@@ -63,17 +63,30 @@ export function Checkbox({
   checked,
   onChange,
   testid,
+  label = "Select",
 }: {
   checked: boolean;
   onChange: () => void;
   testid?: string;
+  label?: string;
 }) {
   return (
     <span
       className={"checkbox" + (checked ? " checked" : "")}
+      role="checkbox"
+      aria-checked={checked}
+      aria-label={label}
+      tabIndex={0}
       onClick={(e) => {
         e.stopPropagation();
         onChange();
+      }}
+      onKeyDown={(e) => {
+        if (e.key === " " || e.key === "Enter") {
+          e.preventDefault();
+          e.stopPropagation();
+          onChange();
+        }
       }}
       data-testid={testid}
     >
