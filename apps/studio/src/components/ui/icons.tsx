@@ -119,6 +119,9 @@ export const Icon = {
   Copy: (p: IconProps) => (
     <Ic {...p} d={<><rect x="8" y="8" width="13" height="13" rx="1.5" /><path d="M16 8V5a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h3" /></>} />
   ),
+  External: (p: IconProps) => (
+    <Ic {...p} d={<><path d="M14 3h7v7" /><path d="M21 3 10 14" /><path d="M21 14v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h6" /></>} />
+  ),
 };
 
 export type IconName = keyof typeof Icon;

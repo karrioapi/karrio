@@ -505,3 +505,20 @@ input, textarea, select { font-family: inherit; color: inherit; }
 @media (max-width: 560px) {
   .kv-grid { grid-template-columns: 1fr; }
 }
+
+/* ===================== Tiles (app/plugin cards) ===================== */
+.tile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+.tile { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--r-md); padding: 14px; display: flex; flex-direction: column; gap: 10px; cursor: pointer; transition: border-color 0.12s; text-align: left; }
+.tile:hover { border-color: var(--border-strong); }
+.tile-head { display: flex; align-items: center; gap: 10px; }
+.tile-name { font-weight: 600; font-size: 13.5px; letter-spacing: -0.005em; }
+.tile-vendor { font-size: 11px; color: var(--fg-muted); margin-top: 1px; }
+.tile-desc { font-size: 12px; color: var(--fg-onsubtle); line-height: 1.5; flex: 1; }
+.tile-foot { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--fg-subtle); font-family: var(--font-mono); }
+.tag.installed { background: var(--green-bg); color: var(--green-fg); }
+.tag.beta { background: var(--amber-bg); color: var(--amber-fg); }
+.tag.new { background: var(--accent-soft-bg); color: var(--accent-soft-fg); }
+.tile-logo { width: 34px; height: 34px; border-radius: var(--r-sm); background: var(--bg-subtle); display: grid; place-items: center; font-weight: 700; color: var(--fg); }
+.kvstat-label { font-size: 10.5px; color: var(--fg-subtle); text-transform: uppercase; letter-spacing: 0.05em; }
+.kvstat-value { font-size: 16px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.snippet { background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 10px 12px; font-family: var(--font-mono); font-size: 11.5px; white-space: pre-wrap; color: var(--fg-onsubtle); overflow-x: auto; }

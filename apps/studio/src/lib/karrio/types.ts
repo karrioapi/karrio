@@ -123,3 +123,55 @@ export type DocumentTemplate = {
   description?: string;
   active?: boolean;
 };
+
+export type App = {
+  id: string;
+  name: string;
+  vendor?: string;
+  description?: string;
+  installed?: boolean;
+  status?: string;
+  category?: string;
+  badge?: string;
+};
+
+export type Plugin = {
+  id: string;
+  name: string;
+  vendor?: string;
+  description?: string;
+  installed?: boolean;
+  status?: string;
+  version?: string;
+  tags?: string[];
+  badge?: string;
+};
+
+export type Webhook = {
+  id: string;
+  url: string;
+  description?: string;
+  enabled?: boolean;
+  events?: string[];
+};
+
+export type ApiKey = {
+  id: string;
+  label?: string;
+  key: string;
+  test_mode?: boolean;
+  created?: string;
+};
+
+export type McpTool = { name: string; description?: string; requests?: number; p99?: string };
+export type McpClient = { id: string; name: string; connected?: boolean; last_seen?: string; calls?: number };
+export type McpInvocation = { id: string; tool: string; client?: string; duration_ms?: number; at?: string };
+export type McpInfo = {
+  status?: string;
+  url?: string;
+  version?: string;
+  stats?: { tools?: number; clients?: number; calls_24h?: string; p99?: string };
+  tools?: McpTool[];
+  clients?: McpClient[];
+  invocations?: McpInvocation[];
+};

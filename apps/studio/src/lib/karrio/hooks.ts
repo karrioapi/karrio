@@ -169,3 +169,53 @@ export function useDocumentTemplates() {
     enabled: Boolean(ctx.token),
   });
 }
+
+// === Build mode ============================================================
+// NOTE: app-store / plugin-registry / MCP endpoints are provisional pending the
+// Build-mode backend integration (EPIC D/F); shapes are intercepted in tests.
+import type { App, ApiKey, McpInfo, Plugin, Webhook } from "~/lib/karrio/types";
+
+export function useApps() {
+  const ctx = useKarrioCtx();
+  return useQuery({
+    queryKey: ["apps", keyExtra(ctx)],
+    queryFn: () => restGet<Paginated<App>>(ctx, "/v1/apps"),
+    enabled: Boolean(ctx.token),
+  });
+}
+
+export function usePlugins() {
+  const ctx = useKarrioCtx();
+  return useQuery({
+    queryKey: ["plugins", keyExtra(ctx)],
+    queryFn: () => restGet<Paginated<Plugin>>(ctx, "/v1/plugins"),
+    enabled: Boolean(ctx.token),
+  });
+}
+
+export function useWebhooks() {
+  const ctx = useKarrioCtx();
+  return useQuery({
+    queryKey: ["webhooks", keyExtra(ctx)],
+    queryFn: () => restGet<Paginated<Webhook>>(ctx, "/v1/webhooks"),
+    enabled: Boolean(ctx.token),
+  });
+}
+
+export function useApiKeys() {
+  const ctx = useKarrioCtx();
+  return useQuery({
+    queryKey: ["api-keys", keyExtra(ctx)],
+    queryFn: () => restGet<Paginated<ApiKey>>(ctx, "/v1/api_keys"),
+    enabled: Boolean(ctx.token),
+  });
+}
+
+export function useMcp() {
+  const ctx = useKarrioCtx();
+  return useQuery({
+    queryKey: ["mcp", keyExtra(ctx)],
+    queryFn: () => restGet<McpInfo>(ctx, "/v1/mcp"),
+    enabled: Boolean(ctx.token),
+  });
+}

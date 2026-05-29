@@ -15,6 +15,11 @@ import { AddressesScreen } from "~/screens/ship/AddressesScreen";
 import { ParcelsScreen } from "~/screens/ship/ParcelsScreen";
 import { ProductsScreen } from "~/screens/ship/ProductsScreen";
 import { DocumentsScreen } from "~/screens/ship/DocumentsScreen";
+import { AppsScreen } from "~/screens/build/AppsScreen";
+import { PluginsScreen } from "~/screens/build/PluginsScreen";
+import { McpScreen } from "~/screens/build/McpScreen";
+import { WebhooksScreen } from "~/screens/build/WebhooksScreen";
+import { ApiKeysScreen } from "~/screens/build/ApiKeysScreen";
 
 const REGISTRY: Record<string, ComponentType> = {
   home: HomeScreen,
@@ -28,6 +33,11 @@ const REGISTRY: Record<string, ComponentType> = {
   parcels: ParcelsScreen,
   products: ProductsScreen,
   documents: DocumentsScreen,
+  apps: AppsScreen,
+  plugins: PluginsScreen,
+  mcp: McpScreen,
+  webhooks: WebhooksScreen,
+  apikeys: ApiKeysScreen,
 };
 
 export function getScreen(route: string): ComponentType {
