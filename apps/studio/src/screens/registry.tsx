@@ -20,6 +20,12 @@ import { PluginsScreen } from "~/screens/build/PluginsScreen";
 import { McpScreen } from "~/screens/build/McpScreen";
 import { WebhooksScreen } from "~/screens/build/WebhooksScreen";
 import { ApiKeysScreen } from "~/screens/build/ApiKeysScreen";
+import { AdminScreen } from "~/screens/govern/AdminScreen";
+import { TenantsScreen } from "~/screens/govern/TenantsScreen";
+import { TeamScreen } from "~/screens/govern/TeamScreen";
+import { SecurityScreen } from "~/screens/govern/SecurityScreen";
+import { AuditScreen } from "~/screens/govern/AuditScreen";
+import { SettingsScreen } from "~/screens/govern/SettingsScreen";
 
 const REGISTRY: Record<string, ComponentType> = {
   home: HomeScreen,
@@ -38,6 +44,12 @@ const REGISTRY: Record<string, ComponentType> = {
   mcp: McpScreen,
   webhooks: WebhooksScreen,
   apikeys: ApiKeysScreen,
+  admin: AdminScreen,
+  tenants: TenantsScreen,
+  team: TeamScreen,
+  security: SecurityScreen,
+  audit: AuditScreen,
+  settings: SettingsScreen,
 };
 
 export function getScreen(route: string): ComponentType {

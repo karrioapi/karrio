@@ -175,3 +175,36 @@ export type McpInfo = {
   clients?: McpClient[];
   invocations?: McpInvocation[];
 };
+
+export type Tenant = {
+  id: string;
+  name: string;
+  slug?: string;
+  status?: string;
+  members?: number;
+  created?: string;
+};
+
+export type TeamMember = {
+  id: string;
+  name?: string;
+  email: string;
+  role?: string;
+  status?: string;
+};
+
+export type AuditEvent = {
+  id: string;
+  type?: string;
+  actor?: string;
+  description?: string;
+  at?: string;
+};
+
+export type AdminInfo = {
+  version?: string;
+  tenants?: number;
+  license?: string;
+  resources?: { label: string; used: number; total: number }[];
+  runtimes?: { name: string; memory?: string; calls?: number; p99?: string }[];
+};

@@ -522,3 +522,17 @@ input, textarea, select { font-family: inherit; color: inherit; }
 .kvstat-label { font-size: 10.5px; color: var(--fg-subtle); text-transform: uppercase; letter-spacing: 0.05em; }
 .kvstat-value { font-size: 16px; font-weight: 600; font-variant-numeric: tabular-nums; }
 .snippet { background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 10px 12px; font-family: var(--font-mono); font-size: 11.5px; white-space: pre-wrap; color: var(--fg-onsubtle); overflow-x: auto; }
+
+/* ===================== Resource bars ===================== */
+.bar { height: 6px; background: var(--bg-subtle); border-radius: 999px; overflow: hidden; }
+.bar-fill { height: 100%; background: var(--accent); border-radius: 999px; }
+
+/* ===================== Settings list ===================== */
+.settings-group { margin-bottom: 18px; }
+.settings-group-title { font-size: 10.5px; font-weight: 600; color: var(--fg-subtle); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+.settings-row { display: flex; align-items: center; gap: 14px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+.settings-row:last-child { border-bottom: none; }
+.settings-row-label { font-size: 13px; font-weight: 500; }
+.settings-row-desc { font-size: 12px; color: var(--fg-muted); margin-top: 2px; }
+/* standalone toggle (button variant of the topbar switch) */
+button.toggle-switch { border: none; padding: 0; cursor: pointer; }

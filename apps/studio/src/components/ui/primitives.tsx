@@ -95,6 +95,61 @@ export function Checkbox({
   );
 }
 
+/* ---------- Toggle switch (accessible) ---------- */
+export function Toggle({
+  checked,
+  onChange,
+  label,
+  testid,
+}: {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  label: string;
+  testid?: string;
+}) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      aria-label={label}
+      className={"toggle-switch" + (checked ? " on" : "")}
+      onClick={() => onChange(!checked)}
+      data-testid={testid}
+    />
+  );
+}
+
+/* ---------- Settings list ---------- */
+export function SettingsGroup({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <div className="settings-group">
+      <div className="settings-group-title">{title}</div>
+      <div className="card">{children}</div>
+    </div>
+  );
+}
+
+export function SettingsRow({
+  label,
+  description,
+  control,
+}: {
+  label: string;
+  description?: string;
+  control?: ReactNode;
+}) {
+  return (
+    <div className="settings-row">
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div className="settings-row-label">{label}</div>
+        {description && <div className="settings-row-desc">{description}</div>}
+      </div>
+      {control}
+    </div>
+  );
+}
+
 /* ---------- Table state rows (loading / error / empty) ---------- */
 export function StateRow({
   colSpan,

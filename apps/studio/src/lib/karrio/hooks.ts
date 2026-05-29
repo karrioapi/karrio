@@ -219,3 +219,42 @@ export function useMcp() {
     enabled: Boolean(ctx.token),
   });
 }
+
+// === Govern mode ===========================================================
+import type { AdminInfo, AuditEvent, TeamMember, Tenant } from "~/lib/karrio/types";
+
+export function useAdminInfo() {
+  const ctx = useKarrioCtx();
+  return useQuery({
+    queryKey: ["admin-info", keyExtra(ctx)],
+    queryFn: () => restGet<AdminInfo>(ctx, "/v1/admin"),
+    enabled: Boolean(ctx.token),
+  });
+}
+
+export function useTenants() {
+  const ctx = useKarrioCtx();
+  return useQuery({
+    queryKey: ["tenants", keyExtra(ctx)],
+    queryFn: () => restGet<Paginated<Tenant>>(ctx, "/v1/admin/tenants"),
+    enabled: Boolean(ctx.token),
+  });
+}
+
+export function useTeam() {
+  const ctx = useKarrioCtx();
+  return useQuery({
+    queryKey: ["team", keyExtra(ctx)],
+    queryFn: () => restGet<Paginated<TeamMember>>(ctx, "/v1/admin/users"),
+    enabled: Boolean(ctx.token),
+  });
+}
+
+export function useAuditLog() {
+  const ctx = useKarrioCtx();
+  return useQuery({
+    queryKey: ["audit", keyExtra(ctx)],
+    queryFn: () => restGet<Paginated<AuditEvent>>(ctx, "/v1/events"),
+    enabled: Boolean(ctx.token),
+  });
+}
