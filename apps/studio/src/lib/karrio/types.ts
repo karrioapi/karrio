@@ -71,3 +71,55 @@ export type Pickup = {
   status?: string;
   address?: Address;
 };
+
+export type AddressTemplate = {
+  id: string;
+  label?: string;
+  is_default?: boolean;
+  address?: Address & { email?: string; phone_number?: string; address_line1?: string };
+};
+
+export type ParcelTemplate = {
+  id: string;
+  label?: string;
+  is_default?: boolean;
+  packaging_type?: string;
+  width?: number;
+  height?: number;
+  length?: number;
+  dimension_unit?: string;
+  weight?: number;
+  weight_unit?: string;
+};
+
+export type ProductTemplate = {
+  id: string;
+  label?: string;
+  title?: string;
+  sku?: string;
+  hs_code?: string;
+  weight?: number;
+  weight_unit?: string;
+  value_amount?: number;
+  value_currency?: string;
+  origin_country?: string;
+  is_default?: boolean;
+};
+
+export type ShippingRule = {
+  id: string;
+  name: string;
+  priority?: number;
+  is_active?: boolean;
+  description?: string;
+  action_type?: string;
+};
+
+export type DocumentTemplate = {
+  id: string;
+  name: string;
+  slug?: string;
+  related_object?: string;
+  description?: string;
+  active?: boolean;
+};

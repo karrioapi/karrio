@@ -5,10 +5,16 @@ import { useQuery } from "@tanstack/react-query";
 import { restGet, graphql, type KarrioCtx } from "~/lib/karrio/client";
 import { useKarrioCtx } from "~/lib/karrio/session";
 import type {
+  AddressTemplate,
   CarrierConnection,
+  DocumentTemplate,
   Order,
   Paginated,
+  ParcelTemplate,
+  Pickup,
+  ProductTemplate,
   Shipment,
+  ShippingRule,
   Tracker,
 } from "~/lib/karrio/types";
 
@@ -69,6 +75,97 @@ export function useOrders(filter?: Record<string, unknown>) {
       const data = await graphql<OrdersResponse>(ctx, ORDERS_QUERY, { filter });
       return data.orders.edges.map((e) => e.node);
     },
+    enabled: Boolean(ctx.token),
+  });
+}
+
+// --- Generic GraphQL edge helper -------------------------------------------
+async function graphqlEdges<T>(
+  ctx: KarrioCtx,
+  query: string,
+  field: string,
+  variables?: Record<string, unknown>,
+): Promise<T[]> {
+  const data = await graphql<Record<string, { edges: Array<{ node: T }> }>>(ctx, query, variables);
+  return (data[field]?.edges ?? []).map((e) => e.node);
+}
+
+// --- Connections (REST) ------------------------------------------------------
+// (useCarrierConnections defined above)
+
+// --- Pickups (REST) ----------------------------------------------------------
+export function usePickups() {
+  const ctx = useKarrioCtx();
+  return useQuery({
+    queryKey: ["pickups", keyExtra(ctx)],
+    queryFn: () => restGet<Paginated<Pickup>>(ctx, "/v1/pickups"),
+    enabled: Boolean(ctx.token),
+  });
+}
+
+// --- Address templates (GraphQL) ---------------------------------------------
+const ADDRESS_TEMPLATES_QUERY = `query { address_templates { edges { node {
+  id label is_default
+  address { person_name company_name address_line1 city state_code postal_code country_code email phone_number residential }
+} } } }`;
+
+export function useAddresses() {
+  const ctx = useKarrioCtx();
+  return useQuery({
+    queryKey: ["address-templates", keyExtra(ctx)],
+    queryFn: () => graphqlEdges<AddressTemplate>(ctx, ADDRESS_TEMPLATES_QUERY, "address_templates"),
+    enabled: Boolean(ctx.token),
+  });
+}
+
+// --- Parcel templates (GraphQL) ----------------------------------------------
+const PARCEL_TEMPLATES_QUERY = `query { parcel_templates { edges { node {
+  id label is_default packaging_type width height length dimension_unit weight weight_unit
+} } } }`;
+
+export function useParcels() {
+  const ctx = useKarrioCtx();
+  return useQuery({
+    queryKey: ["parcel-templates", keyExtra(ctx)],
+    queryFn: () => graphqlEdges<ParcelTemplate>(ctx, PARCEL_TEMPLATES_QUERY, "parcel_templates"),
+    enabled: Boolean(ctx.token),
+  });
+}
+
+// --- Product templates / commodities (GraphQL) -------------------------------
+const PRODUCTS_QUERY = `query { products { edges { node {
+  id label title sku hs_code weight weight_unit value_amount value_currency origin_country is_default
+} } } }`;
+
+export function useProducts() {
+  const ctx = useKarrioCtx();
+  return useQuery({
+    queryKey: ["products", keyExtra(ctx)],
+    queryFn: () => graphqlEdges<ProductTemplate>(ctx, PRODUCTS_QUERY, "products"),
+    enabled: Boolean(ctx.token),
+  });
+}
+
+// --- Shipping rules (GraphQL) ------------------------------------------------
+const SHIPPING_RULES_QUERY = `query { shipping_rules { edges { node {
+  id name priority is_active description action_type
+} } } }`;
+
+export function useShippingRules() {
+  const ctx = useKarrioCtx();
+  return useQuery({
+    queryKey: ["shipping-rules", keyExtra(ctx)],
+    queryFn: () => graphqlEdges<ShippingRule>(ctx, SHIPPING_RULES_QUERY, "shipping_rules"),
+    enabled: Boolean(ctx.token),
+  });
+}
+
+// --- Document templates (REST) -----------------------------------------------
+export function useDocumentTemplates() {
+  const ctx = useKarrioCtx();
+  return useQuery({
+    queryKey: ["document-templates", keyExtra(ctx)],
+    queryFn: () => restGet<Paginated<DocumentTemplate>>(ctx, "/v1/documents/templates"),
     enabled: Boolean(ctx.token),
   });
 }

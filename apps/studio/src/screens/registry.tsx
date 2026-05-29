@@ -8,12 +8,26 @@ import { Placeholder } from "~/screens/Placeholder";
 import { ShipmentsScreen } from "~/screens/ship/ShipmentsScreen";
 import { TrackersScreen } from "~/screens/ship/TrackersScreen";
 import { OrdersScreen } from "~/screens/ship/OrdersScreen";
+import { PickupsScreen } from "~/screens/ship/PickupsScreen";
+import { ConnectionsScreen } from "~/screens/ship/ConnectionsScreen";
+import { RulesScreen } from "~/screens/ship/RulesScreen";
+import { AddressesScreen } from "~/screens/ship/AddressesScreen";
+import { ParcelsScreen } from "~/screens/ship/ParcelsScreen";
+import { ProductsScreen } from "~/screens/ship/ProductsScreen";
+import { DocumentsScreen } from "~/screens/ship/DocumentsScreen";
 
 const REGISTRY: Record<string, ComponentType> = {
   home: HomeScreen,
   shipments: ShipmentsScreen,
   trackers: TrackersScreen,
   orders: OrdersScreen,
+  pickups: PickupsScreen,
+  connections: ConnectionsScreen,
+  rules: RulesScreen,
+  addresses: AddressesScreen,
+  parcels: ParcelsScreen,
+  products: ProductsScreen,
+  documents: DocumentsScreen,
 };
 
 export function getScreen(route: string): ComponentType {
