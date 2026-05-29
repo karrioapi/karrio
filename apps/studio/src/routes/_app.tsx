@@ -2,6 +2,8 @@ import { Outlet, createFileRoute, useNavigate, useParams } from "@tanstack/react
 import { useCallback, useEffect, useState } from "react";
 import { Sidebar } from "~/components/shell/Sidebar";
 import { Topbar, type CreateKind } from "~/components/shell/Topbar";
+import { CommandPalette } from "~/components/overlays/CommandPalette";
+import { Workbench } from "~/components/overlays/Workbench";
 import { MODE_DEFAULTS, routeMode, type Mode } from "~/lib/modes";
 import {
   getSidebarCollapsed,
@@ -26,6 +28,8 @@ function AppLayout() {
   const [collapsed, setCollapsed] = useState(false);
   const [testMode, setTestMode] = useState(false);
   const [navOpen, setNavOpen] = useState(false); // mobile off-canvas drawer
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [workbenchOpen, setWorkbenchOpen] = useState(false);
 
   // Hydrate persisted prefs on the client (avoids SSR/localStorage mismatch).
   useEffect(() => {
@@ -69,13 +73,19 @@ function AppLayout() {
     });
   }, []);
 
-  // Keyboard shortcuts (⌘K ⌘L ⌘T ⌘` ⌘\\ ⌘B).
+  // Keyboard shortcuts (⌘K palette · ⌘` workbench · ⌘\\ theme · ⌘B sidebar).
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const mod = e.metaKey || e.ctrlKey;
       if (!mod) return;
       const k = e.key.toLowerCase();
-      if (k === "\\") {
+      if (k === "k") {
+        e.preventDefault();
+        setPaletteOpen((o) => !o);
+      } else if (e.key === "`") {
+        e.preventDefault();
+        setWorkbenchOpen((o) => !o);
+      } else if (k === "\\") {
         e.preventDefault();
         toggleTheme();
       } else if (k === "b") {
@@ -89,11 +99,25 @@ function AppLayout() {
 
   const onCreate = useCallback(
     (kind: CreateKind) => {
-      if (kind === "plugin") go("plugins");
-      if (kind === "apikey") go("apikeys");
-      // shipment/tracker/order/pickup create sheets land in later phases.
+      if (kind === "plugin") return go("plugins");
+      if (kind === "apikey") return go("apikeys");
+      // shipment/tracker/order/pickup → land on the relevant list (create sheets
+      // with mutations land in the forms phase).
+      if (kind === "shipment") return go("shipments");
+      if (kind === "tracker") return go("trackers");
+      if (kind === "order") return go("orders");
+      if (kind === "pickup") return go("pickups");
     },
     [go],
+  );
+
+  const onPaletteAction = useCallback(
+    (id: string) => {
+      if (id === "theme") return toggleTheme();
+      if (id === "workbench") return setWorkbenchOpen(true);
+      onCreate(id as CreateKind);
+    },
+    [toggleTheme, onCreate],
   );
 
   return (
@@ -109,18 +133,16 @@ function AppLayout() {
           theme={theme}
           testMode={testMode}
           onToggleSidebar={toggleSidebar}
-          onPalette={() => {
-            /* command palette lands in cross-cutting phase */
-          }}
+          onPalette={() => setPaletteOpen(true)}
           onTestMode={setTestMode}
           onTheme={toggleTheme}
-          onOpenWorkbench={() => {
-            /* workbench overlay lands in Build phase */
-          }}
+          onOpenWorkbench={() => setWorkbenchOpen(true)}
           onCreate={onCreate}
         />
         <Outlet />
       </div>
+      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} onGo={go} onAction={onPaletteAction} />
+      <Workbench open={workbenchOpen} onClose={() => setWorkbenchOpen(false)} />
     </div>
   );
 }
