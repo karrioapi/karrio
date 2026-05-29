@@ -22,9 +22,7 @@ export function KV({ label, children, mono }: { label: string; children: ReactNo
 }
 
 export function KVGrid({ children }: { children: ReactNode }) {
-  return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 22px" }}>{children}</div>
-  );
+  return <div className="kv-grid">{children}</div>;
 }
 
 export function AddressCard({ label, addr }: { label: string; addr?: Address }) {

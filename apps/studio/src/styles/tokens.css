@@ -458,3 +458,50 @@ input, textarea, select { font-family: inherit; color: inherit; }
 
 /* ===================== Tag ===================== */
 .tag { display: inline-flex; align-items: center; padding: 1px 6px; background: var(--bg-subtle); color: var(--fg-onsubtle); border-radius: var(--r-xs); font-size: 10.5px; font-weight: 500; letter-spacing: 0.01em; }
+
+/* ===================== Responsive ===================== */
+.nav-backdrop { position: fixed; inset: 0; background: var(--bg-overlay); z-index: 150; }
+
+/* Tablet: default-collapse the sidebar to a rail to give content room. */
+@media (max-width: 1100px) {
+  .app:not(.sidebar-collapsed) { grid-template-columns: 232px 1fr; }
+}
+
+/* Mobile: sidebar becomes an off-canvas drawer; single-column app. */
+@media (max-width: 768px) {
+  .app, .app.sidebar-collapsed { grid-template-columns: 1fr; }
+
+  .sidebar {
+    position: fixed; top: 0; left: 0; height: 100vh; width: 248px;
+    transform: translateX(-100%); transition: transform 0.22s cubic-bezier(0.32, 0.72, 0, 1);
+    z-index: 200; box-shadow: var(--shadow-lg);
+  }
+  .app.nav-open .sidebar { transform: none; }
+
+  /* Always show the full sidebar inside the drawer (ignore desktop rail). */
+  .sidebar.collapsed { padding: 8px; }
+  .sidebar.collapsed .workspace { padding: 8px; justify-content: flex-start; gap: 9px; }
+  .sidebar.collapsed .workspace-body,
+  .sidebar.collapsed .mode-text,
+  .sidebar.collapsed .nav-label,
+  .sidebar.collapsed .nav-item .nav-text,
+  .sidebar.collapsed .nav-item .badge,
+  .sidebar.collapsed .user-meta { display: revert; }
+  .sidebar.collapsed .modes { grid-template-columns: repeat(3, 1fr); }
+  .sidebar.collapsed .nav-item { justify-content: flex-start; padding: 5px 8px; }
+
+  .page { padding: 16px 14px 64px; }
+  .page-header { flex-wrap: wrap; }
+  .topbar { padding: 0 12px; gap: 8px; }
+  .search span { display: none; }
+  .search { max-width: none; flex: 1; }
+
+  /* Sheets go full-width on small screens. */
+  .sheet, .sheet.sm, .sheet.md, .sheet.lg { width: 100vw; }
+}
+
+/* Detail KV grid: two columns, stacking on narrow viewports/sheets. */
+.kv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 22px; }
+@media (max-width: 560px) {
+  .kv-grid { grid-template-columns: 1fr; }
+}

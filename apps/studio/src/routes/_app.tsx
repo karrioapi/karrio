@@ -25,6 +25,7 @@ function AppLayout() {
   const [theme, setTheme] = useState<Theme>("dark");
   const [collapsed, setCollapsed] = useState(false);
   const [testMode, setTestMode] = useState(false);
+  const [navOpen, setNavOpen] = useState(false); // mobile off-canvas drawer
 
   // Hydrate persisted prefs on the client (avoids SSR/localStorage mismatch).
   useEffect(() => {
@@ -35,6 +36,7 @@ function AppLayout() {
   const go = useCallback(
     (next: string) => {
       navigate({ to: "/$screen", params: { screen: next } });
+      setNavOpen(false); // close the mobile drawer on navigation
     },
     [navigate],
   );
@@ -52,7 +54,15 @@ function AppLayout() {
     });
   }, []);
 
+  // On mobile the sidebar toggle opens an off-canvas drawer; on desktop it
+  // collapses to an icon rail.
   const toggleSidebar = useCallback(() => {
+    const isMobile =
+      typeof window !== "undefined" && window.matchMedia("(max-width: 768px)").matches;
+    if (isMobile) {
+      setNavOpen((o) => !o);
+      return;
+    }
     setCollapsed((prev) => {
       persistSidebar(!prev);
       return !prev;
@@ -87,7 +97,10 @@ function AppLayout() {
   );
 
   return (
-    <div className={"app" + (collapsed ? " sidebar-collapsed" : "")}>
+    <div className={"app" + (collapsed ? " sidebar-collapsed" : "") + (navOpen ? " nav-open" : "")}>
+      {navOpen && (
+        <div className="nav-backdrop" onClick={() => setNavOpen(false)} data-testid="nav-backdrop" aria-hidden="true" />
+      )}
       <Sidebar route={route} mode={mode} collapsed={collapsed} onGo={go} onMode={onMode} />
       <div className="main">
         <Topbar
