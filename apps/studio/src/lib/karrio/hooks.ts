@@ -327,3 +327,31 @@ export function useDeleteParcel() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["parcel-templates"] }),
   });
 }
+
+// Product / commodity template create/update/delete (provisional GraphQL).
+const CREATE_PRODUCT = `mutation($data: CreateProductInput!) {
+  create_product(input: $data) { product { id } errors { field messages } }
+}`;
+const UPDATE_PRODUCT = `mutation($id: String!, $data: UpdateProductInput!) {
+  update_product(input: { id: $id, ...$data }) { product { id } errors { field messages } }
+}`;
+const DELETE_PRODUCT = `mutation($id: String!) { delete_product(input: { id: $id }) { id } }`;
+
+export function useSaveProduct() {
+  const ctx = useKarrioCtx();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (vars: { id?: string; data: Record<string, unknown> }) =>
+      graphql(ctx, vars.id ? UPDATE_PRODUCT : CREATE_PRODUCT, vars.id ? { id: vars.id, data: vars.data } : { data: vars.data }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["products"] }),
+  });
+}
+
+export function useDeleteProduct() {
+  const ctx = useKarrioCtx();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => graphql(ctx, DELETE_PRODUCT, { id }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["products"] }),
+  });
+}
