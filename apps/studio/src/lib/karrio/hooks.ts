@@ -258,3 +258,39 @@ export function useAuditLog() {
     enabled: Boolean(ctx.token),
   });
 }
+
+// === Mutations =============================================================
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+// Address template create/update/delete (GraphQL; mutation shapes provisional
+// pending live-schema validation — intercepted in tests).
+const CREATE_ADDRESS = `mutation($data: PartialAddressMutationInput!) {
+  create_address_template(input: { label: $data.label, is_default: $data.is_default, address: $data.address }) {
+    template { id } errors { field messages }
+  }
+}`;
+const UPDATE_ADDRESS = `mutation($id: String!, $data: PartialAddressMutationInput!) {
+  update_address_template(input: { id: $id, label: $data.label, address: $data.address }) {
+    template { id } errors { field messages }
+  }
+}`;
+const DELETE_ADDRESS = `mutation($id: String!) { delete_template(input: { id: $id }) { id } }`;
+
+export function useSaveAddress() {
+  const ctx = useKarrioCtx();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (vars: { id?: string; data: Record<string, unknown> }) =>
+      graphql(ctx, vars.id ? UPDATE_ADDRESS : CREATE_ADDRESS, vars.id ? { id: vars.id, data: vars.data } : { data: vars.data }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["address-templates"] }),
+  });
+}
+
+export function useDeleteAddress() {
+  const ctx = useKarrioCtx();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => graphql(ctx, DELETE_ADDRESS, { id }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["address-templates"] }),
+  });
+}
