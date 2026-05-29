@@ -24,11 +24,22 @@ export default defineConfig({
     },
     {
       name: "chromium",
+      testIgnore: /studio\//,
       use: {
         ...devices["Desktop Chrome"],
         storageState: AUTH_STATE,
       },
       dependencies: ["setup"],
+    },
+    // Karrio Studio (TanStack Start app, apps/studio). Foundation specs run
+    // against the unguarded shell; Phase B adds a studio auth setup project.
+    {
+      name: "studio",
+      testMatch: /studio\/.*\.spec\.ts/,
+      use: {
+        ...devices["Desktop Chrome"],
+        baseURL: process.env.KARRIO_STUDIO_URL || "http://localhost:3003",
+      },
     },
   ],
 });

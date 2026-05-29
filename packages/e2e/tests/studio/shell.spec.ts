@@ -1,0 +1,64 @@
+import { test, expect } from "@playwright/test";
+import { gotoStudio, switchMode } from "../../helpers/studio";
+
+// Foundation coverage for the Karrio Studio app shell: routing, mode IA,
+// theme toggle, and sidebar collapse. Feature-screen specs are added per
+// Linear issue as each screen is implemented.
+
+test.describe("Studio shell", () => {
+  test("root redirects to Ship home", async ({ page }) => {
+    await page.goto("/");
+    await expect(page).toHaveURL(/\/home$/);
+    await expect(page.getByTestId("screen-home")).toBeVisible();
+    await expect(page.getByTestId("home-stats")).toBeVisible();
+  });
+
+  test("mode switch swaps nav and jumps to mode default", async ({ page }) => {
+    await gotoStudio(page, "home");
+
+    await switchMode(page, "build");
+    await expect(page).toHaveURL(/\/apps$/);
+    await expect(page.getByTestId("nav-plugins")).toBeVisible();
+    await expect(page.getByTestId("nav-mcp")).toBeVisible();
+
+    await switchMode(page, "govern");
+    await expect(page).toHaveURL(/\/admin$/);
+    await expect(page.getByTestId("nav-tenants")).toBeVisible();
+
+    await switchMode(page, "ship");
+    await expect(page).toHaveURL(/\/home$/);
+    await expect(page.getByTestId("nav-shipments")).toBeVisible();
+  });
+
+  test("deep link lands in the correct mode", async ({ page }) => {
+    await gotoStudio(page, "mcp");
+    // Build-mode nav should be present for a Build deep link.
+    await expect(page.getByTestId("nav-editor")).toBeVisible();
+    await expect(page.getByTestId("mode-build")).toHaveAttribute("aria-selected", "true");
+  });
+
+  test("theme toggle flips the data-theme attribute", async ({ page }) => {
+    await gotoStudio(page, "home");
+    const html = page.locator("html");
+    await expect(html).toHaveAttribute("data-theme", "dark");
+    await page.getByTestId("theme-toggle").click();
+    await expect(html).toHaveAttribute("data-theme", "light");
+  });
+
+  test("sidebar collapses and expands", async ({ page }) => {
+    await gotoStudio(page, "home");
+    const app = page.locator(".app");
+    await expect(app).not.toHaveClass(/sidebar-collapsed/);
+    await page.getByTestId("toggle-sidebar").click();
+    await expect(app).toHaveClass(/sidebar-collapsed/);
+  });
+
+  test("create menu opens with quick-create actions", async ({ page }) => {
+    await gotoStudio(page, "home");
+    await page.getByTestId("create-btn").click();
+    const menu = page.getByTestId("create-menu");
+    await expect(menu).toBeVisible();
+    await expect(menu.getByText("New shipment")).toBeVisible();
+    await expect(menu.getByText("Generate API key")).toBeVisible();
+  });
+});
