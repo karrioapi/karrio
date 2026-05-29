@@ -47,7 +47,7 @@ test.describe("Ship · resource screens (C5–C11)", () => {
     { route: "pickups", row: "pickup-row-pck_1", sheet: "pickup-sheet-body" },
     { route: "documents", row: "document-row-doc_1", sheet: "document-sheet-body" },
     { route: "addresses", row: "address-row-adr_1", sheet: "address-form" },
-    { route: "parcels", row: "parcel-row-pcl_1", sheet: "parcel-sheet-body" },
+    { route: "parcels", row: "parcel-row-pcl_1", sheet: "parcel-form" },
     { route: "products", row: "product-row-prd_1", sheet: "product-sheet-body" },
     { route: "rules", row: "rule-row-rule_1", sheet: "rule-sheet-body" },
   ];

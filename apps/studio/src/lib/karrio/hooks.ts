@@ -294,3 +294,36 @@ export function useDeleteAddress() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["address-templates"] }),
   });
 }
+
+// Parcel template create/update/delete (provisional GraphQL shapes; intercepted
+// in tests). Mirrors the address mutation pattern.
+const CREATE_PARCEL = `mutation($data: PartialParcelMutationInput!) {
+  create_parcel_template(input: { label: $data.label, is_default: $data.is_default, parcel: $data.parcel }) {
+    template { id } errors { field messages }
+  }
+}`;
+const UPDATE_PARCEL = `mutation($id: String!, $data: PartialParcelMutationInput!) {
+  update_parcel_template(input: { id: $id, label: $data.label, parcel: $data.parcel }) {
+    template { id } errors { field messages }
+  }
+}`;
+const DELETE_TEMPLATE = `mutation($id: String!) { delete_template(input: { id: $id }) { id } }`;
+
+export function useSaveParcel() {
+  const ctx = useKarrioCtx();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (vars: { id?: string; data: Record<string, unknown> }) =>
+      graphql(ctx, vars.id ? UPDATE_PARCEL : CREATE_PARCEL, vars.id ? { id: vars.id, data: vars.data } : { data: vars.data }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["parcel-templates"] }),
+  });
+}
+
+export function useDeleteParcel() {
+  const ctx = useKarrioCtx();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => graphql(ctx, DELETE_TEMPLATE, { id }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["parcel-templates"] }),
+  });
+}
