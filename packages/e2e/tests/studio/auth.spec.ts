@@ -59,3 +59,17 @@ test.describe("Auth UI (B2)", () => {
     await expect(page.getByTestId("forgot-success")).toBeVisible();
   });
 });
+
+test.describe("Route guards (B3)", () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
+
+  test("unauthenticated visit to a screen redirects to /login", async ({ page }) => {
+    await page.goto("/home");
+    await expect(page).toHaveURL(/\/login$/);
+  });
+
+  test("unauthenticated root redirects to /login", async ({ page }) => {
+    await page.goto("/");
+    await expect(page).toHaveURL(/\/login$/);
+  });
+});

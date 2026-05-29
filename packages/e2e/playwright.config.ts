@@ -31,14 +31,30 @@ export default defineConfig({
       },
       dependencies: ["setup"],
     },
-    // Karrio Studio (TanStack Start app, apps/studio). Foundation specs run
-    // against the unguarded shell; Phase B adds a studio auth setup project.
+    // Karrio Studio (TanStack Start app, apps/studio). Authenticated by default
+    // via an inline session cookie (the _app routes are guarded); the auth/guard
+    // specs override storageState to test the unauthenticated paths.
     {
       name: "studio",
       testMatch: /studio\/.*\.spec\.ts/,
       use: {
         ...devices["Desktop Chrome"],
         baseURL: process.env.KARRIO_STUDIO_URL || "http://localhost:3003",
+        storageState: {
+          cookies: [
+            {
+              name: "karrio-studio-session",
+              value: JSON.stringify({ access: "test-token", refresh: "r", email: "admin@example.com" }),
+              domain: "localhost",
+              path: "/",
+              httpOnly: true,
+              secure: false,
+              sameSite: "Lax",
+              expires: Math.floor(Date.now() / 1000) + 86400,
+            },
+          ],
+          origins: [],
+        },
       },
     },
   ],

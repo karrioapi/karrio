@@ -1,5 +1,6 @@
-import { Outlet, createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
+import { Outlet, createFileRoute, redirect, useNavigate, useParams } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
+import { getSession } from "~/server/auth";
 import { Sidebar } from "~/components/shell/Sidebar";
 import { Topbar, type CreateKind } from "~/components/shell/Topbar";
 import { CommandPalette } from "~/components/overlays/CommandPalette";
@@ -14,7 +15,12 @@ import {
 } from "~/lib/theme";
 
 // Pathless layout: app shell (sidebar + topbar) wrapping every screen.
+// Auth guard: unauthenticated requests are redirected to /login.
 export const Route = createFileRoute("/_app")({
+  beforeLoad: async () => {
+    const session = await getSession();
+    if (!session) throw redirect({ to: "/login" });
+  },
   component: AppLayout,
 });
 
