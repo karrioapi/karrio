@@ -20,6 +20,7 @@ import { PluginsScreen } from "~/screens/build/PluginsScreen";
 import { McpScreen } from "~/screens/build/McpScreen";
 import { WebhooksScreen } from "~/screens/build/WebhooksScreen";
 import { ApiKeysScreen } from "~/screens/build/ApiKeysScreen";
+import { EditorScreen } from "~/screens/build/EditorScreen";
 import { AdminScreen } from "~/screens/govern/AdminScreen";
 import { TenantsScreen } from "~/screens/govern/TenantsScreen";
 import { TeamScreen } from "~/screens/govern/TeamScreen";
@@ -44,6 +45,7 @@ const REGISTRY: Record<string, ComponentType> = {
   mcp: McpScreen,
   webhooks: WebhooksScreen,
   apikeys: ApiKeysScreen,
+  editor: EditorScreen,
   admin: AdminScreen,
   tenants: TenantsScreen,
   team: TeamScreen,

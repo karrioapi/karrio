@@ -590,3 +590,28 @@ button.toggle-switch { border: none; padding: 0; cursor: pointer; }
 .wb-row:hover { background: #131318; }
 .wb-method { color: #93b8ff; }
 .wb-status-2 { color: #6ee7a0; } .wb-status-4, .wb-status-5 { color: #ff9e9e; }
+
+/* ===================== Editor (agent IDE) ===================== */
+.editor { display: grid; grid-template-columns: 220px 1fr 240px; flex: 1; min-height: 0; }
+@media (max-width: 900px) { .editor { grid-template-columns: 1fr; } .editor-pane.right { display: none; } }
+.editor-pane { border-right: 1px solid var(--border); display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.editor-pane.right { border-right: none; border-left: 1px solid var(--border); }
+.editor-pane-head { padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--fg-subtle); display: flex; align-items: center; gap: 6px; }
+.editor-pane-body { flex: 1; overflow-y: auto; padding: 8px; }
+.session-item { padding: 8px 10px; border-radius: var(--r-sm); cursor: pointer; font-size: 12.5px; display: flex; align-items: center; gap: 8px; }
+.session-item.active, .session-item:hover { background: var(--bg-subtle); }
+.session-dot { width: 7px; height: 7px; border-radius: 999px; background: var(--green-dot); }
+.chat { display: flex; flex-direction: column; min-height: 0; flex: 1; }
+.chat-stream { flex: 1; overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+.msg { max-width: 680px; }
+.msg.user { align-self: flex-end; }
+.msg-role { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--fg-subtle); margin-bottom: 4px; }
+.msg-body { font-size: 13.5px; line-height: 1.55; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--r-md); padding: 10px 12px; white-space: pre-wrap; }
+.msg.user .msg-body { background: var(--accent-soft-bg); border-color: transparent; color: var(--fg); }
+.composer { border-top: 1px solid var(--border); padding: 12px; }
+.composer textarea { width: 100%; min-height: 64px; resize: vertical; background: var(--bg-input); border: 1px solid var(--border-input); border-radius: var(--r-md); padding: 10px 12px; font-size: 13.5px; color: var(--fg); font-family: inherit; }
+.composer textarea:focus { outline: none; border-color: var(--accent); }
+.composer-bar { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+.file-item { padding: 6px 8px; font-size: 12px; font-family: var(--font-mono); color: var(--fg-onsubtle); border-radius: var(--r-sm); cursor: pointer; }
+.file-item:hover { background: var(--bg-subtle); }
+.select-sm { height: 26px; background: var(--bg-input); border: 1px solid var(--border-input); border-radius: var(--r-sm); color: var(--fg); font-size: 12px; padding: 0 6px; }
