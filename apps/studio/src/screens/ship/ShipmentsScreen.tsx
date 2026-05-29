@@ -1,9 +1,19 @@
-// ShipmentsScreen.tsx — Ship › Shipments (C2). Wired to the decoupled Karrio
-// client via useShipments. Tabs + filter toolbar + selectable table + bulk
-// actions + row→ShipmentSheet, faithful to the design handoff.
+// ShipmentsScreen.tsx — Ship › Shipments (C2). Wired to useShipments via the
+// decoupled Karrio client; built on shared primitives.
 import { useMemo, useState } from "react";
 import { CarrierLogo } from "~/components/ui/CarrierLogo";
 import { Icon } from "~/components/ui/icons";
+import {
+  Checkbox,
+  FilterPill,
+  FilterToolbar,
+  PageHeader,
+  StateRow,
+  StatusPill,
+  TableFooter,
+  Tabs,
+  type TabDef,
+} from "~/components/ui/primitives";
 import { useShipments } from "~/lib/karrio/hooks";
 import {
   carrierKey,
@@ -12,20 +22,18 @@ import {
   recipientAddr,
   recipientName,
   statusClass,
-  statusLabel,
 } from "~/lib/karrio/display";
 import type { Shipment } from "~/lib/karrio/types";
 import { ShipmentSheet } from "~/screens/ship/ShipmentSheet";
 
-const TABS: { id: string; label: string; match?: (s: Shipment) => boolean }[] = [
-  { id: "all", label: "All" },
-  { id: "purchased", label: "Purchased", match: (s) => statusClass(s.status) === "purchased" },
-  { id: "intransit", label: "In transit", match: (s) => statusClass(s.status) === "intransit" },
-  { id: "delivered", label: "Delivered", match: (s) => statusClass(s.status) === "delivered" },
-  { id: "exception", label: "Exception", match: (s) => statusClass(s.status) === "exception" },
-  { id: "cancelled", label: "Cancelled", match: (s) => statusClass(s.status) === "cancelled" },
-  { id: "draft", label: "Draft", match: (s) => statusClass(s.status) === "draft" },
-];
+const TAB_MATCH: Record<string, (s: Shipment) => boolean> = {
+  purchased: (s) => statusClass(s.status) === "purchased",
+  intransit: (s) => statusClass(s.status) === "intransit",
+  delivered: (s) => statusClass(s.status) === "delivered",
+  exception: (s) => statusClass(s.status) === "exception",
+  cancelled: (s) => statusClass(s.status) === "cancelled",
+  draft: (s) => statusClass(s.status) === "draft",
+};
 
 export function ShipmentsScreen() {
   const [tab, setTab] = useState("all");
@@ -35,28 +43,35 @@ export function ShipmentsScreen() {
   const { data, isLoading, isError, error } = useShipments();
   const all = useMemo(() => data?.results ?? [], [data]);
 
-  const counts = useMemo(() => {
-    const c: Record<string, number> = { all: all.length };
-    for (const t of TABS) if (t.match) c[t.id] = all.filter(t.match).length;
-    return c;
-  }, [all]);
-
   const rows = useMemo(() => {
-    const t = TABS.find((x) => x.id === tab);
-    return t?.match ? all.filter(t.match) : all;
+    const m = TAB_MATCH[tab];
+    return m ? all.filter(m) : all;
   }, [all, tab]);
 
+  const tabs: TabDef[] = useMemo(
+    () => [
+      { id: "all", label: "All", count: all.length },
+      { id: "purchased", label: "Purchased", count: all.filter(TAB_MATCH.purchased).length },
+      { id: "intransit", label: "In transit", count: all.filter(TAB_MATCH.intransit).length },
+      { id: "delivered", label: "Delivered", count: all.filter(TAB_MATCH.delivered).length },
+      { id: "exception", label: "Exception", count: all.filter(TAB_MATCH.exception).length },
+      { id: "cancelled", label: "Cancelled", count: all.filter(TAB_MATCH.cancelled).length },
+      { id: "draft", label: "Draft", count: all.filter(TAB_MATCH.draft).length },
+    ],
+    [all],
+  );
+
   const toggle = (id: string) =>
-    setSelected((sel) => (sel.includes(id) ? sel.filter((x) => x !== id) : [...sel, id]));
+    setSelected((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
   const allSelected = rows.length > 0 && selected.length === rows.length;
   const toggleAll = () => setSelected(allSelected ? [] : rows.map((r) => r.id));
 
   return (
     <div className="page" data-testid="screen-shipments">
-      <div className="page-header">
-        <h1 className="page-title">Shipments</h1>
-        <div className="page-actions">
-          {selected.length > 0 ? (
+      <PageHeader
+        title="Shipments"
+        actions={
+          selected.length > 0 ? (
             <>
               <span className="muted" style={{ fontSize: 12 }} data-testid="selection-count">
                 {selected.length} selected
@@ -70,46 +85,26 @@ export function ShipmentsScreen() {
               <button className="btn"><Icon.Download size={14} /> Export</button>
               <button className="btn btn-primary"><Icon.Plus size={14} /> Create label</button>
             </>
-          )}
-        </div>
-      </div>
+          )
+        }
+      />
 
-      <div className="tabs" role="tablist">
-        {TABS.map((t) => (
-          <button
-            key={t.id}
-            role="tab"
-            aria-selected={tab === t.id}
-            className={"tab" + (tab === t.id ? " active" : "")}
-            onClick={() => setTab(t.id)}
-            data-testid={`tab-${t.id}`}
-          >
-            {t.label}
-            <span className="count">{counts[t.id] ?? 0}</span>
-          </button>
-        ))}
-      </div>
+      <Tabs tabs={tabs} value={tab} onChange={setTab} />
 
-      <div className="table-toolbar">
-        <button className="filter-pill"><Icon.Filter size={12} /> Filter</button>
-        <button className="filter-pill">Carrier <span className="v">Any</span> <Icon.ChevronD size={12} /></button>
-        <button className="filter-pill">Date <span className="v">Last 30 days</span> <Icon.ChevronD size={12} /></button>
+      <FilterToolbar>
+        <FilterPill><Icon.Filter size={12} /> Filter</FilterPill>
+        <FilterPill>Carrier <span className="v">Any</span> <Icon.ChevronD size={12} /></FilterPill>
+        <FilterPill>Date <span className="v">Last 30 days</span> <Icon.ChevronD size={12} /></FilterPill>
         <div style={{ flex: 1 }} />
-        <button className="filter-pill"><Icon.Sliders size={12} /> View</button>
-      </div>
+        <FilterPill><Icon.Sliders size={12} /> View</FilterPill>
+      </FilterToolbar>
 
       <div className="card card-scroll">
         <table className="table">
           <thead>
             <tr>
               <th className="checkbox-cell">
-                <span
-                  className={"checkbox" + (allSelected ? " checked" : "")}
-                  onClick={toggleAll}
-                  data-testid="select-all"
-                >
-                  {allSelected && <Icon.Check size={12} style={{ color: "white" }} />}
-                </span>
+                <Checkbox checked={allSelected} onChange={toggleAll} testid="select-all" />
               </th>
               <th>Shipping service</th>
               <th>Status</th>
@@ -121,14 +116,12 @@ export function ShipmentsScreen() {
             </tr>
           </thead>
           <tbody>
-            {isLoading && (
-              <tr><td colSpan={8}><div className="state-row" data-testid="shipments-loading">Loading shipments…</div></td></tr>
-            )}
+            {isLoading && <StateRow colSpan={8} kind="loading" message="Loading shipments…" />}
             {isError && !isLoading && (
-              <tr><td colSpan={8}><div className="state-row" data-testid="shipments-error">{(error as Error)?.message ?? "Failed to load shipments"}</div></td></tr>
+              <StateRow colSpan={8} kind="error" message={(error as Error)?.message ?? "Failed to load shipments"} />
             )}
             {!isLoading && !isError && rows.length === 0 && (
-              <tr><td colSpan={8}><div className="state-row" data-testid="shipments-empty">No shipments found.</div></td></tr>
+              <StateRow colSpan={8} kind="empty" message="No shipments found." />
             )}
             {rows.map((s) => (
               <tr
@@ -137,10 +130,8 @@ export function ShipmentsScreen() {
                 onClick={() => setPreview(s)}
                 data-testid={`shipment-row-${s.id}`}
               >
-                <td className="checkbox-cell" onClick={(e) => { e.stopPropagation(); toggle(s.id); }}>
-                  <span className={"checkbox" + (selected.includes(s.id) ? " checked" : "")}>
-                    {selected.includes(s.id) && <Icon.Check size={12} style={{ color: "white" }} />}
-                  </span>
+                <td className="checkbox-cell">
+                  <Checkbox checked={selected.includes(s.id)} onChange={() => toggle(s.id)} />
                 </td>
                 <td>
                   <div className="svc-cell">
@@ -151,7 +142,7 @@ export function ShipmentsScreen() {
                     </div>
                   </div>
                 </td>
-                <td><span className={"pill " + statusClass(s.status)}>{statusLabel(s.status)}</span></td>
+                <td><StatusPill status={s.status} /></td>
                 <td>
                   <div className="recipient-name">{recipientName(s.recipient)}</div>
                   <div className="recipient-addr">{recipientAddr(s.recipient)}</div>
@@ -166,13 +157,7 @@ export function ShipmentsScreen() {
             ))}
           </tbody>
         </table>
-        <div className="table-footer">
-          <span>Viewing 1–{rows.length} of {data?.count ?? all.length} shipments</span>
-          <div className="right">
-            <button className="btn btn-sm"><Icon.ChevronL size={12} /> Previous</button>
-            <button className="btn btn-sm">Next <Icon.ChevronR size={12} /></button>
-          </div>
-        </div>
+        <TableFooter shown={rows.length} total={data?.count ?? all.length} noun="shipments" hasNext={!!data?.next} hasPrev={!!data?.previous} />
       </div>
 
       <ShipmentSheet shipment={preview} onClose={() => setPreview(null)} />

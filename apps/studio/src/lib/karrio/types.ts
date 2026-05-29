@@ -60,3 +60,14 @@ export type CarrierConnection = {
   active?: boolean;
   capabilities?: string[];
 };
+
+export type Pickup = {
+  id: string;
+  confirmation_number?: string;
+  carrier_name?: string;
+  pickup_date?: string;
+  ready_time?: string;
+  closing_time?: string;
+  status?: string;
+  address?: Address;
+};
