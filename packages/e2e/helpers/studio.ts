@@ -2,9 +2,9 @@ import { type Page, expect } from "@playwright/test";
 
 // Studio nav routes by mode (mirrors apps/studio src/lib/modes.ts).
 export const STUDIO_NAV: Record<string, string[]> = {
-  ship: ["home", "shipments", "trackers", "orders", "pickups", "connections", "rules", "addresses", "parcels", "products", "documents"],
-  build: ["apps", "plugins", "mcp", "editor", "webhooks", "apikeys"],
-  govern: ["admin", "tenants", "team", "security", "audit", "settings"],
+  ship: ["home", "shipments", "trackers", "orders", "pickups", "connections", "rules", "addresses", "parcels", "products", "documents", "manifests", "batches"],
+  build: ["apps", "plugins", "mcp", "editor", "webhooks", "apikeys", "workflows"],
+  govern: ["admin", "tenants", "team", "security", "audit", "settings", "ratesheets", "usage"],
 };
 
 export const ALL_STUDIO_ROUTES = Object.values(STUDIO_NAV).flat();

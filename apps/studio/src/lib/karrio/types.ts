@@ -208,3 +208,50 @@ export type AdminInfo = {
   resources?: { label: string; used: number; total: number }[];
   runtimes?: { name: string; memory?: string; calls?: number; p99?: string }[];
 };
+
+// --- Parity resources (manifests, batches, workflows, rate sheets, usage) ----
+export type Manifest = {
+  id: string;
+  carrier_name?: string;
+  reference?: string;
+  shipment_count?: number;
+  created_at?: string;
+  manifest_url?: string;
+};
+
+export type BatchOperation = {
+  id: string;
+  status?: string;
+  resource_type?: string;
+  total?: number;
+  created_at?: string;
+};
+
+export type Workflow = {
+  id: string;
+  name: string;
+  description?: string;
+  is_active?: boolean;
+  trigger?: string;
+  action_count?: number;
+};
+
+export type RateSheet = {
+  id: string;
+  name: string;
+  carrier_name?: string;
+  services_count?: number;
+  is_system?: boolean;
+};
+
+export type UsageRecord = {
+  label: string;
+  value: string;
+  delta?: string;
+};
+
+export type UsageSummary = {
+  plan?: string;
+  period?: string;
+  metrics?: UsageRecord[];
+};

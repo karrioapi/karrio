@@ -400,3 +400,65 @@ export function useDeleteConnection() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["carrier-connections"] }),
   });
 }
+
+// === Parity resources ======================================================
+import type {
+  BatchOperation,
+  Manifest,
+  RateSheet,
+  UsageSummary,
+  Workflow,
+} from "~/lib/karrio/types";
+
+export function useManifests() {
+  const ctx = useKarrioCtx();
+  return useQuery({
+    queryKey: ["manifests", keyExtra(ctx)],
+    queryFn: () => restGet<Paginated<Manifest>>(ctx, "/v1/manifests"),
+    enabled: Boolean(ctx.token),
+  });
+}
+
+export function useBatches() {
+  const ctx = useKarrioCtx();
+  return useQuery({
+    queryKey: ["batches", keyExtra(ctx)],
+    queryFn: () => restGet<Paginated<BatchOperation>>(ctx, "/v1/batches/operations"),
+    enabled: Boolean(ctx.token),
+  });
+}
+
+const WORKFLOWS_QUERY = `query { workflows { edges { node {
+  id name description is_active trigger action_count
+} } } }`;
+
+export function useWorkflows() {
+  const ctx = useKarrioCtx();
+  return useQuery({
+    queryKey: ["workflows", keyExtra(ctx)],
+    queryFn: () => graphqlEdges<Workflow>(ctx, WORKFLOWS_QUERY, "workflows"),
+    enabled: Boolean(ctx.token),
+  });
+}
+
+const RATE_SHEETS_QUERY = `query { rate_sheets { edges { node {
+  id name carrier_name services_count is_system
+} } } }`;
+
+export function useRateSheets() {
+  const ctx = useKarrioCtx();
+  return useQuery({
+    queryKey: ["rate-sheets", keyExtra(ctx)],
+    queryFn: () => graphqlEdges<RateSheet>(ctx, RATE_SHEETS_QUERY, "rate_sheets"),
+    enabled: Boolean(ctx.token),
+  });
+}
+
+export function useUsage() {
+  const ctx = useKarrioCtx();
+  return useQuery({
+    queryKey: ["usage", keyExtra(ctx)],
+    queryFn: () => restGet<UsageSummary>(ctx, "/v1/usage"),
+    enabled: Boolean(ctx.token),
+  });
+}

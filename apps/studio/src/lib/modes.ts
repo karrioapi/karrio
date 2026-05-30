@@ -52,6 +52,13 @@ export const NAV: Record<Mode, NavGroup[]> = {
         { icon: "Doc", label: "Documents", route: "documents" },
       ],
     },
+    {
+      label: "Operations",
+      items: [
+        { icon: "Doc", label: "Manifests", route: "manifests" },
+        { icon: "Grid", label: "Batches", route: "batches" },
+      ],
+    },
   ],
   build: [
     {
@@ -67,6 +74,7 @@ export const NAV: Record<Mode, NavGroup[]> = {
       items: [
         { icon: "Webhook", label: "Webhooks", route: "webhooks" },
         { icon: "Key", label: "API keys", route: "apikeys" },
+        { icon: "Activity", label: "Workflows", route: "workflows" },
       ],
     },
   ],
@@ -81,6 +89,13 @@ export const NAV: Record<Mode, NavGroup[]> = {
         { icon: "Settings", label: "Settings", route: "settings" },
       ],
     },
+    {
+      label: "Billing & rates",
+      items: [
+        { icon: "Tag", label: "Rate sheets", route: "ratesheets" },
+        { icon: "Activity", label: "Usage & billing", route: "usage" },
+      ],
+    },
   ],
 };
 
@@ -91,6 +106,7 @@ const BUILD_ROUTES = new Set([
   "editor",
   "webhooks",
   "apikeys",
+  "workflows",
 ]);
 const GOVERN_ROUTES = new Set([
   "admin",
@@ -99,6 +115,8 @@ const GOVERN_ROUTES = new Set([
   "security",
   "audit",
   "settings",
+  "ratesheets",
+  "usage",
 ]);
 
 export function routeMode(route: string): Mode {

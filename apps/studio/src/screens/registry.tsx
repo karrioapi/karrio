@@ -20,6 +20,8 @@ const REGISTRY: Record<string, ComponentType> = {
   parcels: lz(() => import("~/screens/ship/ParcelsScreen"), "ParcelsScreen"),
   products: lz(() => import("~/screens/ship/ProductsScreen"), "ProductsScreen"),
   documents: lz(() => import("~/screens/ship/DocumentsScreen"), "DocumentsScreen"),
+  manifests: lz(() => import("~/screens/ship/ManifestsScreen"), "ManifestsScreen"),
+  batches: lz(() => import("~/screens/ship/BatchesScreen"), "BatchesScreen"),
   // Build
   apps: lz(() => import("~/screens/build/AppsScreen"), "AppsScreen"),
   plugins: lz(() => import("~/screens/build/PluginsScreen"), "PluginsScreen"),
@@ -27,6 +29,7 @@ const REGISTRY: Record<string, ComponentType> = {
   webhooks: lz(() => import("~/screens/build/WebhooksScreen"), "WebhooksScreen"),
   apikeys: lz(() => import("~/screens/build/ApiKeysScreen"), "ApiKeysScreen"),
   editor: lz(() => import("~/screens/build/EditorScreen"), "EditorScreen"),
+  workflows: lz(() => import("~/screens/build/WorkflowsScreen"), "WorkflowsScreen"),
   // Govern
   admin: lz(() => import("~/screens/govern/AdminScreen"), "AdminScreen"),
   tenants: lz(() => import("~/screens/govern/TenantsScreen"), "TenantsScreen"),
@@ -34,6 +37,8 @@ const REGISTRY: Record<string, ComponentType> = {
   security: lz(() => import("~/screens/govern/SecurityScreen"), "SecurityScreen"),
   audit: lz(() => import("~/screens/govern/AuditScreen"), "AuditScreen"),
   settings: lz(() => import("~/screens/govern/SettingsScreen"), "SettingsScreen"),
+  ratesheets: lz(() => import("~/screens/govern/RateSheetsScreen"), "RateSheetsScreen"),
+  usage: lz(() => import("~/screens/govern/UsageScreen"), "UsageScreen"),
 };
 
 export function getScreen(route: string): ComponentType {
