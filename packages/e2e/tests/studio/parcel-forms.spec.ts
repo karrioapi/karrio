@@ -6,11 +6,13 @@ const CORS = {
   "access-control-allow-methods": "GET,POST,OPTIONS",
   "access-control-allow-headers": "authorization,x-org-id,x-test-mode,content-type",
 };
+// Live schema: `parcels` connection with flat ParcelTemplate nodes;
+// label/is_default live under `meta` (the hook normalises them out).
 const LIST = {
   data: {
-    parcel_templates: {
+    parcels: {
       edges: [
-        { node: { id: "pcl_1", label: "Small Box", is_default: true, packaging_type: "BOX", width: 15, height: 10, length: 20, dimension_unit: "CM", weight: 0.5, weight_unit: "KG" } },
+        { node: { id: "pcl_1", meta: { label: "Small Box", is_default: true }, packaging_type: "BOX", width: 15, height: 10, length: 20, dimension_unit: "CM", weight: 0.5, weight_unit: "KG" } },
       ],
     },
   },
@@ -20,10 +22,10 @@ async function graphqlRouter(route: Route) {
   if (route.request().method() === "OPTIONS") return route.fulfill({ status: 204, headers: CORS, body: "" });
   const q = route.request().postData() ?? "";
   let body: unknown = { data: {} };
-  if (q.includes("create_parcel_template")) body = { data: { create_parcel_template: { template: { id: "new" }, errors: [] } } };
-  else if (q.includes("update_parcel_template")) body = { data: { update_parcel_template: { template: { id: "pcl_1" }, errors: [] } } };
-  else if (q.includes("delete_template")) body = { data: { delete_template: { id: "pcl_1" } } };
-  else if (q.includes("parcel_templates")) body = LIST;
+  if (q.includes("create_parcel")) body = { data: { create_parcel: { parcel: { id: "new" }, errors: [] } } };
+  else if (q.includes("update_parcel")) body = { data: { update_parcel: { parcel: { id: "pcl_1" }, errors: [] } } };
+  else if (q.includes("delete_parcel")) body = { data: { delete_parcel: { id: "pcl_1" } } };
+  else if (q.includes("parcels")) body = LIST;
   return route.fulfill({ status: 200, headers: { ...CORS, "content-type": "application/json" }, body: JSON.stringify(body) });
 }
 

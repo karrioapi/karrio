@@ -220,13 +220,24 @@ export function useProducts() {
 }
 
 // --- Shipping rules (GraphQL) ------------------------------------------------
-// `shipping_rules` is NOT exposed by the OSS Karrio GraphQL schema.
-// Return an empty list so UI screens degrade gracefully on single-tenant OSS.
+// `shipping_rules` is an EE/platform-only field, absent from the OSS GraphQL
+// schema. Query it and degrade gracefully to [] on the "unknown field" error,
+// so the screen shows real data on EE and an empty state on single-tenant OSS.
+const SHIPPING_RULES_QUERY = `query { shipping_rules { edges { node {
+  id name priority is_active description action_type
+} } } }`;
+
 export function useShippingRules() {
   const ctx = useKarrioCtx();
   return useQuery({
     queryKey: ["shipping-rules", keyExtra(ctx)],
-    queryFn: (): Promise<ShippingRule[]> => Promise.resolve([]),
+    queryFn: async (): Promise<ShippingRule[]> => {
+      try {
+        return await graphqlEdges<ShippingRule>(ctx, SHIPPING_RULES_QUERY, "shipping_rules");
+      } catch {
+        return [];
+      }
+    },
     enabled: Boolean(ctx.token),
   });
 }
@@ -519,13 +530,24 @@ export function useBatches() {
   });
 }
 
-// `workflows` is NOT exposed by the OSS Karrio GraphQL schema (EE/platform only).
-// Return an empty list so the Workflows screen degrades gracefully on OSS.
+// `workflows` is an EE/platform-only field, absent from the OSS GraphQL schema.
+// Query it and degrade gracefully to [] on the unknown-field error so the
+// Workflows screen shows real data on EE and an empty state on OSS.
+const WORKFLOWS_QUERY = `query { workflows { edges { node {
+  id name description is_active trigger action_count
+} } } }`;
+
 export function useWorkflows() {
   const ctx = useKarrioCtx();
   return useQuery({
     queryKey: ["workflows", keyExtra(ctx)],
-    queryFn: (): Promise<Workflow[]> => Promise.resolve([]),
+    queryFn: async (): Promise<Workflow[]> => {
+      try {
+        return await graphqlEdges<Workflow>(ctx, WORKFLOWS_QUERY, "workflows");
+      } catch {
+        return [];
+      }
+    },
     enabled: Boolean(ctx.token),
   });
 }
