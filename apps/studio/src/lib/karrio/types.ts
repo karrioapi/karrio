@@ -14,8 +14,36 @@ export type Address = {
   country_code?: string;
   person_name?: string;
   company_name?: string;
+  address_line1?: string;
+  address_line2?: string;
   postal_code?: string;
+  email?: string;
+  phone_number?: string;
   residential?: boolean;
+};
+
+export type Charge = { name?: string; amount?: number; currency?: string };
+
+export type Parcel = {
+  id?: string;
+  weight?: number;
+  weight_unit?: string;
+  width?: number;
+  height?: number;
+  length?: number;
+  dimension_unit?: string;
+  packaging_type?: string;
+  reference_number?: string;
+};
+
+export type Rate = {
+  carrier_name?: string;
+  carrier_id?: string;
+  service?: string;
+  total_charge?: number;
+  currency?: string;
+  transit_days?: number;
+  extra_charges?: Charge[];
 };
 
 export type Shipment = {
@@ -25,7 +53,8 @@ export type Shipment = {
   carrier_id?: string;
   tracking_number?: string;
   service?: string;
-  selected_rate?: { total_charge?: number; currency?: string } | null;
+  selected_rate?: Rate | null;
+  parcels?: Parcel[];
   recipient?: Address;
   shipper?: Address;
   reference?: string;
@@ -40,6 +69,7 @@ export type Tracker = {
   status: string;
   estimated_delivery?: string;
   events?: Array<{ description?: string; location?: string; date?: string; time?: string }>;
+  meta?: Record<string, unknown>;
 };
 
 export type Order = {

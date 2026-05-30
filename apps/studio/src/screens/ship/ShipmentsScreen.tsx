@@ -21,6 +21,8 @@ import {
   formatRate,
   recipientAddr,
   recipientName,
+  shipmentCarrier,
+  shipmentService,
   statusClass,
 } from "~/lib/karrio/display";
 import type { Shipment } from "~/lib/karrio/types";
@@ -135,10 +137,10 @@ export function ShipmentsScreen() {
                 </td>
                 <td>
                   <div className="svc-cell">
-                    <CarrierLogo carrier={carrierKey(s.carrier_name)} />
+                    <CarrierLogo carrier={carrierKey(shipmentCarrier(s))} />
                     <div>
                       <div className="svc-id">{s.tracking_number ?? s.id}</div>
-                      <div className="svc-name">{s.service ?? "—"}</div>
+                      <div className="svc-name">{shipmentService(s)}</div>
                     </div>
                   </div>
                 </td>

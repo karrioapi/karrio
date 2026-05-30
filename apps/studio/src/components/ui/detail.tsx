@@ -30,8 +30,13 @@ export function AddressCard({ label, addr }: { label: string; addr?: Address }) 
     <div className="addr-card">
       <div className="lbl">{label}</div>
       <div className="nm">{recipientName(addr)}</div>
-      <div className="ln">{recipientAddr(addr) || "—"}</div>
-      {addr?.postal_code && <div className="ln">{addr.postal_code}</div>}
+      {addr?.company_name && addr?.person_name && <div className="ln">{addr.company_name}</div>}
+      {addr?.address_line1 && <div className="ln">{addr.address_line1}</div>}
+      <div className="ln">
+        {recipientAddr(addr) || "—"}
+        {addr?.postal_code ? ` ${addr.postal_code}` : ""}
+      </div>
+      {addr?.email && <div className="ln">{addr.email}</div>}
     </div>
   );
 }

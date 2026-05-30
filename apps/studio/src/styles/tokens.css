@@ -228,6 +228,8 @@ input, textarea, select { font-family: inherit; color: inherit; }
   height: 46px; display: flex; align-items: center; gap: 10px;
   padding: 0 16px; border-bottom: 1px solid var(--border); background: var(--bg);
 }
+/* Hamburger: hidden on desktop (persistent sidebar), shown on mobile. */
+.topbar-menu { display: none; }
 .search {
   flex: 1; max-width: 460px; display: flex; align-items: center; gap: 8px;
   background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--r-md);
@@ -492,9 +494,14 @@ input, textarea, select { font-family: inherit; color: inherit; }
 
   .page { padding: 16px 14px 64px; }
   .page-header { flex-wrap: wrap; }
-  .topbar { padding: 0 12px; gap: 8px; }
+  .topbar { padding: 0 10px; gap: 6px; }
+  .topbar-menu { display: grid; }
   .search span { display: none; }
-  .search { max-width: none; flex: 1; }
+  .search kbd { display: none; }
+  .search { max-width: none; flex: 1; min-width: 0; padding: 5px 8px; }
+  .topbar-actions { gap: 4px; flex-shrink: 0; }
+  .hide-mobile { display: none !important; }
+  .test-toggle { padding: 4px 8px; }
 
   /* Sheets go full-width on small screens. */
   .sheet, .sheet.sm, .sheet.md, .sheet.lg { width: 100vw; }

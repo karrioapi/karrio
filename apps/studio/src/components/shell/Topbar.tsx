@@ -54,10 +54,10 @@ export function Topbar({
 
   return (
     <header className="topbar" data-testid="topbar">
-      <button className="icon-btn" title="Toggle sidebar (⌘B)" onClick={onToggleSidebar} data-testid="toggle-sidebar">
-        <Icon.Sidebar size={14} />
+      <button className="icon-btn topbar-menu" title="Menu" aria-label="Open navigation" onClick={onToggleSidebar} data-testid="toggle-sidebar">
+        <Icon.Menu size={16} />
       </button>
-      <button className="search" onClick={onPalette} data-testid="palette-trigger">
+      <button className="search" onClick={onPalette} data-testid="palette-trigger" aria-label="Search (Command-K)">
         <Icon.Search size={13} />
         <span>Search shipments, orders, plugins…</span>
         <kbd>⌘K</kbd>
@@ -67,28 +67,29 @@ export function Topbar({
           className={"test-toggle" + (testMode ? " on" : "")}
           onClick={() => onTestMode(!testMode)}
           data-testid="test-mode"
+          aria-label="Toggle test mode"
         >
           <span className="toggle-switch" />
-          <span>Test mode</span>
+          <span className="hide-mobile">Test mode</span>
         </button>
         <button className="icon-btn" title="Toggle theme" onClick={onTheme} data-testid="theme-toggle">
           {theme === "dark" ? <Icon.Sun size={14} /> : <Icon.Moon size={14} />}
         </button>
-        <button className="icon-btn" title="Customize appearance" onClick={onTweaks} data-testid="tweaks-trigger">
+        <button className="icon-btn hide-mobile" title="Customize appearance" onClick={onTweaks} data-testid="tweaks-trigger">
           <Icon.Sliders size={14} />
         </button>
-        <button className="icon-btn" title="Developer tools" onClick={onOpenWorkbench} data-testid="workbench-trigger">
+        <button className="icon-btn hide-mobile" title="Developer tools" onClick={onOpenWorkbench} data-testid="workbench-trigger">
           <Icon.Terminal size={14} />
         </button>
         {showLauncher && (
-          <button className="icon-btn" title="Launch app" data-testid="app-launcher">
+          <button className="icon-btn hide-mobile" title="Launch app" data-testid="app-launcher">
             <Icon.Grid size={14} />
           </button>
         )}
         <div ref={createRef} style={{ position: "relative" }}>
-          <button className="create-btn" onClick={() => setCreateOpen((v) => !v)} data-testid="create-btn">
+          <button className="create-btn" onClick={() => setCreateOpen((v) => !v)} data-testid="create-btn" aria-label="Create">
             <Icon.Plus size={14} />
-            <span>Create</span>
+            <span className="hide-mobile">Create</span>
           </button>
           {createOpen && (
             <div className="menu" data-testid="create-menu">

@@ -42,7 +42,15 @@ export function useTrackers(params?: Record<string, string | number | undefined>
   const ctx = useKarrioCtx();
   return useQuery({
     queryKey: ["trackers", params, keyExtra(ctx)],
-    queryFn: () => restGet<Paginated<Tracker>>(ctx, "/v1/trackers", params),
+    queryFn: async () => {
+      const data = await restGet<Paginated<Tracker>>(ctx, "/v1/trackers", params);
+      // Karrio stores the carrier under meta on tracking records; surface it.
+      data.results = data.results.map((t) => ({
+        ...t,
+        carrier_name: t.carrier_name || (t.meta as { carrier_name?: string } | undefined)?.carrier_name,
+      }));
+      return data;
+    },
     enabled: Boolean(ctx.token),
   });
 }

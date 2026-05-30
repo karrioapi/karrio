@@ -15,13 +15,12 @@ const SHIPMENTS = {
     {
       id: "shp_purch",
       status: "purchased",
-      carrier_name: "ups",
-      carrier_id: "ups_prod",
       tracking_number: "1Z999AA10123456784",
-      service: "UPS 2nd Day Air",
-      selected_rate: { total_charge: 12.4, currency: "USD" },
-      recipient: { person_name: "Alicia Romero", city: "Brooklyn", state_code: "NY", country_code: "US", postal_code: "11201" },
-      shipper: { company_name: "Acme Inc.", city: "Newark", state_code: "NJ", country_code: "US" },
+      selected_rate: { carrier_name: "ups", carrier_id: "ups_prod", service: "ups_2nd_day_air", total_charge: 12.4, currency: "USD",
+        extra_charges: [{ name: "Base charge", amount: 9.92, currency: "USD" }, { name: "Fuel surcharge", amount: 1.86, currency: "USD" }] },
+      parcels: [{ id: "pcl_1", packaging_type: "BOX", length: 25, width: 30, height: 20, dimension_unit: "CM", weight: 2, weight_unit: "KG" }],
+      recipient: { person_name: "Alicia Romero", city: "Brooklyn", state_code: "NY", country_code: "US", postal_code: "11201", address_line1: "55 Water St" },
+      shipper: { company_name: "Acme Inc.", person_name: "Daniel Kovic", city: "Brooklyn", state_code: "NY", country_code: "US", postal_code: "11201", address_line1: "432 Park Ave" },
       reference: "ORDER-11335",
       created_at: "2026-05-28T10:02:00Z",
     },
@@ -114,8 +113,13 @@ test.describe("Ship · Shipments (C2)", () => {
     const sheet = page.getByTestId("shipment-sheet-body");
     await expect(sheet).toBeVisible();
     await expect(sheet).toContainText("1Z999AA10123456784");
-    await expect(sheet).toContainText("UPS 2nd Day Air");
-    await expect(sheet).toContainText("Alicia Romero");
+    await expect(sheet).toContainText("Ups 2nd Day Air"); // humanized service from rate
+    await expect(sheet).toContainText("Daniel Kovic"); // shipped-from
+    await expect(sheet).toContainText("Alicia Romero"); // shipped-to
+    await expect(sheet).toContainText("BOX"); // parcels section
+    await expect(sheet).toContainText("25 × 30 × 20 CM");
+    await expect(sheet).toContainText("Base charge"); // itemized charges
+    await expect(sheet).toContainText("Fuel surcharge");
     await page.getByTestId("sheet-close").click();
     await expect(sheet).not.toBeVisible();
   });

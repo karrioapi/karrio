@@ -102,6 +102,7 @@ export const Icon = {
   Sidebar: (p: IconProps) => (
     <Ic {...p} d={<><rect x="3" y="4" width="18" height="16" rx="1.5" /><path d="M9 4v16" /></>} />
   ),
+  Menu: (p: IconProps) => <Ic {...p} d="M3 6h18M3 12h18M3 18h18" />,
   Pkg: (p: IconProps) => (
     <Ic {...p} d={<><path d="M3 7.5 12 3l9 4.5v9L12 21 3 16.5z" /><path d="M3 7.5 12 12l9-4.5M12 12v9" /></>} />
   ),
