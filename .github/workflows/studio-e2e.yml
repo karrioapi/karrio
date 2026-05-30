@@ -1,0 +1,94 @@
+name: studio-e2e
+
+# Run on every push and on PRs touching Studio source or its E2E specs.
+# The mocked `studio` Playwright project does NOT require a Django backend or
+# Postgres — it intercepts all API calls at the Playwright route level.
+on:
+  push:
+    paths:
+      - "apps/studio/**"
+      - "packages/e2e/tests/studio/**"
+      - "packages/e2e/helpers/studio.ts"
+      - "packages/e2e/playwright.config.ts"
+      - ".github/workflows/studio-e2e.yml"
+  pull_request:
+    paths:
+      - "apps/studio/**"
+      - "packages/e2e/tests/studio/**"
+      - "packages/e2e/helpers/studio.ts"
+      - "packages/e2e/playwright.config.ts"
+      - ".github/workflows/studio-e2e.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  studio-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: "npm"
+          cache-dependency-path: apps/studio/package-lock.json
+
+      # Install Studio app dependencies (standalone lockfile, no turborepo).
+      - name: Install Studio deps
+        working-directory: apps/studio
+        run: npm ci
+
+      # Build the Studio app so the dev server can serve the compiled output.
+      # `vite build` produces apps/studio/dist (client) + .output/server (SSR).
+      - name: Build Studio
+        working-directory: apps/studio
+        run: npm run build
+
+      # Install Playwright + Chromium only (mocked suite only needs one browser).
+      - name: Install Playwright browsers
+        working-directory: packages/e2e
+        run: |
+          npm ci
+          npx playwright install chromium --with-deps
+
+      # Start the Studio dev server in the background and wait for it.
+      # We use `npm run dev` (vite dev) instead of the built server so hot-reload
+      # is available; the mocked suite doesn't care which mode the server is in.
+      - name: Start Studio dev server
+        working-directory: apps/studio
+        run: npm run dev &
+        env:
+          PORT: 3003
+
+      - name: Wait for Studio to be ready
+        run: |
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:3003 && break || true
+            echo "Waiting for Studio ($i/30)..."
+            sleep 2
+          done
+          curl -sf http://localhost:3003 || (echo "Studio never became ready" && exit 1)
+
+      # Run the mocked `studio` Playwright project.
+      # No KARRIO_LIVE or Django API needed — all API calls are intercepted.
+      - name: Run Studio E2E (mocked)
+        working-directory: packages/e2e
+        run: npx playwright test --project=studio --reporter=github,html
+        env:
+          KARRIO_STUDIO_URL: http://localhost:3003
+          CI: "true"
+
+      # Upload the HTML report so failures are inspectable via the Actions UI.
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: studio-playwright-report
+          path: packages/e2e/playwright-report/
+          retention-days: 14
