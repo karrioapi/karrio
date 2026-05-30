@@ -9,8 +9,9 @@
 // Mapping of Studio-native state onto existing Karrio surfaces:
 //
 //   Customization (theme/accent/density/font/layout)
-//     → Karrio workspace config / user metadata (metafields)
-//       hooks: @karrio/hooks/workspace-config, @karrio/hooks/metadata
+//     → User.metadata["studio.customization"] on the Karrio backend.
+//       localStorage is the synchronous cache; async sync via update_user
+//       GraphQL mutation. See ~/lib/karrio/preferences.ts for full details.
 //
 //   Agent sessions / runs / messages
 //     → Karrio metafields namespaced under `studio.agents.*`
@@ -29,17 +30,21 @@ export const STUDIO_NS = {
   mcp: "studio.mcp",
 } as const;
 
-export type Customization = {
-  theme: "dark" | "light";
-  accent: string;
-  density: "compact" | "regular" | "comfy";
-  font_stack: "Inter" | "IBM Plex" | "System";
-  layout?: Record<string, unknown>;
-};
+// Customization types and defaults are now owned by ~/lib/karrio/preferences.ts
+// (single source of truth). Re-exported here for backwards compatibility with
+// any imports that reference studio-state.ts directly.
+export type {
+  Preferences as Customization,
+  Theme,
+  Density,
+  FontStack,
+} from "~/lib/karrio/preferences";
 
-export const DEFAULT_CUSTOMIZATION: Customization = {
-  theme: "dark",
-  accent: "#8B5CF6",
-  density: "regular",
-  font_stack: "Inter",
-};
+export {
+  DEFAULT_PREFERENCES as DEFAULT_CUSTOMIZATION,
+  loadPrefs,
+  savePrefs,
+  applyAndSavePrefs,
+  syncToBackend,
+  loadFromBackend,
+} from "~/lib/karrio/preferences";

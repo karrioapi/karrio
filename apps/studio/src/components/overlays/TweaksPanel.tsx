@@ -1,19 +1,24 @@
 // TweaksPanel.tsx — self-editable appearance (G1). Accent / density / font /
-// theme, applied live via CSS variables and persisted to localStorage.
+// theme, applied live via CSS variables and persisted via preferences.ts
+// (localStorage + async backend sync via update_user GraphQL mutation).
 import { useState } from "react";
 import { Sheet } from "~/components/ui/Sheet";
 import { Section } from "~/components/ui/detail";
 import {
-  ACCENTS,
   applyAccent,
   applyDensity,
   applyFont,
-  getAccent,
-  getDensity,
-  getFont,
+  applyTheme,
+  loadPrefs,
+  savePrefs,
+  syncToBackend,
   type Density,
   type FontStack,
-} from "~/lib/theme";
+} from "~/lib/karrio/preferences";
+import { useKarrioCtx } from "~/lib/karrio/session";
+
+// Canonical accent palette (kept here so the constant is co-located with the UI).
+export const ACCENTS = ["#8B5CF6", "#3B82F6", "#10B981", "#F97316", "#E11D48"] as const;
 
 export function TweaksPanel({
   open,
@@ -26,9 +31,11 @@ export function TweaksPanel({
   theme: "dark" | "light";
   onTheme: () => void;
 }) {
-  const [accent, setAccent] = useState(getAccent());
-  const [density, setDensity] = useState<Density>(getDensity());
-  const [font, setFont] = useState<FontStack>(getFont());
+  const ctx = useKarrioCtx();
+  const stored = loadPrefs();
+  const [accent, setAccent] = useState(stored.accent);
+  const [density, setDensity] = useState<Density>(stored.density);
+  const [font, setFont] = useState<FontStack>(stored.font_stack);
 
   if (!open) return null;
 
@@ -41,7 +48,14 @@ export function TweaksPanel({
               <button
                 key={t}
                 className={"btn" + (theme === t ? " btn-primary" : "")}
-                onClick={() => theme !== t && onTheme()}
+                onClick={() => {
+                  if (theme !== t) {
+                    applyTheme(t);
+                    savePrefs({ theme: t });
+                    void syncToBackend(ctx, { ...loadPrefs(), theme: t });
+                    onTheme();
+                  }
+                }}
                 data-testid={`tweak-theme-${t}`}
               >
                 {t[0].toUpperCase() + t.slice(1)}
@@ -59,6 +73,8 @@ export function TweaksPanel({
                 onClick={() => {
                   setAccent(c);
                   applyAccent(c);
+                  savePrefs({ accent: c });
+                  void syncToBackend(ctx, { ...loadPrefs(), accent: c });
                 }}
                 data-testid={`tweak-accent-${c.replace("#", "")}`}
                 style={{
@@ -82,6 +98,8 @@ export function TweaksPanel({
               const d = e.target.value as Density;
               setDensity(d);
               applyDensity(d);
+              savePrefs({ density: d });
+              void syncToBackend(ctx, { ...loadPrefs(), density: d });
             }}
             data-testid="tweak-density"
             aria-label="Density"
@@ -100,6 +118,8 @@ export function TweaksPanel({
               const f = e.target.value as FontStack;
               setFont(f);
               applyFont(f);
+              savePrefs({ font_stack: f });
+              void syncToBackend(ctx, { ...loadPrefs(), font_stack: f });
             }}
             data-testid="tweak-font"
             aria-label="Font"
