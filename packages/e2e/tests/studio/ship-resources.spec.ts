@@ -20,8 +20,8 @@ const REST: Record<string, unknown> = {
 };
 
 const GQL: Record<string, unknown> = {
-  address_templates: edges("address_templates", [{ id: "adr_1", label: "HQ", is_default: true, address: { person_name: "Daniel K", company_name: "Acme", city: "Brooklyn", state_code: "NY", country_code: "US", postal_code: "11201", email: "ops@acme.io", phone_number: "+1 555", address_line1: "432 Park Ave" } }]),
-  parcel_templates: edges("parcel_templates", [{ id: "pcl_1", label: "Small Box", is_default: true, packaging_type: "BOX", width: 15, height: 10, length: 20, dimension_unit: "CM", weight: 0.5, weight_unit: "KG" }]),
+  addresses: edges("addresses", [{ id: "adr_1", meta: { label: "HQ", is_default: true }, person_name: "Daniel K", company_name: "Acme", address_line1: "432 Park Ave", city: "Brooklyn", state_code: "NY", country_code: "US", postal_code: "11201", email: "ops@acme.io", phone_number: "+1 555" }]),
+  parcels: edges("parcels", [{ id: "pcl_1", meta: { label: "Small Box", is_default: true }, packaging_type: "BOX", width: 15, height: 10, length: 20, dimension_unit: "CM", weight: 0.5, weight_unit: "KG" }]),
   products: edges("products", [{ id: "prd_1", title: "Headphones", label: "Headphones", sku: "ACM-1", hs_code: "8518.30", weight: 0.4, weight_unit: "KG", value_amount: 84, value_currency: "USD", origin_country: "US" }]),
   shipping_rules: edges("shipping_rules", [{ id: "rule_1", name: "Cheapest", priority: 100, is_active: true, description: "Pick cheapest", action_type: "service_selection" }]),
 };

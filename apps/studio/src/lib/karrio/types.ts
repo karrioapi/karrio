@@ -102,17 +102,45 @@ export type Pickup = {
   address?: Address;
 };
 
+// AddressTemplate: live schema exposes the Address model directly via the
+// `addresses` Connection. Fields are flat on the node; label/is_default live
+// in the `meta` JSON field. The hook normalises meta into top-level `label`,
+// `is_default`, and an `address` sub-object for screen backward-compat.
 export type AddressTemplate = {
   id: string;
+  /** Populated by hook from meta.label */
   label?: string;
+  /** Populated by hook from meta.is_default */
   is_default?: boolean;
-  address?: Address & { email?: string; phone_number?: string; address_line1?: string };
+  /** Raw meta from the API (contains label, is_default, …) */
+  meta?: { label?: string; is_default?: boolean; [key: string]: unknown };
+  /** Nested address fields (normalised by hook from flat wire fields) */
+  address?: Address;
+  // Also exposed flat for direct access:
+  person_name?: string;
+  company_name?: string;
+  address_line1?: string;
+  address_line2?: string;
+  city?: string;
+  state_code?: string;
+  postal_code?: string;
+  country_code?: string;
+  email?: string;
+  phone_number?: string;
+  residential?: boolean;
 };
 
+// ParcelTemplate: live schema exposes the Parcel model directly via the
+// `parcels` Connection. Fields are flat; label/is_default live in `meta`.
+// The hook normalises meta into top-level `label` and `is_default`.
 export type ParcelTemplate = {
   id: string;
+  /** Populated by hook from meta.label */
   label?: string;
+  /** Populated by hook from meta.is_default */
   is_default?: boolean;
+  /** Raw meta from the API */
+  meta?: { label?: string; is_default?: boolean; [key: string]: unknown };
   packaging_type?: string;
   width?: number;
   height?: number;
@@ -122,9 +150,16 @@ export type ParcelTemplate = {
   weight_unit?: string;
 };
 
+// ProductTemplate: live schema exposes the Commodity model via the `products`
+// Connection. label/is_default live in `meta`. The hook normalises them.
 export type ProductTemplate = {
   id: string;
+  /** Populated by hook from meta.label */
   label?: string;
+  /** Populated by hook from meta.is_default */
+  is_default?: boolean;
+  /** Raw meta from the API */
+  meta?: { label?: string; is_default?: boolean; [key: string]: unknown };
   title?: string;
   sku?: string;
   hs_code?: string;
@@ -133,7 +168,6 @@ export type ProductTemplate = {
   value_amount?: number;
   value_currency?: string;
   origin_country?: string;
-  is_default?: boolean;
 };
 
 export type ShippingRule = {
@@ -266,11 +300,17 @@ export type Workflow = {
   action_count?: number;
 };
 
+// RateSheet: live OSS schema fields are id, name, slug, carrier_name.
+// `services_count` and `is_system` do not exist on the OSS RateSheetType and
+// will always be undefined when fetched from OSS; screens degrade gracefully.
 export type RateSheet = {
   id: string;
   name: string;
+  slug?: string;
   carrier_name?: string;
+  /** OSS: always undefined — not exposed by the OSS GraphQL schema */
   services_count?: number;
+  /** OSS: always undefined — not exposed by the OSS GraphQL schema */
   is_system?: boolean;
 };
 

@@ -7,11 +7,13 @@ const CORS = {
   "access-control-allow-headers": "authorization,x-org-id,x-test-mode,content-type",
 };
 
+// Live schema: `addresses` connection with flat AddressTemplate nodes;
+// label/is_default live under `meta` (the hook normalises them out).
 const LIST = {
   data: {
-    address_templates: {
+    addresses: {
       edges: [
-        { node: { id: "adr_1", label: "HQ", is_default: true, address: { person_name: "Daniel K", company_name: "Acme", city: "Brooklyn", state_code: "NY", country_code: "US", postal_code: "11201", email: "ops@acme.io", phone_number: "+1 555", address_line1: "432 Park Ave" } } },
+        { node: { id: "adr_1", meta: { label: "HQ", is_default: true }, person_name: "Daniel K", company_name: "Acme", address_line1: "432 Park Ave", city: "Brooklyn", state_code: "NY", country_code: "US", postal_code: "11201", email: "ops@acme.io", phone_number: "+1 555" } },
       ],
     },
   },
@@ -21,10 +23,10 @@ async function graphqlRouter(route: Route) {
   if (route.request().method() === "OPTIONS") return route.fulfill({ status: 204, headers: CORS, body: "" });
   const q = route.request().postData() ?? "";
   let body: unknown = { data: {} };
-  if (q.includes("create_address_template")) body = { data: { create_address_template: { template: { id: "new" }, errors: [] } } };
-  else if (q.includes("update_address_template")) body = { data: { update_address_template: { template: { id: "adr_1" }, errors: [] } } };
-  else if (q.includes("delete_template")) body = { data: { delete_template: { id: "adr_1" } } };
-  else if (q.includes("address_templates")) body = LIST;
+  if (q.includes("create_address")) body = { data: { create_address: { address: { id: "new" }, errors: [] } } };
+  else if (q.includes("update_address")) body = { data: { update_address: { address: { id: "adr_1" }, errors: [] } } };
+  else if (q.includes("delete_address")) body = { data: { delete_address: { id: "adr_1" } } };
+  else if (q.includes("addresses")) body = LIST;
   return route.fulfill({ status: 200, headers: { ...CORS, "content-type": "application/json" }, body: JSON.stringify(body) });
 }
 
