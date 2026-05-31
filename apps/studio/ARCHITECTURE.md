@@ -46,8 +46,9 @@ apps/studio/src/
 │   ├── hooks.ts                 # 19 REST + 6 GraphQL TanStack Query hooks + mutations
 │   ├── types.ts                 # local API types (no @karrio/types)
 │   ├── display.ts               # entity → display-string helpers
-│   ├── agents.ts                # AgentDef + McpServerConfig store (localStorage + seam)
-│   └── preferences.ts           # UI prefs (localStorage + update_user(metadata) seam)
+│   ├── agents.ts                # AgentDef + McpServerConfig store (metafields + LS cache)
+│   ├── preferences.ts           # UI prefs (metafields + LS cache)
+│   └── metastore.ts             # per-user backend KV over Karrio metafields
 ├── lib/{modes,studio-state}.ts  # nav model (Ship/Build/Govern) + UI state
 ├── screens/                     # registry.tsx (React.lazy) → ship/* build/* govern/*
 └── components/                  # shell (Sidebar/Topbar), ui (primitives/Sheet/...),
@@ -120,7 +121,7 @@ Route protection: `_app.tsx`'s `beforeLoad` redirects unauthenticated requests t
 | Operational data | `GET/POST/PATCH/DELETE /v1/*` | REST resources |
 | Relational/template data | `POST /graphql` | connections-style queries + typed mutations |
 | Tenancy | headers `x-org-id`, `x-test-mode` | passed from `KarrioCtx` on every call |
-| User prefs | `update_user(input:{ metadata })` GraphQL | writes `User.metadata["studio.customization"]` |
+| Studio-native state | `metafields` (create/update/delete_metafield + filter by key) | per-user JSON under `studio.*` (prefs, agents, MCP configs) — round-trips |
 | Registration / reset | `register_user`, `request_password_reset` GraphQL | |
 
 No schema/migrations are added to Karrio. The one backend file touched on this
@@ -146,14 +147,14 @@ These are the **net‑new endpoints Studio adds** — TanStack Start server func
 
 - **Command palette (⌘K)**, **Workbench** dev overlay, **Tweaks** appearance panel.
 - **Self‑editable appearance** — `preferences.ts` is the single source of truth for
-  theme/accent/density/font/layout; persisted to `localStorage` and flushed to
-  `User.metadata` via `update_user`. (Read‑back from the backend is a documented
-  seam: the OSS GraphQL `UserType` does not yet expose `metadata`.)
+  theme/accent/density/font/layout. Persisted **per‑user to the Karrio backend** as a
+  JSON **metafield** (`studio.customization`) via `metastore.ts`, with `localStorage`
+  as the offline cache. `loadFromBackend()` hydrates on login, so settings follow the
+  user across devices (full create/read/update/delete round trip — no backend change).
 - **Agents & MCP management** — `agents.ts` is a typed store for `AgentDef` and
-  `McpServerConfig` with `localStorage` persistence behind a `BackendAdapter`
-  interface (the swap point for a future REST adapter). MCP entries show an honest
-  **"config‑only"** status — OSS has no execution proxy, so no connection state is
-  fabricated.
+  `McpServerConfig`, persisted as metafields (`studio.agents` / `studio.mcp-servers`)
+  with a `localStorage` write‑through cache. MCP entries show an honest **"config‑only"**
+  status — OSS has no execution proxy, so no connection state is fabricated.
 - **Agent IDE / Assistant** — the Editor screen pairs a Claude chat (via
   `sendAssistantMessage`) with a client‑side connector **scaffolder**.
 
@@ -171,8 +172,6 @@ that this branch does **not** include:
   connectors as Python packages at boot; hot‑reloading them is non‑trivial). Tracked
   as roadmap.
 - **MCP tool execution** — config management only; no backend exec proxy.
-- **Customization read‑back** — write path is real; backend read needs `metadata`
-  on the GraphQL `UserType`.
 - **Deeper write‑wizards** — rate‑buy, recurring pickups, rule builder,
   create‑manifest/run‑batch, markup editor, fulfillment/role actions, billing.
   See `PARITY.md` (all marked 🟡).

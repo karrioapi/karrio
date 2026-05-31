@@ -16,7 +16,7 @@ paths to Karrio's canonical GraphQL API. Linear epic: **EBE-95**. PR base:
 | A Ship reads | ✅ all on GraphQL (shipments/shipment/trackers/user_connections/pickups/document_templates/manifests/batch_operations), live-verified |
 | B Build reads | ✅ api_keys → GraphQL, webhooks list → GraphQL; apps/plugins/mcp → honest "not available" |
 | C Govern reads | ✅ team→admin `users`, admin→`worker_health`, usage→`system_usage`, audit→`events`; tenants → honest EE state |
-| D Studio-native state | ⛔ backend-blocked — no readable user/workspace KV (`UserType.metadata` not exposed); localStorage + write-only `update_user` seam stays. Needs a Karrio change. |
+| D Studio-native state | ✅ real per-user persistence via **metafields** (`studio.*` namespace) — full CRUD round trip, no backend change needed. `metastore.ts` + preferences/agents wired; localStorage is the offline cache. |
 | E Mutations | ✅ address/parcel/product on GraphQL; **every read** is GraphQL. Webhook + carrier-connection create/update/delete stay on **functional** REST (GraphQL equivs exist but need input-shape remapping — refinement, not broken). |
 
 **Net result:** every Studio screen shows real Karrio data via GraphQL, or an honest "not available" state — no invented/404 REST reads remain. Full mocked suite green (205); each query live-verified against `:5002`.
