@@ -355,3 +355,33 @@ export function useDeleteConnection() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["carrier-connections"] }),
   });
 }
+
+// === Document templates: create / update / delete (GraphQL) =================
+const CREATE_DOC_TEMPLATE = `mutation($input: CreateDocumentTemplateMutationInput!) {
+  create_document_template(input: $input) { template { id slug preview_url } errors { field messages } }
+}`;
+const UPDATE_DOC_TEMPLATE = `mutation($input: UpdateDocumentTemplateMutationInput!) {
+  update_document_template(input: $input) { template { id slug preview_url } errors { field messages } }
+}`;
+const DELETE_DOC_TEMPLATE = `mutation($input: DeleteMutationInput!) { delete_document_template(input: $input) { id } }`;
+
+export function useSaveDocumentTemplate() {
+  const ctx = useKarrioCtx();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (vars: { id?: string; data: Record<string, unknown> }) =>
+      graphql(ctx, vars.id ? UPDATE_DOC_TEMPLATE : CREATE_DOC_TEMPLATE, {
+        input: vars.id ? { id: vars.id, ...vars.data } : vars.data,
+      }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["document-templates"] }),
+  });
+}
+
+export function useDeleteDocumentTemplate() {
+  const ctx = useKarrioCtx();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => graphql(ctx, DELETE_DOC_TEMPLATE, { input: { id } }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["document-templates"] }),
+  });
+}

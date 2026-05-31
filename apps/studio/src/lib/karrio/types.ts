@@ -186,6 +186,10 @@ export type DocumentTemplate = {
   related_object?: string;
   description?: string;
   active?: boolean;
+  /** Liquid/HTML template body */
+  template?: string;
+  /** Server render URL (relative to the API base): renders with sample data */
+  preview_url?: string;
 };
 
 export type App = {

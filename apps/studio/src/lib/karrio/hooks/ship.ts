@@ -113,7 +113,7 @@ export function usePickups() {
 
 // --- Document templates -----------------------------------------------------
 const DOCUMENT_TEMPLATES_QUERY = `query { document_templates { edges { node {
-  id name slug description related_object active
+  id name slug description related_object active template preview_url
 } } } }`;
 
 export function useDocumentTemplates() {
