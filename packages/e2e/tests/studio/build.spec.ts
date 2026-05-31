@@ -49,6 +49,18 @@ test.describe("Build mode (D)", () => {
     for (const [path, body] of Object.entries(DATA)) {
       await page.route(`**${path}**`, (route) => json(route, body));
     }
+    // API keys now come from GraphQL `api_keys` (flat list; row id := key).
+    await page.route("**/graphql", (route) => {
+      if (route.request().method() === "OPTIONS") return route.fulfill({ status: 204, headers: CORS, body: "" });
+      const q = route.request().postData() ?? "";
+      if (q.includes("api_keys")) {
+        return json(route, { data: { api_keys: [
+          { key: "key_live", label: "Production", test_mode: false, created: "2026-05-01" },
+          { key: "key_test", label: "Sandbox", test_mode: true, created: "2026-05-02" },
+        ] } });
+      }
+      return json(route, { data: {} });
+    });
   });
 
   test("Apps: tabs + tile opens config sheet", async ({ page }) => {

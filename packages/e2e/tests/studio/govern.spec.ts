@@ -13,30 +13,44 @@ const json = (route: Route, body: unknown) =>
     : route.fulfill({ status: 200, headers: { ...CORS, "content-type": "application/json" }, body: JSON.stringify(body) });
 const paged = (results: unknown[]) => ({ count: results.length, next: null, previous: null, results });
 
-const DATA: Record<string, unknown> = {
-  "/v1/admin/tenants": paged([{ id: "tn_1", name: "Acme", slug: "acme", members: 12, status: "active", created: "2026-01-01" }]),
-  "/v1/admin/users": paged([{ id: "usr_1", name: "Daniel K", email: "dan@karrio.io", role: "owner", status: "active" }]),
-  "/v1/admin": { version: "2026.5.1", tenants: 3, license: "Enterprise", resources: [{ label: "CPU", used: 40, total: 100 }], runtimes: [{ name: "ups", memory: "48MB", calls: 1284, p99: "84ms" }] },
-  "/v1/events": paged([{ id: "ev_1", type: "shipment.purchased", actor: "dan@karrio.io", description: "Purchased label", at: "11:30 AM" }]),
+// Team + admin overview now come from the ADMIN GraphQL schema (/admin/graphql),
+// audit from the tenant GraphQL `events`. Tenants remains REST (no OSS source yet).
+const TENANTS = paged([{ id: "tn_1", name: "Acme", slug: "acme", members: 12, status: "active", created: "2026-01-01" }]);
+const GQL_TENANT: Record<string, unknown> = {
+  events: { data: { events: { edges: [
+    { node: { id: "ev_1", type: "shipment.purchased", created_at: "2026-05-30T11:30:00Z", created_by: { email: "dan@karrio.io" } } },
+  ] } } },
 };
+const GQL_ADMIN: Record<string, unknown> = {
+  users: { data: { users: { edges: [
+    { node: { id: 1, email: "dan@karrio.io", full_name: "Daniel K", is_active: true, is_staff: true, is_superuser: true } },
+  ] } } },
+  worker_health: { data: { worker_health: { is_available: true } } },
+};
+
+function gqlReply(route: Route, table: Record<string, unknown>) {
+  if (route.request().method() === "OPTIONS") return route.fulfill({ status: 204, headers: CORS, body: "" });
+  const q = route.request().postData() ?? "";
+  const field = Object.keys(table).find((f) => q.includes(f));
+  return json(route, field ? table[field] : { data: {} });
+}
 
 test.describe("Govern mode (E)", () => {
   test.beforeEach(async ({ page, context }) => {
     await context.addCookies([
       { name: "karrio-studio-session", value: JSON.stringify({ access: "t", refresh: "r", email: "a@b.c" }), url: STUDIO_URL, httpOnly: true, sameSite: "Lax" },
     ]);
-    // /v1/admin/* must be registered before /v1/admin to match correctly; Playwright
-    // uses last-registered-first, so register the broad one first.
-    await page.route("**/v1/admin**", (route) => json(route, DATA["/v1/admin"]));
-    await page.route("**/v1/admin/tenants**", (route) => json(route, DATA["/v1/admin/tenants"]));
-    await page.route("**/v1/admin/users**", (route) => json(route, DATA["/v1/admin/users"]));
-    await page.route("**/v1/events**", (route) => json(route, DATA["/v1/events"]));
+    await page.route("**/v1/admin/tenants**", (route) => json(route, TENANTS));
+    // "**/graphql" also matches "/admin/graphql"; register the admin route LAST so
+    // it wins for admin URLs (Playwright applies last-registered first).
+    await page.route("**/graphql", (route) => gqlReply(route, GQL_TENANT));
+    await page.route("**/admin/graphql", (route) => gqlReply(route, GQL_ADMIN));
   });
 
   test("Admin overview renders cards + runtimes", async ({ page }) => {
     await page.goto("/admin");
-    await expect(page.getByTestId("admin-cards")).toContainText("Enterprise");
-    await expect(page.getByTestId("admin-runtimes")).toContainText("ups");
+    await expect(page.getByTestId("admin-cards")).toContainText("Open Source");
+    await expect(page.getByTestId("admin-runtimes")).toContainText("Background worker");
   });
 
   test("Tenants table", async ({ page }) => {
@@ -46,7 +60,7 @@ test.describe("Govern mode (E)", () => {
 
   test("Team table", async ({ page }) => {
     await page.goto("/team");
-    await expect(page.getByTestId("member-row-usr_1")).toContainText("dan@karrio.io");
+    await expect(page.getByTestId("member-row-1")).toContainText("dan@karrio.io");
   });
 
   test("Audit log table", async ({ page }) => {
