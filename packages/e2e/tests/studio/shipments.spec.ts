@@ -136,6 +136,18 @@ test.describe("Ship · Shipments (C2)", () => {
     await expect(page.getByTestId("shipment-row-shp_purch")).toBeVisible();
     await page.getByTestId("select-all").click();
     await expect(page.getByTestId("selection-count")).toContainText("3 selected");
-    await expect(page.getByRole("button", { name: /print labels/i })).toBeVisible();
+    await expect(page.getByTestId("bulk-print")).toBeVisible();
+    await expect(page.getByTestId("bulk-export")).toBeVisible();
+  });
+
+  test("bulk export downloads a CSV of the selected shipments", async ({ page }) => {
+    await page.goto("/shipments");
+    await expect(page.getByTestId("shipment-row-shp_purch")).toBeVisible();
+    await page.getByTestId("select-all").click();
+    const [download] = await Promise.all([
+      page.waitForEvent("download"),
+      page.getByTestId("bulk-export").click(),
+    ]);
+    expect(download.suggestedFilename()).toMatch(/shipments-.*\.csv/);
   });
 });

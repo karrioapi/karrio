@@ -27,6 +27,20 @@ import {
 } from "~/lib/karrio/display";
 import type { Shipment } from "~/lib/karrio/types";
 import { ShipmentSheet } from "~/screens/ship/ShipmentSheet";
+import { downloadCsv, toCsv } from "~/lib/csv";
+
+const SHIPMENT_CSV_COLUMNS = [
+  { key: "id", label: "ID" },
+  { key: "tracking_number", label: "Tracking number" },
+  { label: "Carrier", get: (s: Shipment) => shipmentCarrier(s) },
+  { label: "Service", get: (s: Shipment) => shipmentService(s) },
+  { key: "status", label: "Status" },
+  { label: "Recipient", get: (s: Shipment) => recipientName(s.recipient) },
+  { label: "Destination", get: (s: Shipment) => recipientAddr(s.recipient) },
+  { label: "Cost", get: (s: Shipment) => formatRate(s) },
+  { key: "reference", label: "Reference" },
+  { label: "Created", get: (s: Shipment) => formatDate(s.created_at) },
+];
 
 const TAB_MATCH: Record<string, (s: Shipment) => boolean> = {
   purchased: (s) => statusClass(s.status) === "purchased",
@@ -68,6 +82,18 @@ export function ShipmentsScreen() {
   const allSelected = rows.length > 0 && selected.length === rows.length;
   const toggleAll = () => setSelected(allSelected ? [] : rows.map((r) => r.id));
 
+  // Bulk: export the chosen shipments to CSV (selected, or all in the active tab).
+  const exportShipments = (which: Shipment[]) => {
+    if (which.length === 0) return;
+    downloadCsv(`shipments-${new Date().toISOString().slice(0, 10)}.csv`, toCsv(which, SHIPMENT_CSV_COLUMNS));
+  };
+  // Bulk: open the carrier labels of selected shipments that have one.
+  const printLabels = (which: Shipment[]) => {
+    const urls = which.map((s) => (s as { label_url?: string }).label_url).filter(Boolean) as string[];
+    urls.forEach((u) => window.open(u, "_blank", "noopener"));
+  };
+  const selectedRows = useMemo(() => all.filter((s) => selected.includes(s.id)), [all, selected]);
+
   return (
     <div className="page" data-testid="screen-shipments">
       <PageHeader
@@ -78,13 +104,13 @@ export function ShipmentsScreen() {
               <span className="muted" style={{ fontSize: 12 }} data-testid="selection-count">
                 {selected.length} selected
               </span>
-              <button className="btn"><Icon.Print size={14} /> Print labels</button>
-              <button className="btn"><Icon.Download size={14} /> Export</button>
-              <button className="btn">Manifest</button>
+              <button className="btn" onClick={() => printLabels(selectedRows)} data-testid="bulk-print"><Icon.Print size={14} /> Print labels</button>
+              <button className="btn" onClick={() => exportShipments(selectedRows)} data-testid="bulk-export"><Icon.Download size={14} /> Export</button>
+              <button className="btn" onClick={() => setSelected([])} data-testid="bulk-clear">Clear</button>
             </>
           ) : (
             <>
-              <button className="btn"><Icon.Download size={14} /> Export</button>
+              <button className="btn" onClick={() => exportShipments(rows)} data-testid="export-all"><Icon.Download size={14} /> Export</button>
               <button className="btn btn-primary"><Icon.Plus size={14} /> Create label</button>
             </>
           )
