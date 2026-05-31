@@ -71,10 +71,15 @@ const REMOVE_USER = `mutation($input: DeleteUserMutationInput!) {
 export type InviteUserInput = { email: string; full_name?: string; role: Role; redirect_url?: string };
 
 // create_user requires password1/password2; for an invite we generate a random
-// one-time password (the user resets via the email flow / redirect_url).
+// one-time password (the user resets via the email flow / redirect_url). Uses
+// the Web Crypto CSPRNG — never Math.random — since this is a credential.
 function randomPassword(): string {
-  const r = () => Math.random().toString(36).slice(2);
-  return `St${r()}${r()}!`.slice(0, 24);
+  const charset = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
+  const bytes = new Uint8Array(20);
+  crypto.getRandomValues(bytes);
+  const body = Array.from(bytes, (b) => charset[b % charset.length]).join("");
+  // Prefix guarantees the Django validators (length, not-all-numeric, mixed) pass.
+  return `St!${body}`;
 }
 
 export function useInviteUser() {
