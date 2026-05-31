@@ -16,10 +16,14 @@ const SHIPMENTS = {
 
 test.describe("Accessibility & keyboard", () => {
   test.beforeEach(async ({ page }) => {
-    await page.route("**/v1/shipments**", (route) =>
+    await page.route("**/graphql", (route) =>
       route.request().method() === "OPTIONS"
         ? route.fulfill({ status: 204, headers: CORS, body: "" })
-        : route.fulfill({ status: 200, headers: { ...CORS, "content-type": "application/json" }, body: JSON.stringify(SHIPMENTS) }));
+        : route.fulfill({ status: 200, headers: { ...CORS, "content-type": "application/json" }, body: JSON.stringify(
+            (route.request().postData() ?? "").includes("shipments")
+              ? { data: { shipments: { edges: SHIPMENTS.results.map((node) => ({ node })) } } }
+              : { data: {} },
+          ) }));
   });
 
   test("Sheet: focus moves in on open, traps Tab, Escape closes", async ({ page }) => {

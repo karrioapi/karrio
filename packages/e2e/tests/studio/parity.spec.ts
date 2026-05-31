@@ -15,13 +15,14 @@ const paged = (results: unknown[]) => ({ count: results.length, next: null, prev
 const edges = (field: string, nodes: unknown[]) => ({ data: { [field]: { edges: nodes.map((node) => ({ node })) } } });
 
 const REST: Record<string, unknown> = {
-  "/v1/manifests": paged([{ id: "mf_1", carrier_name: "ups", reference: "MAN-1001", shipment_count: 12, created_at: "2026-05-28T10:00:00Z", manifest_url: "http://x/m.pdf" }]),
-  "/v1/batches/operations": paged([{ id: "bat_1", status: "completed", resource_type: "shipments", total: 25, created_at: "2026-05-28T09:00:00Z" }]),
-  "/v1/usage": { plan: "Enterprise", period: "May 2026", metrics: [{ label: "API calls", value: "142.3k", delta: "+18.7%" }, { label: "Shipments", value: "2,143", delta: "+12.4%" }] },
 };
 const GQL: Record<string, unknown> = {
+  manifests: edges("manifests", [{ id: "mf_1", carrier_name: "ups", reference: "MAN-1001", created_at: "2026-05-28T10:00:00Z", manifest_url: "http://x/m.pdf", shipment_identifiers: ["shp_1", "shp_2"] }]),
+  batch_operations: edges("batch_operations", [{ id: "bat_1", status: "completed", resource_type: "shipments", created_at: "2026-05-28T09:00:00Z", resources: [{ id: "r1" }] }]),
   workflows: edges("workflows", [{ id: "wf_1", name: "Auto-fulfill", description: "Fulfill paid orders", is_active: true, trigger: "order.paid", action_count: 3 }]),
   rate_sheets: edges("rate_sheets", [{ id: "rs_1", name: "UPS Negotiated", carrier_name: "ups", services_count: 8, is_system: false }]),
+  // Usage now comes from GraphQL `system_usage` (mapped to plan/metrics by the hook).
+  system_usage: { data: { system_usage: { total_shipments: 2143, total_trackers: 1002, total_requests: 142300, total_shipping_spend: 18402, order_volume: 219 } } },
 };
 
 test.describe("Dashboard parity screens", () => {
@@ -68,7 +69,7 @@ test.describe("Dashboard parity screens", () => {
 
   test("Usage: plan + metrics render", async ({ page }) => {
     await page.goto("/usage");
-    await expect(page.getByTestId("usage-plan")).toContainText("Enterprise");
-    await expect(page.getByTestId("usage-metrics")).toContainText("API calls");
+    await expect(page.getByTestId("usage-plan")).toContainText("Open Source");
+    await expect(page.getByTestId("usage-metrics")).toContainText("Shipments");
   });
 });

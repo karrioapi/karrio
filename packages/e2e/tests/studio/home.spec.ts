@@ -40,12 +40,14 @@ test.describe("Home · landing (C1)", () => {
     await context.addCookies([
       { name: "karrio-studio-session", value: JSON.stringify({ access: "t", refresh: "r", email: "a@b.c" }), url: STUDIO_URL, httpOnly: true, sameSite: "Lax" },
     ]);
-    await page.route("**/v1/shipments**", (route) => (route.request().method() === "OPTIONS" ? route.fulfill({ status: 204, headers: CORS, body: "" }) : json(route, SHIPMENTS)));
-    await page.route("**/v1/trackers**", (route) => (route.request().method() === "OPTIONS" ? route.fulfill({ status: 204, headers: CORS, body: "" }) : json(route, TRACKERS)));
+    // Shipments, trackers and orders all load via GraphQL now.
     await page.route("**/graphql", (route) => {
       if (route.request().method() === "OPTIONS") return route.fulfill({ status: 204, headers: CORS, body: "" });
       const q = route.request().postData() ?? "";
-      return json(route, q.includes("orders") ? ORDERS : { data: {} });
+      if (q.includes("shipments")) return json(route, { data: { shipments: { edges: SHIPMENTS.results.map((node) => ({ node })) } } });
+      if (q.includes("trackers")) return json(route, { data: { trackers: { edges: TRACKERS.results.map((node) => ({ node })) } } });
+      if (q.includes("orders")) return json(route, ORDERS);
+      return json(route, { data: {} });
     });
   });
 
@@ -85,11 +87,14 @@ test.describe("Home · landing (C1)", () => {
   });
 
   test("empty state shows 'all caught up' when nothing is pending", async ({ page }) => {
-    // Override with no in-transit/unfulfilled work.
-    await page.route("**/v1/trackers**", (route) => json(route, paged([{ id: "trk_x", tracking_number: "X", carrier_name: "ups", status: "delivered" }])));
+    // Override with no in-transit/unfulfilled work (all GraphQL now).
     await page.route("**/graphql", (route) => {
+      if (route.request().method() === "OPTIONS") return route.fulfill({ status: 204, headers: CORS, body: "" });
       const q = route.request().postData() ?? "";
-      return json(route, q.includes("orders") ? { data: { orders: { edges: [] } } } : { data: {} });
+      if (q.includes("shipments")) return json(route, { data: { shipments: { edges: SHIPMENTS.results.map((node) => ({ node })) } } });
+      if (q.includes("trackers")) return json(route, { data: { trackers: { edges: [{ node: { id: "trk_x", tracking_number: "X", carrier_name: "ups", status: "delivered" } }] } } });
+      if (q.includes("orders")) return json(route, { data: { orders: { edges: [] } } });
+      return json(route, { data: {} });
     });
     await page.goto("/home");
     await expect(page.getByTestId("home-todo-empty")).toBeVisible();
