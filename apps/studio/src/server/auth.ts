@@ -1,18 +1,31 @@
 // auth.ts — server-side session for Studio. Proxies Karrio's JWT auth and
 // stores tokens in an httpOnly cookie so SSR pages can authenticate the
-// KarrioClient + @karrio/hooks. (Phase B fills in refresh + org switching.)
+// decoupled Karrio client. Access tokens are short-lived; refreshSession()
+// rotates them using the stored refresh token (simplejwt /api/token/refresh).
 import { createServerFn } from "@tanstack/react-start";
 import { getCookie, setCookie, deleteCookie } from "@tanstack/react-start/server";
 import { z } from "zod";
 
 const SESSION_COOKIE = "karrio-studio-session";
 const KARRIO_API = process.env.KARRIO_API || "http://localhost:5002";
+const SESSION_MAX_AGE = 60 * 60 * 24 * 7;
 
 type Session = {
   access: string;
   refresh: string;
   email: string;
 };
+
+// Persist the session in a single httpOnly cookie (shared by login + refresh).
+function persistSession(session: Session) {
+  setCookie(SESSION_COOKIE, JSON.stringify(session), {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: SESSION_MAX_AGE,
+  });
+}
 
 const credentials = z.object({
   email: z.string().email(),
@@ -42,15 +55,45 @@ export const login = createServerFn({ method: "POST" })
       refresh: result.refresh ?? "",
       email: data.email,
     };
-    setCookie(SESSION_COOKIE, JSON.stringify(session), {
-      httpOnly: true,
-      sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
-      path: "/",
-      maxAge: 60 * 60 * 24 * 7,
-    });
+    persistSession(session);
     return { ok: true as const };
   });
+
+// Exchange the stored refresh token for a fresh access token. simplejwt rotates
+// refresh tokens, so we persist whichever refresh token comes back. Returns the
+// updated session, or null (and clears the cookie) when the refresh token is
+// invalid/expired — the client then redirects to login.
+export const refreshSession = createServerFn({ method: "POST" }).handler(async () => {
+  const raw = getCookie(SESSION_COOKIE);
+  if (!raw) return null;
+  let session: Session;
+  try {
+    session = JSON.parse(raw) as Session;
+  } catch {
+    return null;
+  }
+  if (!session.refresh) return null;
+
+  const res = await fetch(`${KARRIO_API}/api/token/refresh`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ refresh: session.refresh }),
+  }).catch(() => null);
+
+  const data =
+    res && res.ok
+      ? ((await res.json().catch(() => null)) as { access?: string; refresh?: string } | null)
+      : null;
+
+  if (!data?.access) {
+    deleteCookie(SESSION_COOKIE);
+    return null;
+  }
+
+  const next: Session = { ...session, access: data.access, refresh: data.refresh ?? session.refresh };
+  persistSession(next);
+  return next;
+});
 
 export const logout = createServerFn({ method: "POST" }).handler(async () => {
   deleteCookie(SESSION_COOKIE);

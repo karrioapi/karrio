@@ -30,6 +30,37 @@ export class KarrioError extends Error {
   }
 }
 
+// The SessionProvider registers a refresh handler (client-side only). On a 401
+// it obtains a fresh access token via the refreshSession server function, so the
+// failed request can be retried once transparently. Stays null on the server and
+// while unauthenticated.
+type RefreshHandler = () => Promise<string | null>;
+let refreshHandler: RefreshHandler | null = null;
+let inFlightRefresh: Promise<string | null> | null = null;
+
+export function setRefreshHandler(handler: RefreshHandler | null): void {
+  refreshHandler = handler;
+}
+
+// Fetch with the ctx's auth headers; on 401, refresh the access token once
+// (de-duping concurrent refreshes) and retry with the new token.
+async function authedFetch(ctx: KarrioCtx, url: string, init: RequestInit = {}): Promise<Response> {
+  const withAuth = (token?: string): RequestInit => ({
+    ...init,
+    headers: { ...authHeaders({ ...ctx, token }), ...(init.headers as Record<string, string> | undefined) },
+  });
+
+  let res = await fetch(url, withAuth(ctx.token));
+  if (res.status === 401 && refreshHandler) {
+    inFlightRefresh ??= refreshHandler().finally(() => {
+      inFlightRefresh = null;
+    });
+    const token = await inFlightRefresh;
+    if (token) res = await fetch(url, withAuth(token));
+  }
+  return res;
+}
+
 export async function restGet<T>(
   ctx: KarrioCtx,
   path: string,
@@ -41,7 +72,7 @@ export async function restGet<T>(
       if (v !== undefined) url.searchParams.set(k, String(v));
     }
   }
-  const res = await fetch(url.toString(), { headers: authHeaders(ctx) });
+  const res = await authedFetch(ctx, url.toString());
   if (!res.ok) {
     throw new KarrioError(`GET ${path} failed (${res.status})`, res.status, await safeJson(res));
   }
@@ -54,9 +85,8 @@ export async function restMutate<T>(
   path: string,
   body?: unknown,
 ): Promise<T> {
-  const res = await fetch(joinUrl(ctx.baseUrl, path), {
+  const res = await authedFetch(ctx, joinUrl(ctx.baseUrl, path), {
     method,
-    headers: authHeaders(ctx),
     body: body === undefined ? undefined : JSON.stringify(body),
   });
   if (!res.ok) {
@@ -70,9 +100,8 @@ export async function graphql<T>(
   query: string,
   variables?: Record<string, unknown>,
 ): Promise<T> {
-  const res = await fetch(joinUrl(ctx.baseUrl, "/graphql"), {
+  const res = await authedFetch(ctx, joinUrl(ctx.baseUrl, "/graphql"), {
     method: "POST",
-    headers: authHeaders(ctx),
     body: JSON.stringify({ query, variables }),
   });
   const json = await res.json();
