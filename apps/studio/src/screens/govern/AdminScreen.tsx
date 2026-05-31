@@ -1,21 +1,34 @@
-// AdminScreen.tsx — Govern › Overview (E1).
+// AdminScreen.tsx — Govern › Overview (E1). Real admin data via /admin/graphql
+// (worker health, users, system connections) + version from references.
 import { useMemo } from "react";
 import { PageHeader } from "~/components/ui/primitives";
 import { useAdminInfo } from "~/lib/karrio/hooks";
+import { useReferences } from "~/lib/karrio/references";
 
 export function AdminScreen() {
   const { data } = useAdminInfo();
+  const { data: refs } = useReferences();
   const info = data ?? {};
   const resources = useMemo(() => info.resources ?? [], [info]);
   const runtimes = useMemo(() => info.runtimes ?? [], [info]);
+  const version = (refs?.VERSION as string) ?? info.version;
 
   return (
     <div className="page" data-testid="screen-admin">
       <PageHeader title="Overview" />
       <div className="stat-grid" data-testid="admin-cards">
-        <div className="stat-card"><div className="kvstat-label">Version</div><div className="kvstat-value mono">{info.version ?? "—"}</div></div>
-        <div className="stat-card"><div className="kvstat-label">Tenants</div><div className="kvstat-value">{info.tenants ?? "—"}</div></div>
+        <div className="stat-card"><div className="kvstat-label">Version</div><div className="kvstat-value mono">{version ?? "—"}</div></div>
         <div className="stat-card"><div className="kvstat-label">License</div><div className="kvstat-value">{info.license ?? "—"}</div></div>
+        <div className="stat-card" data-testid="admin-users"><div className="kvstat-label">Users</div><div className="kvstat-value">{info.users ?? "—"}</div></div>
+        <div className="stat-card" data-testid="admin-system-connections"><div className="kvstat-label">System connections</div><div className="kvstat-value">{info.system_connections ?? "—"}</div></div>
+        <div className="stat-card" data-testid="admin-worker">
+          <div className="kvstat-label">Background worker</div>
+          <div className="kvstat-value">
+            <span className={"pill " + (info.worker_available ? "delivered" : info.worker_available === false ? "cancelled" : "draft")}>
+              {info.worker_available ? "available" : info.worker_available === false ? "down" : "—"}
+            </span>
+          </div>
+        </div>
       </div>
 
       <div className="card" style={{ padding: 16, marginBottom: 16 }}>

@@ -50,23 +50,34 @@ export function useTeam() {
 }
 
 // --- Admin overview (ADMIN GraphQL `worker_health`) -------------------------
-const WORKER_HEALTH_QUERY = `query { worker_health { is_available } }`;
+const ADMIN_OVERVIEW_QUERY = `query {
+  worker_health { is_available }
+  users { edges { node { id } } }
+  system_carrier_connections { edges { node { id active } } }
+}`;
+
+type AdminOverviewRaw = {
+  worker_health?: { is_available?: boolean };
+  users?: { edges: Array<{ node: { id: string } }> };
+  system_carrier_connections?: { edges: Array<{ node: { id: string; active?: boolean } }> };
+};
 
 export function useAdminInfo() {
   const ctx = useKarrioCtx();
   return useQuery({
     queryKey: ["admin-info", keyExtra(ctx)],
     queryFn: async (): Promise<AdminInfo> => {
-      const data = await adminGraphql<{ worker_health?: { is_available?: boolean } }>(
-        ctx,
-        WORKER_HEALTH_QUERY,
-      );
-      const health = data.worker_health;
+      const data = await adminGraphql<AdminOverviewRaw>(ctx, ADMIN_OVERVIEW_QUERY);
+      const available = data.worker_health?.is_available;
+      const conns = data.system_carrier_connections?.edges ?? [];
       return {
         license: "Open Source",
-        runtimes: health
-          ? [{ name: "Background worker", memory: health.is_available ? "available" : "unavailable" }]
-          : [],
+        users: data.users?.edges?.length ?? 0,
+        system_connections: conns.length,
+        worker_available: available,
+        runtimes: [
+          { name: "Background worker", memory: available ? "available" : available === false ? "unavailable" : "—" },
+        ],
         resources: [],
       };
     },

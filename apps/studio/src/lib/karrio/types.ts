@@ -273,6 +273,9 @@ export type AdminInfo = {
   version?: string;
   tenants?: number;
   license?: string;
+  users?: number;
+  system_connections?: number;
+  worker_available?: boolean;
   resources?: { label: string; used: number; total: number }[];
   runtimes?: { name: string; memory?: string; calls?: number; p99?: string }[];
 };
