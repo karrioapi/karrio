@@ -59,6 +59,11 @@ test.describe("Build mode (D)", () => {
           { key: "key_test", label: "Sandbox", test_mode: true, created: "2026-05-02" },
         ] } });
       }
+      if (q.includes("webhooks")) {
+        return json(route, { data: { webhooks: { edges: [
+          { node: { id: "wh_1", url: "https://acme.shop/hooks/karrio", disabled: false, description: "Ops webhook", enabled_events: ["shipment_purchased", "tracker_updated"] } },
+        ] } } });
+      }
       return json(route, { data: {} });
     });
   });

@@ -4,9 +4,9 @@
 // resolve to an empty result and the screens render an honest "not available"
 // state. See STUDIO_GRAPHQL_REBUILD.md.
 import { useQuery } from "@tanstack/react-query";
-import { graphql, restGet } from "~/lib/karrio/client";
+import { graphql } from "~/lib/karrio/client";
 import { useKarrioCtx } from "~/lib/karrio/session";
-import { keyExtra } from "~/lib/karrio/hooks/_shared";
+import { graphqlEdges, keyExtra } from "~/lib/karrio/hooks/_shared";
 import type { ApiKey, App, McpInfo, Paginated, Plugin, Webhook } from "~/lib/karrio/types";
 
 // --- API keys (GraphQL `api_keys`) ------------------------------------------
@@ -27,12 +27,29 @@ export function useApiKeys() {
   });
 }
 
-// --- Webhooks (REST; full CRUD works today) ---------------------------------
+// --- Webhooks (GraphQL `webhooks`; mutations remain on functional REST) ------
+// Wire shape differs from the screens': map disabled->enabled, enabled_events->events.
+const WEBHOOKS_QUERY = `query { webhooks { edges { node {
+  id url disabled description enabled_events
+} } } }`;
+
+type RawWebhook = { id: string; url: string; disabled?: boolean; description?: string; enabled_events?: string[] };
+
 export function useWebhooks() {
   const ctx = useKarrioCtx();
   return useQuery({
     queryKey: ["webhooks", keyExtra(ctx)],
-    queryFn: () => restGet<Paginated<Webhook>>(ctx, "/v1/webhooks"),
+    queryFn: async (): Promise<Paginated<Webhook>> => {
+      const raws = await graphqlEdges<RawWebhook>(ctx, WEBHOOKS_QUERY, "webhooks");
+      const results: Webhook[] = raws.map((w) => ({
+        id: w.id,
+        url: w.url,
+        description: w.description,
+        enabled: !w.disabled,
+        events: w.enabled_events ?? [],
+      }));
+      return { count: results.length, next: null, previous: null, results };
+    },
     enabled: Boolean(ctx.token),
   });
 }
