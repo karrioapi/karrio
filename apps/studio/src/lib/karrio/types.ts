@@ -307,11 +307,23 @@ export type Workflow = {
 // RateSheet: live OSS schema fields are id, name, slug, carrier_name.
 // `services_count` and `is_system` do not exist on the OSS RateSheetType and
 // will always be undefined when fetched from OSS; screens degrade gracefully.
+export type RateSheetService = {
+  id?: string;
+  service_code: string;
+  service_name: string;
+  currency?: string;
+  cost?: number;
+  min_weight?: number;
+  max_weight?: number;
+  weight_unit?: string;
+  transit_days?: number;
+};
 export type RateSheet = {
   id: string;
   name: string;
   slug?: string;
   carrier_name?: string;
+  services?: RateSheetService[];
   /** OSS: always undefined — not exposed by the OSS GraphQL schema */
   services_count?: number;
   /** OSS: always undefined — not exposed by the OSS GraphQL schema */

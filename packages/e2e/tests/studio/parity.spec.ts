@@ -65,11 +65,30 @@ test.describe("Dashboard parity screens", () => {
     await expect(page.getByTestId("workflow-sheet-body")).toBeVisible();
   });
 
-  test("Rate sheets: list + row → sheet", async ({ page }) => {
+  test("Rate sheets: list + row → editor", async ({ page }) => {
     await page.goto("/ratesheets");
     await expect(page.getByTestId("ratesheet-row-rs_1")).toContainText("UPS Negotiated");
     await page.getByTestId("ratesheet-row-rs_1").click();
     await expect(page.getByTestId("ratesheet-sheet-body")).toBeVisible();
+    await expect(page.getByTestId("rs-services")).toBeVisible();
+  });
+
+  test("Rate sheets: create with CSV import of services", async ({ page }) => {
+    await page.route("**/v1/references**", (route) =>
+      route.fulfill({ status: 200, headers: { "content-type": "application/json", "access-control-allow-origin": "*" }, body: JSON.stringify({ carriers: { ups: "UPS", fedex: "FedEx" }, connection_fields: {} }) }));
+    await page.goto("/ratesheets");
+    await expect(page.getByTestId("ratesheet-row-rs_1")).toBeVisible();
+    await page.getByTestId("ratesheet-create").click();
+    await expect(page.getByTestId("ratesheet-sheet-body")).toBeVisible();
+    await page.getByTestId("rs-name").fill("My negotiated rates");
+    await page.getByTestId("rs-carrier").selectOption("fedex");
+    // Import services from CSV.
+    await page.getByTestId("rs-csv").fill("service_code,service_name,currency,cost,transit_days\nfedex_ground,Ground,USD,9.99,3\nfedex_2day,2 Day,USD,18.5,2");
+    await page.getByTestId("rs-csv-import").click();
+    await expect(page.getByTestId("rs-service-code-0")).toHaveValue("fedex_ground");
+    await expect(page.getByTestId("rs-service-code-1")).toHaveValue("fedex_2day");
+    await page.getByTestId("ratesheet-save").click();
+    await expect(page.getByTestId("ratesheet-sheet-body")).toHaveCount(0);
   });
 
   test("Usage: plan + metrics + trend charts render", async ({ page }) => {

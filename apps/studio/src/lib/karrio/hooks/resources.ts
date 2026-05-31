@@ -180,6 +180,7 @@ export function useWorkflows() {
 // === Rate sheets (GraphQL) ==================================================
 const RATE_SHEETS_QUERY = `query { rate_sheets { edges { node {
   id name slug carrier_name
+  services { id service_code service_name currency cost min_weight max_weight weight_unit transit_days }
 } } } }`;
 
 export function useRateSheets() {
@@ -188,6 +189,36 @@ export function useRateSheets() {
     queryKey: ["rate-sheets", keyExtra(ctx)],
     queryFn: () => graphqlEdges<RateSheet>(ctx, RATE_SHEETS_QUERY, "rate_sheets"),
     enabled: Boolean(ctx.token),
+  });
+}
+
+// Rate sheet create/update/delete (GraphQL). services is a list of service levels.
+const CREATE_RATE_SHEET = `mutation($input: CreateRateSheetMutationInput!) {
+  create_rate_sheet(input: $input) { rate_sheet { id slug } errors { field messages } }
+}`;
+const UPDATE_RATE_SHEET = `mutation($input: UpdateRateSheetMutationInput!) {
+  update_rate_sheet(input: $input) { rate_sheet { id slug } errors { field messages } }
+}`;
+const DELETE_RATE_SHEET = `mutation($input: DeleteMutationInput!) { delete_rate_sheet(input: $input) { id } }`;
+
+export function useSaveRateSheet() {
+  const ctx = useKarrioCtx();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (vars: { id?: string; data: Record<string, unknown> }) =>
+      graphql(ctx, vars.id ? UPDATE_RATE_SHEET : CREATE_RATE_SHEET, {
+        input: vars.id ? { id: vars.id, ...vars.data } : vars.data,
+      }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["rate-sheets"] }),
+  });
+}
+
+export function useDeleteRateSheet() {
+  const ctx = useKarrioCtx();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => graphql(ctx, DELETE_RATE_SHEET, { input: { id } }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["rate-sheets"] }),
   });
 }
 
