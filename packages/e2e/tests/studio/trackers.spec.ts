@@ -32,9 +32,14 @@ const TRACKERS = {
   ],
 };
 
+// Trackers now load via GraphQL `trackers { edges { node } }`.
 async function fulfill(route: Route) {
   if (route.request().method() === "OPTIONS") return route.fulfill({ status: 204, headers: CORS, body: "" });
-  return route.fulfill({ status: 200, headers: { ...CORS, "content-type": "application/json" }, body: JSON.stringify(TRACKERS) });
+  const q = route.request().postData() ?? "";
+  const body = q.includes("trackers")
+    ? { data: { trackers: { edges: TRACKERS.results.map((node) => ({ node })) } } }
+    : { data: {} };
+  return route.fulfill({ status: 200, headers: { ...CORS, "content-type": "application/json" }, body: JSON.stringify(body) });
 }
 
 test.describe("Ship · Trackers (C3)", () => {
@@ -42,7 +47,7 @@ test.describe("Ship · Trackers (C3)", () => {
     await context.addCookies([
       { name: "karrio-studio-session", value: JSON.stringify({ access: "t", refresh: "r", email: "a@b.c" }), url: STUDIO_URL, httpOnly: true, sameSite: "Lax" },
     ]);
-    await page.route("**/v1/trackers**", fulfill);
+    await page.route("**/graphql", fulfill);
   });
 
   test("lists trackers with tab counts", async ({ page }) => {

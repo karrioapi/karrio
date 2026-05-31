@@ -13,17 +13,18 @@ const json = (route: Route, body: unknown) =>
 const paged = (results: unknown[]) => ({ count: results.length, next: null, previous: null, results });
 const edges = (field: string, nodes: unknown[]) => ({ data: { [field]: { edges: nodes.map((node) => ({ node })) } } });
 
-const REST: Record<string, unknown> = {
-  "/v1/connections": paged([{ id: "conn_1", carrier_name: "ups", carrier_id: "ups_acct", test_mode: false, active: true, capabilities: ["rating", "shipping", "tracking"] }]),
-  "/v1/pickups": paged([{ id: "pck_1", carrier_name: "fedex", confirmation_number: "CONF123", pickup_date: "2026-06-01", ready_time: "09:00", closing_time: "17:00", status: "scheduled", address: { person_name: "Acme", city: "Brooklyn", country_code: "US" } }]),
-  "/v1/documents/templates": paged([{ id: "doc_1", name: "Packing Slip", slug: "packing_slip", related_object: "shipment", active: true }]),
-};
+// Connections, pickups and document templates are GraphQL now (user_connections /
+// pickups / document_templates) alongside addresses/parcels/products.
+const REST: Record<string, unknown> = {};
 
 const GQL: Record<string, unknown> = {
   addresses: edges("addresses", [{ id: "adr_1", meta: { label: "HQ", is_default: true }, person_name: "Daniel K", company_name: "Acme", address_line1: "432 Park Ave", city: "Brooklyn", state_code: "NY", country_code: "US", postal_code: "11201", email: "ops@acme.io", phone_number: "+1 555" }]),
   parcels: edges("parcels", [{ id: "pcl_1", meta: { label: "Small Box", is_default: true }, packaging_type: "BOX", width: 15, height: 10, length: 20, dimension_unit: "CM", weight: 0.5, weight_unit: "KG" }]),
   products: edges("products", [{ id: "prd_1", title: "Headphones", label: "Headphones", sku: "ACM-1", hs_code: "8518.30", weight: 0.4, weight_unit: "KG", value_amount: 84, value_currency: "USD", origin_country: "US" }]),
   shipping_rules: edges("shipping_rules", [{ id: "rule_1", name: "Cheapest", priority: 100, is_active: true, description: "Pick cheapest", action_type: "service_selection" }]),
+  user_connections: edges("user_connections", [{ id: "conn_1", carrier_name: "ups", carrier_id: "ups_acct", display_name: "UPS", test_mode: false, active: true, capabilities: ["rating", "shipping", "tracking"] }]),
+  pickups: edges("pickups", [{ id: "pck_1", carrier_name: "fedex", confirmation_number: "CONF123", pickup_date: "2026-06-01", ready_time: "09:00", closing_time: "17:00", status: "scheduled", address: { person_name: "Acme", city: "Brooklyn", country_code: "US" } }]),
+  document_templates: edges("document_templates", [{ id: "doc_1", name: "Packing Slip", slug: "packing_slip", related_object: "shipment", active: true }]),
 };
 
 test.describe("Ship · resource screens (C5–C11)", () => {

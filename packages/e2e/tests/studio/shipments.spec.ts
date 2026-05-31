@@ -55,15 +55,20 @@ const CORS = {
   "access-control-allow-headers": "authorization,x-org-id,x-test-mode,content-type",
 };
 
+// Shipments now load via GraphQL `shipments { edges { node } }`.
 async function fulfillShipments(route: Route) {
   if (route.request().method() === "OPTIONS") {
     return route.fulfill({ status: 204, headers: CORS, body: "" });
   }
+  const q = route.request().postData() ?? "";
+  const body = q.includes("shipments")
+    ? { data: { shipments: { edges: SHIPMENTS.results.map((node) => ({ node })) } } }
+    : { data: {} };
   return route.fulfill({
     status: 200,
     headers: { ...CORS, "content-type": "application/json" },
     contentType: "application/json",
-    body: JSON.stringify(SHIPMENTS),
+    body: JSON.stringify(body),
   });
 }
 
@@ -79,7 +84,7 @@ test.describe("Ship · Shipments (C2)", () => {
         sameSite: "Lax",
       },
     ]);
-    await page.route("**/v1/shipments**", fulfillShipments);
+    await page.route("**/graphql", fulfillShipments);
   });
 
   test("renders header, tabs and filter toolbar", async ({ page }) => {

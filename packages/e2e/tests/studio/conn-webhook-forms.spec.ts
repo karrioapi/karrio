@@ -14,10 +14,12 @@ const paged = (results: unknown[]) => ({ count: results.length, next: null, prev
 
 test.describe("Connections & Webhooks forms (C6/D6)", () => {
   test.beforeEach(async ({ page }) => {
-    await page.route("**/v1/connections**", (route) =>
-      ok(route, route.request().method() === "GET"
-        ? paged([{ id: "conn_1", carrier_name: "ups", carrier_id: "ups_acct", test_mode: false, active: true, capabilities: ["rating"] }])
-        : { id: "conn_1" }));
+    // Connection LIST is GraphQL (user_connections); create/update/delete stay REST.
+    await page.route("**/graphql", (route) =>
+      ok(route, (route.request().postData() ?? "").includes("user_connections")
+        ? { data: { user_connections: { edges: [{ node: { id: "conn_1", carrier_name: "ups", carrier_id: "ups_acct", display_name: "UPS", test_mode: false, active: true, capabilities: ["rating"] } }] } } }
+        : { data: {} }));
+    await page.route("**/v1/connections**", (route) => ok(route, { id: "conn_1" }));
     await page.route("**/v1/webhooks**", (route) =>
       ok(route, route.request().method() === "GET"
         ? paged([{ id: "wh_1", url: "https://acme.shop/hooks", enabled: true, events: ["shipment_purchased"], description: "ops" }])
