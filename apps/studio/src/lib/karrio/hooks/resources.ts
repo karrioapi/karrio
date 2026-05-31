@@ -319,14 +319,30 @@ export function useDeleteWebhook() {
   });
 }
 
+// Carrier connection create/update/delete via GraphQL. `credentials` is a JSON
+// map of the carrier's dynamic connection fields (see references.ts + ConnectionForm).
+const CREATE_CONNECTION = `mutation($input: CreateCarrierConnectionMutationInput!) {
+  create_carrier_connection(input: $input) {
+    connection { id carrier_name carrier_id }
+    errors { field messages }
+  }
+}`;
+const UPDATE_CONNECTION = `mutation($input: UpdateCarrierConnectionMutationInput!) {
+  update_carrier_connection(input: $input) {
+    connection { id carrier_name carrier_id }
+    errors { field messages }
+  }
+}`;
+const DELETE_CONNECTION = `mutation($input: DeleteMutationInput!) { delete_carrier_connection(input: $input) { id } }`;
+
 export function useSaveConnection() {
   const ctx = useKarrioCtx();
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (vars: { id?: string; data: Record<string, unknown> }) =>
-      vars.id
-        ? restMutate(ctx, "PATCH", `/v1/connections/${vars.id}`, vars.data)
-        : restMutate(ctx, "POST", "/v1/connections", vars.data),
+      graphql(ctx, vars.id ? UPDATE_CONNECTION : CREATE_CONNECTION, {
+        input: vars.id ? { id: vars.id, ...vars.data } : vars.data,
+      }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["carrier-connections"] }),
   });
 }
@@ -335,7 +351,7 @@ export function useDeleteConnection() {
   const ctx = useKarrioCtx();
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => restMutate(ctx, "DELETE", `/v1/connections/${id}`),
+    mutationFn: (id: string) => graphql(ctx, DELETE_CONNECTION, { input: { id } }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["carrier-connections"] }),
   });
 }
