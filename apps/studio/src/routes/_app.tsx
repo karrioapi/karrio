@@ -7,6 +7,7 @@ import { CommandPalette } from "~/components/overlays/CommandPalette";
 import { Workbench } from "~/components/overlays/Workbench";
 import { TweaksPanel } from "~/components/overlays/TweaksPanel";
 import { MODE_DEFAULTS, routeMode, type Mode } from "~/lib/modes";
+import { useSession } from "~/lib/karrio/session";
 import {
   applyStoredTweaks,
   getSidebarCollapsed,
@@ -32,9 +33,11 @@ function AppLayout() {
   const route = params.screen ?? "home";
   const mode = routeMode(route);
 
+  // Test mode is owned by SessionProvider (it drives ctx.testMode → x-test-mode
+  // and the React Query keys), so the toggle actually affects data across the app.
+  const { testMode, setTestMode } = useSession();
   const [theme, setTheme] = useState<Theme>("dark");
   const [collapsed, setCollapsed] = useState(false);
-  const [testMode, setTestMode] = useState(false);
   const [navOpen, setNavOpen] = useState(false); // mobile off-canvas drawer
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [workbenchOpen, setWorkbenchOpen] = useState(false);
@@ -136,8 +139,13 @@ function AppLayout() {
       {navOpen && (
         <div className="nav-backdrop" onClick={() => setNavOpen(false)} data-testid="nav-backdrop" aria-hidden="true" />
       )}
-      <Sidebar route={route} mode={mode} collapsed={collapsed} onGo={go} onMode={onMode} />
+      <Sidebar route={route} mode={mode} collapsed={collapsed} onGo={go} onMode={onMode} onTweaks={() => setTweaksOpen(true)} />
       <div className="main">
+        {testMode && (
+          <div className="test-mode-banner" data-testid="test-mode-banner" role="status">
+            <span className="test-mode-dot" /> Test mode — showing sandbox data. Actions won’t affect live shipments.
+          </div>
+        )}
         <Topbar
           mode={mode}
           route={route}

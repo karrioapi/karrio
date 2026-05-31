@@ -61,4 +61,31 @@ test.describe("Studio shell", () => {
     await expect(menu.getByText("New shipment")).toBeVisible();
     await expect(menu.getByText("Generate API key")).toBeVisible();
   });
+
+  test("user menu opens and signs out to /login", async ({ page }) => {
+    await gotoStudio(page, "home");
+    await page.getByTestId("user-menu-trigger").click();
+    await expect(page.getByTestId("user-menu")).toBeVisible();
+    await expect(page.getByTestId("user-menu-settings")).toBeVisible();
+    await page.getByTestId("user-menu-logout").click();
+    await expect(page).toHaveURL(/\/login$/);
+  });
+
+  test("workspace menu opens with settings + honest org state", async ({ page }) => {
+    await gotoStudio(page, "home");
+    await page.getByTestId("workspace-switcher").click();
+    const menu = page.getByTestId("workspace-menu");
+    await expect(menu).toBeVisible();
+    await expect(page.getByTestId("workspace-menu-settings")).toBeVisible();
+    await expect(page.getByTestId("workspace-menu-orgs")).toContainText(/Enterprise/i);
+  });
+
+  test("test mode toggles a banner and persists across reload", async ({ page }) => {
+    await gotoStudio(page, "home");
+    await expect(page.getByTestId("test-mode-banner")).toHaveCount(0);
+    await page.getByTestId("test-mode").click();
+    await expect(page.getByTestId("test-mode-banner")).toBeVisible();
+    await page.reload();
+    await expect(page.getByTestId("test-mode-banner")).toBeVisible(); // persisted
+  });
 });

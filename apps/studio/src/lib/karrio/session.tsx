@@ -29,11 +29,46 @@ type SessionContextValue = {
 
 const SessionContext = createContext<SessionContextValue | null>(null);
 
+const TEST_MODE_KEY = "karrio-studio:test-mode";
+const ORG_KEY = "karrio-studio:org-id";
+const lsGet = (k: string): string | null => {
+  try {
+    return typeof localStorage !== "undefined" ? localStorage.getItem(k) : null;
+  } catch {
+    return null;
+  }
+};
+const lsSet = (k: string, v: string | null): void => {
+  try {
+    if (typeof localStorage === "undefined") return;
+    if (v === null) localStorage.removeItem(k);
+    else localStorage.setItem(k, v);
+  } catch {
+    /* storage may be unavailable */
+  }
+};
+
 export function SessionProvider({ children }: { children: ReactNode }) {
   const baseUrl = karrioBaseUrl();
   const queryClient = useQueryClient();
-  const [testMode, setTestMode] = useState(false);
-  const [orgId, setOrgId] = useState<string | undefined>(undefined);
+  const [testMode, setTestModeState] = useState(false);
+  const [orgId, setOrgIdState] = useState<string | undefined>(undefined);
+
+  // Hydrate test-mode + org from localStorage on the client (avoids SSR mismatch),
+  // so the selected mode persists across reloads and navigation.
+  useEffect(() => {
+    setTestModeState(lsGet(TEST_MODE_KEY) === "1");
+    setOrgIdState(lsGet(ORG_KEY) ?? undefined);
+  }, []);
+
+  const setTestMode = (on: boolean) => {
+    lsSet(TEST_MODE_KEY, on ? "1" : "0");
+    setTestModeState(on);
+  };
+  const setOrgId = (id?: string) => {
+    lsSet(ORG_KEY, id ?? null);
+    setOrgIdState(id);
+  };
 
   const sessionQuery = useQuery({
     queryKey: ["studio-session"],

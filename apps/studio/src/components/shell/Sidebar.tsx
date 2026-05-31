@@ -1,5 +1,7 @@
 // Sidebar.tsx — mode-driven navigation (Ship / Build / Govern).
 import { Icon, MODE_LABELS, NAV, type Mode } from "~/lib/modes";
+import { UserMenu } from "~/components/shell/UserMenu";
+import { WorkspaceMenu } from "~/components/shell/WorkspaceMenu";
 
 const MODES: Mode[] = ["ship", "build", "govern"];
 
@@ -9,23 +11,18 @@ export function Sidebar({
   collapsed,
   onGo,
   onMode,
+  onTweaks,
 }: {
   route: string;
   mode: Mode;
   collapsed: boolean;
   onGo: (route: string) => void;
   onMode: (mode: Mode) => void;
+  onTweaks: () => void;
 }) {
   return (
     <aside className={"sidebar" + (collapsed ? " collapsed" : "")} data-testid="sidebar">
-      <div className="workspace" data-testid="workspace-switcher">
-        <div className="workspace-logo">K</div>
-        <div className="workspace-body" style={{ minWidth: 0, flex: 1 }}>
-          <div className="workspace-name">Karrio Studio</div>
-          <div className="workspace-mode">acme-shipping</div>
-        </div>
-        <Icon.ChevronD size={12} className="workspace-chev" style={{ color: "var(--fg-subtle)" }} />
-      </div>
+      <WorkspaceMenu onGo={onGo} />
 
       <div className="modes" role="tablist" aria-label="Mode" data-testid="mode-switch">
         {MODES.map((m) => {
@@ -82,16 +79,7 @@ export function Sidebar({
         ))}
       </nav>
 
-      <div className="sidebar-foot">
-        <div className="avatar">DK</div>
-        <div className="grow user-meta" style={{ minWidth: 0 }}>
-          <div className="user-name">Daniel K.</div>
-          <div className="user-role">Owner</div>
-        </div>
-        <span className="icon-action user-chev">
-          <Icon.ChevronD size={12} />
-        </span>
-      </div>
+      <UserMenu onGo={onGo} onTweaks={onTweaks} />
     </aside>
   );
 }
