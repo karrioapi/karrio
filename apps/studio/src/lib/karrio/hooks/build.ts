@@ -37,17 +37,20 @@ export function useWebhooks() {
   });
 }
 
-// --- Apps / Plugins / MCP -----------------------------------------------------
-// FOLLOW-UP (Unit B, EBE-97): the OSS Karrio schema has no source for these
-// (no oauth_apps/app_installations, plugin registry, or mcp endpoint). They
-// still call the provisional REST paths and need an honest "not available"
-// state — tracked separately so it ships with the screen UX change.
+// --- Apps / Plugins / MCP: no OSS source → honest empty ---------------------
+// The OSS Karrio GraphQL/REST API exposes no app marketplace (oauth_apps/
+// app_installations are EE), plugin registry, or MCP server proxy. Resolve to
+// empty (no fetch) so the screens render a "not available" notice instead of a
+// failed request. Never fabricate rows or a "connected" status.
+const empty = <T>(): Paginated<T> => ({ count: 0, next: null, previous: null, results: [] });
+
 export function useApps() {
   const ctx = useKarrioCtx();
   return useQuery({
     queryKey: ["apps", keyExtra(ctx)],
-    queryFn: () => restGet<Paginated<App>>(ctx, "/v1/apps"),
+    queryFn: async (): Promise<Paginated<App>> => empty<App>(),
     enabled: Boolean(ctx.token),
+    staleTime: Infinity,
   });
 }
 
@@ -55,8 +58,9 @@ export function usePlugins() {
   const ctx = useKarrioCtx();
   return useQuery({
     queryKey: ["plugins", keyExtra(ctx)],
-    queryFn: () => restGet<Paginated<Plugin>>(ctx, "/v1/plugins"),
+    queryFn: async (): Promise<Paginated<Plugin>> => empty<Plugin>(),
     enabled: Boolean(ctx.token),
+    staleTime: Infinity,
   });
 }
 
@@ -64,7 +68,8 @@ export function useMcp() {
   const ctx = useKarrioCtx();
   return useQuery({
     queryKey: ["mcp", keyExtra(ctx)],
-    queryFn: () => restGet<McpInfo>(ctx, "/v1/mcp"),
+    queryFn: async (): Promise<McpInfo> => ({ status: "not_available", tools: [], clients: [], invocations: [] }),
     enabled: Boolean(ctx.token),
+    staleTime: Infinity,
   });
 }

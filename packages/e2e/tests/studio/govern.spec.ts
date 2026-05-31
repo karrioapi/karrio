@@ -53,9 +53,10 @@ test.describe("Govern mode (E)", () => {
     await expect(page.getByTestId("admin-runtimes")).toContainText("Background worker");
   });
 
-  test("Tenants table", async ({ page }) => {
+  test("Tenants: honest not-available state (Enterprise-only)", async ({ page }) => {
     await page.goto("/tenants");
-    await expect(page.getByTestId("tenant-row-tn_1")).toContainText("Acme");
+    await expect(page.getByTestId("screen-tenants")).toBeVisible();
+    await expect(page.getByTestId("not-available")).toBeVisible();
   });
 
   test("Team table", async ({ page }) => {

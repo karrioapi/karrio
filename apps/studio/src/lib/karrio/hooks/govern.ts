@@ -3,7 +3,7 @@
 // (/admin/graphql), usage + audit from the tenant schema. `tenants` has no OSS
 // source (no `accounts`) → empty/EE state. See STUDIO_GRAPHQL_REBUILD.md.
 import { useQuery } from "@tanstack/react-query";
-import { adminGraphql, graphql, restGet } from "~/lib/karrio/client";
+import { adminGraphql, graphql } from "~/lib/karrio/client";
 import { useKarrioCtx } from "~/lib/karrio/session";
 import { graphqlEdges, keyExtra } from "~/lib/karrio/hooks/_shared";
 import type {
@@ -74,16 +74,14 @@ export function useAdminInfo() {
   });
 }
 
-// --- Tenants ------------------------------------------------------------------
-// FOLLOW-UP (Unit C, EBE-98): no OSS source (no `accounts` in /admin/graphql —
-// it's EE-only). Still calls the provisional REST path; needs an honest EE
-// empty state, tracked separately with the screen UX change.
+// --- Tenants: no OSS source (no `accounts`) → honest empty/EE state ----------
 export function useTenants() {
   const ctx = useKarrioCtx();
   return useQuery({
     queryKey: ["tenants", keyExtra(ctx)],
-    queryFn: () => restGet<Paginated<Tenant>>(ctx, "/v1/admin/tenants"),
+    queryFn: async (): Promise<Paginated<Tenant>> => ({ count: 0, next: null, previous: null, results: [] }),
     enabled: Boolean(ctx.token),
+    staleTime: Infinity,
   });
 }
 

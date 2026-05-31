@@ -63,35 +63,30 @@ test.describe("Build mode (D)", () => {
     });
   });
 
-  test("Apps: tabs + tile opens config sheet", async ({ page }) => {
+  // Apps/Plugins/MCP have no source in the OSS Karrio API → honest "not available".
+  test("Apps: shows an honest not-available state (no OSS marketplace)", async ({ page }) => {
     await page.goto("/apps");
-    await expect(page.getByTestId("app-tile-shopify")).toBeVisible();
-    await expect(page.getByTestId("tab-installed")).toContainText("1");
-    await page.getByTestId("tab-available").click();
-    await expect(page.getByTestId("app-tile-zapier")).toBeVisible();
-    await expect(page.getByTestId("app-tile-shopify")).toHaveCount(0);
-    await page.getByTestId("app-tile-zapier").click();
-    await expect(page.getByTestId("app-sheet-body")).toBeVisible();
+    await expect(page.getByTestId("screen-apps")).toBeVisible();
+    await expect(page.getByTestId("not-available")).toContainText(/marketplace/i);
   });
 
-  test("Plugins: category tabs + tile opens sheet", async ({ page }) => {
+  test("Plugins: shows an honest not-available state (no OSS registry)", async ({ page }) => {
     await page.goto("/plugins");
-    await expect(page.getByTestId("plugin-tile-ups")).toBeVisible();
-    await page.getByTestId("tab-address").click();
-    await expect(page.getByTestId("plugin-tile-smarty")).toBeVisible();
-    await page.getByTestId("plugin-tile-smarty").click();
-    await expect(page.getByTestId("plugin-sheet-body")).toBeVisible();
+    await expect(page.getByTestId("screen-plugins")).toBeVisible();
+    await expect(page.getByTestId("not-available")).toBeVisible();
   });
 
-  test("MCP: server card, tools, start/stop toggle, copy snippet", async ({ page }) => {
+  test("MCP: not-available notice + real user-server management", async ({ page }) => {
     await page.goto("/mcp");
-    await expect(page.getByTestId("mcp-server-card")).toBeVisible();
-    await expect(page.getByTestId("mcp-tool-list_shipments")).toBeVisible();
-    await expect(page.getByTestId("mcp-status")).toHaveText("running");
-    await page.getByTestId("mcp-toggle").click();
-    await expect(page.getByTestId("mcp-status")).toHaveText("stopped");
-    await expect(page.getByTestId("mcp-snippet")).toContainText("@karrio/mcp");
-    await page.getByTestId("mcp-copy").click(); // should not throw
+    await page.waitForLoadState("networkidle");
+    await expect(page.getByTestId("screen-mcp")).toBeVisible();
+    await expect(page.getByTestId("not-available")).toBeVisible();
+    // The user-managed MCP servers section is real (persisted locally).
+    await expect(page.getByTestId("mcp-user-servers")).toBeVisible();
+    await expect(page.getByTestId("mcp-add-server")).toBeVisible();
+    // Opening the add form shows the honest "config only" notice (no fake connection).
+    await page.getByTestId("mcp-add-server").click();
+    await expect(page.getByTestId("mcp-form-notice")).toBeVisible();
   });
 
   test("Webhooks: row opens edit form prefilled with events", async ({ page }) => {
