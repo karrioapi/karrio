@@ -12,6 +12,7 @@
 // a backend proxy that does not exist in OSS Karrio. The `McpServerConfig`
 // records stored here are *configuration only*. The `connectionStatus` field
 // is set to "config-only" to make this explicit.
+import { getStudioCtx, readMeta, writeMeta } from "~/lib/karrio/metastore";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -174,10 +175,80 @@ const localStorageAdapter: BackendAdapter = {
 };
 
 // ---------------------------------------------------------------------------
-// Active adapter (swap this to a REST adapter when the backend ships)
+// Backend (metafield) adapter — real per-user persistence with localStorage cache
+// ---------------------------------------------------------------------------
+// Agent + MCP configs persist as per-user JSON metafields under the `studio.*`
+// namespace (see metastore.ts), with localStorage as an immediate write-through
+// cache and offline fallback. The ctx comes from SessionProvider via setStudioCtx.
+
+const META_AGENTS_KEY = "studio.agents";
+const META_MCP_KEY = "studio.mcp-servers";
+
+async function loadList<T>(metaKey: string, lsKey: string): Promise<T[]> {
+  const ctx = getStudioCtx();
+  if (ctx?.token) {
+    try {
+      const remote = await readMeta<T[]>(ctx, metaKey);
+      if (remote) {
+        writeJson(lsKey, remote); // refresh the local cache
+        return remote;
+      }
+    } catch {
+      /* network/permission error — fall back to cache */
+    }
+  }
+  return readJson<T[]>(lsKey, []);
+}
+
+async function persistList<T>(metaKey: string, lsKey: string, next: T[]): Promise<void> {
+  writeJson(lsKey, next); // immediate cache
+  const ctx = getStudioCtx();
+  if (ctx?.token) {
+    try {
+      await writeMeta(ctx, metaKey, next);
+    } catch {
+      /* sync failure is non-fatal; cache holds and re-syncs on next write */
+    }
+  }
+}
+
+const backendAdapter: BackendAdapter = {
+  listAgents: () => loadList<AgentDef>(META_AGENTS_KEY, LS_AGENTS_KEY),
+
+  saveAgent: async (agent) => {
+    const existing = await loadList<AgentDef>(META_AGENTS_KEY, LS_AGENTS_KEY);
+    const idx = existing.findIndex((a) => a.id === agent.id);
+    const next = idx >= 0 ? existing.map((a) => (a.id === agent.id ? agent : a)) : [...existing, agent];
+    await persistList(META_AGENTS_KEY, LS_AGENTS_KEY, next);
+    return agent;
+  },
+
+  deleteAgent: async (id) => {
+    const next = (await loadList<AgentDef>(META_AGENTS_KEY, LS_AGENTS_KEY)).filter((a) => a.id !== id);
+    await persistList(META_AGENTS_KEY, LS_AGENTS_KEY, next);
+  },
+
+  listMcpServers: () => loadList<McpServerConfig>(META_MCP_KEY, LS_MCP_KEY),
+
+  saveMcpServer: async (server) => {
+    const existing = await loadList<McpServerConfig>(META_MCP_KEY, LS_MCP_KEY);
+    const idx = existing.findIndex((s) => s.id === server.id);
+    const next = idx >= 0 ? existing.map((s) => (s.id === server.id ? server : s)) : [...existing, server];
+    await persistList(META_MCP_KEY, LS_MCP_KEY, next);
+    return server;
+  },
+
+  deleteMcpServer: async (id) => {
+    const next = (await loadList<McpServerConfig>(META_MCP_KEY, LS_MCP_KEY)).filter((s) => s.id !== id);
+    await persistList(META_MCP_KEY, LS_MCP_KEY, next);
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Active adapter — metafield-backed with localStorage cache/fallback.
 // ---------------------------------------------------------------------------
 
-const defaultAdapter: BackendAdapter = localStorageAdapter;
+const defaultAdapter: BackendAdapter = backendAdapter;
 
 // ---------------------------------------------------------------------------
 // Helpers

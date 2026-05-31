@@ -21,7 +21,8 @@
 //   savePrefs({ accent: "#10B981" });    // synchronous + kicks off async sync
 //   await syncToBackend(ctx, prefs);     // explicit flush (e.g. on unload)
 
-import { graphql, type KarrioCtx } from "~/lib/karrio/client";
+import type { KarrioCtx } from "~/lib/karrio/client";
+import { readMeta, writeMeta } from "~/lib/karrio/metastore";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -154,78 +155,47 @@ export function applyFont(font: FontStack): void {
 }
 
 // ---------------------------------------------------------------------------
-// Backend adapter — async sync layer (Karrio User.metadata)
+// Backend adapter — async sync layer (Karrio metafields, key-namespaced)
 // ---------------------------------------------------------------------------
-
-// GraphQL mutation — writes the full preferences blob into User.metadata under
-// the BACKEND_META_KEY namespace. Karrio's process_dictionaries_mutations helper
-// merges dict keys, so other metadata keys are preserved.
-const UPDATE_USER_PREFS_MUTATION = `
-  mutation UpdateUserPreferences($data: UpdateUserInput!) {
-    update_user(input: $data) {
-      user {
-        email
-      }
-      errors {
-        field
-        messages
-      }
-    }
-  }
-`;
-
-type UpdateUserResponse = {
-  update_user: {
-    user: { email: string } | null;
-    errors: Array<{ field: string; messages: string[] }> | null;
-  };
-};
+// Studio prefs persist as a per-user JSON metafield under BACKEND_META_KEY
+// ("studio.customization"). Unlike User.metadata (write-only on the OSS
+// GraphQL), metafields round-trip cleanly — so loadFromBackend() actually
+// hydrates. See metastore.ts.
 
 /**
- * Flush the given preferences to the Karrio backend (User.metadata).
- *
- * Writes to `User.metadata["studio.customization"]`. Fails silently if the
- * user is not authenticated (ctx.token absent) — localStorage remains the
- * source of truth in that case.
+ * Flush the given preferences to the Karrio backend (metafield
+ * `studio.customization`). No-op + silent when unauthenticated or on error —
+ * localStorage remains the applied source of truth in that case.
  */
 export async function syncToBackend(
   ctx: KarrioCtx,
   prefs: Preferences,
 ): Promise<void> {
-  if (!ctx.token) return; // unauthenticated — localStorage only
-
   try {
-    await graphql<UpdateUserResponse>(ctx, UPDATE_USER_PREFS_MUTATION, {
-      data: {
-        metadata: { [BACKEND_META_KEY]: prefs },
-      },
-    });
+    await writeMeta(ctx, BACKEND_META_KEY, prefs);
   } catch {
-    // Sync failure is non-fatal. The user's local settings remain applied;
-    // they will re-sync on next successful write.
+    // Sync failure is non-fatal; local settings stay applied and re-sync later.
   }
 }
 
 /**
- * Load preferences from the Karrio backend into localStorage.
- *
- * LIMITATION: The OSS `UserType` GraphQL selection does not expose the
- * `metadata` field. Until `metadata: JSON` is added to the `user` query
- * response in `karrio/server/graph/schemas/base/types.py` (UserType class),
- * this function is a no-op and localStorage remains the primary read source.
- *
- * TODO(backend): Expose `metadata` on UserType, then implement:
- *   const data = await graphql<{ user: { metadata: Record<string, unknown> } }>(
- *     ctx, `query { user { metadata } }`,
- *   );
- *   const remote = data.user?.metadata?.[BACKEND_META_KEY] as Partial<Preferences> | undefined;
- *   if (remote) savePrefs(remote);
+ * Load preferences from the Karrio backend (metafield `studio.customization`)
+ * into localStorage, and return the merged preferences. Falls back to the
+ * localStorage cache when unauthenticated or on any error.
  */
 export async function loadFromBackend(
-  _ctx: KarrioCtx,
+  ctx: KarrioCtx,
 ): Promise<Preferences> {
-  // No-op: returns the current localStorage-cached prefs.
-  // When the TODO above is resolved, replace this body with the remote fetch.
+  try {
+    const remote = await readMeta<Partial<Preferences>>(ctx, BACKEND_META_KEY);
+    if (remote) {
+      const merged = { ...loadPrefs(), ...remote };
+      savePrefs(merged);
+      return merged;
+    }
+  } catch {
+    // Ignore — fall through to the localStorage cache.
+  }
   return loadPrefs();
 }
 

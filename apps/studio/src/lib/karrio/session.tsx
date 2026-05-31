@@ -14,6 +14,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getSession, refreshSession } from "~/server/auth";
 import { karrioBaseUrl } from "~/lib/karrio/env";
 import { setRefreshHandler, type KarrioCtx } from "~/lib/karrio/client";
+import { applyPrefsToDOM, loadFromBackend } from "~/lib/karrio/preferences";
+import { setStudioCtx } from "~/lib/karrio/metastore";
 
 type SessionContextValue = {
   ctx: KarrioCtx;
@@ -51,8 +53,19 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     return () => setRefreshHandler(null);
   }, [queryClient]);
 
+  // Hydrate Studio UI preferences from the backend (metafield `studio.customization`)
+  // once authenticated, so settings follow the user across devices.
+  const token = sessionQuery.data?.access;
+  useEffect(() => {
+    // Register the current ctx so ctx-less stores (agents/MCP configs) can reach
+    // the backend, then hydrate UI preferences from the backend metafield.
+    setStudioCtx(token ? { baseUrl, token, orgId, testMode } : null);
+    if (!token) return;
+    void loadFromBackend({ baseUrl, token, orgId, testMode }).then(applyPrefsToDOM);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, baseUrl, orgId, testMode]);
+
   const value = useMemo<SessionContextValue>(() => {
-    const token = sessionQuery.data?.access;
     return {
       ctx: { baseUrl, token, orgId, testMode },
       isAuthenticated: Boolean(token),
