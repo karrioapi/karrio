@@ -21,10 +21,10 @@ Legend: ✅ implemented · 🟡 partial · ⛔ not yet (roadmap) · ➕ net-new 
 | Parcels | `parcel` | Parcels (**CRUD**) | ✅ |
 | Products / commodities | `product`, `customs` | Products (**CRUD**) | ✅ (customs templates 🟡) |
 | Document templates | `document-template`, `default-template` | Documents + sheet | ✅ list/detail; template editor 🟡 |
-| Manifests | `manifests` | — | ⛔ roadmap |
-| Batch operations | `batch-operations` | — | ⛔ roadmap |
-| Rate sheets / markups | `rate-sheet`, `admin-rate-sheets`, `admin-markups` | — | ⛔ roadmap |
-| Workflows (automation) | `workflows`, `workflow-*` | — | ⛔ roadmap |
+| Manifests | `manifests` | Manifests + sheet | ✅ list/detail; create-manifest 🟡 |
+| Batch operations | `batch-operations` | Batches + sheet | ✅ list/detail; run-batch action 🟡 |
+| Rate sheets / markups | `rate-sheet`, `admin-rate-sheets`, `admin-markups` | Rate sheets + sheet | ✅ list/detail; markup editor 🟡 |
+| Workflows (automation) | `workflows`, `workflow-*` | Workflows + sheet | ✅ list/detail; EE-only data (OSS GraphQL has no `workflows` field → graceful empty state) |
 
 ## Build (developer / extensibility)
 
@@ -46,7 +46,7 @@ Legend: ✅ implemented · 🟡 partial · ⛔ not yet (roadmap) · ➕ net-new 
 | Admin overview / system | `admin-platform`, `admin-worker`, `system-usage` | Admin overview | ✅ |
 | Tenants | `admin-platform` | Tenants | ✅ |
 | Team & roles | `admin-users`, `organization`, `user` | Team & roles | ✅ list; invite/role-edit 🟡 |
-| Usage / billing | `usage`, `admin-usage`, `subscription` | — | ⛔ roadmap |
+| Usage / billing | `usage`, `admin-usage`, `subscription` | Usage | ✅ metrics; billing/subscription mgmt 🟡 |
 | Security (2FA/SSO/sessions) | `session`, admin | Security | ✅ (wire toggles 🟡) |
 | Audit log | `event` | Audit | ✅ |
 | Workspace settings | `workspace-config`, `metadata` | Settings + Tweaks | ✅ ➕ self-edit |
@@ -55,7 +55,8 @@ Legend: ✅ implemented · 🟡 partial · ⛔ not yet (roadmap) · ➕ net-new 
 
 | Feature | Studio | Status |
 |---|---|---|
-| Auth (sign in/up/forgot, guards) | ✅ | wired to Karrio `/api/token` |
+| Auth (sign in/up/forgot, guards) | ✅ | wired to Karrio `/api/token`; httpOnly session + 401 token refresh |
+| Home landing (stats + recent + to-do) | ✅ | real metrics from shipment/tracker/order hooks |
 | Command palette (⌘K) | ➕ ✅ | |
 | Self-editable appearance (theme/accent/density/font) | ➕ ✅ | |
 | Responsive + dark/light | ✅ | swept across every page |
@@ -64,8 +65,13 @@ Legend: ✅ implemented · 🟡 partial · ⛔ not yet (roadmap) · ➕ net-new 
 ## Summary
 
 Ship/Build/Govern **operational parity** (list + detail + core write flows) is in
-place, **plus** net-new Studio capabilities (plugins, MCP, agent Editor/Assistant,
-self-editable UI). Remaining dashboard features — manifests, batch operations,
-rate sheets/markups, workflows, usage/billing, and the deeper create-wizards
-(rate-buy, recurring pickups, rule builder, template editor) — are the documented
-roadmap (tracked in the Karrio Studio Linear project).
+place across **every** dashboard surface — including manifests, batch operations,
+rate sheets, workflows, and usage (all now list/detail screens) — **plus** net-new
+Studio capabilities (plugins, MCP, agent Editor/Assistant, self-editable UI).
+
+What remains is **depth on specific write flows**, marked 🟡 above and tracked in
+the Karrio Studio Linear project: the create-wizards (rate-buy, recurring pickups,
+rule builder, customs/template editors, create-manifest/run-batch, markup editor),
+order-fulfillment + invite/role actions, billing/subscription management, the
+org/test-mode switcher UI, and live wiring for logs/GraphiQL. No dashboard surface
+is missing a screen; these are deeper interactions layered on the existing screens.
