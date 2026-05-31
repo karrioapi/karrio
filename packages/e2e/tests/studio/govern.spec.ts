@@ -69,6 +69,63 @@ test.describe("Govern mode (E)", () => {
     await expect(page.getByTestId("audit-row-ev_1")).toContainText("shipment.purchased");
   });
 
+  test("Team: invite a member via the admin schema", async ({ page }) => {
+    // Dynamic users list so the refetch after create_user shows the new member.
+    const users = [{ id: 1, email: "dan@karrio.io", full_name: "Daniel K", is_active: true, is_staff: true, is_superuser: true }];
+    let createInput: Record<string, unknown> | undefined;
+    await page.route("**/admin/graphql", (route) => {
+      if (route.request().method() === "OPTIONS") return route.fulfill({ status: 204, headers: CORS, body: "" });
+      const q = route.request().postData() ?? "";
+      if (q.includes("create_user")) {
+        const vars = JSON.parse(q).variables ?? {};
+        createInput = vars.input;
+        users.push({ id: 2, email: createInput.email as string, full_name: (createInput.full_name as string) ?? "", is_active: true, is_staff: !!createInput.is_staff, is_superuser: !!createInput.is_superuser });
+        return json(route, { data: { create_user: { user: { id: 2, email: createInput.email }, errors: [] } } });
+      }
+      if (q.includes("worker_health")) return json(route, GQL_ADMIN.worker_health);
+      return json(route, { data: { users: { edges: users.map((node) => ({ node })) } } });
+    });
+
+    await page.goto("/team");
+    await expect(page.getByTestId("member-row-1")).toBeVisible();
+    await page.getByTestId("team-invite").click();
+    await page.getByTestId("member-email").fill("newbie@karrio.io");
+    await page.getByTestId("member-name").fill("New Bie");
+    await page.getByTestId("member-role").selectOption("admin");
+    await page.getByTestId("member-save").click();
+
+    await expect(page.getByTestId("member-row-2")).toContainText("newbie@karrio.io");
+    expect(createInput?.email).toBe("newbie@karrio.io");
+    expect(createInput?.is_staff).toBe(true);
+    expect(createInput?.is_superuser).toBe(false);
+  });
+
+  test("Team: edit a member role via update_user", async ({ page }) => {
+    const users = [{ id: 1, email: "dan@karrio.io", full_name: "Daniel K", is_active: true, is_staff: true, is_superuser: true }];
+    let updateInput: Record<string, unknown> | undefined;
+    await page.route("**/admin/graphql", (route) => {
+      if (route.request().method() === "OPTIONS") return route.fulfill({ status: 204, headers: CORS, body: "" });
+      const q = route.request().postData() ?? "";
+      if (q.includes("update_user")) {
+        updateInput = (JSON.parse(q).variables ?? {}).input;
+        return json(route, { data: { update_user: { user: { id: 1, email: "dan@karrio.io" }, errors: [] } } });
+      }
+      if (q.includes("worker_health")) return json(route, GQL_ADMIN.worker_health);
+      return json(route, { data: { users: { edges: users.map((node) => ({ node })) } } });
+    });
+
+    await page.goto("/team");
+    await page.getByTestId("member-row-1").click();
+    await page.getByTestId("member-role").selectOption("member");
+    await page.getByTestId("member-status").selectOption("inactive");
+    await page.getByTestId("member-save").click();
+
+    await expect(page.getByTestId("sheet")).not.toBeVisible();
+    expect(updateInput?.id).toBe(1);
+    expect(updateInput?.is_staff).toBe(false);
+    expect(updateInput?.is_active).toBe(false);
+  });
+
   test("Security toggles flip", async ({ page }) => {
     await page.goto("/security");
     await page.waitForLoadState("networkidle");

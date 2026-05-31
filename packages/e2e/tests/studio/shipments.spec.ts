@@ -150,4 +150,30 @@ test.describe("Ship · Shipments (C2)", () => {
     ]);
     expect(download.suggestedFilename()).toMatch(/shipments-.*\.csv/);
   });
+
+  test("bulk buy labels posts a batch operation and navigates to Batches", async ({ page }) => {
+    let batchPayload: unknown;
+    await page.route("**/v1/batches/shipments", async (route) => {
+      if (route.request().method() === "OPTIONS") {
+        return route.fulfill({ status: 204, headers: CORS, body: "" });
+      }
+      batchPayload = JSON.parse(route.request().postData() ?? "{}");
+      return route.fulfill({
+        status: 201,
+        headers: { ...CORS, "content-type": "application/json" },
+        contentType: "application/json",
+        body: JSON.stringify({ id: "batch_1", status: "queued", resource_type: "shipments" }),
+      });
+    });
+
+    await page.goto("/shipments");
+    await expect(page.getByTestId("shipment-row-shp_purch")).toBeVisible();
+    await page.getByTestId("select-all").click();
+    await page.getByTestId("bulk-buy").click();
+
+    await page.waitForURL("**/batches");
+    expect(batchPayload).toEqual({
+      shipments: [{ id: "shp_purch" }, { id: "shp_transit" }, { id: "shp_delivered" }],
+    });
+  });
 });

@@ -416,3 +416,19 @@ export function useDeleteDocumentTemplate() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["document-templates"] }),
   });
 }
+
+// === Bulk label purchase (REST batch operation) =============================
+// POST /v1/batches/shipments with references to existing shipments → creates a
+// batch operation that buys labels for the selected (purchasable) shipments.
+export function useBulkBuyLabels() {
+  const ctx = useKarrioCtx();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (shipmentIds: string[]) =>
+      restMutate(ctx, "POST", "/v1/batches/shipments", { shipments: shipmentIds.map((id) => ({ id })) }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["batches"] });
+      qc.invalidateQueries({ queryKey: ["shipments"] });
+    },
+  });
+}

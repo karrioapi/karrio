@@ -2,7 +2,7 @@
 // canonical GraphQL: team + admin overview from the ADMIN schema
 // (/admin/graphql), usage + audit from the tenant schema. `tenants` has no OSS
 // source (no `accounts`) → empty/EE state. See STUDIO_GRAPHQL_REBUILD.md.
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { adminGraphql, graphql } from "~/lib/karrio/client";
 import { useKarrioCtx } from "~/lib/karrio/session";
 import { graphqlEdges, keyExtra } from "~/lib/karrio/hooks/_shared";
@@ -46,6 +46,83 @@ export function useTeam() {
       return { count: results.length, next: null, previous: null, results };
     },
     enabled: Boolean(ctx.token),
+  });
+}
+
+// --- Team mutations (ADMIN GraphQL create/update/remove user) ---------------
+// Role is encoded onto the Django flags the admin schema exposes:
+//   owner  → is_superuser   admin → is_staff   member → neither.
+type Role = "owner" | "admin" | "member";
+const roleFlags = (role: Role) => ({
+  is_superuser: role === "owner",
+  is_staff: role === "owner" || role === "admin",
+});
+
+const CREATE_USER = `mutation($input: CreateUserMutationInput!) {
+  create_user(input: $input) { user { id email } errors { field messages } }
+}`;
+const UPDATE_USER = `mutation($input: UpdateUserMutationInput!) {
+  update_user(input: $input) { user { id email } errors { field messages } }
+}`;
+const REMOVE_USER = `mutation($input: DeleteUserMutationInput!) {
+  remove_user(input: $input) { id }
+}`;
+
+export type InviteUserInput = { email: string; full_name?: string; role: Role; redirect_url?: string };
+
+// create_user requires password1/password2; for an invite we generate a random
+// one-time password (the user resets via the email flow / redirect_url).
+function randomPassword(): string {
+  const r = () => Math.random().toString(36).slice(2);
+  return `St${r()}${r()}!`.slice(0, 24);
+}
+
+export function useInviteUser() {
+  const ctx = useKarrioCtx();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (vars: InviteUserInput) => {
+      const password = randomPassword();
+      return adminGraphql(ctx, CREATE_USER, {
+        input: {
+          email: vars.email,
+          full_name: vars.full_name || undefined,
+          password1: password,
+          password2: password,
+          redirect_url: vars.redirect_url || (typeof window !== "undefined" ? window.location.origin : undefined),
+          ...roleFlags(vars.role),
+        },
+      });
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["team"] }),
+  });
+}
+
+export type UpdateUserInput = { id: string; role?: Role; is_active?: boolean; full_name?: string };
+
+export function useUpdateUser() {
+  const ctx = useKarrioCtx();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (vars: UpdateUserInput) =>
+      adminGraphql(ctx, UPDATE_USER, {
+        input: {
+          id: Number(vars.id),
+          ...(vars.full_name !== undefined ? { full_name: vars.full_name } : {}),
+          ...(vars.is_active !== undefined ? { is_active: vars.is_active } : {}),
+          ...(vars.role ? roleFlags(vars.role) : {}),
+        },
+      }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["team"] }),
+  });
+}
+
+export function useRemoveUser() {
+  const ctx = useKarrioCtx();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => adminGraphql(ctx, REMOVE_USER, { input: { id: Number(id) } }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["team"] }),
   });
 }
 

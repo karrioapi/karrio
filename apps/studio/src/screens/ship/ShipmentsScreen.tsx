@@ -14,7 +14,8 @@ import {
   Tabs,
   type TabDef,
 } from "~/components/ui/primitives";
-import { useShipments } from "~/lib/karrio/hooks";
+import { useNavigate } from "@tanstack/react-router";
+import { useShipments, useBulkBuyLabels } from "~/lib/karrio/hooks";
 import {
   carrierKey,
   formatDate,
@@ -94,6 +95,20 @@ export function ShipmentsScreen() {
   };
   const selectedRows = useMemo(() => all.filter((s) => selected.includes(s.id)), [all, selected]);
 
+  // Bulk: buy labels for the selected shipments (batch operation), then jump to Batches.
+  const navigate = useNavigate();
+  const bulkBuy = useBulkBuyLabels();
+  const buyLabels = async () => {
+    if (selected.length === 0) return;
+    try {
+      await bulkBuy.mutateAsync(selected);
+      setSelected([]);
+      void navigate({ to: "/$screen", params: { screen: "batches" } });
+    } catch {
+      /* surfaced inline below via bulkBuy.isError */
+    }
+  };
+
   return (
     <div className="page" data-testid="screen-shipments">
       <PageHeader
@@ -107,6 +122,9 @@ export function ShipmentsScreen() {
               <button className="btn" onClick={() => printLabels(selectedRows)} data-testid="bulk-print"><Icon.Print size={14} /> Print labels</button>
               <button className="btn" onClick={() => exportShipments(selectedRows)} data-testid="bulk-export"><Icon.Download size={14} /> Export</button>
               <button className="btn" onClick={() => setSelected([])} data-testid="bulk-clear">Clear</button>
+              <button className="btn btn-primary" onClick={buyLabels} disabled={bulkBuy.isPending} data-testid="bulk-buy">
+                <Icon.Tag size={14} /> {bulkBuy.isPending ? "Buying…" : "Buy labels"}
+              </button>
             </>
           ) : (
             <>

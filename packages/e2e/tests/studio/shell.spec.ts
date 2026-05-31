@@ -23,7 +23,10 @@ test.describe("Studio shell", () => {
 
     await switchMode(page, "govern");
     await expect(page).toHaveURL(/\/admin$/);
-    await expect(page.getByTestId("nav-tenants")).toBeVisible();
+    // Assert an ungated govern item: `tenants` is gated behind the
+    // MULTI_ORGANIZATIONS feature flag (off on OSS), so `team` is the stable
+    // signal that the govern nav rendered.
+    await expect(page.getByTestId("nav-team")).toBeVisible();
 
     await switchMode(page, "ship");
     await expect(page).toHaveURL(/\/home$/);
