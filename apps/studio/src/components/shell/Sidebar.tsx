@@ -2,6 +2,7 @@
 import { Icon, MODE_LABELS, NAV, type Mode } from "~/lib/modes";
 import { UserMenu } from "~/components/shell/UserMenu";
 import { WorkspaceMenu } from "~/components/shell/WorkspaceMenu";
+import { useFeatureFlags, type FeatureFlag } from "~/lib/karrio/references";
 
 const MODES: Mode[] = ["ship", "build", "govern"];
 
@@ -20,6 +21,7 @@ export function Sidebar({
   onMode: (mode: Mode) => void;
   onTweaks: () => void;
 }) {
+  const { isEnabled } = useFeatureFlags();
   return (
     <aside className={"sidebar" + (collapsed ? " collapsed" : "")} data-testid="sidebar">
       <WorkspaceMenu onGo={onGo} />
@@ -48,10 +50,14 @@ export function Sidebar({
       </div>
 
       <nav className="nav">
-        {NAV[mode].map((group, gi) => (
+        {NAV[mode].map((group, gi) => {
+          // Hide items gated by a disabled deployment feature flag; drop empty groups.
+          const items = group.items.filter((item) => !item.flag || isEnabled(item.flag as FeatureFlag));
+          if (items.length === 0) return null;
+          return (
           <div className="nav-group" key={group.label ?? gi}>
             {group.label && <div className="nav-label">{group.label}</div>}
-            {group.items.map((item) => {
+            {items.map((item) => {
               const ItemIcon = Icon[item.icon];
               const active = item.route === route;
               return (
@@ -76,7 +82,8 @@ export function Sidebar({
               );
             })}
           </div>
-        ))}
+          );
+        })}
       </nav>
 
       <UserMenu onGo={onGo} onTweaks={onTweaks} />

@@ -11,6 +11,8 @@ export type NavItem = {
   label: string;
   route: string;
   badge?: string;
+  /** Optional deployment feature flag (from /v1/references) that gates this item. */
+  flag?: string;
 };
 
 export type NavGroup = {
@@ -37,7 +39,7 @@ export const NAV: Record<Mode, NavGroup[]> = {
         { icon: "Home", label: "Home", route: "home" },
         { icon: "Truck", label: "Shipments", route: "shipments" },
         { icon: "Pin", label: "Trackers", route: "trackers" },
-        { icon: "Inbox", label: "Orders", route: "orders" },
+        { icon: "Inbox", label: "Orders", route: "orders", flag: "ORDERS_MANAGEMENT" },
         { icon: "Box", label: "Pickups", route: "pickups" },
       ],
     },
@@ -45,11 +47,11 @@ export const NAV: Record<Mode, NavGroup[]> = {
       label: "Setup",
       items: [
         { icon: "Plug", label: "Connections", route: "connections" },
-        { icon: "Activity", label: "Shipping rules", route: "rules" },
+        { icon: "Activity", label: "Shipping rules", route: "rules", flag: "SHIPPING_RULES" },
         { icon: "Pin", label: "Addresses", route: "addresses" },
         { icon: "Pkg", label: "Parcels", route: "parcels" },
         { icon: "Tag", label: "Products", route: "products" },
-        { icon: "Doc", label: "Documents", route: "documents" },
+        { icon: "Doc", label: "Documents", route: "documents", flag: "DOCUMENTS_MANAGEMENT" },
       ],
     },
     {
@@ -63,7 +65,7 @@ export const NAV: Record<Mode, NavGroup[]> = {
   build: [
     {
       items: [
-        { icon: "Grid", label: "Apps", route: "apps" },
+        { icon: "Grid", label: "Apps", route: "apps", flag: "APPS_MANAGEMENT" },
         { icon: "Plug", label: "Plugins", route: "plugins" },
         { icon: "Terminal", label: "MCP", route: "mcp" },
         { icon: "Code", label: "Editor", route: "editor" },
@@ -74,7 +76,7 @@ export const NAV: Record<Mode, NavGroup[]> = {
       items: [
         { icon: "Webhook", label: "Webhooks", route: "webhooks" },
         { icon: "Key", label: "API keys", route: "apikeys" },
-        { icon: "Activity", label: "Workflows", route: "workflows" },
+        { icon: "Activity", label: "Workflows", route: "workflows", flag: "WORKFLOW_MANAGEMENT" },
       ],
     },
   ],
@@ -82,7 +84,7 @@ export const NAV: Record<Mode, NavGroup[]> = {
     {
       items: [
         { icon: "Home", label: "Overview", route: "admin" },
-        { icon: "Workspace", label: "Tenants", route: "tenants" },
+        { icon: "Workspace", label: "Tenants", route: "tenants", flag: "MULTI_ORGANIZATIONS" },
         { icon: "User", label: "Team & roles", route: "team" },
         { icon: "Lock", label: "Security", route: "security" },
         { icon: "Doc", label: "Audit log", route: "audit" },

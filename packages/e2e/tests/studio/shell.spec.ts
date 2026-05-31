@@ -80,6 +80,20 @@ test.describe("Studio shell", () => {
     await expect(page.getByTestId("workspace-menu-orgs")).toContainText(/Enterprise/i);
   });
 
+  test("nav hides items gated by a disabled deployment feature flag", async ({ page }) => {
+    // /v1/references drives feature-flag gating; default-on until it loads.
+    await page.route("**/v1/references**", (route) =>
+      route.fulfill({
+        status: 200,
+        headers: { "content-type": "application/json", "access-control-allow-origin": "*" },
+        body: JSON.stringify({ ORDERS_MANAGEMENT: false, DOCUMENTS_MANAGEMENT: true, carriers: {}, connection_fields: {} }),
+      }));
+    await gotoStudio(page, "home");
+    await expect(page.getByTestId("nav-shipments")).toBeVisible();
+    await expect(page.getByTestId("nav-documents")).toBeVisible(); // flag true
+    await expect(page.getByTestId("nav-orders")).toHaveCount(0); // flag false → gated out
+  });
+
   test("test mode toggles a banner and persists across reload", async ({ page }) => {
     await gotoStudio(page, "home");
     await expect(page.getByTestId("test-mode-banner")).toHaveCount(0);
