@@ -59,10 +59,10 @@ def rate_dict(carrier, svc, charge, cur):
 
 
 SHIPMENTS = [
-    ("ups", "ups_2nd_day_air", "purchased", 12.40, "USD", "1Z999AA10123456784", "ORDER-11335", 0),
+    ("ups", "ups_2nd_day_air", "shipped", 12.40, "USD", "1Z999AA10123456784", "ORDER-11335", 0),
     ("canadapost", "canadapost_expedited_parcel", "delivered", 9.80, "CAD", "CP123456789CA", "ORDER-11333", 1),
     ("dhl_express", "dhl_express_worldwide", "in_transit", 42.80, "USD", "1231006943", "ORDER-11334", 2),
-    ("fedex", "fedex_priority_overnight", "purchased", 28.10, "USD", "794651413733", "REF-1112", 3),
+    ("fedex", "fedex_priority_overnight", "shipped", 28.10, "USD", "794651413733", "REF-1112", 3),
 ]
 
 
