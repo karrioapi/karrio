@@ -1,6 +1,7 @@
 // HomeScreen.tsx — Ship-mode landing. Real metrics computed from the shipment,
 // tracker, and order hooks (no hardcoded numbers): summary stats, a recent
 // shipments list, and an actionable "things to do" panel.
+import { useNavigate } from "@tanstack/react-router";
 import { PageHeader, StatusPill } from "~/components/ui/primitives";
 import { CarrierLogo } from "~/components/ui/CarrierLogo";
 import { useOrders, useShipments, useTrackers } from "~/lib/karrio/hooks";
@@ -16,6 +17,14 @@ const has = (status: string | undefined, re: RegExp) => re.test(status ?? "");
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
 
 export function HomeScreen() {
+  const navigate = useNavigate();
+  // Client-side navigation (matches the Sidebar convention: real <a href> for
+  // accessibility/right-click, but intercept the click to avoid a full reload).
+  const go = (to: string) => (e: React.MouseEvent) => {
+    e.preventDefault();
+    void navigate({ to });
+  };
+
   const shipmentsQ = useShipments();
   const trackersQ = useTrackers();
   const ordersQ = useOrders();
@@ -51,7 +60,7 @@ export function HomeScreen() {
         actions={
           <>
             <button className="btn">Last 30 days</button>
-            <a className="btn btn-primary" href="/shipments">Create label</a>
+            <a className="btn btn-primary" href="/shipments" onClick={go("/shipments")}>Create label</a>
           </>
         }
       />
@@ -68,6 +77,7 @@ export function HomeScreen() {
           <a
             key={s.label}
             href={s.href}
+            onClick={go(s.href)}
             data-testid={`home-stat-${s.label.toLowerCase().replace(/\s+/g, "-")}`}
             style={{
               border: "1px solid var(--border)",
@@ -91,7 +101,7 @@ export function HomeScreen() {
         <section className="card" data-testid="home-recent">
           <div className="section-head" style={{ display: "flex", alignItems: "center" }}>
             Recent shipments
-            <a href="/shipments" className="muted" style={{ marginLeft: "auto", fontSize: 12 }}>View all →</a>
+            <a href="/shipments" onClick={go("/shipments")} className="muted" style={{ marginLeft: "auto", fontSize: 12 }}>View all →</a>
           </div>
           <table className="table">
             <tbody>
@@ -133,6 +143,7 @@ export function HomeScreen() {
                 <a
                   key={i}
                   href={t.href}
+                  onClick={go(t.href)}
                   data-testid={`home-todo-${i}`}
                   style={{
                     display: "flex",

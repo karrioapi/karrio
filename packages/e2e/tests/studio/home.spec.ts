@@ -76,6 +76,14 @@ test.describe("Home · landing (C1)", () => {
     await expect(page.getByTestId("home-todo-0")).toHaveAttribute("href", "/orders");
   });
 
+  test("stat cards navigate client-side to their screen", async ({ page }) => {
+    await page.goto("/home");
+    await expect(page.getByTestId("home-stat-shipments")).toBeVisible();
+    await page.getByTestId("home-stat-shipments").click();
+    await expect(page).toHaveURL(/\/shipments$/);
+    await expect(page.getByTestId("screen-shipments")).toBeVisible();
+  });
+
   test("empty state shows 'all caught up' when nothing is pending", async ({ page }) => {
     // Override with no in-transit/unfulfilled work.
     await page.route("**/v1/trackers**", (route) => json(route, paged([{ id: "trk_x", tracking_number: "X", carrier_name: "ups", status: "delivered" }])));
