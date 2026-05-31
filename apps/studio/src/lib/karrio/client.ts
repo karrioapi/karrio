@@ -99,8 +99,9 @@ export async function graphql<T>(
   ctx: KarrioCtx,
   query: string,
   variables?: Record<string, unknown>,
+  endpoint = "/graphql",
 ): Promise<T> {
-  const res = await authedFetch(ctx, joinUrl(ctx.baseUrl, "/graphql"), {
+  const res = await authedFetch(ctx, joinUrl(ctx.baseUrl, endpoint), {
     method: "POST",
     body: JSON.stringify({ query, variables }),
   });
@@ -113,6 +114,17 @@ export async function graphql<T>(
     );
   }
   return json.data as T;
+}
+
+// Karrio exposes a SECOND GraphQL schema for platform/admin resources
+// (users, accounts, worker_health, configs, usage…) at /admin/graphql.
+// adminGraphql targets it with the same auth + 401-refresh behaviour.
+export function adminGraphql<T>(
+  ctx: KarrioCtx,
+  query: string,
+  variables?: Record<string, unknown>,
+): Promise<T> {
+  return graphql<T>(ctx, query, variables, "/admin/graphql");
 }
 
 async function safeJson(res: Response): Promise<unknown> {
