@@ -114,14 +114,25 @@ export function useAuditLog() {
 // --- Usage (tenant GraphQL `system_usage`) ----------------------------------
 const SYSTEM_USAGE_QUERY = `query { system_usage {
   total_shipments total_trackers total_requests total_shipping_spend order_volume
+  shipment_count { date count }
+  shipping_spend { date count }
+  order_volumes { date count }
+  api_requests { date count }
+  tracker_count { date count }
 } }`;
 
+type Point = { date: string; count: number };
 type RawUsage = {
   total_shipments?: number;
   total_trackers?: number;
   total_requests?: number;
   total_shipping_spend?: number;
   order_volume?: number;
+  shipment_count?: Point[];
+  shipping_spend?: Point[];
+  order_volumes?: Point[];
+  api_requests?: Point[];
+  tracker_count?: Point[];
 };
 
 const num = (n?: number) => (n == null ? "—" : Math.round(n).toLocaleString());
@@ -141,6 +152,12 @@ export function useUsage() {
           { label: "Orders", value: num(u.order_volume) },
           { label: "API requests", value: num(u.total_requests) },
           { label: "Shipping spend", value: u.total_shipping_spend != null ? `$${u.total_shipping_spend.toLocaleString()}` : "—" },
+        ],
+        series: [
+          { key: "shipment_count", label: "Shipments", format: "number", points: u.shipment_count ?? [] },
+          { key: "shipping_spend", label: "Shipping spend", format: "currency", points: u.shipping_spend ?? [] },
+          { key: "api_requests", label: "API requests", format: "number", points: u.api_requests ?? [] },
+          { key: "order_volumes", label: "Orders", format: "number", points: u.order_volumes ?? [] },
         ],
       };
     },

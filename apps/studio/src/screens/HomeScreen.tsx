@@ -4,7 +4,8 @@
 import { useNavigate } from "@tanstack/react-router";
 import { PageHeader, StatusPill } from "~/components/ui/primitives";
 import { CarrierLogo } from "~/components/ui/CarrierLogo";
-import { useOrders, useShipments, useTrackers } from "~/lib/karrio/hooks";
+import { AreaChart } from "~/components/ui/Chart";
+import { useOrders, useShipments, useTrackers, useUsage } from "~/lib/karrio/hooks";
 import {
   carrierKey,
   formatRate,
@@ -28,6 +29,9 @@ export function HomeScreen() {
   const shipmentsQ = useShipments();
   const trackersQ = useTrackers();
   const ordersQ = useOrders();
+  const usageQ = useUsage();
+  const trend = (usageQ.data?.series ?? []).find((s) => s.key === "shipment_count");
+  const spendTrend = (usageQ.data?.series ?? []).find((s) => s.key === "shipping_spend");
 
   const shipments = shipmentsQ.data?.results ?? [];
   const trackers = trackersQ.data?.results ?? [];
@@ -96,6 +100,19 @@ export function HomeScreen() {
           </a>
         ))}
       </div>
+
+      {(trend?.points.length || spendTrend?.points.length) ? (
+        <div className="two-col" style={{ marginTop: "var(--gap)", gap: "var(--gap)" }} data-testid="home-trends">
+          <section className="card" style={{ padding: 16 }} data-testid="home-trend-shipments">
+            <div style={{ fontSize: 11, color: "var(--fg-muted)", marginBottom: 8 }}>Shipments trend</div>
+            <AreaChart points={trend?.points ?? []} format="number" height={76} />
+          </section>
+          <section className="card" style={{ padding: 16 }} data-testid="home-trend-spend">
+            <div style={{ fontSize: 11, color: "var(--fg-muted)", marginBottom: 8 }}>Shipping spend trend</div>
+            <AreaChart points={spendTrend?.points ?? []} format="currency" height={76} />
+          </section>
+        </div>
+      ) : null}
 
       <div className="two-col" style={{ marginTop: "var(--gap)", gap: "var(--gap)" }}>
         <section className="card" data-testid="home-recent">

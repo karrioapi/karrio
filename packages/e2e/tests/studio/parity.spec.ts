@@ -22,7 +22,12 @@ const GQL: Record<string, unknown> = {
   workflows: edges("workflows", [{ id: "wf_1", name: "Auto-fulfill", description: "Fulfill paid orders", is_active: true, trigger: "order.paid", action_count: 3 }]),
   rate_sheets: edges("rate_sheets", [{ id: "rs_1", name: "UPS Negotiated", carrier_name: "ups", services_count: 8, is_system: false }]),
   // Usage now comes from GraphQL `system_usage` (mapped to plan/metrics by the hook).
-  system_usage: { data: { system_usage: { total_shipments: 2143, total_trackers: 1002, total_requests: 142300, total_shipping_spend: 18402, order_volume: 219 } } },
+  system_usage: { data: { system_usage: {
+    total_shipments: 2143, total_trackers: 1002, total_requests: 142300, total_shipping_spend: 18402, order_volume: 219,
+    shipment_count: [{ date: "2026-05-01", count: 12 }, { date: "2026-05-02", count: 31 }, { date: "2026-05-03", count: 22 }],
+    shipping_spend: [{ date: "2026-05-01", count: 140 }, { date: "2026-05-02", count: 380 }, { date: "2026-05-03", count: 210 }],
+    api_requests: [], order_volumes: [], tracker_count: [],
+  } } },
 };
 
 test.describe("Dashboard parity screens", () => {
@@ -67,9 +72,12 @@ test.describe("Dashboard parity screens", () => {
     await expect(page.getByTestId("ratesheet-sheet-body")).toBeVisible();
   });
 
-  test("Usage: plan + metrics render", async ({ page }) => {
+  test("Usage: plan + metrics + trend charts render", async ({ page }) => {
     await page.goto("/usage");
     await expect(page.getByTestId("usage-plan")).toContainText("Open Source");
     await expect(page.getByTestId("usage-metrics")).toContainText("Shipments");
+    // Time-series → trend charts render from the system_usage series.
+    await expect(page.getByTestId("usage-chart-shipment_count")).toBeVisible();
+    await expect(page.getByTestId("usage-chart-shipping_spend")).toBeVisible();
   });
 });

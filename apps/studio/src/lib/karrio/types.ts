@@ -320,8 +320,16 @@ export type UsageRecord = {
   delta?: string;
 };
 
+export type UsagePoint = { date: string; count: number };
+export type UsageSeries = {
+  key: string;
+  label: string;
+  format?: "number" | "currency";
+  points: UsagePoint[];
+};
 export type UsageSummary = {
   plan?: string;
   period?: string;
   metrics?: UsageRecord[];
+  series?: UsageSeries[];
 };
