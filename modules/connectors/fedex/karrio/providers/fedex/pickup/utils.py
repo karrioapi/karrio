@@ -8,6 +8,22 @@ FEDEX_PICKUP_ADDRESS_TYPE_VALUES = {"ACCOUNT", "SHIPPER", "OTHER"}
 FEDEX_MAX_NOTIFICATION_EMAILS = 5
 
 
+def _normalize_email_values(
+    value: typing.Any,
+) -> typing.List[str]:
+    if value is None:
+        return []
+
+    if isinstance(value, (list, tuple, set)):
+        return [str(item).strip() for item in value if str(item).strip()]
+
+    return [
+        _.strip()
+        for _ in str(value).replace(";", ",").split(",")
+        if _.strip()
+    ]
+
+
 def validate_package_location(value: typing.Optional[str]) -> typing.Optional[str]:
     if value is None:
         return None
@@ -53,28 +69,8 @@ def resolve_notification_emails(
     if primary_email:
         emails.append(str(primary_email).strip())
 
-    extra_email = options.get("email_notification_to")
-    extra_emails = options.get("fedex_notification_emails")
-
-    if extra_email:
-        emails.extend(
-            [
-                _.strip()
-                for _ in str(extra_email).replace(";", ",").split(",")
-                if _.strip()
-            ]
-        )
-
-    if isinstance(extra_emails, (list, tuple, set)):
-        emails.extend([str(_).strip() for _ in extra_emails if str(_).strip()])
-    elif extra_emails:
-        emails.extend(
-            [
-                _.strip()
-                for _ in str(extra_emails).replace(";", ",").split(",")
-                if _.strip()
-            ]
-        )
+    emails.extend(_normalize_email_values(options.get("email_notification_to")))
+    emails.extend(_normalize_email_values(options.get("fedex_notification_emails")))
 
     unique_emails: typing.List[str] = []
     seen = set()

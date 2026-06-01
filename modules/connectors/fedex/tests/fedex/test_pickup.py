@@ -66,6 +66,55 @@ class TestFedExPickup(unittest.TestCase):
             ],
         )
 
+    def test_create_pickup_request_supports_email_notification_to_array(self):
+        payload_with_emails = {
+            **PickupPayload,
+            "options": {
+                **(PickupPayload.get("options") or {}),
+                "email_notification_to": [
+                    "cnolan@saundersbook.ca",
+                    "ops@xyz.com",
+                ],
+            },
+        }
+        request = gateway.mapper.create_pickup_request(
+            models.PickupRequest(**payload_with_emails)
+        )
+
+        self.assertEqual(
+            request.serialize()
+            .get("pickupNotificationDetail", {})
+            .get("emailDetails"),
+            [
+                {"address": "jane.smith@xyz.com", "locale": "en_US"},
+                {"address": "cnolan@saundersbook.ca", "locale": "en_US"},
+                {"address": "ops@xyz.com", "locale": "en_US"},
+            ],
+        )
+
+    def test_create_pickup_request_supports_comma_separated_email_notification_to(self):
+        payload_with_emails = {
+            **PickupPayload,
+            "options": {
+                **(PickupPayload.get("options") or {}),
+                "email_notification_to": "cnolan@saundersbook.ca,ops@xyz.com",
+            },
+        }
+        request = gateway.mapper.create_pickup_request(
+            models.PickupRequest(**payload_with_emails)
+        )
+
+        self.assertEqual(
+            request.serialize()
+            .get("pickupNotificationDetail", {})
+            .get("emailDetails"),
+            [
+                {"address": "jane.smith@xyz.com", "locale": "en_US"},
+                {"address": "cnolan@saundersbook.ca", "locale": "en_US"},
+                {"address": "ops@xyz.com", "locale": "en_US"},
+            ],
+        )
+
     def test_create_pickup_request_raises_for_too_many_notification_emails(self):
         payload_with_too_many_emails = {
             **PickupPayload,
