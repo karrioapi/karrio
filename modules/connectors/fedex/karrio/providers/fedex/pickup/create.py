@@ -11,6 +11,8 @@ import karrio.providers.fedex.units as provider_units
 from karrio.providers.fedex.pickup.utils import (
     validate_package_location,
     validate_pickup_address_type,
+    resolve_notification_emails,
+    build_notification_email_details,
 )
 
 
@@ -51,6 +53,7 @@ def pickup_request(
 ) -> lib.Serializable:
     package_location = validate_package_location(payload.package_location)
     address = lib.to_address(payload.address)
+    notification_emails = resolve_notification_emails(address.email, payload.options)
     packages = lib.to_packages(payload.parcels)
     options = lib.units.Options(
         payload.options,
@@ -145,16 +148,11 @@ def pickup_request(
         oversizePackageCount=None,
         pickupNotificationDetail=lib.identity(
             fedex.PickupNotificationDetailType(
-                emailDetails=[
-                    fedex.EmailDetailType(
-                        address=address.email,
-                        locale="en_US",
-                    )
-                ],
+                emailDetails=build_notification_email_details(notification_emails),
                 format="TEXT",
                 userMessage=options.fedex_user_message.state,
             )
-            if address.email
+            if any(notification_emails)
             else None
         ),
     )

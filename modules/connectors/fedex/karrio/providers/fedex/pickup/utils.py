@@ -1,9 +1,11 @@
 import typing
 import karrio.lib as lib
+import karrio.schemas.fedex.pickup_request as fedex
 
 
 FEDEX_PACKAGE_LOCATION_VALUES = {"FRONT", "NONE", "REAR", "SIDE"}
 FEDEX_PICKUP_ADDRESS_TYPE_VALUES = {"ACCOUNT", "SHIPPER", "OTHER"}
+FEDEX_MAX_NOTIFICATION_EMAILS = 5
 
 
 def validate_package_location(value: typing.Optional[str]) -> typing.Optional[str]:
@@ -40,3 +42,68 @@ def validate_pickup_address_type(value: typing.Optional[str]) -> str:
         )
 
     return pickup_address_type
+
+
+def resolve_notification_emails(
+    primary_email: typing.Optional[str], options: typing.Optional[dict]
+) -> typing.List[str]:
+    options = options or {}
+    emails: typing.List[str] = []
+
+    if primary_email:
+        emails.append(str(primary_email).strip())
+
+    extra_email = options.get("email_notification_to")
+    extra_emails = options.get("fedex_notification_emails")
+
+    if extra_email:
+        emails.extend(
+            [
+                _.strip()
+                for _ in str(extra_email).replace(";", ",").split(",")
+                if _.strip()
+            ]
+        )
+
+    if isinstance(extra_emails, (list, tuple, set)):
+        emails.extend([str(_).strip() for _ in extra_emails if str(_).strip()])
+    elif extra_emails:
+        emails.extend(
+            [
+                _.strip()
+                for _ in str(extra_emails).replace(";", ",").split(",")
+                if _.strip()
+            ]
+        )
+
+    unique_emails: typing.List[str] = []
+    seen = set()
+    for email in emails:
+        key = email.lower()
+        if key not in seen:
+            unique_emails.append(email)
+            seen.add(key)
+
+    if len(unique_emails) > FEDEX_MAX_NOTIFICATION_EMAILS:
+        raise lib.exceptions.FieldError(
+            {
+                "fedex_notification_emails": (
+                    f"FedEx pickup notification supports up to {FEDEX_MAX_NOTIFICATION_EMAILS} email addresses. "
+                    f"Received: {len(unique_emails)}"
+                )
+            }
+        )
+
+    return unique_emails
+
+
+def build_notification_email_details(
+    emails: typing.List[str],
+) -> typing.List[fedex.EmailDetailType]:
+    return [
+        fedex.EmailDetailType(
+            address=email,
+            locale="en_US",
+        )
+        for email in emails
+    ]

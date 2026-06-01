@@ -40,6 +40,52 @@ class TestFedExPickup(unittest.TestCase):
             "Please ring bell at loading dock.",
         )
 
+    def test_create_pickup_request_supports_extra_notification_emails(self):
+        payload_with_emails = {
+            **PickupPayload,
+            "options": {
+                **(PickupPayload.get("options") or {}),
+                "fedex_notification_emails": [
+                    "ops@xyz.com",
+                    "support@xyz.com",
+                ],
+            },
+        }
+        request = gateway.mapper.create_pickup_request(
+            models.PickupRequest(**payload_with_emails)
+        )
+
+        self.assertEqual(
+            request.serialize()
+            .get("pickupNotificationDetail", {})
+            .get("emailDetails"),
+            [
+                {"address": "jane.smith@xyz.com", "locale": "en_US"},
+                {"address": "ops@xyz.com", "locale": "en_US"},
+                {"address": "support@xyz.com", "locale": "en_US"},
+            ],
+        )
+
+    def test_create_pickup_request_raises_for_too_many_notification_emails(self):
+        payload_with_too_many_emails = {
+            **PickupPayload,
+            "options": {
+                **(PickupPayload.get("options") or {}),
+                "fedex_notification_emails": [
+                    "one@xyz.com",
+                    "two@xyz.com",
+                    "three@xyz.com",
+                    "four@xyz.com",
+                    "five@xyz.com",
+                ],
+            },
+        }
+
+        with self.assertRaises(lib.exceptions.FieldError):
+            gateway.mapper.create_pickup_request(
+                models.PickupRequest(**payload_with_too_many_emails)
+            )
+
     def test_create_update_pickup_request(self):
         request = gateway.mapper.create_pickup_update_request(self.PickupUpdateRequest)
 
