@@ -48,6 +48,18 @@ class TestFedExPickup(unittest.TestCase):
         with self.assertRaises(lib.exceptions.FieldError):
             gateway.mapper.create_pickup_request(models.PickupRequest(**invalid_payload))
 
+    def test_create_pickup_request_invalid_pickup_address_type(self):
+        invalid_payload = {
+            **PickupPayload,
+            "options": {
+                **(PickupPayload.get("options") or {}),
+                "fedex_pickup_address_type": "BUSINESS",
+            },
+        }
+
+        with self.assertRaises(lib.exceptions.FieldError):
+            gateway.mapper.create_pickup_request(models.PickupRequest(**invalid_payload))
+
     def test_create_cancel_pickup_request(self):
         request = gateway.mapper.create_cancel_pickup_request(self.PickupCancelRequest)
 
@@ -129,7 +141,6 @@ PickupPayload = {
     "parcels": [{"weight": 20, "weight_unit": "LB"}],
     "options": {
         "fedex_carrier_code": "FDXE",
-        "fedex_pickup_address_type": "BUSINESS",
     },
 }
 
@@ -154,7 +165,6 @@ PickupPayloadWithSeconds = {
     "parcels": [{"weight": 20, "weight_unit": "LB"}],
     "options": {
         "fedex_carrier_code": "FDXE",
-        "fedex_pickup_address_type": "BUSINESS",
     },
 }
 
@@ -180,7 +190,6 @@ PickupUpdatePayload = {
     "parcels": [{"weight": 20, "weight_unit": "LB"}],
     "options": {
         "fedex_carrier_code": "FDXE",
-        "fedex_pickup_address_type": "BUSINESS",
     },
 }
 
@@ -206,7 +215,6 @@ PickupUpdatePayloadWithSeconds = {
     "parcels": [{"weight": 20, "weight_unit": "LB"}],
     "options": {
         "fedex_carrier_code": "FDXE",
-        "fedex_pickup_address_type": "BUSINESS",
     },
 }
 
@@ -264,7 +272,7 @@ PickupRequest = {
     "originDetail": {
         "customerCloseTime": "09:20:00",
         "packageLocation": "FRONT",
-        "pickupAddressType": "BUSINESS",
+        "pickupAddressType": "OTHER",
         "pickupLocation": {
             "accountNumber": {"value": "2349857"},
             "address": {
@@ -298,7 +306,7 @@ PickupUpdateRequest = {
     "originDetail": {
         "customerCloseTime": "09:20:00",
         "packageLocation": "FRONT",
-        "pickupAddressType": "BUSINESS",
+        "pickupAddressType": "OTHER",
         "pickupLocation": {
             "accountNumber": {"value": "2349857"},
             "address": {

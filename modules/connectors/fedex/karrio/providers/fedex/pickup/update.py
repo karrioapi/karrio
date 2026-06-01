@@ -9,7 +9,10 @@ import karrio.providers.fedex.error as error
 import karrio.providers.fedex.utils as provider_utils
 import karrio.providers.fedex.units as provider_units
 import karrio.providers.fedex.pickup.cancel as cancel
-from karrio.providers.fedex.pickup.utils import validate_package_location
+from karrio.providers.fedex.pickup.utils import (
+    validate_package_location,
+    validate_pickup_address_type,
+)
 
 
 def parse_pickup_update_response(
@@ -70,6 +73,9 @@ def pickup_update_request(
             # fmt: on
         ),
     )
+    pickup_address_type = validate_pickup_address_type(
+        options.fedex_pickup_address_type.state
+    )
 
     # Normalize times to HH:MM format to handle both HH:MM and HH:MM:SS inputs
     ready_time = lib.ftime(payload.ready_time, try_formats=["%H:%M:%S", "%H:%M"]) or payload.ready_time
@@ -81,7 +87,7 @@ def pickup_update_request(
             value=settings.account_number,
         ),
         originDetail=fedex.OriginDetailType(
-            pickupAddressType=options.fedex_pickup_address_type.state,
+            pickupAddressType=pickup_address_type,
             pickupLocation=fedex.PickupLocationType(
                 contact=fedex.ContactType(
                     companyName=address.company_name,

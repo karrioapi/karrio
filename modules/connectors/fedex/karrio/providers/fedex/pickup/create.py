@@ -8,7 +8,10 @@ import karrio.core.models as models
 import karrio.providers.fedex.error as error
 import karrio.providers.fedex.utils as provider_utils
 import karrio.providers.fedex.units as provider_units
-from karrio.providers.fedex.pickup.utils import validate_package_location
+from karrio.providers.fedex.pickup.utils import (
+    validate_package_location,
+    validate_pickup_address_type,
+)
 
 
 def parse_pickup_response(
@@ -69,6 +72,9 @@ def pickup_request(
             # fmt: on
         ),
     )
+    pickup_address_type = validate_pickup_address_type(
+        options.fedex_pickup_address_type.state
+    )
 
     # Map unified pickup_type to FedEx pickup type
     # one_time -> ON_CALL, daily/recurring -> REGULAR_STOP
@@ -89,7 +95,7 @@ def pickup_request(
             value=settings.account_number,
         ),
         originDetail=fedex.OriginDetailType(
-            pickupAddressType=options.fedex_pickup_address_type.state,
+            pickupAddressType=pickup_address_type,
             pickupLocation=fedex.PickupLocationType(
                 contact=fedex.ContactType(
                     companyName=address.company_name,
