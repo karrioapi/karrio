@@ -39,6 +39,15 @@ class TestFedExPickup(unittest.TestCase):
         # Should produce the same output as PickupUpdateRequest (times normalized)
         self.assertEqual(request.serialize(), PickupUpdateRequest)
 
+    def test_create_pickup_request_invalid_package_location(self):
+        invalid_payload = {
+            **PickupPayload,
+            "package_location": "behind the front desk",
+        }
+
+        with self.assertRaises(lib.exceptions.FieldError):
+            gateway.mapper.create_pickup_request(models.PickupRequest(**invalid_payload))
+
     def test_create_cancel_pickup_request(self):
         request = gateway.mapper.create_cancel_pickup_request(self.PickupCancelRequest)
 
@@ -103,7 +112,7 @@ PickupPayload = {
     "pickup_date": "2013-10-19",
     "ready_time": "11:00",
     "closing_time": "09:20",
-    "package_location": "behind the front desk",
+    "package_location": "FRONT",
     "address": {
         "company_name": "XYZ Inc.",
         "address_line1": "456 Oak Avenue",
@@ -128,7 +137,7 @@ PickupPayloadWithSeconds = {
     "pickup_date": "2013-10-19",
     "ready_time": "11:00:00",  # HH:MM:SS format (some browsers send this)
     "closing_time": "09:20:00",  # HH:MM:SS format
-    "package_location": "behind the front desk",
+    "package_location": "FRONT",
     "address": {
         "company_name": "XYZ Inc.",
         "address_line1": "456 Oak Avenue",
@@ -154,7 +163,7 @@ PickupUpdatePayload = {
     "pickup_date": "2013-10-19",
     "ready_time": "11:00",
     "closing_time": "09:20",
-    "package_location": "behind the front desk",
+    "package_location": "FRONT",
     "address": {
         "company_name": "XYZ Inc.",
         "address_line1": "456 Oak Avenue",
@@ -180,7 +189,7 @@ PickupUpdatePayloadWithSeconds = {
     "pickup_date": "2013-10-19",
     "ready_time": "11:00:00",  # HH:MM:SS format
     "closing_time": "09:20:00",  # HH:MM:SS format
-    "package_location": "behind the front desk",
+    "package_location": "FRONT",
     "address": {
         "company_name": "XYZ Inc.",
         "address_line1": "456 Oak Avenue",
@@ -254,7 +263,7 @@ PickupRequest = {
     "carrierCode": "FDXE",
     "originDetail": {
         "customerCloseTime": "09:20:00",
-        "packageLocation": "behind the front desk",
+        "packageLocation": "FRONT",
         "pickupAddressType": "BUSINESS",
         "pickupLocation": {
             "accountNumber": {"value": "2349857"},
@@ -288,7 +297,7 @@ PickupUpdateRequest = {
     "carrierCode": "FDXE",
     "originDetail": {
         "customerCloseTime": "09:20:00",
-        "packageLocation": "behind the front desk",
+        "packageLocation": "FRONT",
         "pickupAddressType": "BUSINESS",
         "pickupLocation": {
             "accountNumber": {"value": "2349857"},

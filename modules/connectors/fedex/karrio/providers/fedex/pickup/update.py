@@ -9,6 +9,7 @@ import karrio.providers.fedex.error as error
 import karrio.providers.fedex.utils as provider_utils
 import karrio.providers.fedex.units as provider_units
 import karrio.providers.fedex.pickup.cancel as cancel
+from karrio.providers.fedex.pickup.utils import validate_package_location
 
 
 def parse_pickup_update_response(
@@ -46,6 +47,7 @@ def pickup_update_request(
     payload: models.PickupUpdateRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
+    package_location = validate_package_location(payload.package_location)
     address = lib.to_address(payload.address)
     packages = lib.to_packages(payload.parcels)
     options = lib.units.Options(
@@ -105,7 +107,7 @@ def pickup_update_request(
             readyDateTimestamp=f"{payload.pickup_date}T{ready_time}:00Z",
             customerCloseTime=f"{closing_time}:00",
             pickupDateType=options.fedex_pickup_date_type.state,
-            packageLocation=payload.package_location,
+            packageLocation=package_location,
             buildingPart=options.fedex_building_part.state,
             buildingPartDescription=options.fedex_building_part_description.state,
             earlyPickup=options.fedex_early_pickup.state,
