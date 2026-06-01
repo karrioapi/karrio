@@ -128,7 +128,7 @@ def pickup_request(
         packageCount=len(packages),
         carrierCode=options.fedex_carrier_code.state or "FDXE",
         accountAddressOfRecord=None,
-        remarks=None,
+        remarks=payload.instruction,
         countryRelationships=None,
         pickupType=fedex_pickup_type,
         trackingNumber=None,
