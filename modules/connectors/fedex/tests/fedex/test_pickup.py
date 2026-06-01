@@ -26,6 +26,20 @@ class TestFedExPickup(unittest.TestCase):
         # Should produce the same output as PickupRequest (times normalized)
         self.assertEqual(request.serialize(), PickupRequest)
 
+    def test_create_pickup_request_maps_instruction_to_remarks(self):
+        payload_with_instruction = {
+            **PickupPayload,
+            "instruction": "Please ring bell at loading dock.",
+        }
+        request = gateway.mapper.create_pickup_request(
+            models.PickupRequest(**payload_with_instruction)
+        )
+
+        self.assertEqual(
+            request.serialize().get("remarks"),
+            "Please ring bell at loading dock.",
+        )
+
     def test_create_update_pickup_request(self):
         request = gateway.mapper.create_pickup_update_request(self.PickupUpdateRequest)
 
