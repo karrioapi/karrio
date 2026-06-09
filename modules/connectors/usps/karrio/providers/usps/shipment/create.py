@@ -265,7 +265,7 @@ def shipment_request(
                 width=package.width.IN,
                 girth=package.girth.value,
                 mailClass=mail_class,
-                rateIndicator=package.options.usps_rate_indicator.state or "DR",
+                rateIndicator=package.options.usps_rate_indicator.state or "SP",
                 processingCategory=lib.identity(
                     package.options.usps_processing_category.state or "NON_MACHINABLE"
                 ),
