@@ -57,6 +57,8 @@ class TrackingAPIView(APIView):
                 query.get("hub") if "hub" in query else data["carrier_name"]
             ),
         }
+        if data.get("carrier_id"):
+            carrier_filter["carrier_id"] = data["carrier_id"]
         data = {
             **data,
             "tracking_numbers": [data["tracking_number"]],

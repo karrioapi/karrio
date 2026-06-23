@@ -3,10 +3,17 @@ from unittest.mock import patch, ANY
 from django.urls import reverse
 from rest_framework import status
 from karrio.core.models import TrackingDetails, TrackingEvent
+from karrio.server.core.serializers import TrackingData
 from karrio.server.core.tests import APITestCase
 
 
 class TestTracking(APITestCase):
+    def test_tracking_data_accepts_carrier_id_without_test_mode_body_field(self):
+        fields = TrackingData().fields
+
+        self.assertIn("carrier_id", fields)
+        self.assertNotIn("test_mode", fields)
+
     def test_tracking_shipment(self):
         url = reverse("karrio.server.proxy:get-tracking")
         data = dict(tracking_number="1Z12345E6205277936", carrier_name="ups")
@@ -18,6 +25,32 @@ class TestTracking(APITestCase):
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertDictEqual(response_data, TRACKING_RESPONSE)
+
+    def test_tracking_shipment_with_carrier_id(self):
+        url = reverse("karrio.server.proxy:get-tracking")
+        data = dict(
+            tracking_number="1Z12345E6205277936",
+            carrier_name="ups",
+            carrier_id="ups_domestic",
+        )
+
+        with patch("karrio.server.core.gateway.Carriers.first") as carrier_mock, patch(
+            "karrio.server.core.gateway.utils.identity"
+        ) as mock:
+            carrier_mock.return_value = self.ups_carrier
+            mock.return_value = RETURNED_VALUE
+
+            response = self.client.post(url, data)
+
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            carrier_mock.assert_called_once_with(
+                active=True,
+                capability="tracking",
+                raise_not_found=True,
+                context=ANY,
+                carrier_name="ups",
+                carrier_id="ups_domestic",
+            )
 
 
 RETURNED_VALUE = [
