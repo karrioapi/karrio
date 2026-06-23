@@ -2,11 +2,13 @@ import sys
 import typing
 import inspect
 import functools
+import atexit
 from concurrent import futures
 from datetime import timedelta, datetime, timezone
 from typing import TypeVar, Union, Callable, Any, List, Optional
 
 from django.conf import settings
+from django.db import close_old_connections, connections
 from django.utils.translation import gettext_lazy as _
 import django_email_verification.confirm as confirm
 import rest_framework_simplejwt.tokens as jwt
@@ -18,6 +20,17 @@ from karrio.core.utils import DP, DF
 from karrio.server.core import datatypes, serializers, exceptions
 
 T = TypeVar("T")
+
+
+# Reuse a bounded executor for server-side fire-and-forget operations to avoid
+# creating one thread pool per request and leaking thread-local DB connections.
+_ASYNC_EXECUTOR = futures.ThreadPoolExecutor(max_workers=4)
+
+
+@atexit.register
+def _shutdown_async_executor():
+    # Registered with atexit: invoked automatically when the process exits.
+    _ASYNC_EXECUTOR.shutdown(wait=False, cancel_futures=True)
 
 
 def identity(value: Union[Any, Callable]) -> Any:
@@ -144,7 +157,18 @@ def run_async(callable: Callable[[], Any]) -> futures.Future:
     of a callable in a non-blocking thread and return a
     handle for a future response.
     """
-    return futures.ThreadPoolExecutor(max_workers=1).submit(callable)
+
+    def _wrapped_call():
+        # Ensure this worker thread starts from a clean DB connection state.
+        close_old_connections()
+
+        try:
+            return callable()
+        finally:
+            # Close thread-local DB connections opened during background ORM work.
+            connections.close_all()
+
+    return _ASYNC_EXECUTOR.submit(_wrapped_call)
 
 
 def error_wrapper(func):
