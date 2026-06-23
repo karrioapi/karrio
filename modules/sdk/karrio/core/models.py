@@ -1,9 +1,9 @@
 """Karrio Unified model definitions module."""
 
-from unicodedata import category
+from typing import Any
+
 import attr
-from typing import List, Dict, Any, Union
-from jstruct import JList, JStruct, REQUIRED
+from jstruct import REQUIRED, JList, JStruct
 
 
 @attr.s(auto_attribs=True)
@@ -52,7 +52,7 @@ class Commodity:
     image_url: str = None
     product_id: str = None
     variant_id: str = None
-    metadata: Dict = {}
+    metadata: dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -74,10 +74,10 @@ class Parcel:
     description: str = None
     content: str = None
 
-    items: List[Commodity] = JList[Commodity]
+    items: list[Commodity] = JList[Commodity]
     reference_number: str = None
     freight_class: str = None
-    options: Dict = {}
+    options: dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -105,7 +105,7 @@ class Duty:
 class Customs:
     """customs info unified data type."""
 
-    commodities: List[Commodity] = JList[Commodity, REQUIRED]
+    commodities: list[Commodity] = JList[Commodity, REQUIRED]
     certify: bool = None
     signer: str = None
     content_type: str = None
@@ -116,7 +116,7 @@ class Customs:
     duty: Duty = JStruct[Duty]
     duty_billing_address: Address = JStruct[Address]
     commercial_invoice: bool = False
-    options: Dict = {}
+    options: dict = {}
     id: str = None
 
 
@@ -128,20 +128,20 @@ class ShipmentRequest:
 
     shipper: Address = JStruct[Address, REQUIRED]
     recipient: Address = JStruct[Address, REQUIRED]
-    parcels: List[Parcel] = JList[Parcel, REQUIRED]
+    parcels: list[Parcel] = JList[Parcel, REQUIRED]
 
     payment: Payment = JStruct[Payment]
     customs: Customs = JStruct[Customs]
     return_address: Address = JStruct[Address]
     billing_address: Address = JStruct[Address]
 
-    options: Dict = {}
+    options: dict = {}
     reference: str = ""
     order_id: str = ""
     label_type: str = None
     is_return: bool = False
 
-    metadata: Dict = {}
+    metadata: dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -151,7 +151,7 @@ class ShipmentCancelRequest:
     shipment_identifier: str
 
     service: str = None
-    options: Dict = {}
+    options: dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -160,15 +160,15 @@ class RateRequest:
 
     shipper: Address = JStruct[Address, REQUIRED]
     recipient: Address = JStruct[Address, REQUIRED]
-    parcels: List[Parcel] = JList[Parcel, REQUIRED]
+    parcels: list[Parcel] = JList[Parcel, REQUIRED]
 
     payment: Payment = JStruct[Payment]
     customs: Customs = JStruct[Customs]
     return_address: Address = JStruct[Address]
     billing_address: Address = JStruct[Address]
 
-    services: List[str] = []
-    options: Dict = {}
+    services: list[str] = []
+    options: dict = {}
     reference: str = ""
     is_return: bool = False
 
@@ -177,10 +177,10 @@ class RateRequest:
 class TrackingRequest:
     """tracking request unified data type."""
 
-    tracking_numbers: List[str]
+    tracking_numbers: list[str]
     account_numer: str = None
     reference: str = None
-    options: Dict = {}
+    options: dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -192,15 +192,15 @@ class PickupRequest:
     closing_time: str
     address: Address = JStruct[Address, REQUIRED]
 
-    parcels: List[Parcel] = JList[Parcel]
+    parcels: list[Parcel] = JList[Parcel]
     parcels_count: int = None
-    shipment_identifiers: List[str] = []
+    shipment_identifiers: list[str] = []
     package_location: str = None
     instruction: str = None
     pickup_type: str = "one_time"  # one_time, daily, recurring
-    recurrence: Dict = {}  # For recurring: {frequency, days_of_week, end_date}
-    options: Dict = {}
-    metadata: Dict = {}
+    recurrence: dict = {}  # For recurring: {frequency, days_of_week, end_date}
+    options: dict = {}
+    metadata: dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -213,13 +213,13 @@ class PickupUpdateRequest:
     closing_time: str
     address: Address = JStruct[Address, REQUIRED]
 
-    parcels: List[Parcel] = JList[Parcel]
-    shipment_identifiers: List[str] = []
+    parcels: list[Parcel] = JList[Parcel]
+    shipment_identifiers: list[str] = []
     package_location: str = None
     instruction: str = None
     pickup_type: str = "one_time"  # one_time, daily, recurring
-    recurrence: Dict = {}  # For recurring: {frequency, days_of_week, end_date}
-    options: Dict = {}
+    recurrence: dict = {}  # For recurring: {frequency, days_of_week, end_date}
+    options: dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -231,7 +231,7 @@ class PickupCancelRequest:
     address: Address = JStruct[Address]
     pickup_date: str = None
     reason: str = None
-    options: Dict = {}
+    options: dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -239,19 +239,19 @@ class AddressValidationRequest:
     """address validation request unified data type."""
 
     address: Address = JStruct[Address, REQUIRED]
-    options: Dict = {}
+    options: dict = {}
 
 
 @attr.s(auto_attribs=True)
 class ManifestRequest:
     """manifest request unified data type."""
 
-    shipment_identifiers: List[str]
+    shipment_identifiers: list[str]
     address: Address = JStruct[Address, REQUIRED]
 
     reference: str = None
-    metadata: Dict = {}
-    options: Dict = {}
+    metadata: dict = {}
+    options: dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -266,7 +266,7 @@ class ChargeDetails:
     # Enhanced fields for accounting and transparency
     cost: float = None  # COGS - Cost of Goods Sold (internal)
     charge_type: str = None  # "base" | "surcharge" | "addon" | "tax"
-    metadata: Dict = None  # Extra metadata (only set when needed)
+    metadata: dict = None  # Extra metadata (only set when needed)
 
 
 @attr.s(auto_attribs=True)
@@ -281,8 +281,8 @@ class DutiesCalculationRequest:
     shipping_charge: ChargeDetails = JStruct[ChargeDetails]
     insurance_charge: ChargeDetails = JStruct[ChargeDetails]
     reference: str = None
-    metadata: Dict = {}
-    options: Dict = {}
+    metadata: dict = {}
+    options: dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -298,8 +298,8 @@ class InsuranceRequest:
 
     provider: str = None
     reference: str = None
-    metadata: Dict = {}
-    options: Dict = {}
+    metadata: dict = {}
+    options: dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -308,9 +308,9 @@ class WebhookRegistrationRequest:
 
     url: str
     description: str = None
-    enabled_events: List[str] = []
-    options: Dict = {}
-    metadata: Dict = {}
+    enabled_events: list[str] = []
+    options: dict = {}
+    metadata: dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -318,7 +318,7 @@ class WebhookDeregistrationRequest:
     """webhook deregistration request unified data type."""
 
     webhook_id: str
-    options: Dict = {}
+    options: dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -328,10 +328,10 @@ class Message:
     carrier_name: str
     carrier_id: str
 
-    message: Union[str, Any] = None
+    message: str | Any = None
     level: str = None
     code: str = None
-    details: Dict = None
+    details: dict = None
 
 
 @attr.s(auto_attribs=True)
@@ -371,7 +371,7 @@ class RateDetails:
     service: str
     currency: str = None
     total_charge: float = 0.0
-    extra_charges: List[ChargeDetails] = JList[ChargeDetails]
+    extra_charges: list[ChargeDetails] = JList[ChargeDetails]
     estimated_delivery: str = None
     transit_days: int = None
     meta: dict = None
@@ -418,7 +418,7 @@ class TrackingDetails:
     carrier_name: str
     carrier_id: str
     tracking_number: str
-    events: List[TrackingEvent] = JList[TrackingEvent, REQUIRED]
+    events: list[TrackingEvent] = JList[TrackingEvent, REQUIRED]
     images: Images = JStruct[Images]
     estimated_delivery: str = None
     info: TrackingInfo = None
@@ -447,7 +447,7 @@ class Documents:
     invoice: str = None
     zpl_label: str = None
     pdf_label: str = None
-    extra_documents: List[ShippingDocument] = JList[ShippingDocument]
+    extra_documents: list[ShippingDocument] = JList[ShippingDocument]
 
 
 @attr.s(auto_attribs=True)
@@ -531,7 +531,7 @@ class DutiesCalculationDetails:
     total_charge: float
     currency: str
 
-    charges: List[ChargeDetails] = JList[ChargeDetails]
+    charges: list[ChargeDetails] = JList[ChargeDetails]
     meta: dict = None
     id: str = None
 
@@ -543,7 +543,7 @@ class InsuranceDetails:
     carrier_name: str
     carrier_id: str
 
-    fees: List[ChargeDetails] = JList[ChargeDetails]
+    fees: list[ChargeDetails] = JList[ChargeDetails]
     meta: dict = None
     id: str = None
 
@@ -580,7 +580,7 @@ class OAuthAuthorizePayload:
 
     redirect_uri: str
     state: str
-    options: Dict = {}
+    options: dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -591,7 +591,7 @@ class OAuthAuthorizeRequest:
     authorization_url: str
 
     state: str = None
-    meta: Dict = {}
+    meta: dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -636,12 +636,12 @@ class ServiceZone:
     longitude: float = None
 
     # Location matching
-    cities: List[str] = []
-    postal_codes: List[str] = []
-    country_codes: List[str] = []
+    cities: list[str] = []
+    postal_codes: list[str] = []
+    country_codes: list[str] = []
 
     # Rate-level metadata (exclusions, per-plan costs, etc.)
-    meta: Dict = {}
+    meta: dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -673,9 +673,9 @@ class SharedZone:
     label: str = None
 
     # Location matching
-    country_codes: List[str] = []
-    postal_codes: List[str] = []
-    cities: List[str] = []
+    country_codes: list[str] = []
+    postal_codes: list[str] = []
+    cities: list[str] = []
 
     # Default transit times (can be overridden in service_rates)
     transit_days: int = None
@@ -686,7 +686,7 @@ class SharedZone:
     latitude: float = None
     longitude: float = None
 
-    metadata: Dict = {}
+    metadata: dict = {}
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -709,7 +709,7 @@ class SharedSurcharge:
     surcharge_type: str = "fixed"  # "fixed" or "percentage"
     cost: float = None  # COGS - Cost of Goods Sold
     active: bool = True
-    metadata: Dict = {}
+    metadata: dict = {}
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -739,7 +739,7 @@ class ServiceRate:
     transit_time: float = None
 
     # Per-rate metadata (exclusions, etc.)
-    meta: Dict = {}
+    meta: dict = {}
 
 
 # SERVICE LEVEL FEATURES (Structured feature definitions)
@@ -841,14 +841,14 @@ class ServiceLevel:
     currency: str = None
 
     # Zone data for rate calculation (populated at runtime from rate sheet)
-    zones: List[ServiceZone] = JList[ServiceZone]
+    zones: list[ServiceZone] = JList[ServiceZone]
 
     # Surcharge data for rate calculation (populated at runtime from rate sheet)
-    surcharges: List[Surcharge] = JList[Surcharge]
+    surcharges: list[Surcharge] = JList[Surcharge]
 
     # References to shared zones/surcharges at RateSheet level (for storage)
-    zone_ids: List[str] = []
-    surcharge_ids: List[str] = []
+    zone_ids: list[str] = []
+    surcharge_ids: list[str] = []
 
     # Cost tracking (internal - not shown to customer)
     cost: float = None  # Base COGS - Cost of Goods Sold
@@ -872,7 +872,7 @@ class ServiceLevel:
     use_volumetric: bool = False  # Use max(actual, volumetric) for rate calc
 
     # Origin restrictions (optional - inherits from rate sheet if not set)
-    origin_countries: List[str] = []
+    origin_countries: list[str] = []
 
     # Destination supports
     domicile: bool = None
@@ -886,10 +886,10 @@ class ServiceLevel:
     # Contains first_mile, last_mile, form_factor, b2c, b2b, shipment_type, etc.
     features: ServiceLevelFeatures = JStruct[ServiceLevelFeatures]
 
-    metadata: Dict = {}
+    metadata: dict = {}
 
     # Pricing config (excluded_markup_ids, sort_order, etc.)
-    pricing_config: Dict = {}
+    pricing_config: dict = {}
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -912,16 +912,16 @@ class RateSheet:
     slug: str = None
 
     # Shared definitions (referenced by ID from services)
-    zones: List[SharedZone] = JList[SharedZone]
-    surcharges: List[SharedSurcharge] = JList[SharedSurcharge]
+    zones: list[SharedZone] = JList[SharedZone]
+    surcharges: list[SharedSurcharge] = JList[SharedSurcharge]
 
     # Service-zone rate mappings
-    service_rates: List[ServiceRate] = JList[ServiceRate]
+    service_rates: list[ServiceRate] = JList[ServiceRate]
 
     # Service definitions
-    services: List[ServiceLevel] = JList[ServiceLevel]
+    services: list[ServiceLevel] = JList[ServiceLevel]
 
-    metadata: Dict = {}
+    metadata: dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -962,11 +962,11 @@ class DocumentFile:
 class DocumentUploadRequest:
     """shipment document upload request unified data type."""
 
-    document_files: List[DocumentFile] = JList[DocumentFile, REQUIRED]
+    document_files: list[DocumentFile] = JList[DocumentFile, REQUIRED]
     tracking_number: str = None
     shipment_date: str = None
     reference: str = None
-    options: Dict = {}
+    options: dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -983,6 +983,6 @@ class DocumentUploadDetails:
 
     carrier_name: str
     carrier_id: str
-    documents: List[DocumentDetails] = JList[DocumentDetails]
+    documents: list[DocumentDetails] = JList[DocumentDetails]
     meta: dict = None
     id: str = None

@@ -1,8 +1,10 @@
 import unittest
 from unittest.mock import patch
+
+from karrio.core.models import TrackingRequest
 from karrio.core.utils import DP
 from karrio.sdk import Tracking
-from karrio.core.models import TrackingRequest
+
 from .fixture import gateway
 
 
@@ -29,21 +31,15 @@ class TestCarrierTracking(unittest.TestCase):
     def test_parse_tracking_response(self):
         with patch("karrio.mappers.dhl_universal.proxy.http") as mock:
             mock.return_value = TrackingResponseJSON
-            parsed_response = (
-                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
+            parsed_response = Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             self.assertListEqual(DP.to_dict(parsed_response), ParsedTrackingResponse)
 
     def test_parse_tracking_error_response(self):
         with patch("karrio.mappers.dhl_universal.proxy.http") as mock:
             mock.return_value = TrackingErrorResponseJSON
-            parsed_response = (
-                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
+            parsed_response = Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
 
-            self.assertListEqual(
-                DP.to_dict(parsed_response), ParsedTrackingErrorResponse
-            )
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedTrackingErrorResponse)
 
 
 if __name__ == "__main__":

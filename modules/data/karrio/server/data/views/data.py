@@ -1,22 +1,19 @@
-import io
-from django.http import JsonResponse, HttpResponse
-from django.urls import re_path, path
-from django.core.files.base import ContentFile
-from django_downloadview import VirtualDownloadView
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.parsers import MultiPartParser, FormParser
-from rest_framework.response import Response
-from rest_framework.request import Request
-from rest_framework import status
 import logging
 
-from karrio.server.data.serializers.data import ImportDataSerializer
-import karrio.server.data.serializers as serializers
+import karrio.server.core.views.api as api
 import karrio.server.data.resources as resources
 import karrio.server.data.resources.rate_sheets as rate_sheet_resource
+import karrio.server.data.serializers as serializers
 import karrio.server.data.serializers.batch_rate_sheets as batch_rate_sheets
-import karrio.server.core.views.api as api
 import karrio.server.openapi as openapi
+from django.http import HttpResponse, JsonResponse
+from django.urls import path, re_path
+from django.views.decorators.csrf import csrf_exempt
+from karrio.server.data.serializers.data import ImportDataSerializer
+from rest_framework import status
+from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.request import Request
+from rest_framework.response import Response
 
 ENDPOINT_ID = "&&&&$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 DataImportParameters: list = [
@@ -55,14 +52,14 @@ class DataImport(api.BaseAPIView):
             500: serializers.ErrorResponse(),
         },
         request={
-            'multipart/form-data': {
-                'type': 'object',
-                'properties': {
-                    'resource_type': {'type': 'string'},
-                    'data_template': {'type': 'string'},
-                    'dry_run': {'type': 'boolean'},
-                    'data_file': {'type': 'string', 'format': 'binary'},
-                }
+            "multipart/form-data": {
+                "type": "object",
+                "properties": {
+                    "resource_type": {"type": "string"},
+                    "data_template": {"type": "string"},
+                    "dry_run": {"type": "boolean"},
+                    "data_file": {"type": "string", "format": "binary"},
+                },
             }
         },
         parameters=DataImportParameters,
@@ -95,31 +92,19 @@ class DataImport(api.BaseAPIView):
                     dry_run=dry_run,
                     rate_sheet_id=rate_sheet_id,
                 )
-            except Exception as exc:
+            except Exception:
                 logging.exception("Error while processing rate sheet import")
                 return Response(
-                    {
-                        "errors": [
-                            {
-                                "message": "An error occurred while processing the rate sheet import."
-                            }
-                        ]
-                    },
+                    {"errors": [{"message": "An error occurred while processing the rate sheet import."}]},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             if result.get("errors"):
                 return Response(result, status=status.HTTP_400_BAD_REQUEST)
             return Response(result, status=status.HTTP_200_OK)
 
-        operation = (
-            ImportDataSerializer.map(data=request.data, context=request)
-            .save()
-            .instance
-        )
+        operation = ImportDataSerializer.map(data=request.data, context=request).save().instance
 
-        return Response(
-            serializers.BatchOperation(operation).data, status=status.HTTP_202_ACCEPTED
-        )
+        return Response(serializers.BatchOperation(operation).data, status=status.HTTP_202_ACCEPTED)
 
 
 DataExportParameters: list = [
@@ -173,6 +158,7 @@ class DataExport(api.BaseAPIView):
             # Rate sheet export — dedicated xlsx handler
             if resource_type == "rate_sheet":
                 from karrio.server.providers.models import RateSheet, SystemRateSheet
+
                 sheet_id = query_params.get("id")
                 if not sheet_id:
                     return JsonResponse(
@@ -205,31 +191,29 @@ class DataExport(api.BaseAPIView):
                 return response
 
             # Standard tablib export
-            dataset = resources.export(
-                resource_type, query_params, context=request
-            )
+            dataset = resources.export(resource_type, query_params, context=request)
 
             # Get the content
             content = getattr(dataset, export_format, "")
 
             # Determine content type
             content_types = {
-                'csv': 'text/csv',
-                'xls': 'application/vnd.ms-excel',
-                'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                "csv": "text/csv",
+                "xls": "application/vnd.ms-excel",
+                "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             }
-            content_type = content_types.get(export_format, 'application/octet-stream')
+            content_type = content_types.get(export_format, "application/octet-stream")
 
             # Create response
             if isinstance(content, str):
-                response = HttpResponse(content.encode('utf-8'), content_type=content_type)
+                response = HttpResponse(content.encode("utf-8"), content_type=content_type)
             else:
                 response = HttpResponse(content, content_type=content_type)
 
             # Set headers
             filename = f"{resource_type}.{export_format}"
-            response['Content-Disposition'] = f'attachment; filename="{filename}"'
-            response['X-Frame-Options'] = 'ALLOWALL'
+            response["Content-Disposition"] = f'attachment; filename="{filename}"'
+            response["X-Frame-Options"] = "ALLOWALL"
 
             return response
 

@@ -136,18 +136,14 @@
           },
           "insuranceParcelContent": "Electronic equipment"
         },
-        "messages": {
-          "email1": {
-            "notificationType": "DELIVERY",
-            "notificationEmail": "receiver@example.com",
-            "notificationLanguage": "EN"
-          },
-          "sms1": {
-            "notificationType": "DELIVERY",
-            "notificationPhone": "+33123456789",
-            "notificationLanguage": "EN"
+        "messages": [
+          {
+            "messageType": "EMAIL",
+            "messageDestination": "receiver@example.com",
+            "messageLanguage": "EN",
+            "senderCompany": "DPD"
           }
-        },
+        ],
         "person": {
           "personToNotify": "Jane Receiver",
           "personToDeliver": "Jane Receiver"
@@ -186,6 +182,7 @@
           "country": "FR"
         },
         "contact": {
+          "contactPerson": "Import Manager",
           "phone1": "+33198765432",
           "email": "importer@example.com"
         },
@@ -205,6 +202,7 @@
           "country": "DE"
         },
         "contact": {
+          "contactPerson": "Export Manager",
           "phone1": "+49301234567",
           "email": "exporter@example.com"
         },

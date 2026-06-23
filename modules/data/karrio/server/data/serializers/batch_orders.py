@@ -1,12 +1,11 @@
-from django.db import transaction
-
 import karrio.lib as lib
 import karrio.server.conf as conf
-import karrio.server.orders.models as orders
-import karrio.server.serializers as serializers
-import karrio.server.data.serializers.base as base
 import karrio.server.core.exceptions as exceptions
+import karrio.server.data.serializers.base as base
+import karrio.server.orders.models as orders
 import karrio.server.orders.serializers as order_serializers
+import karrio.server.serializers as serializers
+from django.db import transaction
 
 
 @serializers.owned_model_serializer
@@ -19,17 +18,11 @@ class BatchOrderData(serializers.Serializer):
 
     @transaction.atomic
     def create(self, validated_data: dict, context: serializers.Context, **kwargs):
-        import karrio.server.events.tasks as tasks
         import karrio.server.data.serializers.batch as batch
+        import karrio.server.events.tasks as tasks
 
         operation_data = dict(resource_type="orders", test_mode=context.test_mode)
-        operation = (
-            batch.BatchOperationModelSerializer.map(
-                data=operation_data, context=context
-            )
-            .save()
-            .instance
-        )
+        operation = batch.BatchOperationModelSerializer.map(data=operation_data, context=context).save().instance
 
         sid = transaction.savepoint()
         resources = BatchOrderData.save_resources(
@@ -75,19 +68,11 @@ class BatchOrderData(serializers.Serializer):
                 order = (
                     queryset.first()
                     if queryset.exists()
-                    else (
-                        order_serializers.OrderSerializer.map(
-                            data=order_data, context=context
-                        )
-                        .save()
-                        .instance
-                    )
+                    else (order_serializers.OrderSerializer.map(data=order_data, context=context).save().instance)
                 )
-                resources.append(
-                    dict(id=order.id, status=base.ResourceStatus.queued.value)
-                )
+                resources.append(dict(id=order.id, status=base.ResourceStatus.queued.value))
             except Exception as e:
-                setattr(e, "index", index)
+                e.index = index
                 resources.append(
                     dict(
                         id=index,

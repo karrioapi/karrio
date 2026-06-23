@@ -6,18 +6,19 @@ by setting ReturnCharges=1 on the shipment request.
 """
 
 import typing
-import karrio.schemas.parcelone as parcelone
-import karrio.lib as lib
+
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.parcelone.error as error
-import karrio.providers.parcelone.utils as provider_utils
 import karrio.providers.parcelone.units as provider_units
+import karrio.providers.parcelone.utils as provider_utils
+import karrio.schemas.parcelone as parcelone
 
 
 def parse_rate_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+) -> tuple[list[models.RateDetails], list[models.Message]]:
     """Parse rate response from ParcelOne REST API."""
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
@@ -34,8 +35,8 @@ def parse_rate_response(
 def _extract_rate(
     data: dict,
     settings: provider_utils.Settings,
-    ctx: typing.Dict[str, typing.Any] = None,
-) -> typing.Optional[models.RateDetails]:
+    ctx: dict[str, typing.Any] | None = None,
+) -> models.RateDetails | None:
     """Extract rate details from API response."""
     ctx = ctx or {}
     result = lib.to_object(parcelone.ShipmentResultType, data.get("results") or {})
@@ -85,20 +86,17 @@ def rate_request(
     recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(payload.parcels, required=["weight"])
     services = lib.to_services(payload.services, service_type=provider_units.ShippingService)
-    options = lib.to_shipping_options(
+    lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,
     )
 
     # Get first service or use default
-    service = lib.identity(
-        next(iter(services), None)
-        or provider_units.ShippingService.parcelone_pa1_eco
-    )
+    service = lib.identity(next(iter(services), None) or provider_units.ShippingService.parcelone_pa1_eco)
 
     # Parse service for CEP and product IDs
-    service_code = service.value if hasattr(service, 'value') else str(service)
+    service_code = service.value if hasattr(service, "value") else str(service)
     cep_id, product_id = provider_units.parse_service_code(service_code)
     cep_id = cep_id or settings.connection_config.cep_id.state
     product_id = product_id or settings.connection_config.product_id.state
@@ -129,7 +127,9 @@ def rate_request(
                     Country=shipper.country_code,
                     State=shipper.state_code,
                 ),
-            ) if shipper else None,
+            )
+            if shipper
+            else None,
             ReturnCharges=1,  # Request charges only
             PrintLabel=0,  # Don't generate label for rate request
             Software="Karrio",
@@ -158,5 +158,5 @@ def rate_request(
     return lib.Serializable(
         request,
         lib.to_dict,
-        dict(service_code=service.name if hasattr(service, 'name') else str(service)),
+        dict(service_code=service.name if hasattr(service, "name") else str(service)),
     )

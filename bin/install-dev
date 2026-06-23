@@ -18,6 +18,7 @@
 #   - Installs nvm and Node.js
 #   - Creates Python virtual environment (.venv/karrio)
 #   - Installs Python and Node.js dependencies
+#   - Installs pre-commit git hooks (ruff + ruff-format on commit)
 #   - Generates local HTTPS certificates (mkcert)
 #   - Sets up environment files (.env)
 #
@@ -48,8 +49,9 @@ show_help() {
     echo "  3. Install nvm and Node.js"
     echo "  4. Create virtual environment at .venv/karrio"
     echo "  5. Install all Python and Node.js dependencies"
-    echo "  6. Generate HTTPS certificates with mkcert"
-    echo "  7. Set up environment configuration files"
+    echo "  6. Install pre-commit git hooks (ruff + ruff-format on commit)"
+    echo "  7. Generate HTTPS certificates with mkcert"
+    echo "  8. Set up environment configuration files"
     echo ""
     echo "After installation, run:"
     echo "  ./bin/dev up              Start development servers"
@@ -531,6 +533,30 @@ else
     else
         exit 1
     fi
+fi
+
+# =============================================================================
+# STEP 5b: PRE-COMMIT HOOKS
+# =============================================================================
+print_step "Installing pre-commit git hooks..."
+
+if [[ -d ".venv/karrio" ]] && [[ -f ".pre-commit-config.yaml" ]]; then
+    if (
+        source ".venv/karrio/bin/activate" 2>/dev/null
+        cd "$ROOT_DIR"
+        if command_exists pre-commit; then
+            pre-commit install --install-hooks
+        else
+            print_warning "pre-commit not found in venv — check requirements.dev.txt"
+            exit 1
+        fi
+    ); then
+        print_success "Pre-commit hooks installed (ruff, ruff-format, check-merge-conflict will run on each commit)"
+    else
+        print_warning "pre-commit install failed — run manually: source bin/activate-env && pre-commit install"
+    fi
+else
+    print_warning "Virtual environment or .pre-commit-config.yaml missing — skipping pre-commit install"
 fi
 
 # =============================================================================

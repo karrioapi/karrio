@@ -1,19 +1,19 @@
+import datetime
+
+import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
+import karrio.providers.dhl_parcel_de.error as error
+import karrio.providers.dhl_parcel_de.units as provider_units
+import karrio.providers.dhl_parcel_de.utils as provider_utils
 import karrio.schemas.dhl_parcel_de.shipping_request as dhl_parcel_de
 import karrio.schemas.dhl_parcel_de.shipping_response as shipping
-import typing
-import datetime
-import karrio.lib as lib
-import karrio.core.units as units
-import karrio.core.models as models
-import karrio.providers.dhl_parcel_de.error as error
-import karrio.providers.dhl_parcel_de.utils as provider_utils
-import karrio.providers.dhl_parcel_de.units as provider_units
 
 
 def parse_shipment_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+) -> tuple[list[models.RateDetails], list[models.Message]]:
     response = _response.deserialize()
     items = response.get("items") or []
     ctx = _response.ctx or {}
@@ -21,12 +21,9 @@ def parse_shipment_response(
     messages = error.parse_error_response(response, settings)
     shipment = (
         lib.to_multi_piece_shipment(
-            [
-                (f"{_}", _extract_details(item, settings, ctx))
-                for _, item in enumerate(items, start=1)
-            ]
+            [(f"{_}", _extract_details(item, settings, ctx)) for _, item in enumerate(items, start=1)]
         )
-        if any([lib.failsafe(lambda: _["sstatus"]["statusCode"]) == 200 for _ in items])
+        if any(lib.failsafe(lambda item=item: item["sstatus"]["statusCode"]) == 200 for item in items)
         else None
     )
 
@@ -36,7 +33,7 @@ def parse_shipment_response(
 def _extract_details(
     data: dict,
     settings: provider_utils.Settings,
-    ctx: dict = None,
+    ctx: dict | None = None,
 ) -> models.ShipmentDetails:
     # fmt: off
     shipment = lib.to_object(shipping.ItemType, data)
@@ -67,7 +64,9 @@ def _extract_details(
                 models.ShippingDocument(
                     category=provider_units.ShippingDocumentCategory.map(category).name_or_key,
                     format=lib.identity("ZPL" if doc.fileFormat == "ZPL2" else "PDF"),
-                    base64=lib.failsafe(lambda: doc.b64 or doc.zpl2),
+                    base64=lib.failsafe(
+                        lambda document=doc: document.b64 or document.zpl2
+                    ),
                     print_format=doc.printFormat,
                     url=doc.url,
                 )
@@ -105,7 +104,12 @@ def shipment_request(
     recipient = lib.to_address(payload.recipient)
     service = provider_units.ShippingService.map(payload.service).value_or_key
     service_code = provider_units.ShippingService.map(payload.service).name
-    billing_number = settings.get_billing_number(service_code)
+    # Shipping methods can pin a DHL billing row with this carrier option when
+    # multiple configured rows share the same service code.
+    billing_id = (
+        (payload.options or {}).get("dhl_parcel_de_service_billing_id") if isinstance(payload.options, dict) else None
+    )
+    billing_number = settings.get_billing_number(service_code, billing_id=billing_id)
     options = lib.to_shipping_options(
         payload.options,
         initializer=provider_units.shipping_options_initializer,
@@ -124,7 +128,10 @@ def shipment_request(
     return_address = lib.to_address(payload.return_address) if payload.return_address else shipper
     is_intl = shipper.country_code != recipient.country_code
     doc_format, print_format = provider_units.LabelType.map(
-        options.dhl_parcel_de_label_type.state or settings.connection_config.label_type.state or payload.label_type or "PDF"
+        options.dhl_parcel_de_label_type.state
+        or settings.connection_config.label_type.state
+        or payload.label_type
+        or "PDF"
     ).value
     shipment_date = lib.to_date(
         options.shipping_date.state or datetime.datetime.now(),
@@ -132,32 +139,24 @@ def shipment_request(
     )
 
     request = dhl_parcel_de.ShippingRequestType(
-        profile=options.dhl_parcel_de_profile.state or settings.connection_config.profile.state or "STANDARD_GRUPPENPROFIL",
+        profile=options.dhl_parcel_de_profile.state
+        or settings.connection_config.profile.state
+        or "STANDARD_GRUPPENPROFIL",
         shipments=[
             dhl_parcel_de.ShipmentType(
                 product=service,
                 billingNumber=billing_number,
-                refNo=payload.reference,
+                refNo=options.dhl_parcel_de_reference.state or payload.reference,
                 costCenter=options.dhl_parcel_de_cost_center.state or settings.connection_config.cost_center.state,
                 creationSoftware=settings.connection_config.creation_software.state,
-                shipDate=lib.fdatetime(
-                    shipment_date, output_format="%Y-%m-%dT%H:%M:%S"
-                ),
+                shipDate=lib.fdatetime(shipment_date, output_format="%Y-%m-%dT%H:%M:%S"),
                 shipper=dhl_parcel_de.ShipperType(
                     name1=shipper.company_name or shipper.person_name,
                     name2=(shipper.person_name if shipper.company_name else None),
                     name3=None,
-                    addressStreet=lib.identity(
-                        shipper.street_name
-                        if shipper.street_number
-                        else shipper.address_line1
-                    ),
+                    addressStreet=lib.identity(shipper.street_name if shipper.street_number else shipper.address_line1),
                     addressHouse=lib.text(
-                        (
-                            shipper.street_number
-                            if shipper.street_number
-                            else shipper.address_line2
-                        ),
+                        (shipper.street_number if shipper.street_number else shipper.address_line2),
                         max=10,
                     ),
                     postalCode=shipper.postal_code,
@@ -172,16 +171,10 @@ def shipment_request(
                     name3=None,
                     dispatchingInformation=None,
                     addressStreet=lib.identity(
-                        recipient.street_name
-                        if recipient.street_number
-                        else recipient.address_line1
+                        recipient.street_name if recipient.street_number else recipient.address_line1
                     ),
                     addressHouse=lib.text(
-                        (
-                            recipient.street_number
-                            if recipient.street_number
-                            else recipient.address_line2
-                        ),
+                        (recipient.street_number if recipient.street_number else recipient.address_line2),
                         max=10,
                     ),
                     additionalAddressInformation1=None,
@@ -207,7 +200,9 @@ def shipment_request(
                             length=package.length.CM,
                             width=package.width.CM,
                         )
-                        if package.height.value is not None and package.length.value is not None and package.width.value is not None
+                        if package.height.value is not None
+                        and package.length.value is not None
+                        and package.width.value is not None
                         else None
                     ),
                     weight=dhl_parcel_de.WeightType(
@@ -239,8 +234,7 @@ def shipment_request(
                             currency=package.options.currency.state,
                             value=package.options.dhl_parcel_de_additional_insurance.state,
                         )
-                        if package.options.dhl_parcel_de_additional_insurance.state
-                        is not None
+                        if package.options.dhl_parcel_de_additional_insurance.state is not None
                         else None
                     ),
                     bulkyGoods=package.options.dhl_parcel_de_bulky_goods.state,
@@ -249,8 +243,7 @@ def shipment_request(
                             currency=package.options.currency.state,
                             value=package.options.dhl_parcel_de_cash_on_delivery.state,
                         )
-                        if package.options.dhl_parcel_de_cash_on_delivery.state
-                        is not None
+                        if package.options.dhl_parcel_de_cash_on_delivery.state is not None
                         else None
                     ),
                     individualSenderRequirement=package.options.dhl_parcel_de_individual_sender_requirement.state,
@@ -268,20 +261,15 @@ def shipment_request(
                             dhl_parcel_de.DhlRetoureType(
                                 billingNumber=(
                                     package.options.dhl_parcel_de_return_billing_number.state
-                                    or settings.get_return_billing_number(service_code_override=options.dhl_parcel_de_return_service_code.state)
+                                    or settings.get_return_billing_number(
+                                        service_code_override=options.dhl_parcel_de_return_service_code.state
+                                    )
                                     or billing_number
                                 ),
-                                refNo=(
-                                    package.options.dhl_parcel_de_return_reference.state
-                                    or payload.reference
-                                ),
+                                refNo=(package.options.dhl_parcel_de_return_reference.state or payload.reference),
                                 returnAddress=dhl_parcel_de.ConsigneeType(
                                     name1=return_address.company_name or return_address.person_name,
-                                    name2=(
-                                        return_address.person_name
-                                        if return_address.company_name
-                                        else None
-                                    ),
+                                    name2=(return_address.person_name if return_address.company_name else None),
                                     addressStreet=lib.identity(
                                         return_address.street_name
                                         if return_address.street_number
@@ -297,9 +285,7 @@ def shipment_request(
                                     ),
                                     postalCode=return_address.postal_code,
                                     city=return_address.city,
-                                    country=units.CountryCode.map(
-                                        return_address.country_code
-                                    ).value_or_key,
+                                    country=units.CountryCode.map(return_address.country_code).value_or_key,
                                     contactName=return_address.person_name,
                                     email=return_address.email,
                                 ),
@@ -316,47 +302,31 @@ def shipment_request(
                     dhl_parcel_de.CustomsType(
                         invoiceNo=customs.invoice,
                         exportType=lib.identity(
-                            provider_units.CustomsContentType.map(
-                                customs.content_type
-                            ).value
-                            or "COMMERCIAL_GOODS"
+                            provider_units.CustomsContentType.map(customs.content_type).value or "COMMERCIAL_GOODS"
                         ),
                         exportDescription=lib.identity(
-                            customs.content_description
-                            or package.parcel.description
-                            or "Other"
+                            customs.content_description or package.parcel.description or "Other"
                         ),
-                        shippingConditions=(
-                            provider_units.Incoterm.map(customs.incoterm).value or "DDP"
-                        ),
+                        shippingConditions=(provider_units.Incoterm.map(customs.incoterm).value or "DDP"),
                         permitNo=package.options.dhl_parcel_de_permit_no.state,
                         attestationNo=package.options.dhl_parcel_de_attestation_no.state,
                         hasElectronicExportNotification=package.options.dhl_parcel_de_has_electronic_export_notification.state,
                         MRN=package.options.dhl_parcel_de_MRN.state,
                         postalCharges=lib.identity(
                             dhl_parcel_de.PostalChargesType(
-                                currency=(
-                                    package.options.currency.state
-                                    or customs.duty.currency
-                                    or "EUR"
-                                ),
+                                currency=(package.options.currency.state or customs.duty.currency or "EUR"),
                                 value=package.options.dhl_parcel_de_postal_charges.state,
                             )
-                            if package.options.dhl_parcel_de_postal_charges.state
-                            is not None
+                            if package.options.dhl_parcel_de_postal_charges.state is not None
                             else None
                         ),
-                        officeOfOrigin=(
-                            units.CountryCode.map(shipper.country_code).value_or_key
-                        ),
+                        officeOfOrigin=(units.CountryCode.map(shipper.country_code).value_or_key),
                         shipperCustomsRef=package.options.dhl_parcel_de_shipper_customs_ref.state,
                         consigneeCustomsRef=package.options.dhl_parcel_de_consignee_customs_ref.state,
                         items=[
                             dhl_parcel_de.ItemType(
                                 itemDescription=item.description or item.title,
-                                countryOfOrigin=units.CountryCode.map(
-                                    item.origin_country or ""
-                                ).value_or_key,
+                                countryOfOrigin=units.CountryCode.map(item.origin_country or "").value_or_key,
                                 hsCode=item.hs_code,
                                 packagedQuantity=item.quantity,
                                 itemValue=dhl_parcel_de.PostalChargesType(

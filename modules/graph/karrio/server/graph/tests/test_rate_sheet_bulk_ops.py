@@ -4,10 +4,9 @@ Verifies that zone, surcharge, and service mutations use batched writes
 instead of per-item saves.
 """
 
-from django.test import TestCase
-from django.contrib.auth import get_user_model
-
 import karrio.server.providers.models as providers
+from django.contrib.auth import get_user_model
+from django.test import TestCase
 from karrio.server.graph.serializers import _RateSheetSerializerMixin
 
 
@@ -23,9 +22,7 @@ class TestProcessZonesBulk(TestCase):
     """Test that process_zones batches all mutations into a single save."""
 
     def setUp(self):
-        self.user = get_user_model().objects.create_superuser(
-            "testadmin@test.com", "testpassword"
-        )
+        self.user = get_user_model().objects.create_superuser("testadmin@test.com", "testpassword")
         self.rate_sheet = providers.RateSheet.objects.create(
             name="Test Sheet",
             carrier_name="ups",
@@ -49,8 +46,8 @@ class TestProcessZonesBulk(TestCase):
         ]
 
         # Count queries: should be exactly 1 UPDATE
-        from django.test.utils import CaptureQueriesContext
         from django.db import connection
+        from django.test.utils import CaptureQueriesContext
 
         with CaptureQueriesContext(connection) as ctx:
             self.serializer.process_zones(zones_data)
@@ -88,9 +85,7 @@ class TestProcessSurchargesBulk(TestCase):
     """Test that process_surcharges batches all mutations into a single save."""
 
     def setUp(self):
-        self.user = get_user_model().objects.create_superuser(
-            "testadmin2@test.com", "testpassword"
-        )
+        self.user = get_user_model().objects.create_superuser("testadmin2@test.com", "testpassword")
         self.rate_sheet = providers.RateSheet.objects.create(
             name="Test Sheet 2",
             carrier_name="ups",
@@ -110,8 +105,8 @@ class TestProcessSurchargesBulk(TestCase):
             {"id": None, "name": "Peak Season", "amount": 15.0},
         ]
 
-        from django.test.utils import CaptureQueriesContext
         from django.db import connection
+        from django.test.utils import CaptureQueriesContext
 
         with CaptureQueriesContext(connection) as ctx:
             self.serializer.process_surcharges(surcharges_data)
@@ -128,9 +123,7 @@ class TestUpdateServicesBulk(TestCase):
     """Test that update_services uses bulk operations."""
 
     def setUp(self):
-        self.user = get_user_model().objects.create_superuser(
-            "testadmin3@test.com", "testpassword"
-        )
+        self.user = get_user_model().objects.create_superuser("testadmin3@test.com", "testpassword")
         self.rate_sheet = providers.RateSheet.objects.create(
             name="Test Sheet 3",
             carrier_name="ups",
@@ -153,9 +146,7 @@ class TestUpdateServicesBulk(TestCase):
             created_by=self.user,
         )
         self.rate_sheet.services.add(self.service1, self.service2)
-        self.serializer = MockRateSheetSerializer(
-            self.rate_sheet, context={"user": self.user}
-        )
+        self.serializer = MockRateSheetSerializer(self.rate_sheet, context={"user": self.user})
 
     def test_bulk_update_existing_services(self):
         """Updating multiple existing services should use bulk_update."""
@@ -191,9 +182,7 @@ class TestUpdateServicesBulk(TestCase):
         self.serializer.update_services(services_data, remove_missing=True)
 
         self.assertEqual(self.rate_sheet.services.count(), 1)
-        self.assertFalse(
-            providers.ServiceLevel.objects.filter(id=self.service2.id).exists()
-        )
+        self.assertFalse(providers.ServiceLevel.objects.filter(id=self.service2.id).exists())
 
     def test_mixed_create_and_update(self):
         """Mix of new and existing services should work correctly."""
@@ -211,4 +200,5 @@ class TestUpdateServicesBulk(TestCase):
 
 if __name__ == "__main__":
     import unittest
+
     unittest.main()

@@ -1,12 +1,14 @@
 """SmartKargo carrier tracking tests."""
 
-import unittest
-from unittest.mock import patch, ANY
-from .fixture import gateway
 import logging
-import karrio.sdk as karrio
-import karrio.lib as lib
+import unittest
+from unittest.mock import patch
+
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 logger = logging.getLogger(__name__)
 
@@ -32,9 +34,7 @@ class TestSmartKargoTracking(unittest.TestCase):
     def test_get_tracking_by_airwaybill(self):
         with patch("karrio.mappers.smartkargo.proxy.lib.request") as mock:
             mock.return_value = "[]"
-            tracking_request = models.TrackingRequest(
-                tracking_numbers=["XIA00291643"]
-            )
+            tracking_request = models.TrackingRequest(tracking_numbers=["XIA00291643"])
             karrio.Tracking.fetch(tracking_request).from_(gateway)
             self.assertIn(
                 "tracking?",
@@ -62,9 +62,7 @@ class TestSmartKargoTracking(unittest.TestCase):
     def test_parse_tracking_response(self):
         with patch("karrio.mappers.smartkargo.proxy.lib.request") as mock:
             mock.return_value = TrackingResponse
-            parsed_response = (
-                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             self.assertListEqual(
                 lib.to_dict(parsed_response),
                 ParsedTrackingResponse,
@@ -73,9 +71,7 @@ class TestSmartKargoTracking(unittest.TestCase):
     def test_parse_partner_tracking_response(self):
         with patch("karrio.mappers.smartkargo.proxy.lib.request") as mock:
             mock.return_value = PartnerTrackingResponse
-            parsed_response = (
-                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             self.assertListEqual(
                 lib.to_dict(parsed_response),
                 ParsedPartnerTrackingResponse,
@@ -84,9 +80,7 @@ class TestSmartKargoTracking(unittest.TestCase):
     def test_parse_error_response(self):
         with patch("karrio.mappers.smartkargo.proxy.lib.request") as mock:
             mock.return_value = ErrorResponse
-            parsed_response = (
-                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             self.assertListEqual(
                 lib.to_dict(parsed_response),
                 ParsedTrackingErrorResponse,

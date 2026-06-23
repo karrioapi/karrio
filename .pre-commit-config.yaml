@@ -1,0 +1,43 @@
+# Pre-commit scope:
+#   - ruff + ruff-format: enforced on all Python (scope governed by ruff.toml)
+#   - check-merge-conflict: repo-wide
+#   - prettier: plumbed in but staged as 'manual' so it doesn't trigger a
+#     repo-wide frontend reformat in this sub-PR. Run explicitly with:
+#         pre-commit run prettier --hook-stage manual --all-files
+#     A dedicated follow-up PR will flip this to the default stage after
+#     the frontend reformat lands.
+exclude: |
+  (?x)^(
+    ee/.*|
+    community/.*|
+    modules/connectors/.+/schemas/.*|
+    modules/connectors/.+/vendor(s)?/.*|
+    modules/connectors/.+/karrio/schemas/.*|
+    apps/api/karrio/server/static/.*|
+    docker/.*|
+    postman/.*|
+    schemas/.*|
+    .*\.har|
+    .*/generated/.*|
+    package-lock\.json|
+    CHANGELOG\.md
+  )$
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    # Bumped from task-default v0.6.9 → v0.15.11: JTL's ruff.toml uses
+    # UP045/UP046/UP047 per-file-ignores, which only exist in ruff 0.12+.
+    rev: v0.15.11
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: check-merge-conflict
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v4.0.0-alpha.8
+    hooks:
+      - id: prettier
+        stages: [manual]
+        files: ^(apps|packages|plugins)/.+\.(ts|tsx|js|jsx|mjs|cjs|css|scss)$

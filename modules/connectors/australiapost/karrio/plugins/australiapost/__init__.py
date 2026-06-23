@@ -1,8 +1,6 @@
 import karrio.core.metadata as metadata
 import karrio.mappers.australiapost as mappers
 import karrio.providers.australiapost.units as units
-import karrio.providers.australiapost.utils as utils
-
 
 METADATA = metadata.PluginMetadata(
     status="beta",

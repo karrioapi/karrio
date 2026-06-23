@@ -1,25 +1,21 @@
 """Karrio MyDHL tracking API implementation."""
 
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.mydhl.error as error
-import karrio.providers.mydhl.utils as provider_utils
 import karrio.providers.mydhl.units as provider_units
+import karrio.providers.mydhl.utils as provider_utils
 import karrio.schemas.mydhl.tracking_response as mydhl_res
 
 
 def parse_tracking_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+) -> tuple[list[models.TrackingDetails], list[models.Message]]:
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
 
-    tracking_details = [
-        _extract_details(shipment, settings)
-        for shipment in (response.get("shipments") or [])
-    ]
+    tracking_details = [_extract_details(shipment, settings) for shipment in (response.get("shipments") or [])]
 
     return tracking_details, messages
 
@@ -40,16 +36,10 @@ def _extract_details(
         provider_units.TrackingStatus.in_transit.name,
     )
     delivered = status == "delivered"
-    estimated_delivery = lib.fdate(
-        shipment.estimatedTimeOfDelivery, "%Y-%m-%dT%H:%M:%S"
-    )
+    estimated_delivery = lib.fdate(shipment.estimatedTimeOfDelivery, "%Y-%m-%dT%H:%M:%S")
     signature_image = lib.failsafe(
         lambda: (
-            provider_utils.get_proof_of_delivery(
-                str(shipment.shipmentTrackingNumber), settings
-            )
-            if delivered
-            else None
+            provider_utils.get_proof_of_delivery(str(shipment.shipmentTrackingNumber), settings) if delivered else None
         )
     )
 
@@ -122,7 +112,5 @@ def tracking_request(
     request = payload.tracking_numbers
     return lib.Serializable(
         request,
-        lambda tracking_numbers: "&".join(
-            f"shipmentTrackingNumber={num}" for num in tracking_numbers
-        ),
+        lambda tracking_numbers: "&".join(f"shipmentTrackingNumber={num}" for num in tracking_numbers),
     )

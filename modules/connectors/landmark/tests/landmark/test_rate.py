@@ -1,8 +1,10 @@
 import unittest
+
 import karrio.sdk as karrio
-from karrio.core.utils import DP
 from karrio.core.models import RateRequest
+from karrio.core.utils import DP
 from karrio.providers.landmark import units
+
 from .fixture import gateway
 
 
@@ -59,12 +61,7 @@ class TestLandmarkServiceConfiguration(unittest.TestCase):
         self.assertIsNotNone(minipak_ddp)
         self.assertEqual(minipak_ddp.currency, "GBP")
 
-        all_countries = {
-            code
-            for zone in minipak_ddp.zones
-            if zone.country_codes
-            for code in zone.country_codes
-        }
+        all_countries = {code for zone in minipak_ddp.zones if zone.country_codes for code in zone.country_codes}
         # MiniPak DDP is available for all zones including US, CA, AU
         self.assertIn("US", all_countries, "MiniPak DDP should include US")
         self.assertIn("DE", all_countries, "MiniPak DDP should include EU countries")
@@ -100,21 +97,13 @@ class TestLandmarkZoneConfiguration(unittest.TestCase):
 
     def setUp(self):
         self.maxipak_ddp = next(
-            (
-                s
-                for s in units.DEFAULT_SERVICES
-                if s.service_code == "landmark_maxipak_scan_ddp"
-            ),
+            (s for s in units.DEFAULT_SERVICES if s.service_code == "landmark_maxipak_scan_ddp"),
             None,
         )
 
     def test_us_zone_exists(self):
         """Test that US zone exists."""
-        us_zones = [
-            z
-            for z in self.maxipak_ddp.zones
-            if z.country_codes and "US" in z.country_codes
-        ]
+        us_zones = [z for z in self.maxipak_ddp.zones if z.country_codes and "US" in z.country_codes]
 
         self.assertGreater(len(us_zones), 0, "US zone should exist")
 
@@ -136,20 +125,12 @@ class TestLandmarkZoneConfiguration(unittest.TestCase):
     def test_germany_rate_lower_than_us(self):
         """Test that Germany rates are lower than US rates."""
         de_zone = next(
-            (
-                z
-                for z in self.maxipak_ddp.zones
-                if z.country_codes and "DE" in z.country_codes
-            ),
+            (z for z in self.maxipak_ddp.zones if z.country_codes and "DE" in z.country_codes),
             None,
         )
 
         us_zone = next(
-            (
-                z
-                for z in self.maxipak_ddp.zones
-                if z.country_codes and "US" in z.country_codes
-            ),
+            (z for z in self.maxipak_ddp.zones if z.country_codes and "US" in z.country_codes),
             None,
         )
 
@@ -161,15 +142,9 @@ class TestLandmarkZoneConfiguration(unittest.TestCase):
         """Test that transit times are defined for zones."""
         zones_with_transit = [z for z in self.maxipak_ddp.zones if z.transit_days]
 
-        self.assertGreater(
-            len(zones_with_transit), 0, "Zones should have transit times"
-        )
+        self.assertGreater(len(zones_with_transit), 0, "Zones should have transit times")
 
-        us_zones = [
-            z
-            for z in self.maxipak_ddp.zones
-            if z.country_codes and "US" in z.country_codes
-        ]
+        us_zones = [z for z in self.maxipak_ddp.zones if z.country_codes and "US" in z.country_codes]
         if us_zones:
             self.assertEqual(us_zones[0].transit_days, 7, "US transit should be 7 days")
 
@@ -181,11 +156,7 @@ class TestLandmarkRateScenarios(unittest.TestCase):
 
     def setUp(self):
         self.maxipak_ddp = next(
-            (
-                s
-                for s in units.DEFAULT_SERVICES
-                if s.service_code == "landmark_maxipak_scan_ddp"
-            ),
+            (s for s in units.DEFAULT_SERVICES if s.service_code == "landmark_maxipak_scan_ddp"),
             None,
         )
 
@@ -199,11 +170,7 @@ class TestLandmarkRateScenarios(unittest.TestCase):
     def test_us_zone_rate(self):
         """Test that US zone has expected rate."""
         us_zone = next(
-            (
-                z
-                for z in self.maxipak_ddp.zones
-                if z.country_codes and "US" in z.country_codes
-            ),
+            (z for z in self.maxipak_ddp.zones if z.country_codes and "US" in z.country_codes),
             None,
         )
 
@@ -213,11 +180,7 @@ class TestLandmarkRateScenarios(unittest.TestCase):
     def test_eu_zone1_rate(self):
         """Test that EU Zone 1 has expected rate."""
         eu_zone1 = next(
-            (
-                z
-                for z in self.maxipak_ddp.zones
-                if z.label == "EU Zone 1"
-            ),
+            (z for z in self.maxipak_ddp.zones if z.label == "EU Zone 1"),
             None,
         )
 

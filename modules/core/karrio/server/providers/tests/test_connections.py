@@ -1,17 +1,18 @@
 """Tests for carrier connection OAuth and Webhook APIs."""
 
 import json
-from unittest.mock import patch, ANY
+from unittest.mock import ANY, patch
+
+import karrio.server.providers.models as providers
 from django.urls import reverse
-from rest_framework import status
 from karrio.core.models import (
-    OAuthAuthorizeRequest,
-    WebhookRegistrationDetails,
     ConfirmationDetails,
     Message,
+    OAuthAuthorizeRequest,
+    WebhookRegistrationDetails,
 )
 from karrio.server.core.tests import APITestCase
-import karrio.server.providers.models as providers
+from rest_framework import status
 
 
 class TestConnectionOAuthAuthorize(APITestCase):
@@ -101,10 +102,7 @@ class TestConnectionOAuthCallback(APITestCase):
             "karrio.server.providers:connection-oauth-callback",
             kwargs=dict(carrier_name="teleship"),
         )
-        query_params = (
-            "?account_client_id=user_client_abc"
-            "&account_client_secret=user_secret_xyz"
-        )
+        query_params = "?account_client_id=user_client_abc&account_client_secret=user_secret_xyz"
 
         with patch("karrio.server.core.gateway.utils.identity") as mock:
             mock.return_value = OAUTH_CALLBACK_ERROR_RETURNED_VALUE
@@ -147,9 +145,7 @@ class TestConnectionWebhookDeregister(APITestCase):
     def setUp(self):
         super().setUp()
         url = reverse("karrio.server.providers:carrier-connection-list")
-        response = self.client.post(
-            url, TELESHIP_CONNECTION_WITH_WEBHOOK_DATA, format="json"
-        )
+        response = self.client.post(url, TELESHIP_CONNECTION_WITH_WEBHOOK_DATA, format="json")
         self.teleship_carrier_pk = json.loads(response.content)["id"]
 
     def test_webhook_deregister(self):
@@ -174,9 +170,7 @@ class TestConnectionWebhookDisconnect(APITestCase):
     def setUp(self):
         super().setUp()
         url = reverse("karrio.server.providers:carrier-connection-list")
-        response = self.client.post(
-            url, TELESHIP_CONNECTION_WITH_WEBHOOK_DATA, format="json"
-        )
+        response = self.client.post(url, TELESHIP_CONNECTION_WITH_WEBHOOK_DATA, format="json")
         self.teleship_carrier_pk = json.loads(response.content)["id"]
 
     def test_webhook_disconnect(self):
@@ -209,9 +203,7 @@ class TestConnectionWebhookEvent(APITestCase):
     def setUp(self):
         super().setUp()
         url = reverse("karrio.server.providers:carrier-connection-list")
-        response = self.client.post(
-            url, TELESHIP_CONNECTION_WITH_WEBHOOK_DATA, format="json"
-        )
+        response = self.client.post(url, TELESHIP_CONNECTION_WITH_WEBHOOK_DATA, format="json")
         self.teleship_carrier_pk = json.loads(response.content)["id"]
 
     def test_webhook_event(self):
@@ -387,9 +379,7 @@ class TestConnectionCreate(APITestCase):
         """Test creating connection with additional config."""
         url = reverse("karrio.server.providers:carrier-connection-list")
 
-        response = self.client.post(
-            url, SENDLE_CONNECTION_WITH_CONFIG_DATA, format="json"
-        )
+        response = self.client.post(url, SENDLE_CONNECTION_WITH_CONFIG_DATA, format="json")
         response_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -462,9 +452,7 @@ class TestConnectionDetail(APITestCase):
     def test_delete_connection(self):
         """Test DELETE /v1/connections/{pk} removes connection."""
         list_url = reverse("karrio.server.providers:carrier-connection-list")
-        create_response = self.client.post(
-            list_url, SENDLE_TO_DELETE_DATA, format="json"
-        )
+        create_response = self.client.post(list_url, SENDLE_TO_DELETE_DATA, format="json")
         connection_pk = json.loads(create_response.content)["id"]
 
         url = reverse(
@@ -481,9 +469,7 @@ class TestConnectionDetail(APITestCase):
         """Test that superuser can delete any connection."""
         from django.contrib.auth import get_user_model
 
-        other_user = get_user_model().objects.create_user(
-            "other@example.com", "password456"
-        )
+        other_user = get_user_model().objects.create_user("other@example.com", "password456")
         other_connection = providers.CarrierConnection.objects.create(
             carrier_code="sendle",
             carrier_id="other_user_sendle",
@@ -500,9 +486,7 @@ class TestConnectionDetail(APITestCase):
         response = self.client.delete(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertFalse(
-            providers.CarrierConnection.objects.filter(pk=other_connection.pk).exists()
-        )
+        self.assertFalse(providers.CarrierConnection.objects.filter(pk=other_connection.pk).exists())
 
 
 class TestConnectionPagination(APITestCase):

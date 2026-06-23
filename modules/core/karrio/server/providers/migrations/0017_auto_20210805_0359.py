@@ -7,7 +7,6 @@ import karrio.server.providers.models.carrier
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ("providers", "0016_alter_purolatorsettings_user_token"),
@@ -17,9 +16,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="carrier",
             name="active_users",
-            field=models.ManyToManyField(
-                blank=True, related_name="active_users", to=settings.AUTH_USER_MODEL
-            ),
+            field=models.ManyToManyField(blank=True, related_name="active_users", to=settings.AUTH_USER_MODEL),
         ),
         migrations.AddField(
             model_name="carrier",

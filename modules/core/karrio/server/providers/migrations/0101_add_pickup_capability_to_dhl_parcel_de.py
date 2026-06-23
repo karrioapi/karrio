@@ -8,11 +8,7 @@ def add_pickup_capability(apps, schema_editor):
 
     for model_name in ("CarrierConnection", "SystemConnection"):
         Model = apps.get_model("providers", model_name)
-        for conn in (
-            Model.objects.using(db_alias)
-            .filter(carrier_code="dhl_parcel_de")
-            .iterator()
-        ):
+        for conn in Model.objects.using(db_alias).filter(carrier_code="dhl_parcel_de").iterator():
             capabilities = conn.capabilities or []
             if "pickup" not in capabilities:
                 conn.capabilities = [*capabilities, "pickup"]
@@ -24,11 +20,7 @@ def remove_pickup_capability(apps, schema_editor):
 
     for model_name in ("CarrierConnection", "SystemConnection"):
         Model = apps.get_model("providers", model_name)
-        for conn in (
-            Model.objects.using(db_alias)
-            .filter(carrier_code="dhl_parcel_de")
-            .iterator()
-        ):
+        for conn in Model.objects.using(db_alias).filter(carrier_code="dhl_parcel_de").iterator():
             capabilities = conn.capabilities or []
             if "pickup" in capabilities:
                 conn.capabilities = [c for c in capabilities if c != "pickup"]
@@ -36,7 +28,6 @@ def remove_pickup_capability(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("providers", "0100_migrate_dhl_parcel_de_billing_number"),
     ]

@@ -150,6 +150,7 @@ class ServiceBillingNumberType:
     service: ShippingService  # Required: shipping service enum
     billing_number: str  # Required: billing number for this service
 
+    id: typing.Optional[str] = None  # Optional: stable row id for duplicate services
     name: typing.Optional[str] = None  # Optional: friendly name for this entry
 
 
@@ -157,29 +158,17 @@ class ServiceBillingNumberType:
 # https://developer.dhl.com/api-reference/parcel-de-shipping-post-parcel-germany-v2
 DEFAULT_TEST_BILLING_NUMBERS: typing.List[ServiceBillingNumberType] = [
     # V01PAK - DHL Paket (incl. services)
-    ServiceBillingNumberType(
-        service="dhl_parcel_de_paket", billing_number="33333333330102"
-    ),
+    ServiceBillingNumberType(service="dhl_parcel_de_paket", billing_number="33333333330102"),
     # V53WPAK - DHL Paket International
-    ServiceBillingNumberType(
-        service="dhl_parcel_de_paket_international", billing_number="33333333335301"
-    ),
+    ServiceBillingNumberType(service="dhl_parcel_de_paket_international", billing_number="33333333335301"),
     # V54EPAK - DHL Europaket
-    ServiceBillingNumberType(
-        service="dhl_parcel_de_europaket", billing_number="33333333335401"
-    ),
+    ServiceBillingNumberType(service="dhl_parcel_de_europaket", billing_number="33333333335401"),
     # V62KP - DHL Kleinpaket
-    ServiceBillingNumberType(
-        service="dhl_parcel_de_kleinpaket", billing_number="33333333336201"
-    ),
+    ServiceBillingNumberType(service="dhl_parcel_de_kleinpaket", billing_number="33333333336201"),
     # V66WPI - Warenpost International
-    ServiceBillingNumberType(
-        service="dhl_parcel_de_warenpost_international", billing_number="33333333336601"
-    ),
+    ServiceBillingNumberType(service="dhl_parcel_de_warenpost_international", billing_number="33333333336601"),
     # V07PAK - DHL Retoure
-    ServiceBillingNumberType(
-        service="dhl_parcel_de_retoure", billing_number="33333333330701"
-    ),
+    ServiceBillingNumberType(service="dhl_parcel_de_retoure", billing_number="33333333330701"),
 ]
 
 # Default test billing number (V01PAK with services)
@@ -191,24 +180,15 @@ class ConnectionConfig(lib.Enum):
         "label_type",
         lib.units.create_enum("LabelType", [_.name for _ in LabelType]),  # type: ignore
     )
-    language = lib.OptionEnum(
-        "language",
-        lib.units.create_enum("Language", ["de", "en"]), default="en"
-    )
-    default_billing_number = lib.OptionEnum(
-        "default_billing_number", default=DEFAULT_TEST_BILLING_NUMBER
-    )
+    language = lib.OptionEnum("language", lib.units.create_enum("Language", ["de", "en"]), default="en")
+    default_billing_number = lib.OptionEnum("default_billing_number", default=DEFAULT_TEST_BILLING_NUMBER)
     service_billing_numbers = lib.OptionEnum(
         "service_billing_numbers",
         typing.List[ServiceBillingNumberType],
         default=DEFAULT_TEST_BILLING_NUMBERS,
     )
-    pickup_billing_number = lib.OptionEnum(
-        "pickup_billing_number", str, default="22222222220801"
-    )
-    return_billing_number = lib.OptionEnum(
-        "return_billing_number", str, default="33333333330701"
-    )
+    pickup_billing_number = lib.OptionEnum("pickup_billing_number", str, default="22222222220801")
+    return_billing_number = lib.OptionEnum("return_billing_number", str, default="33333333330701")
     profile = lib.OptionEnum("profile")
     cost_center = lib.OptionEnum("cost_center")
     creation_software = lib.OptionEnum("creation_software")
@@ -220,6 +200,44 @@ class ShippingOption(lib.Enum):
     """Carrier specific options"""
 
     # fmt: off
+    # Reference Options
+    dhl_parcel_de_service_billing_id = lib.OptionEnum(
+        "serviceBillingId",
+        meta=dict(
+            category="SHIPMENT",
+            # Not user-editable in the shipping-method options editor —
+            # populated automatically when the merchant picks a Service
+            # whose billing row carries an id. At label purchase time
+            # the provider resolves the exact billing_number via this id.
+            configurable=False,
+            help="Auto-set from the selected Service's billing row id when the merchant's connection has duplicate service_codes.",
+            compatible_services=[
+                "dhl_parcel_de_paket",
+                "dhl_parcel_de_paket_international",
+                "dhl_parcel_de_europaket",
+                "dhl_parcel_de_kleinpaket",
+                "dhl_parcel_de_warenpost",
+                "dhl_parcel_de_warenpost_international",
+                "dhl_parcel_de_retoure",
+            ],
+        )
+    )
+    dhl_parcel_de_reference = lib.OptionEnum(
+        "refNo",
+        meta=dict(
+            category="SHIPMENT",
+            configurable=True,
+            help="Shipment reference number (overrides payload.reference for refNo)",
+            compatible_services=[
+                "dhl_parcel_de_paket",
+                "dhl_parcel_de_paket_international",
+                "dhl_parcel_de_europaket",
+                "dhl_parcel_de_kleinpaket",
+                "dhl_parcel_de_warenpost",
+                "dhl_parcel_de_warenpost_international",
+            ],
+        )
+    )
     # Delivery Options
     dhl_parcel_de_preferred_neighbour = lib.OptionEnum(
         "preferredNeighbour",
@@ -597,9 +615,7 @@ def shipping_options_initializer(
     # Inject properly converted dhlRetoure option
     if _retoure_data is not None:
         _retoure_obj = (
-            lib.to_object(ship_req.DhlRetoureType, _retoure_data)
-            if isinstance(_retoure_data, dict)
-            else _retoure_data
+            lib.to_object(ship_req.DhlRetoureType, _retoure_data) if isinstance(_retoure_data, dict) else _retoure_data
         )
         _options._options["dhl_parcel_de_dhl_retoure"] = lib.OptionEnum(
             "dhlRetoure", ship_req.DhlRetoureType, state=_retoure_obj
@@ -618,10 +634,23 @@ class CustomsOption(lib.Enum):
 
 
 class TrackingStatus(lib.Enum):
-    delivered = ["delivered", "dlvrd"]
-    in_transit = ["transit", "srted", "ulfmv", "ldtmv", "pckdu", "shrcu"]
-    delivery_failed = ["failure", "ndelv"]
+    """Maps DHL ICE codes and TTPRO standard-event-codes to karrio tracking statuses.
+
+    ICE codes: from tracking API response (e.g. dlvrd, srted, ulfmv)
+    TTPRO codes: from standard-event-code field (e.g. va, aa, zu)
+    Reference: vendors/parcel_de_ice_event_ric_combinations_July_2024.csv
+    """
+
+    pending = ["va"]  # TTPRO: Electronic pre advise
+    picked_up = ["ae", "es"]  # TTPRO: Pickup successful / Handed over to DHL
+    in_transit = ["transit", "srted", "ulfmv", "ldtmv", "pckdu", "shrcu", "aa", "ee", "nb"]  # ICE + TTPRO
+    out_for_delivery = ["po"]  # TTPRO: In delivery process
+    delivered = ["delivered", "dlvrd", "zu"]  # ICE + TTPRO
+    delivery_failed = ["failure", "ndelv", "bv", "zn", "an"]  # ICE + TTPRO
     delivery_delayed = ["unknown"]
+    on_hold = ["zo"]  # TTPRO: Customs clearance
+    ready_for_pickup = ["la", "zf"]  # TTPRO: In storage / Delivery to postal outlet
+    # DD, GT = Data Service / Money transfer (not shipping milestones) → no mapping
 
 
 class TrackingIncidentReason(lib.Enum):
@@ -723,43 +752,27 @@ def load_services_from_csv() -> list:
                     "currency": row.get("currency", "EUR"),
                     "min_weight": row_min_weight,
                     "max_weight": row_max_weight,
-                    "max_length": (
-                        float(row["max_length"]) if row.get("max_length") else None
-                    ),
-                    "max_width": (
-                        float(row["max_width"]) if row.get("max_width") else None
-                    ),
-                    "max_height": (
-                        float(row["max_height"]) if row.get("max_height") else None
-                    ),
+                    "max_length": (float(row["max_length"]) if row.get("max_length") else None),
+                    "max_width": (float(row["max_width"]) if row.get("max_width") else None),
+                    "max_height": (float(row["max_height"]) if row.get("max_height") else None),
                     "weight_unit": "KG",
                     "dimension_unit": "CM",
                     "domicile": row.get("domicile", "").lower() == "true",
-                    "international": (
-                        True if row.get("international", "").lower() == "true" else None
-                    ),
+                    "international": (True if row.get("international", "").lower() == "true" else None),
                     "zones": [],
                 }
             else:
                 # Update service-level weight bounds to cover all zones
                 current = services_dict[karrio_service_code]
                 if row_min_weight is not None:
-                    if (
-                        current["min_weight"] is None
-                        or row_min_weight < current["min_weight"]
-                    ):
+                    if current["min_weight"] is None or row_min_weight < current["min_weight"]:
                         current["min_weight"] = row_min_weight
                 if row_max_weight is not None:
-                    if (
-                        current["max_weight"] is None
-                        or row_max_weight > current["max_weight"]
-                    ):
+                    if current["max_weight"] is None or row_max_weight > current["max_weight"]:
                         current["max_weight"] = row_max_weight
 
             # Parse country codes
-            country_codes = [
-                c.strip() for c in row.get("country_codes", "").split(",") if c.strip()
-            ]
+            country_codes = [c.strip() for c in row.get("country_codes", "").split(",") if c.strip()]
 
             # Create zone
             zone = models.ServiceZone(
@@ -767,20 +780,14 @@ def load_services_from_csv() -> list:
                 rate=float(row.get("rate", 0.0)),
                 min_weight=row_min_weight,
                 max_weight=row_max_weight,
-                transit_days=(
-                    int(row["transit_days"].split("-")[0])
-                    if row.get("transit_days")
-                    else None
-                ),
+                transit_days=(int(row["transit_days"].split("-")[0]) if row.get("transit_days") else None),
                 country_codes=country_codes if country_codes else None,
             )
 
             services_dict[karrio_service_code]["zones"].append(zone)
 
     # Convert to ServiceLevel objects
-    return [
-        models.ServiceLevel(**service_data) for service_data in services_dict.values()
-    ]
+    return [models.ServiceLevel(**service_data) for service_data in services_dict.values()]
 
 
 DEFAULT_SERVICES = load_services_from_csv()

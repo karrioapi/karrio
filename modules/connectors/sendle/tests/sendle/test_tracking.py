@@ -1,10 +1,11 @@
 import unittest
-from unittest.mock import patch, ANY
-from .fixture import gateway
+from unittest.mock import patch
 
-import karrio.sdk as karrio
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 
 class TestSendleTracking(unittest.TestCase):
@@ -30,18 +31,14 @@ class TestSendleTracking(unittest.TestCase):
     def test_parse_tracking_response(self):
         with patch("karrio.mappers.sendle.proxy.lib.request") as mock:
             mock.return_value = TrackingResponse
-            parsed_response = (
-                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedTrackingResponse)
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.sendle.proxy.lib.request") as mock:
             mock.return_value = ErrorResponse
-            parsed_response = (
-                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
@@ -65,8 +62,7 @@ ParsedTrackingResponse = [
                 {
                     "code": "Delivered",
                     "date": "2023-04-05",
-                    "description": "Your package has been delivered to your "
-                    "mailbox!",
+                    "description": "Your package has been delivered to your mailbox!",
                     "location": "NEW YORK, NY",
                     "status": "delivered",
                     "time": "14:56 PM",
@@ -137,8 +133,7 @@ ParsedTrackingResponse = [
                 {
                     "code": "Pickup Attempted",
                     "date": "2023-04-03",
-                    "description": "We attempted to pick up the parcel but were "
-                    "unsuccessful",
+                    "description": "We attempted to pick up the parcel but were unsuccessful",
                     "reason": "delivery_exception_hold",
                     "status": "on_hold",
                     "time": "08:20 AM",
@@ -160,12 +155,10 @@ ParsedErrorResponse = [
             "carrier_name": "sendle",
             "code": "not_found",
             "details": {
-                "error_description": "The resource you requested was not found. "
-                "Please check the URI and try again.",
+                "error_description": "The resource you requested was not found. Please check the URI and try again.",
                 "tracking_number": "S34WER4S",
             },
-            "message": "The resource you requested was not found. Please check the URI "
-            "and try again.",
+            "message": "The resource you requested was not found. Please check the URI and try again.",
         }
     ],
 ]

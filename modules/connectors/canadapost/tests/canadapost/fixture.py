@@ -1,5 +1,5 @@
-import karrio.sdk as karrio
 import karrio.providers.canadapost.units as units
+import karrio.sdk as karrio
 
 gateway = karrio.gateway["canadapost"].create(
     dict(
@@ -10,11 +10,7 @@ gateway = karrio.gateway["canadapost"].create(
         config={
             "transmit_shipment_by_default": True,
             "cost_center": "karrio-app",
-            "shipping_services": [
-                _.name
-                for _ in list(units.ServiceType)
-                if _.name != "canadapost_xpresspost"
-            ],
+            "shipping_services": [_.name for _ in list(units.ServiceType) if _.name != "canadapost_xpresspost"],
         },
     )
 )

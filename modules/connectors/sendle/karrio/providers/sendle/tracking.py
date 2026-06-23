@@ -1,25 +1,20 @@
+import karrio.core.models as models
+import karrio.lib as lib
+import karrio.providers.sendle.error as error
+import karrio.providers.sendle.units as provider_units
+import karrio.providers.sendle.utils as provider_utils
 import karrio.schemas.sendle.tracking_request as sendle
 import karrio.schemas.sendle.tracking_response as tracking
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
-import karrio.core.models as models
-import karrio.providers.sendle.error as error
-import karrio.providers.sendle.utils as provider_utils
-import karrio.providers.sendle.units as provider_units
 
 
 def parse_tracking_response(
-    _response: lib.Deserializable[typing.List[typing.Tuple[str, dict]]],
+    _response: lib.Deserializable[list[tuple[str, dict]]],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+) -> tuple[list[models.TrackingDetails], list[models.Message]]:
     responses = _response.deserialize()
 
-    messages: typing.List[models.Message] = sum(
-        [
-            error.parse_error_response(response, settings, tracking_number=_)
-            for _, response in responses
-        ],
+    messages: list[models.Message] = sum(
+        [error.parse_error_response(response, settings, tracking_number=_) for _, response in responses],
         start=[],
     )
     tracking_details = [
@@ -45,11 +40,7 @@ def _extract_details(
         or details.scheduling.delivered_on
     )
     status = next(
-        (
-            status.name
-            for status in list(provider_units.TrackingStatus)
-            if details.state in status.value
-        ),
+        (status.name for status in list(provider_units.TrackingStatus) if details.state in status.value),
         provider_units.TrackingStatus.in_transit.name,
     )
 
@@ -85,11 +76,7 @@ def _extract_details(
                     current_format="%Y-%m-%dT%H:%M:%S",
                 ),
                 status=next(
-                    (
-                        s.name
-                        for s in list(provider_units.TrackingStatus)
-                        if event.event_type in s.value
-                    ),
+                    (s.name for s in list(provider_units.TrackingStatus) if event.event_type in s.value),
                     None,
                 ),
                 reason=next(

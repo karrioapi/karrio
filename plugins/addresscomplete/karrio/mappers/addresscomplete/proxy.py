@@ -1,7 +1,7 @@
 """Karrio AddressComplete client proxy."""
 
-import karrio.lib as lib
 import karrio.api.proxy as proxy
+import karrio.lib as lib
 import karrio.mappers.addresscomplete.settings as provider_settings
 
 

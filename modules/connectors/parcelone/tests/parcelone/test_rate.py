@@ -2,11 +2,12 @@
 
 import unittest
 from unittest.mock import patch
-from .fixture import gateway
 
-import karrio.sdk as karrio
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 
 class TestParcelOneRating(unittest.TestCase):
@@ -33,18 +34,14 @@ class TestParcelOneRating(unittest.TestCase):
     def test_parse_rate_response(self):
         with patch("karrio.mappers.parcelone.proxy.lib.request") as mock:
             mock.return_value = RateResponseJSON
-            parsed_response = (
-                karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedRateResponse)
 
     def test_parse_rate_error_response(self):
         with patch("karrio.mappers.parcelone.proxy.lib.request") as mock:
             mock.return_value = RateErrorResponseJSON
-            parsed_response = (
-                karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedRateErrorResponse)
 

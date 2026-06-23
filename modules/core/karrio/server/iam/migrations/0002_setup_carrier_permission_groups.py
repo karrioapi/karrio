@@ -12,24 +12,21 @@ def setup_carrier_groups(apps, schema_editor):
     1. read_carriers and write_carriers groups were added to ROLES_GROUPS
     2. But existing user ContextPermissions weren't updated with these groups
     """
-    Group = apps.get_model('user', 'Group')
-    Permission = apps.get_model('auth', 'Permission')
-    ContentType = apps.get_model('contenttypes', 'ContentType')
-    ContextPermission = apps.get_model('iam', 'ContextPermission')
+    Group = apps.get_model("user", "Group")
+    Permission = apps.get_model("auth", "Permission")
+    ContentType = apps.get_model("contenttypes", "ContentType")
+    ContextPermission = apps.get_model("iam", "ContextPermission")
 
     # Create the new permission groups if they don't exist
-    read_carriers_group, _ = Group.objects.get_or_create(name='read_carriers')
-    write_carriers_group, _ = Group.objects.get_or_create(name='write_carriers')
+    read_carriers_group, _ = Group.objects.get_or_create(name="read_carriers")
+    write_carriers_group, _ = Group.objects.get_or_create(name="write_carriers")
 
     # Get providers content types for permissions
     try:
-        providers_ct = ContentType.objects.filter(app_label='providers')
+        providers_ct = ContentType.objects.filter(app_label="providers")
 
         # Set up read_carriers with view permissions
-        view_perms = Permission.objects.filter(
-            content_type__in=providers_ct,
-            codename__icontains='view'
-        )
+        view_perms = Permission.objects.filter(content_type__in=providers_ct, codename__icontains="view")
         if view_perms.exists():
             read_carriers_group.permissions.set(view_perms)
 
@@ -42,13 +39,11 @@ def setup_carrier_groups(apps, schema_editor):
         pass
 
     # Update all existing ContextPermissions that have manage_carriers to also include read_carriers
-    manage_carriers_group = Group.objects.filter(name='manage_carriers').first()
+    manage_carriers_group = Group.objects.filter(name="manage_carriers").first()
 
     if manage_carriers_group:
         # Find all context permissions that have manage_carriers
-        context_perms_with_manage = ContextPermission.objects.filter(
-            groups=manage_carriers_group
-        )
+        context_perms_with_manage = ContextPermission.objects.filter(groups=manage_carriers_group)
 
         # Add read_carriers and write_carriers to these context permissions
         for ctx_perm in context_perms_with_manage:
@@ -58,13 +53,11 @@ def setup_carrier_groups(apps, schema_editor):
     # Also update any OrganizationUser context permissions based on their roles
     # This ensures all users who should have read_carriers get it
     try:
-        OrganizationUser = apps.get_model('orgs', 'OrganizationUser')
+        OrganizationUser = apps.get_model("orgs", "OrganizationUser")
         org_user_ct = ContentType.objects.get_for_model(OrganizationUser)
 
         # Roles that should have read_carriers (all roles)
-        org_user_context_perms = ContextPermission.objects.filter(
-            content_type=org_user_ct
-        )
+        org_user_context_perms = ContextPermission.objects.filter(content_type=org_user_ct)
 
         for ctx_perm in org_user_context_perms:
             # All organization users should have read_carriers by default
@@ -76,11 +69,11 @@ def setup_carrier_groups(apps, schema_editor):
 
 def reverse_migration(apps, schema_editor):
     """Reverse migration - remove the new groups from context permissions."""
-    Group = apps.get_model('user', 'Group')
-    ContextPermission = apps.get_model('iam', 'ContextPermission')
+    Group = apps.get_model("user", "Group")
+    ContextPermission = apps.get_model("iam", "ContextPermission")
 
-    read_carriers_group = Group.objects.filter(name='read_carriers').first()
-    write_carriers_group = Group.objects.filter(name='write_carriers').first()
+    read_carriers_group = Group.objects.filter(name="read_carriers").first()
+    write_carriers_group = Group.objects.filter(name="write_carriers").first()
 
     if read_carriers_group:
         for ctx_perm in ContextPermission.objects.filter(groups=read_carriers_group):
@@ -92,10 +85,9 @@ def reverse_migration(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('iam', '0001_initial'),
-        ('user', '0004_group'),
+        ("iam", "0001_initial"),
+        ("user", "0004_group"),
     ]
 
     operations = [

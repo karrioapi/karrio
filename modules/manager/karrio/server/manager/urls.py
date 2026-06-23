@@ -1,6 +1,7 @@
 """
 karrio server manager module urls
 """
+
 from django.urls import include, path
 from karrio.server.manager.views import router
 

@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('manager', '0039_documentuploadrecord'),
+        ("manager", "0039_documentuploadrecord"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='parcel',
-            name='freight_class',
+            model_name="parcel",
+            name="freight_class",
             field=models.CharField(blank=True, max_length=10, null=True),
         ),
     ]

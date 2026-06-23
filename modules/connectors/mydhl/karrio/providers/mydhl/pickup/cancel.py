@@ -1,8 +1,7 @@
 """Karrio MyDHL pickup cancellation API implementation."""
 
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.mydhl.error as error
 import karrio.providers.mydhl.utils as provider_utils
 import karrio.schemas.mydhl.pickup_cancel_response as cancel_res
@@ -11,7 +10,7 @@ import karrio.schemas.mydhl.pickup_cancel_response as cancel_res
 def parse_pickup_cancel_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
+) -> tuple[models.ConfirmationDetails, list[models.Message]]:
     """Parse pickup cancellation response from MyDHL API"""
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
@@ -36,7 +35,6 @@ def _extract_details(
         success=success,
         operation="Cancel Pickup",
     )
-    
 
 
 def pickup_cancel_request(
@@ -47,4 +45,3 @@ def pickup_cancel_request(
     # MyDHL uses DELETE /pickups/{confirmationNumber}
     # So we just return the confirmation number
     return lib.Serializable(payload.confirmation_number)
-    

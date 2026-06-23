@@ -7,9 +7,7 @@ def forwards_func(apps, schema_editor):
     db_alias = schema_editor.connection.alias
     Shipment = apps.get_model("manager", "Shipment")
 
-    for shipment in (
-        Shipment.objects.using(db_alias).filter(meta__invoice__isnull=False).iterator()
-    ):
+    for shipment in Shipment.objects.using(db_alias).filter(meta__invoice__isnull=False).iterator():
         shipment.invoice = shipment.meta.get("invoice")
         shipment.meta = {k: v for k, v in shipment.meta.items() if k != "invoice"}
         shipment.save()

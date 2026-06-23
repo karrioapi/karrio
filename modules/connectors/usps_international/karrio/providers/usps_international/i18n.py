@@ -13,9 +13,15 @@ SERVICE_NAME_TRANSLATIONS = {
 }
 
 OPTION_NAME_TRANSLATIONS = {
-    "usps_hazardous_materials_class_7_radioactive_materials": _("USPS Hazardous Materials Class 7 Radioactive Materials"),
-    "usps_hazardous_materials_class_9_unmarked_lithium_batteries": _("USPS Hazardous Materials Class 9 Unmarked Lithium Batteries"),
-    "usps_hazardous_materials_division_6_2_biological_materials": _("USPS Hazardous Materials Division 6 2 Biological Materials"),
+    "usps_hazardous_materials_class_7_radioactive_materials": _(
+        "USPS Hazardous Materials Class 7 Radioactive Materials"
+    ),
+    "usps_hazardous_materials_class_9_unmarked_lithium_batteries": _(
+        "USPS Hazardous Materials Class 9 Unmarked Lithium Batteries"
+    ),
+    "usps_hazardous_materials_division_6_2_biological_materials": _(
+        "USPS Hazardous Materials Division 6 2 Biological Materials"
+    ),
     "usps_hazardous_materials": _("USPS Hazardous Materials"),
     "usps_insurance_below_500": _("USPS Insurance Below 500"),
     "usps_insurance_above_500": _("USPS Insurance Above 500"),

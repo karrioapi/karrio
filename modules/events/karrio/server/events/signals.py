@@ -1,13 +1,12 @@
+import karrio.server.core.serializers as serializers
+import karrio.server.events.tasks as tasks
+import karrio.server.manager.models as models
 from django.db.models import signals
-
+from karrio.server.conf import settings
 from karrio.server.core import utils
 from karrio.server.core.logging import logger
 from karrio.server.core.middleware import get_request_id
-from karrio.server.conf import settings
 from karrio.server.events.serializers import EventTypes
-import karrio.server.core.serializers as serializers
-import karrio.server.manager.models as models
-import karrio.server.events.tasks as tasks
 
 
 def _get_parent_request_id(instance=None):
@@ -29,9 +28,7 @@ def register_signals():
 
 @utils.disable_for_loaddata
 @utils.error_wrapper
-def shipment_updated(
-    sender, instance, created, raw, using, update_fields, *args, **kwargs
-):
+def shipment_updated(sender, instance, created, raw, using, update_fields, *args, **kwargs):
     """Shipment related events:
     - shipment purchased (label purchased)
     - shipment fulfilled (shipped)
@@ -41,35 +38,21 @@ def shipment_updated(
 
     if created:
         return
-    if is_bound and instance.status == serializers.ShipmentStatus.created.value:
-        event = EventTypes.shipment_purchased.value
-    elif (
-        status_updated and instance.status == serializers.ShipmentStatus.created.value
+    if (
+        is_bound
+        and instance.status == serializers.ShipmentStatus.created.value
+        or (status_updated and instance.status == serializers.ShipmentStatus.created.value)
     ):
         event = EventTypes.shipment_purchased.value
-    elif (
-        status_updated
-        and instance.status == serializers.ShipmentStatus.in_transit.value
-    ):
+    elif status_updated and instance.status == serializers.ShipmentStatus.in_transit.value:
         event = EventTypes.shipment_fulfilled.value
-    elif (
-        status_updated and instance.status == serializers.ShipmentStatus.cancelled.value
-    ):
+    elif status_updated and instance.status == serializers.ShipmentStatus.cancelled.value:
         event = EventTypes.shipment_cancelled.value
-    elif (
-        status_updated
-        and instance.status == serializers.ShipmentStatus.out_for_delivery.value
-    ):
+    elif status_updated and instance.status == serializers.ShipmentStatus.out_for_delivery.value:
         event = EventTypes.shipment_out_for_delivery.value
-    elif (
-        status_updated
-        and instance.status == serializers.ShipmentStatus.needs_attention.value
-    ):
+    elif status_updated and instance.status == serializers.ShipmentStatus.needs_attention.value:
         event = EventTypes.shipment_needs_attention.value
-    elif (
-        status_updated
-        and instance.status == serializers.ShipmentStatus.delivery_failed.value
-    ):
+    elif status_updated and instance.status == serializers.ShipmentStatus.delivery_failed.value:
         event = EventTypes.shipment_delivery_failed.value
     else:
         return
@@ -80,9 +63,7 @@ def shipment_updated(
     context = dict(
         test_mode=instance.test_mode,
         user_id=utils.failsafe(lambda: instance.created_by.id),
-        org_id=utils.failsafe(
-            lambda: instance.org.first().id if hasattr(instance, "org") else None
-        ),
+        org_id=utils.failsafe(lambda: instance.org.first().id if hasattr(instance, "org") else None),
         **({"parent_request_id": _parent_request_id} if _parent_request_id else {}),
     )
 
@@ -105,9 +86,7 @@ def shipment_cancelled(sender, instance, *args, **kwargs):
     context = dict(
         user_id=utils.failsafe(lambda: instance.created_by.id),
         test_mode=instance.test_mode,
-        org_id=utils.failsafe(
-            lambda: instance.org.first().id if hasattr(instance, "org") else None
-        ),
+        org_id=utils.failsafe(lambda: instance.org.first().id if hasattr(instance, "org") else None),
         **({"parent_request_id": _parent_request_id} if _parent_request_id else {}),
     )
 
@@ -119,9 +98,7 @@ def shipment_cancelled(sender, instance, *args, **kwargs):
 
 @utils.disable_for_loaddata
 @utils.error_wrapper
-def tracker_updated(
-    sender, instance, created, raw, using, update_fields, *args, **kwargs
-):
+def tracker_updated(sender, instance, created, raw, using, update_fields, *args, **kwargs):
     """Tracking related events:
     - tracker created (pending)
     - tracker status changed (in_transit, delivered or blocked)
@@ -142,9 +119,7 @@ def tracker_updated(
     context = dict(
         user_id=utils.failsafe(lambda: instance.created_by.id),
         test_mode=instance.test_mode,
-        org_id=utils.failsafe(
-            lambda: instance.org.first().id if hasattr(instance, "org") else None
-        ),
+        org_id=utils.failsafe(lambda: instance.org.first().id if hasattr(instance, "org") else None),
         **({"parent_request_id": _parent_request_id} if _parent_request_id else {}),
     )
 
@@ -156,9 +131,7 @@ def tracker_updated(
 
 @utils.disable_for_loaddata
 @utils.error_wrapper
-def pickup_updated(
-    sender, instance, created, raw, using, update_fields, *args, **kwargs
-):
+def pickup_updated(sender, instance, created, raw, using, update_fields, *args, **kwargs):
     """Pickup related events:
     - pickup scheduled (created)
     - pickup cancelled (status changed to cancelled)
@@ -169,15 +142,9 @@ def pickup_updated(
 
     if created:
         event = EventTypes.pickup_scheduled.value
-    elif (
-        status_updated
-        and instance.status == serializers.PickupStatus.cancelled.value
-    ):
+    elif status_updated and instance.status == serializers.PickupStatus.cancelled.value:
         event = EventTypes.pickup_cancelled.value
-    elif (
-        status_updated
-        and instance.status == serializers.PickupStatus.closed.value
-    ):
+    elif status_updated and instance.status == serializers.PickupStatus.closed.value:
         event = EventTypes.pickup_closed.value
     else:
         return
@@ -188,9 +155,7 @@ def pickup_updated(
     context = dict(
         user_id=utils.failsafe(lambda: instance.created_by.id),
         test_mode=instance.test_mode,
-        org_id=utils.failsafe(
-            lambda: instance.org.first().id if hasattr(instance, "org") else None
-        ),
+        org_id=utils.failsafe(lambda: instance.org.first().id if hasattr(instance, "org") else None),
         **({"parent_request_id": _parent_request_id} if _parent_request_id else {}),
     )
 

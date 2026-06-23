@@ -1,6 +1,7 @@
 """
 karrio server orders module urls
 """
+
 from django.urls import include, path
 from karrio.server.orders.views import router
 

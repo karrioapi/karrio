@@ -1,57 +1,60 @@
-from karrio.schemas.purolator.shipping_documents_service_1_3_0 import DocumentDetail
-from karrio.schemas.purolator.shipping_service_2_1_3 import (
-    CreateShipmentRequest,
-    PIN,
-    Shipment,
-    SenderInformation,
-    ReceiverInformation,
-    PackageInformation,
-    TrackingReferenceInformation,
-    Address,
-    InternationalInformation,
-    PickupInformation,
-    PickupType,
-    ArrayOfPiece,
-    Piece,
-    Weight as PurolatorWeight,
-    WeightUnit as PurolatorWeightUnit,
-    RequestContext,
-    Dimension as PurolatorDimension,
-    DimensionUnit as PurolatorDimensionUnit,
-    TotalWeight,
-    PhoneNumber,
-    PaymentInformation,
-    DutyInformation,
-    NotificationInformation,
-    ArrayOfOptionIDValuePair,
-    OptionIDValuePair,
-    BusinessRelationship,
-    PrinterType,
-    ContentDetail,
-    ArrayOfContentDetail,
-)
-
-import typing
 import functools
-import karrio.lib as lib
-import karrio.core.units as units
+
 import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
 import karrio.providers.purolator.error as provider_error
+import karrio.providers.purolator.shipment.documents as documents
 import karrio.providers.purolator.units as provider_units
 import karrio.providers.purolator.utils as provider_utils
-import karrio.providers.purolator.shipment.documents as documents
+from karrio.schemas.purolator.shipping_documents_service_1_3_0 import DocumentDetail
+from karrio.schemas.purolator.shipping_service_2_1_3 import (
+    PIN,
+    Address,
+    ArrayOfContentDetail,
+    ArrayOfOptionIDValuePair,
+    ArrayOfPiece,
+    BusinessRelationship,
+    ContentDetail,
+    CreateShipmentRequest,
+    DutyInformation,
+    InternationalInformation,
+    NotificationInformation,
+    OptionIDValuePair,
+    PackageInformation,
+    PaymentInformation,
+    PhoneNumber,
+    PickupInformation,
+    PickupType,
+    Piece,
+    PrinterType,
+    ReceiverInformation,
+    RequestContext,
+    SenderInformation,
+    Shipment,
+    TotalWeight,
+    TrackingReferenceInformation,
+)
+from karrio.schemas.purolator.shipping_service_2_1_3 import (
+    Dimension as PurolatorDimension,
+)
+from karrio.schemas.purolator.shipping_service_2_1_3 import (
+    DimensionUnit as PurolatorDimensionUnit,
+)
+from karrio.schemas.purolator.shipping_service_2_1_3 import (
+    Weight as PurolatorWeight,
+)
+from karrio.schemas.purolator.shipping_service_2_1_3 import (
+    WeightUnit as PurolatorWeightUnit,
+)
 
 
 def parse_shipment_response(
     _response: lib.Deserializable[lib.Element], settings: provider_utils.Settings
-) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+) -> tuple[models.ShipmentDetails, list[models.Message]]:
     response = _response.deserialize()
     pin = lib.find_element("ShipmentPIN", response, PIN, first=True)
-    shipment = (
-        _extract_shipment(response, settings)
-        if (getattr(pin, "Value", None) is not None)
-        else None
-    )
+    shipment = _extract_shipment(response, settings) if (getattr(pin, "Value", None) is not None) else None
 
     return shipment, provider_error.parse_error_response(response, settings)
 
@@ -88,12 +91,8 @@ def shipment_request(
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
     requests: lib.Pipeline = lib.Pipeline(
-        create=lambda *_: functools.partial(
-            _create_shipment, payload=payload, settings=settings
-        )(),
-        document=functools.partial(
-            _get_shipment_label, payload=payload, settings=settings
-        ),
+        create=lambda *_: functools.partial(_create_shipment, payload=payload, settings=settings)(),
+        document=functools.partial(_get_shipment_label, payload=payload, settings=settings),
     )
     return lib.Serializable(requests)
 
@@ -120,12 +119,8 @@ def _shipment_request(
     printing = provider_units.PrintType.map(payload.label_type or "PDF").value
     service = provider_units.ShippingService.map(payload.service).value_or_key
     is_international = shipper.country_code != recipient.country_code
-    shipper_phone_number = units.Phone(
-        shipper.phone_number or "000 000 0000", shipper.country_code
-    )
-    recipient_phone_number = units.Phone(
-        recipient.phone_number or "000 000 0000", recipient.country_code
-    )
+    shipper_phone_number = units.Phone(shipper.phone_number or "000 000 0000", shipper.country_code)
+    recipient_phone_number = units.Phone(recipient.phone_number or "000 000 0000", recipient.country_code)
 
     request = lib.create_envelope(
         header_content=RequestContext(
@@ -198,16 +193,10 @@ def _shipment_request(
                 ShipmentDate=options.shipment_date.state,
                 PackageInformation=PackageInformation(
                     ServiceID=service,
-                    Description=(
-                        packages.description[:25]
-                        if any(packages.description or "")
-                        else None
-                    ),
+                    Description=(packages.description[:25] if any(packages.description or "") else None),
                     TotalWeight=(
                         TotalWeight(
-                            Value=packages.weight.map(
-                                provider_units.MeasurementOptions
-                            ).LB,
+                            Value=packages.weight.map(provider_units.MeasurementOptions).LB,
                             WeightUnit=PurolatorWeightUnit.LB.value,
                         )
                         if packages.weight.value
@@ -219,48 +208,32 @@ def _shipment_request(
                             Piece(
                                 Weight=(
                                     PurolatorWeight(
-                                        Value=package.weight.map(
-                                            provider_units.MeasurementOptions
-                                        ).value,
-                                        WeightUnit=PurolatorWeightUnit[
-                                            package.weight_unit.value
-                                        ].value,
+                                        Value=package.weight.map(provider_units.MeasurementOptions).value,
+                                        WeightUnit=PurolatorWeightUnit[package.weight_unit.value].value,
                                     )
                                     if package.weight.value
                                     else None
                                 ),
                                 Length=(
                                     PurolatorDimension(
-                                        Value=package.length.map(
-                                            provider_units.MeasurementOptions
-                                        ).value,
-                                        DimensionUnit=PurolatorDimensionUnit[
-                                            package.dimension_unit.value
-                                        ].value,
+                                        Value=package.length.map(provider_units.MeasurementOptions).value,
+                                        DimensionUnit=PurolatorDimensionUnit[package.dimension_unit.value].value,
                                     )
                                     if package.length.value
                                     else None
                                 ),
                                 Width=(
                                     PurolatorDimension(
-                                        Value=package.width.map(
-                                            provider_units.MeasurementOptions
-                                        ).value,
-                                        DimensionUnit=PurolatorDimensionUnit[
-                                            package.dimension_unit.value
-                                        ].value,
+                                        Value=package.width.map(provider_units.MeasurementOptions).value,
+                                        DimensionUnit=PurolatorDimensionUnit[package.dimension_unit.value].value,
                                     )
                                     if package.width.value
                                     else None
                                 ),
                                 Height=(
                                     PurolatorDimension(
-                                        Value=package.height.map(
-                                            provider_units.MeasurementOptions
-                                        ).value,
-                                        DimensionUnit=PurolatorDimensionUnit[
-                                            package.dimension_unit.value
-                                        ].value,
+                                        Value=package.height.map(provider_units.MeasurementOptions).value,
+                                        DimensionUnit=PurolatorDimensionUnit[package.dimension_unit.value].value,
                                     )
                                     if package.height.value
                                     else None
@@ -292,13 +265,9 @@ def _shipment_request(
                             ArrayOfContentDetail(
                                 ContentDetail=[
                                     ContentDetail(
-                                        Description=lib.text(
-                                            item.title or item.description or "", max=25
-                                        ),
+                                        Description=lib.text(item.title or item.description or "", max=25),
                                         HarmonizedCode=item.hs_code or "0000",
-                                        CountryOfManufacture=(
-                                            item.origin_country or shipper.country_code
-                                        ),
+                                        CountryOfManufacture=(item.origin_country or shipper.country_code),
                                         ProductCode=item.sku or "0000",
                                         UnitValue=item.value_amount,
                                         Quantity=item.quantity,
@@ -318,9 +287,7 @@ def _shipment_request(
                         BuyerInformation=None,
                         PreferredCustomsBroker=None,
                         DutyInformation=DutyInformation(
-                            BillDutiesToParty=provider_units.DutyPaymentType.map(
-                                customs.duty.paid_by
-                            ).value
+                            BillDutiesToParty=provider_units.DutyPaymentType.map(customs.duty.paid_by).value
                             or "Sender",
                             BusinessRelationship=BusinessRelationship.NOT_RELATED.value,
                             Currency=(customs.duty.currency or options.currence.state),
@@ -335,34 +302,23 @@ def _shipment_request(
                 PaymentInformation=(
                     PaymentInformation(
                         PaymentType=provider_units.PaymentType[payment.paid_by].value,
-                        RegisteredAccountNumber=(
-                            payment.account_number or settings.account_number
-                        ),
-                        BillingAccountNumber=(
-                            payment.account_number or settings.account_number
-                        ),
+                        RegisteredAccountNumber=(payment.account_number or settings.account_number),
+                        BillingAccountNumber=(payment.account_number or settings.account_number),
                         CreditCardInformation=None,
                     )
                     if payload.payment is not None
                     else None
                 ),
-                PickupInformation=PickupInformation(
-                    PickupType=PickupType.DROP_OFF.value
-                ),
+                PickupInformation=PickupInformation(PickupType=PickupType.DROP_OFF.value),
                 NotificationInformation=(
                     NotificationInformation(
-                        ConfirmationEmailAddress=(
-                            options.email_notification_to.state or recipient.email
-                        )
+                        ConfirmationEmailAddress=(options.email_notification_to.state or recipient.email)
                     )
-                    if options.email_notification.state
-                    and any([options.email_notification_to.state, recipient.email])
+                    if options.email_notification.state and any([options.email_notification_to.state, recipient.email])
                     else None
                 ),
                 TrackingReferenceInformation=(
-                    TrackingReferenceInformation(Reference1=payload.reference)
-                    if any(payload.reference or "")
-                    else None
+                    TrackingReferenceInformation(Reference1=payload.reference) if any(payload.reference or "") else None
                 ),
                 OtherInformation=None,
                 ProactiveNotification=None,
@@ -390,17 +346,7 @@ def _get_shipment_label(
 ) -> lib.Job:
     response = lib.to_element(create_response)
     valid = len(provider_error.parse_error_response(response, settings)) == 0
-    shipment_pin = (
-        getattr(
-            lib.find_element("ShipmentPIN", response, PIN, first=True), "Value", None
-        )
-        if valid
-        else None
-    )
-    data = (
-        documents.get_shipping_documents_request(shipment_pin, payload, settings)
-        if valid
-        else None
-    )
+    shipment_pin = getattr(lib.find_element("ShipmentPIN", response, PIN, first=True), "Value", None) if valid else None
+    data = documents.get_shipping_documents_request(shipment_pin, payload, settings) if valid else None
 
     return lib.Job(id="document", data=data, fallback="")

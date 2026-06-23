@@ -2,7 +2,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("data", "0003_datatemplate_metadata_alter_batchoperation_resources"),
     ]

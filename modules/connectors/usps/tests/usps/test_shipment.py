@@ -1,20 +1,19 @@
-import unittest
-from unittest.mock import patch, ANY
-from .fixture import gateway
 import logging as logger
+import unittest
+from unittest.mock import ANY, patch
 
-import karrio.sdk as karrio
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 
 class TestUSPSShipping(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.ShipmentRequest = models.ShipmentRequest(**ShipmentPayload)
-        self.ShipmentCancelRequest = models.ShipmentCancelRequest(
-            **ShipmentCancelPayload
-        )
+        self.ShipmentCancelRequest = models.ShipmentCancelRequest(**ShipmentCancelPayload)
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
@@ -22,9 +21,7 @@ class TestUSPSShipping(unittest.TestCase):
         self.assertEqual(request.serialize(), ShipmentRequest)
 
     def test_create_cancel_shipment_request(self):
-        request = gateway.mapper.create_cancel_shipment_request(
-            self.ShipmentCancelRequest
-        )
+        request = gateway.mapper.create_cancel_shipment_request(self.ShipmentCancelRequest)
         logger.debug(request.serialize())
         self.assertEqual(request.serialize(), ShipmentCancelRequest)
 
@@ -51,48 +48,30 @@ class TestUSPSShipping(unittest.TestCase):
     def test_parse_shipment_response(self):
         with patch("karrio.mappers.usps.proxy.lib.request") as mock:
             mock.return_value = ShipmentResponse
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             logger.debug(lib.to_dict(parsed_response))
             self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_parse_cancel_shipment_response(self):
         with patch("karrio.mappers.usps.proxy.lib.request") as mock:
             mock.return_value = ShipmentCancelResponse
-            parsed_response = (
-                karrio.Shipment.cancel(self.ShipmentCancelRequest)
-                .from_(gateway)
-                .parse()
-            )
+            parsed_response = karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()
             logger.debug(lib.to_dict(parsed_response))
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedCancelShipmentResponse
-            )
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedCancelShipmentResponse)
 
     def test_parse_return_shipment_response(self):
         with patch("karrio.mappers.usps.proxy.lib.request") as mock:
             mock.return_value = ReturnShipmentResponse
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest)
-                .from_(gateway)
-                .parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             print(parsed_response)
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedReturnShipmentResponse
-            )
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedReturnShipmentResponse)
 
     def test_parse_shipment_response_sample2(self):
         with patch("karrio.mappers.usps.proxy.lib.request") as mock:
             mock.return_value = ShipmentResponseSample2
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             logger.debug(lib.to_dict(parsed_response))
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedShipmentResponseSample2
-            )
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponseSample2)
 
 
 if __name__ == "__main__":
@@ -241,9 +220,7 @@ ShipmentRequest = [
             "receiptOption": "NONE",
         },
         "packageDescription": {
-            "customerReference": [
-                {"printReferenceNumber": True, "referenceNumber": "#Order 11111"}
-            ],
+            "customerReference": [{"printReferenceNumber": True, "referenceNumber": "#Order 11111"}],
             "destinationEntryFacilityType": "NONE",
             "dimensionsUOM": "in",
             "girth": 124.0,

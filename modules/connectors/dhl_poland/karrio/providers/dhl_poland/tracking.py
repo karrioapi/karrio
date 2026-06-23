@@ -1,26 +1,23 @@
-import karrio.schemas.dhl_poland.services as dhl
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.dhl_poland.error as provider_error
 import karrio.providers.dhl_poland.utils as provider_utils
+import karrio.schemas.dhl_poland.services as dhl
 
 
 def parse_tracking_response(
-    _response: lib.Deserializable[typing.Dict[str, lib.Element]],
+    _response: lib.Deserializable[dict[str, lib.Element]],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+) -> tuple[list[models.TrackingDetails], list[models.Message]]:
     response = _response.deserialize()
     details = [
         _extract_tracking_details(node, settings)
         for node in response.values()
         if lib.find_element("getTrackAndTraceInfoResult", node, first=True) is not None
     ]
-    errors: typing.List[models.Message] = sum(
+    errors: list[models.Message] = sum(
         [
-            provider_error.parse_error_response(
-                node, settings, dict(tracking_number=number)
-            )
+            provider_error.parse_error_response(node, settings, dict(tracking_number=number))
             for number, node in response.items()
             if lib.find_element("Fault", node, first=True) is not None
         ],
@@ -37,10 +34,7 @@ def _extract_tracking_details(
     track: dhl.TrackAndTraceResponse = lib.find_element(
         "getTrackAndTraceInfoResult", node, dhl.TrackAndTraceResponse, first=True
     )
-    events = [
-        lib.to_object(dhl.TrackAndTraceEvent, item)
-        for item in lib.find_element("item", node)
-    ]
+    events = [lib.to_object(dhl.TrackAndTraceEvent, item) for item in lib.find_element("item", node)]
 
     return models.TrackingDetails(
         carrier_name=settings.carrier_name,

@@ -13,11 +13,12 @@ Run from repository root:
     source .venv/karrio/bin/activate
     python modules/connectors/dhl_parcel_de/vendors/test_tracking_live.py
 """
+
 import os
 import sys
-import json
-import karrio.sdk as karrio
+
 import karrio.lib as lib
+import karrio.sdk as karrio
 from karrio.core.models import TrackingRequest
 
 # Get credentials from environment variables
@@ -45,8 +46,8 @@ def check_credentials():
         print("ERROR: Missing required environment variables!")
         print("")
         print("Please set the following environment variables:")
-        print("  export DHL_PARCEL_DE_API_KEY=\"your-api-key\"")
-        print("  export DHL_PARCEL_DE_API_SECRET=\"your-api-secret\"")
+        print('  export DHL_PARCEL_DE_API_KEY="your-api-key"')
+        print('  export DHL_PARCEL_DE_API_SECRET="your-api-secret"')
         print("")
         print("You can get these from: https://developer.dhl.com")
         sys.exit(1)
@@ -58,19 +59,25 @@ def test_tracking():
     print_separator("DHL Parcel DE Tracking API - Live Test")
 
     print("\n[CONFIG]")
-    print(lib.to_json({
-        "api_key": "***redacted***",
-        "api_secret": "***redacted***",
-        "test_mode": True,
-        "tracking_appname": "zt12345 (sandbox)",
-        "tracking_password": "geheim (sandbox)",
-    }))
+    print(
+        lib.to_json(
+            {
+                "api_key": "***redacted***",
+                "api_secret": "***redacted***",
+                "test_mode": True,
+                "tracking_appname": "zt12345 (sandbox)",
+                "tracking_password": "geheim (sandbox)",
+            }
+        )
+    )
 
-    gateway = karrio.gateway["dhl_parcel_de"].create({
-        "client_id": API_KEY,
-        "client_secret": API_SECRET,
-        "test_mode": True,
-    })
+    gateway = karrio.gateway["dhl_parcel_de"].create(
+        {
+            "client_id": API_KEY,
+            "client_secret": API_SECRET,
+            "test_mode": True,
+        }
+    )
 
     print(f"\n[ENDPOINT] {gateway.settings.tracking_server_url}")
 
@@ -86,6 +93,7 @@ def test_tracking():
         serialized = mapper_request.serialize()
         for xml_req in serialized:
             import xml.dom.minidom
+
             try:
                 dom = xml.dom.minidom.parseString(xml_req)
                 print(dom.toprettyxml(indent="  "))
@@ -100,10 +108,14 @@ def test_tracking():
         tracking_details, messages = result.parse()
 
         print("[RESPONSE]")
-        print(lib.to_json({
-            "tracking_details": [lib.to_dict(d) for d in tracking_details],
-            "messages": [lib.to_dict(m) for m in messages],
-        }))
+        print(
+            lib.to_json(
+                {
+                    "tracking_details": [lib.to_dict(d) for d in tracking_details],
+                    "messages": [lib.to_dict(m) for m in messages],
+                }
+            )
+        )
 
     print_separator("Test Complete")
 
@@ -114,11 +126,13 @@ def test_error_handling():
 
     print_separator("Error Handling Test - Invalid Tracking Number")
 
-    gateway = karrio.gateway["dhl_parcel_de"].create({
-        "client_id": API_KEY,
-        "client_secret": API_SECRET,
-        "test_mode": True,
-    })
+    gateway = karrio.gateway["dhl_parcel_de"].create(
+        {
+            "client_id": API_KEY,
+            "client_secret": API_SECRET,
+            "test_mode": True,
+        }
+    )
 
     request = TrackingRequest(tracking_numbers=["INVALID123456789"])
 
@@ -127,6 +141,7 @@ def test_error_handling():
     serialized = mapper_request.serialize()
     for xml_req in serialized:
         import xml.dom.minidom
+
         try:
             dom = xml.dom.minidom.parseString(xml_req)
             print(dom.toprettyxml(indent="  "))
@@ -138,10 +153,14 @@ def test_error_handling():
     tracking_details, messages = result.parse()
 
     print("[RESPONSE]")
-    print(lib.to_json({
-        "tracking_details": [lib.to_dict(d) for d in tracking_details],
-        "messages": [lib.to_dict(m) for m in messages],
-    }))
+    print(
+        lib.to_json(
+            {
+                "tracking_details": [lib.to_dict(d) for d in tracking_details],
+                "messages": [lib.to_dict(m) for m in messages],
+            }
+        )
+    )
 
 
 if __name__ == "__main__":

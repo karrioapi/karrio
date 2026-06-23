@@ -1,7 +1,7 @@
-import json
-from datetime import datetime, date
-from django.test import TestCase
+from datetime import date, datetime
+
 from django.contrib.auth import get_user_model
+from django.test import TestCase
 from karrio.server.core.models import Metafield, MetafieldType
 from karrio.server.graph.tests import GraphTestCase
 
@@ -10,17 +10,12 @@ User = get_user_model()
 
 class MetafieldModelTest(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(
-            email="test@example.com", password="test123"
-        )
+        self.user = User.objects.create_user(email="test@example.com", password="test123")
 
     def test_create_text_metafield(self):
         """Test creating a text metafield"""
         metafield = Metafield.objects.create(
-            key="test_text",
-            value="Hello World",
-            type=MetafieldType.text,
-            created_by=self.user
+            key="test_text", value="Hello World", type=MetafieldType.text, created_by=self.user
         )
         self.assertEqual(metafield.key, "test_text")
         self.assertEqual(metafield.value, "Hello World")
@@ -29,10 +24,7 @@ class MetafieldModelTest(TestCase):
     def test_create_number_metafield(self):
         """Test creating a number metafield"""
         metafield = Metafield.objects.create(
-            key="test_number",
-            value=42,
-            type=MetafieldType.number,
-            created_by=self.user
+            key="test_number", value=42, type=MetafieldType.number, created_by=self.user
         )
         self.assertEqual(metafield.key, "test_number")
         self.assertEqual(metafield.value, 42)
@@ -41,10 +33,7 @@ class MetafieldModelTest(TestCase):
     def test_create_boolean_metafield(self):
         """Test creating a boolean metafield"""
         metafield = Metafield.objects.create(
-            key="test_bool",
-            value=True,
-            type=MetafieldType.boolean,
-            created_by=self.user
+            key="test_bool", value=True, type=MetafieldType.boolean, created_by=self.user
         )
         self.assertEqual(metafield.key, "test_bool")
         self.assertEqual(metafield.value, True)
@@ -54,10 +43,7 @@ class MetafieldModelTest(TestCase):
         """Test creating a JSON metafield"""
         json_data = {"name": "John", "age": 30}
         metafield = Metafield.objects.create(
-            key="test_json",
-            value=json_data,
-            type=MetafieldType.json,
-            created_by=self.user
+            key="test_json", value=json_data, type=MetafieldType.json, created_by=self.user
         )
         self.assertEqual(metafield.key, "test_json")
         self.assertEqual(metafield.get_parsed_value(), json_data)
@@ -66,10 +52,7 @@ class MetafieldModelTest(TestCase):
         """Test creating a date metafield"""
         date_string = "2023-12-25"
         metafield = Metafield.objects.create(
-            key="test_date",
-            value=date_string,
-            type=MetafieldType.date,
-            created_by=self.user
+            key="test_date", value=date_string, type=MetafieldType.date, created_by=self.user
         )
         self.assertEqual(metafield.key, "test_date")
         self.assertEqual(metafield.value, date_string)
@@ -79,10 +62,7 @@ class MetafieldModelTest(TestCase):
         """Test creating a datetime metafield"""
         datetime_string = "2023-12-25T10:30:00Z"
         metafield = Metafield.objects.create(
-            key="test_datetime",
-            value=datetime_string,
-            type=MetafieldType.date_time,
-            created_by=self.user
+            key="test_datetime", value=datetime_string, type=MetafieldType.date_time, created_by=self.user
         )
         self.assertEqual(metafield.key, "test_datetime")
         self.assertEqual(metafield.value, datetime_string)
@@ -93,10 +73,7 @@ class MetafieldModelTest(TestCase):
     def test_create_password_metafield(self):
         """Test creating a password metafield"""
         metafield = Metafield.objects.create(
-            key="test_password",
-            value="secret123",
-            type=MetafieldType.password,
-            created_by=self.user
+            key="test_password", value="secret123", type=MetafieldType.password, created_by=self.user
         )
         self.assertEqual(metafield.key, "test_password")
         self.assertEqual(metafield.get_parsed_value(), "secret123")
@@ -108,7 +85,7 @@ class MetafieldModelTest(TestCase):
             value="required value",
             type=MetafieldType.text,
             is_required=True,
-            created_by=self.user
+            created_by=self.user,
         )
         self.assertTrue(metafield.is_required)
 
@@ -119,7 +96,7 @@ class MetafieldGraphQLTest(GraphTestCase):
 
     def test_create_text_metafield_graphql(self):
         """Test creating a text metafield via GraphQL"""
-        query = '''
+        query = """
         mutation CreateMetafield($input: CreateMetafieldInput!) {
             create_metafield(input: $input) {
                 metafield {
@@ -136,16 +113,9 @@ class MetafieldGraphQLTest(GraphTestCase):
                 }
             }
         }
-        '''
+        """
 
-        variables = {
-            "input": {
-                "key": "test_text",
-                "value": "Hello World",
-                "type": "text",
-                "is_required": False
-            }
-        }
+        variables = {"input": {"key": "test_text", "value": "Hello World", "type": "text", "is_required": False}}
 
         response = self.query(query, variables=variables)
         self.assertResponseNoErrors(response)
@@ -159,16 +129,16 @@ class MetafieldGraphQLTest(GraphTestCase):
                     "value": "Hello World",
                     "type": "text",
                     "parsed_value": "Hello World",
-                    "is_required": False
+                    "is_required": False,
                 },
-                "errors": None
+                "errors": None,
             }
         }
         self.assertDictEqual(response.data["data"], expected_data)
 
     def test_create_json_metafield_graphql(self):
         """Test creating a JSON metafield via GraphQL"""
-        query = '''
+        query = """
         mutation CreateMetafield($input: CreateMetafieldInput!) {
             create_metafield(input: $input) {
                 metafield {
@@ -185,17 +155,10 @@ class MetafieldGraphQLTest(GraphTestCase):
                 }
             }
         }
-        '''
+        """
 
         json_data = {"name": "John", "age": 30, "active": True}
-        variables = {
-            "input": {
-                "key": "test_json",
-                "value": json_data,
-                "type": "json",
-                "is_required": False
-            }
-        }
+        variables = {"input": {"key": "test_json", "value": json_data, "type": "json", "is_required": False}}
 
         response = self.query(query, variables=variables)
         self.assertResponseNoErrors(response)
@@ -209,9 +172,9 @@ class MetafieldGraphQLTest(GraphTestCase):
                     "value": json_data,
                     "type": "json",
                     "parsed_value": json_data,
-                    "is_required": False
+                    "is_required": False,
                 },
-                "errors": None
+                "errors": None,
             }
         }
         self.assertDictEqual(response.data["data"], expected_data)
@@ -219,20 +182,10 @@ class MetafieldGraphQLTest(GraphTestCase):
     def test_query_metafields_graphql(self):
         """Test querying metafields via GraphQL"""
         # Create some test metafields
-        Metafield.objects.create(
-            key="test_text_0",
-            value="Hello",
-            type=MetafieldType.text,
-            created_by=self.user
-        )
-        Metafield.objects.create(
-            key="test_number_0",
-            value=42,
-            type=MetafieldType.number,
-            created_by=self.user
-        )
+        Metafield.objects.create(key="test_text_0", value="Hello", type=MetafieldType.text, created_by=self.user)
+        Metafield.objects.create(key="test_number_0", value=42, type=MetafieldType.number, created_by=self.user)
 
-        query = '''
+        query = """
         query GetMetafields($filter: MetafieldFilter) {
             metafields(filter: $filter) {
                 edges {
@@ -251,7 +204,7 @@ class MetafieldGraphQLTest(GraphTestCase):
                 }
             }
         }
-        '''
+        """
 
         response = self.query(query)
         self.assertResponseNoErrors(response)
@@ -264,13 +217,10 @@ class MetafieldGraphQLTest(GraphTestCase):
         """Test updating a metafield via GraphQL"""
         # Create a metafield first
         metafield = Metafield.objects.create(
-            key="test_update",
-            value="original",
-            type=MetafieldType.text,
-            created_by=self.user
+            key="test_update", value="original", type=MetafieldType.text, created_by=self.user
         )
 
-        query = '''
+        query = """
         mutation UpdateMetafield($input: UpdateMetafieldInput!) {
             update_metafield(input: $input) {
                 metafield {
@@ -287,7 +237,7 @@ class MetafieldGraphQLTest(GraphTestCase):
                 }
             }
         }
-        '''
+        """
 
         variables = {
             "input": {
@@ -295,7 +245,7 @@ class MetafieldGraphQLTest(GraphTestCase):
                 "key": "test_updated",
                 "value": "updated value",
                 "type": "text",
-                "is_required": True
+                "is_required": True,
             }
         }
 
@@ -310,9 +260,9 @@ class MetafieldGraphQLTest(GraphTestCase):
                     "value": "updated value",
                     "type": "text",
                     "parsed_value": "updated value",
-                    "is_required": True
+                    "is_required": True,
                 },
-                "errors": None
+                "errors": None,
             }
         }
         self.assertDictEqual(response.data["data"], expected_data)
@@ -321,13 +271,10 @@ class MetafieldGraphQLTest(GraphTestCase):
         """Test deleting a metafield via GraphQL"""
         # Create a metafield first
         metafield = Metafield.objects.create(
-            key="test_delete",
-            value="to be deleted",
-            type=MetafieldType.text,
-            created_by=self.user
+            key="test_delete", value="to be deleted", type=MetafieldType.text, created_by=self.user
         )
 
-        query = '''
+        query = """
         mutation DeleteMetafield($input: DeleteMutationInput!) {
             delete_metafield(input: $input) {
                 id
@@ -337,23 +284,14 @@ class MetafieldGraphQLTest(GraphTestCase):
                 }
             }
         }
-        '''
+        """
 
-        variables = {
-            "input": {
-                "id": metafield.id
-            }
-        }
+        variables = {"input": {"id": metafield.id}}
 
         response = self.query(query, variables=variables)
         self.assertResponseNoErrors(response)
 
-        expected_data = {
-            "delete_metafield": {
-                "id": metafield.id,
-                "errors": None
-            }
-        }
+        expected_data = {"delete_metafield": {"id": metafield.id, "errors": None}}
         self.assertDictEqual(response.data["data"], expected_data)
 
         # Verify the metafield was actually deleted
@@ -361,7 +299,7 @@ class MetafieldGraphQLTest(GraphTestCase):
 
     def test_metafield_type_validation(self):
         """Test that metafield type validation works"""
-        query = '''
+        query = """
         mutation CreateMetafield($input: CreateMetafieldInput!) {
             create_metafield(input: $input) {
                 metafield {
@@ -378,17 +316,10 @@ class MetafieldGraphQLTest(GraphTestCase):
                 }
             }
         }
-        '''
+        """
 
         # Test with invalid JSON
-        variables = {
-            "input": {
-                "key": "invalid_json",
-                "value": "not valid json",
-                "type": "json",
-                "is_required": False
-            }
-        }
+        variables = {"input": {"key": "invalid_json", "value": "not valid json", "type": "json", "is_required": False}}
 
         response = self.query(query, variables=variables)
 

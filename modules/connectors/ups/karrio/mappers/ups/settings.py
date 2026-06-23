@@ -1,8 +1,6 @@
 """Karrio UPS connection settings."""
 
 import attr
-import jstruct
-import karrio.lib as lib
 import karrio.providers.ups.utils as provider_utils
 
 

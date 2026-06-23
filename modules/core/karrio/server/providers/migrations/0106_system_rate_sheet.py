@@ -22,8 +22,7 @@ def migrate_system_rate_sheets(apps, schema_editor):
     # Collect all IDs that must live in the new SystemRateSheet table
     is_system_ids = set(RateSheet.objects.filter(is_system=True).values_list("id", flat=True))
     connection_ids = set(
-        SystemConnection.objects.filter(rate_sheet_id__isnull=False)
-        .values_list("rate_sheet_id", flat=True)
+        SystemConnection.objects.filter(rate_sheet_id__isnull=False).values_list("rate_sheet_id", flat=True)
     )
     all_ids = is_system_ids | connection_ids
 
@@ -54,9 +53,7 @@ def migrate_system_rate_sheets(apps, schema_editor):
         )
 
         # Copy M2M service links
-        service_ids = list(
-            sheet.services.values_list("id", flat=True)
-        )
+        service_ids = list(sheet.services.values_list("id", flat=True))
         if service_ids:
             sys_sheet.services.set(service_ids)
 
@@ -70,40 +67,107 @@ def migrate_system_rate_sheets(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('providers', '0105_migrate_smartkargo_account_id_to_config'),
+        ("providers", "0105_migrate_smartkargo_account_id_to_config"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         # Step 1: Create the new SystemRateSheet table
         migrations.CreateModel(
-            name='SystemRateSheet',
+            name="SystemRateSheet",
             fields=[
-                ('name', models.CharField(db_index=True, max_length=50, verbose_name='name')),
-                ('slug', models.CharField(db_index=True, max_length=50, verbose_name='slug')),
-                ('carrier_name', models.CharField(db_index=True, max_length=50)),
-                ('origin_countries', models.JSONField(blank=True, default=functools.partial(karrio.server.core.models._identity, value=[]), help_text='List of origin country codes this rate sheet applies to', null=True)),
-                ('zones', models.JSONField(blank=True, default=functools.partial(karrio.server.core.models._identity, value=[]), help_text="Shared zone definitions: [{'id': 'zone_1', 'label': 'Zone 1', 'cities': [...], 'country_codes': [...]}]", null=True)),
-                ('surcharges', models.JSONField(blank=True, default=functools.partial(karrio.server.core.models._identity, value=[]), help_text="Shared surcharge definitions: [{'id': 'surch_1', 'name': 'Fuel', 'amount': 8.5, 'surcharge_type': 'percentage'}]", null=True)),
-                ('service_rates', models.JSONField(blank=True, default=functools.partial(karrio.server.core.models._identity, value=[]), help_text="Service-zone rate mapping: [{'service_id': 'svc_1', 'zone_id': 'zone_1', 'rate': 10.50}]", null=True)),
-                ('metadata', models.JSONField(blank=True, default=functools.partial(karrio.server.core.models._identity, value={}), null=True)),
-                ('pricing_config', models.JSONField(blank=True, default=functools.partial(karrio.server.core.models._identity, value={}), help_text='Pricing config: {excluded_markup_ids: [...]}', null=True)),
-                ('id', models.CharField(default=functools.partial(karrio.server.core.models.base.uuid, prefix='rsht_'), editable=False, max_length=50, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('created_by', models.ForeignKey(blank=True, editable=False, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='system_rate_sheets_created', to=settings.AUTH_USER_MODEL)),
-                ('services', models.ManyToManyField(blank=True, related_name='system_service_sheet', to='providers.servicelevel')),
+                ("name", models.CharField(db_index=True, max_length=50, verbose_name="name")),
+                ("slug", models.CharField(db_index=True, max_length=50, verbose_name="slug")),
+                ("carrier_name", models.CharField(db_index=True, max_length=50)),
+                (
+                    "origin_countries",
+                    models.JSONField(
+                        blank=True,
+                        default=functools.partial(karrio.server.core.models._identity, value=[]),
+                        help_text="List of origin country codes this rate sheet applies to",
+                        null=True,
+                    ),
+                ),
+                (
+                    "zones",
+                    models.JSONField(
+                        blank=True,
+                        default=functools.partial(karrio.server.core.models._identity, value=[]),
+                        help_text="Shared zone definitions: [{'id': 'zone_1', 'label': 'Zone 1', 'cities': [...], 'country_codes': [...]}]",
+                        null=True,
+                    ),
+                ),
+                (
+                    "surcharges",
+                    models.JSONField(
+                        blank=True,
+                        default=functools.partial(karrio.server.core.models._identity, value=[]),
+                        help_text="Shared surcharge definitions: [{'id': 'surch_1', 'name': 'Fuel', 'amount': 8.5, 'surcharge_type': 'percentage'}]",
+                        null=True,
+                    ),
+                ),
+                (
+                    "service_rates",
+                    models.JSONField(
+                        blank=True,
+                        default=functools.partial(karrio.server.core.models._identity, value=[]),
+                        help_text="Service-zone rate mapping: [{'service_id': 'svc_1', 'zone_id': 'zone_1', 'rate': 10.50}]",
+                        null=True,
+                    ),
+                ),
+                (
+                    "metadata",
+                    models.JSONField(
+                        blank=True, default=functools.partial(karrio.server.core.models._identity, value={}), null=True
+                    ),
+                ),
+                (
+                    "pricing_config",
+                    models.JSONField(
+                        blank=True,
+                        default=functools.partial(karrio.server.core.models._identity, value={}),
+                        help_text="Pricing config: {excluded_markup_ids: [...]}",
+                        null=True,
+                    ),
+                ),
+                (
+                    "id",
+                    models.CharField(
+                        default=functools.partial(karrio.server.core.models.base.uuid, prefix="rsht_"),
+                        editable=False,
+                        max_length=50,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        blank=True,
+                        editable=False,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="system_rate_sheets_created",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "services",
+                    models.ManyToManyField(
+                        blank=True, related_name="system_service_sheet", to="providers.servicelevel"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'System Rate Sheet',
-                'verbose_name_plural': 'System Rate Sheets',
-                'db_table': 'system-rate-sheet',
-                'ordering': ['-created_at'],
+                "verbose_name": "System Rate Sheet",
+                "verbose_name_plural": "System Rate Sheets",
+                "db_table": "system-rate-sheet",
+                "ordering": ["-created_at"],
             },
         ),
-
         # Step 2: Data migration — copy is_system=True rows to SystemRateSheet
         migrations.RunPython(
             migrate_system_rate_sheets,

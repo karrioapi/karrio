@@ -1,9 +1,10 @@
-import re
 import unittest
-from unittest.mock import patch, ANY
+from unittest.mock import ANY, patch
+
+from karrio.core.models import ShipmentCancelRequest, ShipmentRequest
 from karrio.core.utils import DP
-from karrio.core.models import ShipmentRequest, ShipmentCancelRequest
 from karrio.sdk import Shipment
+
 from .fixture import gateway
 
 
@@ -11,9 +12,7 @@ class TestPurolatorShipment(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.ShipmentRequest = ShipmentRequest(**SHIPMENT_REQUEST_PAYLOAD)
-        self.ShipmentCancelRequest = ShipmentCancelRequest(
-            **SHIPMENT_CANCEL_REQUEST_PAYLOAD
-        )
+        self.ShipmentCancelRequest = ShipmentCancelRequest(**SHIPMENT_CANCEL_REQUEST_PAYLOAD)
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
@@ -23,14 +22,10 @@ class TestPurolatorShipment(unittest.TestCase):
         document_request = pipeline["document"](SHIPMENT_RESPONSE_XML)
 
         self.assertEqual(create_request.data.serialize(), SHIPMENT_REQUEST_XML)
-        self.assertEqual(
-            document_request.data.serialize(), SHIPMENT_DOCUMENT_REQUEST_XML
-        )
+        self.assertEqual(document_request.data.serialize(), SHIPMENT_DOCUMENT_REQUEST_XML)
 
     def test_cancel_shipment_request(self):
-        request = gateway.mapper.create_cancel_shipment_request(
-            self.ShipmentCancelRequest
-        )
+        request = gateway.mapper.create_cancel_shipment_request(self.ShipmentCancelRequest)
 
         self.assertEqual(request.serialize(), SHIPMENT_CANCEL_REQUEST_XML)
 
@@ -70,22 +65,16 @@ class TestPurolatorShipment(unittest.TestCase):
                 SHIPMENT_RESPONSE_XML,
                 SHIPMENT_DOCUMENT_RESPONSE_XML,
             ]
-            parsed_response = (
-                Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = Shipment.create(self.ShipmentRequest).from_(gateway).parse()
 
             self.assertListEqual(DP.to_dict(parsed_response), PARSED_SHIPMENT_RESPONSE)
 
     def test_parse_cancel_shipment_response(self):
         with patch("karrio.mappers.purolator.proxy.http") as mocks:
             mocks.return_value = SHIPMENT_CANCEL_RESPONSE_XML
-            parsed_response = (
-                Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()
-            )
+            parsed_response = Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()
 
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(PARSED_CANCEL_SHIPMENT_RESPONSE)
-            )
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(PARSED_CANCEL_SHIPMENT_RESPONSE))
 
 
 if __name__ == "__main__":
@@ -131,9 +120,7 @@ PARSED_SHIPMENT_RESPONSE = [
         "tracking_number": "329014521622",
         "shipment_identifier": "329014521622",
         "docs": {"label": ANY},
-        "meta": {
-            "carrier_tracking_link": "https://tools.usps.com/go/TrackConfirmAction?tLabels=329014521622"
-        },
+        "meta": {"carrier_tracking_link": "https://tools.usps.com/go/TrackConfirmAction?tLabels=329014521622"},
     },
     [],
 ]
@@ -149,7 +136,7 @@ PARSED_CANCEL_SHIPMENT_RESPONSE = [
 ]
 
 
-SHIPMENT_REQUEST_XML = f"""<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v2="http://purolator.com/pws/datatypes/v2">
+SHIPMENT_REQUEST_XML = """<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v2="http://purolator.com/pws/datatypes/v2">
     <soap:Header>
         <v2:RequestContext>
             <v2:Version>2.1</v2:Version>

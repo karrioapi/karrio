@@ -1,12 +1,13 @@
-import typing
 import functools
-import karrio.core.utils as utils
+import typing
+
 import karrio.core.models as models
+import karrio.core.utils as utils
 
 
 def transform_to_shared_zones_format(
-    services: typing.List[typing.Union[models.ServiceLevel, dict]],
-) -> typing.Dict[str, typing.Any]:
+    services: list[models.ServiceLevel | dict],
+) -> dict[str, typing.Any]:
     """Transform legacy service levels with embedded zones to the new shared zones format.
 
     This function extracts unique zones from service levels and creates a shared zones
@@ -59,14 +60,14 @@ def transform_to_shared_zones_format(
         }
     """
     # Zone deduplication: use (label, country_codes tuple) as key
-    zone_registry: typing.Dict[str, typing.Dict] = {}  # key -> zone definition
-    zone_key_to_id: typing.Dict[str, str] = {}  # key -> zone_id
+    zone_registry: dict[str, dict] = {}  # key -> zone definition
+    zone_key_to_id: dict[str, str] = {}  # key -> zone_id
 
-    transformed_services: typing.List[typing.Dict] = []
-    service_rates: typing.List[typing.Dict] = []
+    transformed_services: list[dict] = []
+    service_rates: list[dict] = []
     zone_counter = 1
 
-    def _get_zone_key(zone: typing.Dict) -> str:
+    def _get_zone_key(zone: dict) -> str:
         """Generate a unique key for zone deduplication."""
         label = zone.get("label") or ""
         country_codes = tuple(sorted(zone.get("country_codes") or []))
@@ -74,7 +75,7 @@ def transform_to_shared_zones_format(
         cities = tuple(sorted(zone.get("cities") or []))
         return f"{label}:{country_codes}:{postal_codes}:{cities}"
 
-    def _to_dict(obj: typing.Any) -> typing.Dict:
+    def _to_dict(obj: typing.Any) -> dict:
         """Convert object to dict if needed."""
         if hasattr(obj, "__dict__"):
             # attrs class - convert to dict
@@ -119,20 +120,23 @@ def transform_to_shared_zones_format(
             zone_ids.append(zone_id)
 
             # Create service-zone rate mapping
-            service_rates.append({
-                "service_id": service_id,
-                "zone_id": zone_id,
-                "rate": zone.get("rate") or 0,
-                "cost": zone.get("cost"),
-                "min_weight": zone.get("min_weight"),
-                "max_weight": zone.get("max_weight"),
-                "transit_days": zone.get("transit_days"),
-                "transit_time": zone.get("transit_time"),
-            })
+            service_rates.append(
+                {
+                    "service_id": service_id,
+                    "zone_id": zone_id,
+                    "rate": zone.get("rate") or 0,
+                    "cost": zone.get("cost"),
+                    "min_weight": zone.get("min_weight"),
+                    "max_weight": zone.get("max_weight"),
+                    "transit_days": zone.get("transit_days"),
+                    "transit_time": zone.get("transit_time"),
+                }
+            )
 
         # Create transformed service (without embedded zones)
         transformed_service = {
-            k: v for k, v in service.items()
+            k: v
+            for k, v in service.items()
             if k not in ("zones", "surcharges")  # Remove embedded data
         }
         transformed_service["id"] = service_id
@@ -149,9 +153,7 @@ def transform_to_shared_zones_format(
     }
 
 
-def to_multi_piece_rates(
-    package_rates: typing.List[typing.Tuple[str, typing.List[models.RateDetails]]]
-) -> typing.List[models.RateDetails]:
+def to_multi_piece_rates(package_rates: list[tuple[str, list[models.RateDetails]]]) -> list[models.RateDetails]:
     """Combine rates received separately per package into a single rate list.
 
     Example:
@@ -172,28 +174,23 @@ def to_multi_piece_rates(
 
     multi_piece_rates = []
     max_rates = max([len(rates) for _, rates in package_rates])
-    main_piece_rates: typing.List[models.RateDetails] = next(
+    main_piece_rates: list[models.RateDetails] = next(
         (rates for _, rates in package_rates if len(rates) == max_rates), []
     )
 
     for main in main_piece_rates:
-        similar_rates: typing.List[typing.Optional[models.RateDetails]] = [
-            next((rate for rate in rates if rate.service == main.service), None)
-            for _, rates in package_rates
+        similar_rates: list[models.RateDetails | None] = [
+            next((rate for rate in rates if rate.service == main.service), None) for _, rates in package_rates
         ]
 
         if all(rate is not None for rate in similar_rates):
-            all_charges: typing.List[models.ChargeDetails] = sum(
-                [rate.extra_charges for rate in similar_rates], []
-            )
-            extra_charges: typing.Dict[str, models.ChargeDetails] = functools.reduce(
+            all_charges: list[models.ChargeDetails] = sum([rate.extra_charges for rate in similar_rates], [])
+            extra_charges: dict[str, models.ChargeDetails] = functools.reduce(
                 lambda acc, charge: {
                     **acc,
                     charge.name: models.ChargeDetails(
                         name=charge.name,
-                        amount=utils.NF.decimal(
-                            charge.amount + getattr(acc.get(charge.name), "amount", 0.0)
-                        ),
+                        amount=utils.NF.decimal(charge.amount + getattr(acc.get(charge.name), "amount", 0.0)),
                         currency=charge.currency,
                     ),
                 },
@@ -202,10 +199,7 @@ def to_multi_piece_rates(
             )
             total_charge = utils.NF.decimal(
                 sum(
-                    (
-                        utils.NF.decimal(rate.total_charge or 0.0)
-                        for rate in similar_rates
-                    ),
+                    (utils.NF.decimal(rate.total_charge or 0.0) for rate in similar_rates),
                     0.0,
                 )
             )
@@ -225,9 +219,7 @@ def to_multi_piece_rates(
     return multi_piece_rates
 
 
-def to_multi_piece_shipment(
-    package_shipments: typing.List[typing.Tuple[str, models.ShipmentDetails]]
-) -> models.ShipmentDetails:
+def to_multi_piece_shipment(package_shipments: list[tuple[str, models.ShipmentDetails]]) -> models.ShipmentDetails:
     """Combine shipment received separately per package into a single master shipment.
 
     Example:

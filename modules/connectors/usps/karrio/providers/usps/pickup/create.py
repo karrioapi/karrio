@@ -1,29 +1,21 @@
 """Karrio USPS schedule pickup implementation."""
 
-import karrio.schemas.usps.pickup_request as usps
-import karrio.schemas.usps.pickup_response as pickup
-
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.usps.error as error
 import karrio.providers.usps.utils as provider_utils
-import karrio.providers.usps.units as provider_units
+import karrio.schemas.usps.pickup_request as usps
+import karrio.schemas.usps.pickup_response as pickup
 
 
 def parse_pickup_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.PickupDetails], typing.List[models.Message]]:
+) -> tuple[list[models.PickupDetails], list[models.Message]]:
     response = _response.deserialize()
 
     messages = error.parse_error_response(response, settings)
-    pickup = (
-        _extract_details(response, settings)
-        if "confirmationNumber" in response
-        else None
-    )
+    pickup = _extract_details(response, settings) if "confirmationNumber" in response else None
 
     return pickup, messages
 
@@ -49,10 +41,12 @@ def pickup_request(
     # USPS only supports one-time pickups via API
     pickup_type = getattr(payload, "pickup_type", "one_time") or "one_time"
     if pickup_type not in ("one_time", None):
-        raise lib.exceptions.FieldError({
-            "pickup_type": f"USPS only supports 'one_time' pickups via API. Received: '{pickup_type}'. "
-            "For daily/recurring pickups, please contact USPS to set up a regular pickup schedule."
-        })
+        raise lib.exceptions.FieldError(
+            {
+                "pickup_type": f"USPS only supports 'one_time' pickups via API. Received: '{pickup_type}'. "
+                "For daily/recurring pickups, please contact USPS to set up a regular pickup schedule."
+            }
+        )
 
     address = lib.to_address(payload.address)
     packages = lib.to_packages(payload.parcels)
@@ -84,11 +78,7 @@ def pickup_request(
                 ZIPPlus4=lib.to_zip4(address.postal_code) or "",
                 urbanization=None,
             ),
-            contact=[
-                usps.ContactType(email=address.email)
-                for _ in [address.email]
-                if _ is not None
-            ],
+            contact=[usps.ContactType(email=address.email) for _ in [address.email] if _ is not None],
         ),
         packages=[
             usps.PackageType(

@@ -9,21 +9,21 @@ This enables a three-tier connection architecture:
 2. SystemConnection: Platform-managed connections (admin only)
 3. BrokeredConnection: User enablement of SystemConnection (config overrides only)
 """
-import typing
-import functools
-import django.conf as conf
-import django.forms as forms
-import django.db.models as models
-import django.core.cache as caching
-from django.contrib.contenttypes.fields import GenericRelation
 
+import functools
+import typing
+
+import django.conf as conf
+import django.core.cache as caching
+import django.db.models as models
+import django.forms as forms
+import karrio.api.gateway as gateway
 import karrio.lib as lib
 import karrio.sdk as karrio
-import karrio.api.gateway as gateway
-import karrio.server.core.models as core
-import karrio.server.core.fields as fields
 import karrio.server.core.datatypes as datatypes
-
+import karrio.server.core.fields as fields
+import karrio.server.core.models as core
+from django.contrib.contenttypes.fields import GenericRelation
 
 # ─────────────────────────────────────────────────────────────────────────────
 # SYSTEM CONNECTION - Admin-managed platform-wide connections
@@ -44,10 +44,7 @@ class SystemConnectionManager(models.Manager):
     """Manager for system connections."""
 
     def get_queryset(self):
-        return (
-            SystemConnectionQuerySet(self.model, using=self._db)
-            .select_related("created_by", "rate_sheet")
-        )
+        return SystemConnectionQuerySet(self.model, using=self._db).select_related("created_by", "rate_sheet")
 
     def active(self):
         return self.get_queryset().active()
@@ -192,11 +189,7 @@ class SystemConnection(models.Model):
         through get_credentials().
         """
         _creds = self.credentials or {}
-        return (
-            "generic"
-            if "custom_carrier_name" in _creds
-            else lib.failsafe(lambda: self.carrier_code) or "generic"
-        )
+        return "generic" if "custom_carrier_name" in _creds else lib.failsafe(lambda: self.carrier_code) or "generic"
 
     @property
     def carrier_name(self) -> str:
@@ -205,9 +198,7 @@ class SystemConnection(models.Model):
 
     @property
     def display_name(self) -> str:
-        """Get human-readable display name.
-
-        """
+        """Get human-readable display name."""
         import karrio.references as references
 
         _creds = self.credentials or {}
@@ -219,7 +210,7 @@ class SystemConnection(models.Model):
         )
 
     @property
-    def services(self) -> typing.Optional[typing.List]:
+    def services(self) -> list | None:
         """Get services from linked rate sheet."""
         if self.rate_sheet is None:
             return None
@@ -229,7 +220,7 @@ class SystemConnection(models.Model):
     # CREDENTIAL MANAGEMENT (Encrypted Storage)
     # ─────────────────────────────────────────────────────────────────
 
-    def get_sensitive_fields(self) -> typing.Set[str]:
+    def get_sensitive_fields(self) -> set[str]:
         """
         Dynamically get sensitive fields for THIS carrier.
 
@@ -247,14 +238,12 @@ class SystemConnection(models.Model):
 
         # Filter to only sensitive fields
         sensitive = {
-            field_name
-            for field_name, field_meta in carrier_fields.items()
-            if field_meta.get("sensitive", False)
+            field_name for field_name, field_meta in carrier_fields.items() if field_meta.get("sensitive", False)
         }
 
         return sensitive
 
-    def get_allowed_fields(self) -> typing.Set[str]:
+    def get_allowed_fields(self) -> set[str]:
         """
         Dynamically get all allowed fields for THIS carrier.
 
@@ -269,7 +258,7 @@ class SystemConnection(models.Model):
         carrier_fields = connection_fields.get(self.ext, {})
         return set(carrier_fields.keys())
 
-    def get_credentials(self, user_id: typing.Optional[typing.Any] = None) -> typing.Dict:
+    def get_credentials(self, user_id: typing.Any | None = None) -> dict:
         """
         Get all credentials for this system connection.
 
@@ -278,11 +267,7 @@ class SystemConnection(models.Model):
         """
         return dict(self.credentials or {})
 
-    def set_credentials(
-        self,
-        credentials_dict: typing.Dict,
-        user_id: typing.Optional[typing.Any] = None
-    ) -> None:
+    def set_credentials(self, credentials_dict: dict, user_id: typing.Any | None = None) -> None:
         """
         Store credentials for this system connection.
 
@@ -290,7 +275,7 @@ class SystemConnection(models.Model):
         Extension modules can override via hooks.override("set_credentials", fn).
         """
         self.credentials = credentials_dict
-        self.save(update_fields=['credentials'])
+        self.save(update_fields=["credentials"])
 
     # ─────────────────────────────────────────────────────────────────
     # SDK INTEGRATION
@@ -303,7 +288,7 @@ class SystemConnection(models.Model):
     @property
     def data(self) -> datatypes.CarrierSettings:
         """Build CarrierSettings for SDK gateway creation."""
-        _computed_data: typing.Dict = dict(
+        _computed_data: dict = dict(
             id=self.id,
             config=self.config or {},
             test_mode=self.test_mode,
@@ -331,15 +316,13 @@ class SystemConnection(models.Model):
                 ]
             )
 
-        return datatypes.CarrierSettings.create(
-            {**self._get_credentials(), **_computed_data}
-        )
+        return datatypes.CarrierSettings.create({**self._get_credentials(), **_computed_data})
 
     @property
     def gateway(self) -> gateway.Gateway:
         """Create SDK gateway instance for this connection."""
-        import karrio.server.core.middleware as middleware
         import karrio.server.core.config as system_config
+        import karrio.server.core.middleware as middleware
 
         _context = middleware.SessionContext.get_current_request()
         _tracer = getattr(_context, "tracer", lib.Tracer())
@@ -384,10 +367,7 @@ class BrokeredConnectionManager(models.Manager):
     """Manager for brokered connections."""
 
     def get_queryset(self):
-        return (
-            BrokeredConnectionQuerySet(self.model, using=self._db)
-            .with_system()
-        )
+        return BrokeredConnectionQuerySet(self.model, using=self._db).with_system()
 
     def enabled(self):
         return self.get_queryset().enabled()
@@ -589,7 +569,7 @@ class BrokeredConnection(models.Model):
         return self.system_connection.rate_sheet
 
     @property
-    def services(self) -> typing.Optional[typing.List]:
+    def services(self) -> list | None:
         """Get services from system connection's rate sheet."""
         return self.system_connection.services
 
@@ -618,7 +598,7 @@ class BrokeredConnection(models.Model):
     @property
     def data(self) -> datatypes.CarrierSettings:
         """Build CarrierSettings for SDK gateway creation."""
-        _computed_data: typing.Dict = dict(
+        _computed_data: dict = dict(
             id=self.id,
             config=self.config,
             test_mode=self.test_mode,
@@ -646,15 +626,13 @@ class BrokeredConnection(models.Model):
                 ]
             )
 
-        return datatypes.CarrierSettings.create(
-            {**self._get_credentials(), **_computed_data}
-        )
+        return datatypes.CarrierSettings.create({**self._get_credentials(), **_computed_data})
 
     @property
     def gateway(self) -> gateway.Gateway:
         """Create SDK gateway instance for this connection."""
-        import karrio.server.core.middleware as middleware
         import karrio.server.core.config as system_config
+        import karrio.server.core.middleware as middleware
 
         _context = middleware.SessionContext.get_current_request()
         _tracer = getattr(_context, "tracer", lib.Tracer())

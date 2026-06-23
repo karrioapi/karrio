@@ -1,7 +1,6 @@
-import karrio.providers.smartkargo.units as units
 import karrio.mappers.smartkargo as mappers
+import karrio.providers.smartkargo.units as units
 from karrio.core.metadata import PluginMetadata
-
 
 METADATA = PluginMetadata(
     id="smartkargo",

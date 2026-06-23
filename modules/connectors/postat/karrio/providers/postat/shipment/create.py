@@ -1,19 +1,17 @@
 """Karrio PostAT shipment API implementation."""
 
-import karrio.schemas.postat.plc_types as postat
-
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.postat.error as error
-import karrio.providers.postat.utils as provider_utils
 import karrio.providers.postat.units as provider_units
+import karrio.providers.postat.utils as provider_utils
+import karrio.schemas.postat.plc_types as postat
 
 
 def parse_shipment_response(
     _response: lib.Deserializable[lib.Element],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.Optional[models.ShipmentDetails], typing.List[models.Message]]:
+) -> tuple[models.ShipmentDetails | None, list[models.Message]]:
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
     result = lib.find_element("ImportShipmentResult", response, first=True)
@@ -23,9 +21,7 @@ def parse_shipment_response(
     has_tracking = any(code.text for code in (code_elements or []))
 
     shipment = (
-        _extract_details(response, settings)
-        if result is not None and has_tracking and not any(messages)
-        else None
+        _extract_details(response, settings) if result is not None and has_tracking and not any(messages) else None
     )
 
     return shipment, messages
@@ -76,18 +72,12 @@ def shipment_request(
     )
 
     # Label configuration with fallbacks
-    label_format = lib.identity(
-        settings.connection_config.label_format.state or payload.label_type
-    )
+    label_format = lib.identity(settings.connection_config.label_format.state or payload.label_type)
     label_size = lib.identity(
-        settings.connection_config.label_size.state
-        or options.postat_label_size.state
-        or "SIZE_100x150"
+        settings.connection_config.label_size.state or options.postat_label_size.state or "SIZE_100x150"
     )
     paper_layout = lib.identity(
-        settings.connection_config.paper_layout.state
-        or options.postat_paper_layout.state
-        or "LAYOUT_2xA5inA4"
+        settings.connection_config.paper_layout.state or options.postat_paper_layout.state or "LAYOUT_2xA5inA4"
     )
 
     # Build request using generated schema types
@@ -113,11 +103,7 @@ def shipment_request(
                 ),
                 OURecipientAddress=postat.AddressType(
                     Name1=recipient.company_name or recipient.person_name,
-                    Name2=(
-                        recipient.person_name
-                        if recipient.company_name
-                        else None
-                    ),
+                    Name2=(recipient.person_name if recipient.company_name else None),
                     AddressLine1=recipient.street,
                     AddressLine2=recipient.address_line2,
                     HouseNumber=recipient.street_number,

@@ -1,9 +1,7 @@
 from django import forms
-from django.db import transaction
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
-from django.utils.translation import gettext_lazy as _
-
+from django.db import transaction
 from karrio.server.conf import settings
 from karrio.server.user.utils import send_email
 
@@ -17,11 +15,8 @@ class SignUpForm(UserCreationForm):
 
     @transaction.atomic
     def save(self, commit=True):
-        if settings.ALLOW_SIGNUP == False:
-            raise Exception(
-                "Signup is not allowed. "
-                "Please contact your administrator to create an account."
-            )
+        if not settings.ALLOW_SIGNUP:
+            raise Exception("Signup is not allowed. Please contact your administrator to create an account.")
 
         user = super().save(commit=commit)
 

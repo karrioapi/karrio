@@ -6,9 +6,7 @@
 # 4. Renaming *_data fields to direct names (removing suffix)
 # 5. Renaming tables to plural form
 
-import functools
 from django.db import migrations, models
-import karrio.server.core.utils
 
 
 def address_to_dict(address):
@@ -63,7 +61,6 @@ def reverse_noop(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("manager", "0073_make_shipment_fk_nullable"),
     ]
@@ -90,7 +87,6 @@ class Migration(migrations.Migration):
                 help_text="Manifest address (embedded JSON)",
             ),
         ),
-
         # =========================================================
         # STEP 2: Populate JSON fields from FK
         # =========================================================
@@ -98,7 +94,6 @@ class Migration(migrations.Migration):
             populate_pickup_manifest_json,
             reverse_noop,
         ),
-
         # =========================================================
         # STEP 3: Drop Shipment legacy FK/M2M fields
         # =========================================================
@@ -128,7 +123,6 @@ class Migration(migrations.Migration):
             model_name="shipment",
             name="parcels",
         ),
-
         # =========================================================
         # STEP 4: Drop Pickup and Manifest legacy FK fields
         # =========================================================
@@ -140,7 +134,6 @@ class Migration(migrations.Migration):
             model_name="manifest",
             name="address",
         ),
-
         # =========================================================
         # STEP 5: Rename Shipment *_data fields to direct names
         # =========================================================
@@ -174,7 +167,6 @@ class Migration(migrations.Migration):
             old_name="customs_data",
             new_name="customs",
         ),
-
         # =========================================================
         # STEP 6: Rename Pickup and Manifest address_data fields
         # =========================================================
@@ -188,7 +180,6 @@ class Migration(migrations.Migration):
             old_name="address_data",
             new_name="address",
         ),
-
         # =========================================================
         # STEP 7: Rename tables to plural form
         # =========================================================

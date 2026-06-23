@@ -1,18 +1,16 @@
 """Karrio Asendia manifest creation implementation."""
 
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.asendia.error as error
 import karrio.providers.asendia.utils as provider_utils
-import karrio.schemas.asendia.manifest_request as asendia_req
 import karrio.schemas.asendia.manifest_response as asendia_res
 
 
 def parse_manifest_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.Optional[models.ManifestDetails], typing.List[models.Message]]:
+) -> tuple[models.ManifestDetails | None, list[models.Message]]:
     """Parse manifest creation response from Asendia API."""
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
@@ -79,8 +77,4 @@ def manifest_request(
     Asendia uses POST /api/manifests with parcel IDs.
     The shipment_identifiers should be the parcel IDs returned from create shipment.
     """
-    request = asendia_req.ManifestRequestType(
-        parcelIds=payload.shipment_identifiers,
-    )
-
-    return lib.Serializable(request, lib.to_dict)
+    return lib.Serializable(payload.shipment_identifiers, lib.to_dict)

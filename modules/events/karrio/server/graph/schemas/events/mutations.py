@@ -1,23 +1,19 @@
-import typing
+import karrio.server.events.models as models
+import karrio.server.events.serializers.webhook as serializers
+import karrio.server.graph.schemas.events.inputs as inputs
+import karrio.server.graph.schemas.events.types as types
+import karrio.server.graph.utils as utils
 import strawberry
 from strawberry.types import Info
-
-import karrio.server.graph.utils as utils
-import karrio.server.graph.schemas.events.types as types
-import karrio.server.graph.schemas.events.inputs as inputs
-import karrio.server.events.serializers.webhook as serializers
-import karrio.server.events.models as models
 
 
 @strawberry.type
 class CreateWebhookMutation(utils.BaseMutation):
-    webhook: typing.Optional[types.WebhookType] = None
+    webhook: types.WebhookType | None = None
 
     @staticmethod
     @utils.authentication_required
-    def mutate(
-        info: Info, **input: inputs.CreateWebhookMutationInput
-    ) -> "CreateWebhookMutation":
+    def mutate(info: Info, **input: inputs.CreateWebhookMutationInput) -> "CreateWebhookMutation":
         serializer = serializers.WebhookSerializer(
             data=input,
             context=info.context.request,
@@ -29,13 +25,11 @@ class CreateWebhookMutation(utils.BaseMutation):
 
 @strawberry.type
 class UpdateWebhookMutation(utils.BaseMutation):
-    webhook: typing.Optional[types.WebhookType] = None
+    webhook: types.WebhookType | None = None
 
     @staticmethod
     @utils.authentication_required
-    def mutate(
-        info: Info, **input: inputs.UpdateWebhookMutationInput
-    ) -> "UpdateWebhookMutation":
+    def mutate(info: Info, **input: inputs.UpdateWebhookMutationInput) -> "UpdateWebhookMutation":
         id = input.get("id")
         webhook = models.Webhook.access_by(info.context.request).get(id=id)
 

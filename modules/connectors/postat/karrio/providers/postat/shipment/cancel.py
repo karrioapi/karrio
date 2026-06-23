@@ -1,18 +1,16 @@
 """Karrio PostAT shipment cancellation API implementation."""
 
-import karrio.schemas.postat.void_types as postat_void
-
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.postat.error as error
 import karrio.providers.postat.utils as provider_utils
+import karrio.schemas.postat.void_types as postat_void
 
 
 def parse_shipment_cancel_response(
     _response: lib.Deserializable[lib.Element],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.Optional[models.ConfirmationDetails], typing.List[models.Message]]:
+) -> tuple[models.ConfirmationDetails | None, list[models.Message]]:
     """Parse shipment cancellation response from PostAT SOAP API."""
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
@@ -21,10 +19,7 @@ def parse_shipment_cancel_response(
     result = lib.find_element("VoidShipmentResult", response, first=True)
     success_elem = lib.find_element("Success", result, first=True)
     success = (
-        success_elem is not None
-        and success_elem.text
-        and success_elem.text.lower() == "true"
-        and not any(messages)
+        success_elem is not None and success_elem.text and success_elem.text.lower() == "true" and not any(messages)
     )
 
     confirmation = (
@@ -62,4 +57,3 @@ def shipment_cancel_request(
     request = lib.Envelope(Body=lib.Body(void_shipment))
 
     return lib.Serializable(request, provider_utils.standard_request_serializer)
-    

@@ -1,21 +1,18 @@
+import karrio.server.documents.models as models
+import karrio.server.graph.schemas.base as base
+import karrio.server.graph.schemas.documents.inputs as inputs
+import karrio.server.graph.schemas.documents.mutations as mutations
+import karrio.server.graph.schemas.documents.types as types
+import karrio.server.graph.utils as utils
 import strawberry
 from strawberry.types import Info
-
-import karrio.server.graph.utils as utils
-import karrio.server.graph.schemas.base as base
-import karrio.server.graph.schemas.documents.mutations as mutations
-import karrio.server.graph.schemas.documents.inputs as inputs
-import karrio.server.graph.schemas.documents.types as types
-import karrio.server.documents.models as models
 
 extra_types: list = []
 
 
 @strawberry.type
 class Query:
-    document_template: types.DocumentTemplateType = strawberry.field(
-        resolver=types.DocumentTemplateType.resolve
-    )
+    document_template: types.DocumentTemplateType = strawberry.field(resolver=types.DocumentTemplateType.resolve)
     document_templates: utils.Connection[types.DocumentTemplateType] = strawberry.field(
         resolver=types.DocumentTemplateType.resolve_list
     )
@@ -39,8 +36,4 @@ class Mutation:
     def delete_document_template(
         self, info: Info, input: base.inputs.DeleteMutationInput
     ) -> base.mutations.DeleteMutation:
-        return base.mutations.DeleteMutation.mutate(
-            info,
-            model=models.DocumentTemplate,
-            **input.to_dict()
-        )
+        return base.mutations.DeleteMutation.mutate(info, model=models.DocumentTemplate, **input.to_dict())

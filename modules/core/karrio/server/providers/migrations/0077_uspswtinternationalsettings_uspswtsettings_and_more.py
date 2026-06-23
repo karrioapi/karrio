@@ -8,7 +8,6 @@ import karrio.server.core.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         (
@@ -130,9 +129,7 @@ class Migration(migrations.Migration):
             model_name="carrier",
             name="credentials",
             field=models.JSONField(
-                default=functools.partial(
-                    karrio.server.core.models._identity, *(), **{"value": {}}
-                ),
+                default=functools.partial(karrio.server.core.models._identity, *(), **{"value": {}}),
                 help_text="Carrier connection credentials",
             ),
         ),
@@ -149,9 +146,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="carrier",
             name="active_users",
-            field=models.ManyToManyField(
-                blank=True, related_name="connection_users", to=settings.AUTH_USER_MODEL
-            ),
+            field=models.ManyToManyField(blank=True, related_name="connection_users", to=settings.AUTH_USER_MODEL),
         ),
         migrations.AlterField(
             model_name="carrier",

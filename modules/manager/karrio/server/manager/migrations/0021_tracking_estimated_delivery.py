@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('manager', '0020_tracking_messages'),
+        ("manager", "0020_tracking_messages"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='tracking',
-            name='estimated_delivery',
+            model_name="tracking",
+            name="estimated_delivery",
             field=models.DateField(blank=True, null=True),
         ),
     ]

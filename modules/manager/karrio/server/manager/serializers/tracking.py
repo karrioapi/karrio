@@ -1,24 +1,25 @@
 import typing
-from django.db import transaction
-from django.utils import timezone
 
 import karrio.lib as lib
-import karrio.server.serializers as serializers
 import karrio.server.core.utils as utils
+import karrio.server.manager.models as models
+import karrio.server.serializers as serializers
+from django.db import transaction
+from django.utils import timezone
+from karrio.server.core.gateway import Connections, Shipments
 from karrio.server.core.logging import logger
-from karrio.server.core.gateway import Shipments, Connections
-from karrio.server.core.utils import create_carrier_snapshot, resolve_carrier
 from karrio.server.core.serializers import (
     TRACKER_STATUS,
-    TrackingDetails,
-    TrackingEvent,
-    TrackingRequest,
     ShipmentStatus,
     TrackerStatus,
+    TrackingDetails,
+    TrackingEvent,
     TrackingInfo,
+    TrackingRequest,
 )
+from karrio.server.core.utils import create_carrier_snapshot, resolve_carrier
+from karrio.server.manager.signals import trackers_bulk_updated
 
-import karrio.server.manager.models as models
 DEFAULT_CARRIER_FILTER: typing.Any = dict(active=True, capability="tracking")
 
 
@@ -54,8 +55,7 @@ class TrackingSerializer(TrackingDetails):
         reference = validated_data.get("reference")
         pending_pickup = validated_data.get("pending_pickup")
         carrier = Connections.first(
-            context=context,
-            **{"raise_not_found": True, **DEFAULT_CARRIER_FILTER, **carrier_filter}
+            context=context, **{"raise_not_found": True, **DEFAULT_CARRIER_FILTER, **carrier_filter}
         )
 
         response = Shipments.track(
@@ -77,6 +77,7 @@ class TrackingSerializer(TrackingDetails):
 
         # Merge request_id into meta for request correlation
         from karrio.server.core.middleware import get_request_id
+
         _tracker_meta = response.tracking.meta or {}
         _request_id = get_request_id()
         if _request_id:
@@ -103,24 +104,15 @@ class TrackingSerializer(TrackingDetails):
         )
 
     @transaction.atomic
-    def update(
-        self, instance: models.Tracking, validated_data: dict, context, **kwargs
-    ) -> models.Tracking:
-        last_fetch = (
-            timezone.now() - instance.updated_at
-        ).seconds / 60  # minutes since last fetch
+    def update(self, instance: models.Tracking, validated_data: dict, context, **kwargs) -> models.Tracking:
+        last_fetch = (timezone.now() - instance.updated_at).seconds / 60  # minutes since last fetch
 
         if last_fetch >= 1 and instance.delivered is not True:
             carrier_filter = validated_data["carrier_filter"]
             options = {
                 instance.tracking_number: {
                     **(instance.options.get(instance.tracking_number) or {}),
-                    **(
-                        (validated_data.get("options") or {}).get(
-                            instance.tracking_number
-                        )
-                        or {}
-                    ),
+                    **((validated_data.get("options") or {}).get(instance.tracking_number) or {}),
                 }
             }
             # Try to get carrier from filter, fall back to resolved carrier from snapshot
@@ -129,9 +121,7 @@ class TrackingSerializer(TrackingDetails):
             ) or resolve_carrier(instance.carrier, context)
 
             response = Shipments.track(
-                payload=TrackingRequest(
-                    dict(tracking_numbers=[instance.tracking_number], options=options)
-                ).data,
+                payload=TrackingRequest(dict(tracking_numbers=[instance.tracking_number], options=options)).data,
                 carrier=carrier,
             )
 
@@ -167,14 +157,10 @@ class TrackerUpdateData(serializers.Serializer):
         allow_null=True,
         help_text="The package and shipment tracking details",
     )
-    metadata = serializers.PlainDictField(
-        required=False, help_text="User metadata for the tracker"
-    )
+    metadata = serializers.PlainDictField(required=False, help_text="User metadata for the tracker")
 
     @transaction.atomic
-    def update(
-        self, instance: models.Tracking, validated_data: dict, **kwargs
-    ) -> models.Tracking:
+    def update(self, instance: models.Tracking, validated_data: dict, **kwargs) -> models.Tracking:
         changes = []
         data = validated_data.copy()
 
@@ -198,7 +184,7 @@ def can_mutate_tracker(
     if update and tracker.delivered and [*(payload or {}).keys()] == ["metadata"]:
         return
 
-    if update and all([key in ["metadata", "info"] for key in (payload or {}).keys()]):
+    if update and all(key in ["metadata", "info"] for key in (payload or {})):
         return
 
 
@@ -229,7 +215,12 @@ def update_shipment_tracker(tracker: models.Tracking):
             tracker.shipment.status = status
             tracker.shipment.save(update_fields=["status"])
     except Exception as e:
-        logger.exception("Failed to update the tracked shipment", error=str(e), tracker_id=tracker.id, tracking_number=tracker.tracking_number)
+        logger.exception(
+            "Failed to update the tracked shipment",
+            error=str(e),
+            tracker_id=tracker.id,
+            tracking_number=tracker.tracking_number,
+        )
 
 
 @transaction.atomic
@@ -262,9 +253,7 @@ def update_tracker(tracker: models.Tracking, tracking_details: dict) -> models.T
         # Process events - merge with existing events
         new_events = tracking_details.get("events") or []
         if new_events:
-            events = utils.process_events(
-                response_events=new_events, current_events=tracker.events
-            )
+            events = utils.process_events(response_events=new_events, current_events=tracker.events)
             if events != tracker.events:
                 tracker.events = events
                 changes.append("events")
@@ -308,9 +297,7 @@ def update_tracker(tracker: models.Tracking, tracking_details: dict) -> models.T
         # Update info - merge with existing info
         info = tracking_details.get("info") or {}
         if any(info.keys()) and info != tracker.info:
-            tracker.info = serializers.process_dictionaries_mutations(
-                ["info"], dict(info=info), tracker
-            )["info"]
+            tracker.info = serializers.process_dictionaries_mutations(["info"], dict(info=info), tracker)["info"]
             changes.append("info")
 
         # Sync estimated_delivery to info.expected_delivery if updated
@@ -323,17 +310,22 @@ def update_tracker(tracker: models.Tracking, tracking_details: dict) -> models.T
 
         # Update images
         images = tracking_details.get("images") or {}
-        delivery_image = images.get("delivery_image") if isinstance(images, dict) else getattr(images, "delivery_image", None)
-        signature_image = images.get("signature_image") if isinstance(images, dict) else getattr(images, "signature_image", None)
+        delivery_image = (
+            images.get("delivery_image") if isinstance(images, dict) else getattr(images, "delivery_image", None)
+        )
+        signature_image = (
+            images.get("signature_image") if isinstance(images, dict) else getattr(images, "signature_image", None)
+        )
 
-        if delivery_image is not None or signature_image is not None:
-            if delivery_image != tracker.delivery_image or signature_image != tracker.signature_image:
-                if delivery_image is not None:
-                    tracker.delivery_image = delivery_image
-                    changes.append("delivery_image")
-                if signature_image is not None:
-                    tracker.signature_image = signature_image
-                    changes.append("signature_image")
+        if (delivery_image is not None or signature_image is not None) and (
+            delivery_image != tracker.delivery_image or signature_image != tracker.signature_image
+        ):
+            if delivery_image is not None:
+                tracker.delivery_image = delivery_image
+                changes.append("delivery_image")
+            if signature_image is not None:
+                tracker.signature_image = signature_image
+                changes.append("signature_image")
 
         # Save changes and update associated shipment
         if any(changes):
@@ -364,19 +356,17 @@ def update_tracker(tracker: models.Tracking, tracking_details: dict) -> models.T
 def apply_tracker_changes(
     tracker: models.Tracking,
     tracking_details: dict,
-) -> typing.List[str]:
+) -> list[str]:
     """Apply tracking detail changes to a tracker instance in memory (no DB save).
 
     Returns the list of changed field names, or empty list if nothing changed.
     """
-    changes: typing.List[str] = []
+    changes: list[str] = []
 
     # Process events - merge with existing events
     new_events = tracking_details.get("events") or []
     if new_events:
-        events = utils.process_events(
-            response_events=new_events, current_events=tracker.events
-        )
+        events = utils.process_events(response_events=new_events, current_events=tracker.events)
         if events != tracker.events:
             tracker.events = events
             changes.append("events")
@@ -420,9 +410,7 @@ def apply_tracker_changes(
     # Update info - merge with existing info
     info = tracking_details.get("info") or {}
     if any(info.keys()) and info != tracker.info:
-        tracker.info = serializers.process_dictionaries_mutations(
-            ["info"], dict(info=info), tracker
-        )["info"]
+        tracker.info = serializers.process_dictionaries_mutations(["info"], dict(info=info), tracker)["info"]
         changes.append("info")
 
     # Sync estimated_delivery to info.expected_delivery if updated
@@ -435,17 +423,22 @@ def apply_tracker_changes(
 
     # Update images
     images = tracking_details.get("images") or {}
-    delivery_image = images.get("delivery_image") if isinstance(images, dict) else getattr(images, "delivery_image", None)
-    signature_image = images.get("signature_image") if isinstance(images, dict) else getattr(images, "signature_image", None)
+    delivery_image = (
+        images.get("delivery_image") if isinstance(images, dict) else getattr(images, "delivery_image", None)
+    )
+    signature_image = (
+        images.get("signature_image") if isinstance(images, dict) else getattr(images, "signature_image", None)
+    )
 
-    if delivery_image is not None or signature_image is not None:
-        if delivery_image != tracker.delivery_image or signature_image != tracker.signature_image:
-            if delivery_image is not None:
-                tracker.delivery_image = delivery_image
-                changes.append("delivery_image")
-            if signature_image is not None:
-                tracker.signature_image = signature_image
-                changes.append("signature_image")
+    if (delivery_image is not None or signature_image is not None) and (
+        delivery_image != tracker.delivery_image or signature_image != tracker.signature_image
+    ):
+        if delivery_image is not None:
+            tracker.delivery_image = delivery_image
+            changes.append("delivery_image")
+        if signature_image is not None:
+            tracker.signature_image = signature_image
+            changes.append("signature_image")
 
     if any(changes):
         tracker.updated_at = timezone.now()
@@ -456,7 +449,7 @@ def apply_tracker_changes(
 
 @transaction.atomic
 def bulk_save_trackers(
-    changed_trackers: typing.List[typing.Tuple[models.Tracking, typing.List[str]]],
+    changed_trackers: list[tuple[models.Tracking, list[str]]],
 ):
     """Save multiple trackers in a single bulk_update and batch shipment status updates.
 
@@ -468,8 +461,8 @@ def bulk_save_trackers(
         return
 
     # Collect the union of all changed fields for bulk_update
-    all_fields: typing.Set[str] = set()
-    trackers_to_update: typing.List[models.Tracking] = []
+    all_fields: set[str] = set()
+    trackers_to_update: list[models.Tracking] = []
 
     for tracker, fields in changed_trackers:
         all_fields.update(fields)
@@ -488,8 +481,18 @@ def bulk_save_trackers(
     # dispatch webhook notifications for trackers with status/events changes.
     _notify_changed_trackers(changed_trackers)
 
+    # Fire a custom signal so extension modules (e.g. the bridge) can react to
+    # background poll updates without modifying karrio core.
+    lib.failsafe(
+        lambda: trackers_bulk_updated.send(
+            sender=models.Tracking,
+            changed_trackers=changed_trackers,
+        ),
+        "Failed to dispatch trackers_bulk_updated signal",
+    )
+
     # Batch shipment status updates: collect shipments that need status changes
-    shipment_updates: typing.List[models.Shipment] = []
+    shipment_updates: list[models.Shipment] = []
 
     for tracker, fields in changed_trackers:
         if "status" not in fields:
@@ -507,7 +510,7 @@ def bulk_save_trackers(
         logger.info("Bulk updated shipment statuses", count=len(shipment_updates))
 
 
-def _compute_shipment_status(tracker: models.Tracking) -> typing.Optional[str]:
+def _compute_shipment_status(tracker: models.Tracking) -> str | None:
     """Compute shipment status from tracker status (pure function, no DB access)."""
     status_map = {
         TrackerStatus.delivered.value: ShipmentStatus.delivered.value,
@@ -532,7 +535,7 @@ def _compute_shipment_status(tracker: models.Tracking) -> typing.Optional[str]:
 
 
 def _notify_changed_trackers(
-    changed_trackers: typing.List[typing.Tuple[models.Tracking, typing.List[str]]],
+    changed_trackers: list[tuple[models.Tracking, list[str]]],
 ):
     """Dispatch webhook notifications for trackers changed by bulk_update.
 
@@ -540,10 +543,10 @@ def _notify_changed_trackers(
     the logic from events.signals.tracker_updated to ensure webhooks fire.
     """
     try:
+        import karrio.server.core.serializers as core_serializers
+        import karrio.server.events.tasks as tasks
         from karrio.server.conf import settings
         from karrio.server.events.serializers import EventTypes
-        import karrio.server.events.tasks as tasks
-        import karrio.server.core.serializers as core_serializers
     except ImportError:
         logger.warning("Events module not available, skipping webhook notifications")
         return
@@ -557,12 +560,12 @@ def _notify_changed_trackers(
             event = EventTypes.tracker_updated.value
             data = core_serializers.TrackingStatus(tracker).data
             event_at = tracker.updated_at
+            created_by_id = utils.failsafe(lambda tracker=tracker: tracker.created_by.id)
+            org_id = utils.failsafe(lambda tracker=tracker: tracker.org.first().id if hasattr(tracker, "org") else None)
             context = dict(
-                user_id=utils.failsafe(lambda: tracker.created_by.id),
+                user_id=created_by_id,
                 test_mode=tracker.test_mode,
-                org_id=utils.failsafe(
-                    lambda: tracker.org.first().id if hasattr(tracker, "org") else None
-                ),
+                org_id=org_id,
             )
 
             if settings.MULTI_ORGANIZATIONS and context.get("org_id") is None:

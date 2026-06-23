@@ -1,10 +1,11 @@
 import unittest
-from unittest.mock import patch, ANY
-from .fixture import gateway
+from unittest.mock import ANY, patch
 
-import karrio.sdk as karrio
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 
 class TestDPDShipping(unittest.TestCase):
@@ -12,9 +13,7 @@ class TestDPDShipping(unittest.TestCase):
         self.maxDiff = None
         self.ShipmentRequest = models.ShipmentRequest(**ShipmentPayload)
         self.IntlShipmentRequest = models.ShipmentRequest(**IntlShipmentPayload)
-        self.MultiPieceShipmentRequest = models.ShipmentRequest(
-            **MultiPieceShipmentPayload
-        )
+        self.MultiPieceShipmentRequest = models.ShipmentRequest(**MultiPieceShipmentPayload)
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
@@ -43,9 +42,7 @@ class TestDPDShipping(unittest.TestCase):
     def test_parse_shipment_response(self):
         with patch("karrio.mappers.dpd.proxy.lib.request") as mock:
             mock.return_value = ShipmentResponse
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
 

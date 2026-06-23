@@ -1,11 +1,13 @@
 import json
-from unittest.mock import patch, ANY
-from django.urls import reverse
-from rest_framework import status
-from karrio.core.models import PickupDetails, ConfirmationDetails, ChargeDetails
-from karrio.server.manager.tests.test_shipments import TestShipmentFixture
-from karrio.server.core.utils import create_carrier_snapshot
+from unittest.mock import ANY, patch
+
 import karrio.server.manager.models as models
+from django.urls import reverse
+from karrio.core.models import ChargeDetails, ConfirmationDetails, PickupDetails
+from karrio.server.core.utils import create_carrier_snapshot
+from karrio.server.manager.tests.test_shipments import TestShipmentFixture
+from rest_framework import status
+
 
 class TestFixture(TestShipmentFixture):
     def setUp(self) -> None:
@@ -40,6 +42,7 @@ class TestFixture(TestShipmentFixture):
         }
         self.shipment.carrier = create_carrier_snapshot(self.carrier)
         self.shipment.save()
+
 
 class TestPickupSchedule(TestFixture):
     def test_schedule_pickup(self):
@@ -160,6 +163,7 @@ class TestPickupSchedule(TestFixture):
             self.assertEqual(response_data["recurrence"]["frequency"], "weekly")
             self.assertIn("monday", response_data["recurrence"]["days_of_week"])
 
+
 class TestPickupDetails(TestFixture):
     def setUp(self) -> None:
         super().setUp()
@@ -205,6 +209,7 @@ class TestPickupDetails(TestFixture):
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertDictEqual(response_data, PICKUP_CANCEL_RESPONSE)
+
 
 class TestPickupStatusLifecycle(TestFixture):
     """Tests for pickup status lifecycle transitions."""
@@ -282,6 +287,7 @@ class TestPickupStatusLifecycle(TestFixture):
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertEqual(response_data["status"], "scheduled")
 
+
 class TestPickupStatusFilter(TestFixture):
     """Tests for pickup status filtering."""
 
@@ -356,6 +362,7 @@ class TestPickupStatusFilter(TestFixture):
         self.assertIn("SCH001", confirmation_numbers)
         self.assertIn("CLO001", confirmation_numbers)
         self.assertNotIn("CAN001", confirmation_numbers)
+
 
 class TestPickupGuardrails(TestFixture):
     """Tests for pickup status guardrails preventing invalid mutations."""
@@ -480,6 +487,7 @@ class TestPickupGuardrails(TestFixture):
             # Metadata-only updates bypass the guard
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+
 class TestPickupScheduleNewAPI(TestFixture):
     """Tests for the new POST /v1/pickups endpoint with carrier_code in body."""
 
@@ -540,6 +548,7 @@ class TestPickupScheduleNewAPI(TestFixture):
         response_data = json.loads(response.content)
         self.assertIn("errors", response_data)
 
+
 class TestLegacyEndpointDeprecation(TestFixture):
     """Tests for the legacy endpoint deprecation headers."""
 
@@ -572,6 +581,7 @@ class TestLegacyEndpointDeprecation(TestFixture):
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertEqual(response_data["confirmation_number"], "27241")
             self.assertEqual(response_data["carrier_name"], "canadapost")
+
 
 PICKUP_DATA = {
     "pickup_date": "2020-10-25",
@@ -899,8 +909,6 @@ PICKUP_UPDATE_RESPONSE = {
     "options": {},
     "metadata": {},
     "meta": ANY,
-    "is_archived": False,
-    "archived_at": None,
 }
 
 PICKUP_CANCEL_RESPONSE = {

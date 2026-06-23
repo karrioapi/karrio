@@ -2760,6 +2760,7 @@ export const UPDATE_RATE_SHEET = gql`
             sunday_delivery
             multicollo
             neighbor_delivery
+            transit_label
           }
         }
       }
@@ -2825,6 +2826,7 @@ export const DELETE_RATE_SHEET_SERVICE = gql`
             sunday_delivery
             multicollo
             neighbor_delivery
+            transit_label
           }
         }
       }
@@ -3240,6 +3242,7 @@ export const GET_RATE_SHEET = gql`
           sunday_delivery
           multicollo
           neighbor_delivery
+          transit_label
         }
       }
       carriers {
@@ -3338,6 +3341,7 @@ export const GET_RATE_SHEETS = gql`
               sunday_delivery
               multicollo
               neighbor_delivery
+              transit_label
             }
           }
           carriers {

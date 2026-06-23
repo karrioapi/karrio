@@ -1,8 +1,8 @@
 import karrio.lib as lib
 import karrio.server.conf as conf
 import karrio.server.core.utils as utils
-import karrio.server.tracing.models as models
 import karrio.server.serializers as serializers
+import karrio.server.tracing.models as models
 from karrio.server.core.logging import logger
 
 
@@ -140,5 +140,5 @@ def _propagate_to_sentry(context: dict):
                     }
                 ),
             )
-    except Exception:
+    except Exception:  # noqa: S110 — tracing context is best-effort; failures must not surface
         pass

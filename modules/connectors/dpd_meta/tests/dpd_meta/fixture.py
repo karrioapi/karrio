@@ -1,9 +1,9 @@
 """DPD Global carrier tests fixtures."""
 
 import datetime
-import karrio.sdk as karrio
-import karrio.lib as lib
 
+import karrio.lib as lib
+import karrio.sdk as karrio
 
 # Pre-populate token cache to avoid real API calls during tests
 dpd_login = "TEST_USERNAME"

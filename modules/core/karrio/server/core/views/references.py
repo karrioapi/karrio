@@ -1,18 +1,17 @@
-import yaml  # type: ignore
-from rest_framework import status
-from rest_framework.decorators import api_view, renderer_classes, permission_classes, authentication_classes
-from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
-from rest_framework.request import Request
-from rest_framework.renderers import JSONRenderer
-from django.urls import path
-from django.conf import settings
-from django.utils import translation
-
-from karrio.server.conf import FEATURE_FLAGS
-from karrio.server.core.router import router
 import karrio.server.core.dataunits as dataunits
 import karrio.server.openapi as openapi
+import yaml  # type: ignore
+from django.conf import settings
+from django.urls import path
+from django.utils import translation
+from karrio.server.conf import FEATURE_FLAGS
+from karrio.server.core.router import router
+from rest_framework import status
+from rest_framework.decorators import api_view, authentication_classes, permission_classes, renderer_classes
+from rest_framework.permissions import AllowAny
+from rest_framework.renderers import JSONRenderer
+from rest_framework.request import Request
+from rest_framework.response import Response
 
 ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 BASE_PATH = getattr(settings, "BASE_PATH", "")
@@ -81,7 +80,7 @@ def references(request: Request):
 
         from karrio.core.i18n import translate_references
 
-        with translation.override(lang or getattr(request, 'LANGUAGE_CODE', settings.LANGUAGE_CODE)):
+        with translation.override(lang or getattr(request, "LANGUAGE_CODE", settings.LANGUAGE_CODE)):
             data = dataunits.contextual_reference(reduced=reduced)
             data = translate_references(data)
 

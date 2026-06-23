@@ -1,13 +1,14 @@
 import json
 from time import sleep
+from unittest.mock import ANY, patch
+
+import karrio.server.manager.models as models
+import karrio.server.manager.serializers as serializers
 from django.urls import reverse
-from rest_framework import status
-from unittest.mock import patch, ANY
 from karrio.core.models import TrackingDetails, TrackingEvent
 from karrio.server.core.tests import APITestCase
 from karrio.server.core.utils import create_carrier_snapshot
-import karrio.server.manager.models as models
-import karrio.server.manager.serializers as serializers
+from rest_framework import status
 
 
 class TestTrackers(APITestCase):
@@ -121,7 +122,7 @@ TRACKING_RESPONSE = {
     "archived_at": None,
     "delivered": False,
     "status": "in_transit",
-    "estimated_delivery": ANY,
+    "estimated_delivery": None,
     "delivery_image_url": None,
     "signature_image_url": None,
     "events": [
@@ -198,7 +199,7 @@ UPDATE_TRACKING_RESPONSE = {
     "is_archived": False,
     "archived_at": None,
     "status": "in_transit",
-    "estimated_delivery": ANY,
+    "estimated_delivery": None,
     "delivery_image_url": None,
     "signature_image_url": None,
     "messages": [],

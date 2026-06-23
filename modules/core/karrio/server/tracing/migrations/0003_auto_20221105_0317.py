@@ -7,35 +7,34 @@ def forwards_func(apps, schema_editor):
     db_alias = schema_editor.connection.alias
     TracingRecord = apps.get_model("tracing", "TracingRecord")
 
-    duplicates = TracingRecord.objects.using(db_alias)\
-        .values('meta__request_log_id')\
-        .annotate(count=models.Count('id'))\
-        .values('meta__request_log_id')\
-        .order_by().filter(count__gt=1)
+    duplicates = (
+        TracingRecord.objects.using(db_alias)
+        .values("meta__request_log_id")
+        .annotate(count=models.Count("id"))
+        .values("meta__request_log_id")
+        .order_by()
+        .filter(count__gt=1)
+    )
 
     for value in duplicates:
-        dups = TracingRecord.objects.using(db_alias)\
-            .filter(meta__request_log_id=value['meta__request_log_id'])
+        dups = TracingRecord.objects.using(db_alias).filter(meta__request_log_id=value["meta__request_log_id"])
 
-        if dups.filter(key='response').exists():
-            dups.filter(key='response').exclude(
-                id__in=[dups.filter(key='response').first().id]
+        if dups.filter(key="response").exists():
+            dups.filter(key="response").exclude(id__in=[dups.filter(key="response").first().id]).delete()
+
+        if dups.filter(key="request").exists():
+            dups.filter(key="request").exclude(
+                id__in=[dups.filter(key="request").first().id],
             ).delete()
-
-        if dups.filter(key='request').exists():
-            dups.filter(key='request').exclude(
-                id__in=[dups.filter(key='request').first().id],
-            ).delete()
-
 
 
 def reverse_func(apps, schema_editor):
     pass
 
-class Migration(migrations.Migration):
 
+class Migration(migrations.Migration):
     dependencies = [
-        ('tracing', '0002_auto_20220710_1307'),
+        ("tracing", "0002_auto_20220710_1307"),
     ]
 
     operations = [

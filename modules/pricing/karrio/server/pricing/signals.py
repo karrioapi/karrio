@@ -7,15 +7,13 @@ This module provides:
 """
 
 import functools
-import importlib
+
+import karrio.server.pricing.models as models
 from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-
 from karrio.server.core.gateway import Rates
 from karrio.server.core.logging import logger
-import karrio.server.pricing.models as models
-
 
 # ─────────────────────────────────────────────────────────────────────────────
 # RATE POST-PROCESSING (Apply markups to quotes)
@@ -58,10 +56,7 @@ def apply_custom_markups(result, *args, **kwargs):
         # 2. Have an empty organization_ids list (system-wide markups)
         # Note: icontains is used instead of __contains for cross-DB
         # compatibility (SQLite does not support JSON containment lookups).
-        _filters = (
-            Q(active=True, organization_ids__icontains=org_id)
-            | Q(active=True, organization_ids=[]),
-        )
+        _filters = (Q(active=True, organization_ids__icontains=org_id) | Q(active=True, organization_ids=[]),)
     else:
         # No organization context - only apply system-wide markups
         _filters = (Q(active=True, organization_ids=[]),)
@@ -84,9 +79,7 @@ def apply_custom_markups(result, *args, **kwargs):
     if request_plan:
         tenant_plan = request_plan
     else:
-        org_metadata = getattr(
-            getattr(context, "org", None), "metadata", {}
-        ) or {}
+        org_metadata = getattr(getattr(context, "org", None), "metadata", {}) or {}
         tenant_plan = org_metadata.get("plan", "launch")
 
     # Filter markups by plan:
@@ -103,9 +96,7 @@ def apply_custom_markups(result, *args, **kwargs):
     applicable_markups = [m for m in markups if matches_plan(m)]
 
     return functools.reduce(
-        lambda cumulated_result, markup: markup.apply_charge(
-            cumulated_result, options=request_options
-        ),
+        lambda cumulated_result, markup: markup.apply_charge(cumulated_result, options=request_options),
         applicable_markups,
         result,
     )
@@ -195,11 +186,11 @@ def register_fee_capture(*args, **kwargs):
         # Only capture fees when:
         # 1. Shipment has a selected_rate (label was purchased)
         # 2. Shipment status indicates it's been purchased/processed
-        if instance.selected_rate and instance.status not in ["draft"]:
-            # Check if we've already captured fees for this shipment
-            if not models.Fee.objects.filter(shipment_id=instance.id).exists():
-                capture_fees_for_shipment(instance)
+        if (
+            instance.selected_rate
+            and instance.status not in ["draft"]
+            and not models.Fee.objects.filter(shipment_id=instance.id).exists()
+        ):
+            capture_fees_for_shipment(instance)
 
     logger.info("Fee capture signal registered", module="karrio.pricing")
-
-

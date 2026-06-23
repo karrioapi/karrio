@@ -1,23 +1,20 @@
 import unittest
-from unittest.mock import patch, ANY
-from .fixture import gateway
+from unittest.mock import ANY, patch
 
-import karrio.sdk as karrio
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 
 class TestUSPSReturnShipment(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        self.ReturnShipmentRequest = models.ShipmentRequest(
-            **ReturnShipmentPayload
-        )
+        self.ReturnShipmentRequest = models.ShipmentRequest(**ReturnShipmentPayload)
 
     def test_create_return_shipment_request(self):
-        request = gateway.mapper.create_return_shipment_request(
-            self.ReturnShipmentRequest
-        )
+        request = gateway.mapper.create_return_shipment_request(self.ReturnShipmentRequest)
         serialized = request.serialize()
 
         # Verify the return label flag is set
@@ -31,23 +28,15 @@ class TestUSPSReturnShipment(unittest.TestCase):
             karrio.Shipment.create(self.ReturnShipmentRequest).from_(gateway)
 
             url = mock.call_args[1]["url"]
-            self.assertEqual(
-                url, f"{gateway.settings.server_url}/labels/v3/label"
-            )
+            self.assertEqual(url, f"{gateway.settings.server_url}/labels/v3/label")
 
     def test_parse_return_shipment_response(self):
         with patch("karrio.mappers.usps.proxy.lib.request") as mock:
             mock.return_value = ReturnShipmentResponseJSON
-            parsed_response = (
-                karrio.Shipment.create(self.ReturnShipmentRequest)
-                .from_(gateway)
-                .parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ReturnShipmentRequest).from_(gateway).parse()
 
             print(parsed_response)
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedReturnShipmentResponse
-            )
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedReturnShipmentResponse)
 
 
 if __name__ == "__main__":

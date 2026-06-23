@@ -1,5 +1,6 @@
-import karrio.lib as lib
 from unittest.mock import ANY
+
+import karrio.lib as lib
 from karrio.server.graph.tests.base import GraphTestCase
 
 

@@ -1,6 +1,6 @@
 # type: ignore
-from karrio.server.settings.base import *
 import karrio.server.settings.constance as constance
+from karrio.server.settings.base import *
 
 INSTALLED_APPS += [
     "karrio.server.admin",

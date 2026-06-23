@@ -1,17 +1,18 @@
 """Dynamic configuration editable on runtime powered by django-constance."""
 
-from decouple import config
+import importlib.util
+
 import karrio.references as ref
 import karrio.server.settings.base as base
+from decouple import config
 from karrio.server.settings.email import (
-    EMAIL_USE_TLS,
-    EMAIL_HOST_USER,
-    EMAIL_HOST_PASSWORD,
-    EMAIL_HOST,
-    EMAIL_PORT,
     EMAIL_FROM_ADDRESS,
+    EMAIL_HOST,
+    EMAIL_HOST_PASSWORD,
+    EMAIL_HOST_USER,
+    EMAIL_PORT,
+    EMAIL_USE_TLS,
 )
-import importlib.util
 
 CONSTANCE_BACKEND = "constance.backends.database.DatabaseBackend"
 CONSTANCE_DATABASE_PREFIX = "constance:core:"
@@ -19,9 +20,7 @@ CONSTANCE_DATABASE_PREFIX = "constance:core:"
 DATA_ARCHIVING_SCHEDULE = config("DATA_ARCHIVING_SCHEDULE", default=168, cast=int)
 
 GOOGLE_CLOUD_API_KEY = config("GOOGLE_CLOUD_API_KEY", default="")
-CANADAPOST_ADDRESS_COMPLETE_API_KEY = config(
-    "CANADAPOST_ADDRESS_COMPLETE_API_KEY", default=""
-)
+CANADAPOST_ADDRESS_COMPLETE_API_KEY = config("CANADAPOST_ADDRESS_COMPLETE_API_KEY", default="")
 
 # data retention env in days
 ORDER_DATA_RETENTION = config("ORDER_DATA_RETENTION", default=183, cast=int)
@@ -33,9 +32,7 @@ API_LOGS_DATA_RETENTION = config("API_LOGS_DATA_RETENTION", default=92, cast=int
 TRACKER_MAX_ACTIVE_DAYS = config("TRACKER_MAX_ACTIVE_DAYS", default=90, cast=int)
 
 # registry config
-ENABLE_ALL_PLUGINS_BY_DEFAULT = config(
-    "ENABLE_ALL_PLUGINS_BY_DEFAULT", default=True if base.DEBUG else False, cast=bool
-)
+ENABLE_ALL_PLUGINS_BY_DEFAULT = config("ENABLE_ALL_PLUGINS_BY_DEFAULT", default=bool(base.DEBUG), cast=bool)
 
 # Feature flags config — always present with False default when module is absent
 FEATURE_FLAGS_CONFIG = {
@@ -112,6 +109,11 @@ FEATURE_FLAGS_CONFIG = {
     "PERSIST_SDK_TRACING": (
         base.PERSIST_SDK_TRACING,
         "Persist SDK tracing",
+        bool,
+    ),
+    "CLOSED_BETA_ENABLED": (
+        config("CLOSED_BETA_ENABLED", default=False, cast=bool),
+        "Enable closed beta mode — only invited KAccounts can onboard",
         bool,
     ),
 }
@@ -232,12 +234,6 @@ CONSTANCE_CONFIG_FIELDSETS = {
     ),
     "Feature Flags": tuple(FEATURE_FLAGS_FIELDSET),
     "Registry Config": ("ENABLE_ALL_PLUGINS_BY_DEFAULT",),
-    "Registry Plugins": tuple(
-        [
-            k
-            for k in PLUGIN_REGISTRY.keys()
-            if not k in ("ENABLE_ALL_PLUGINS_BY_DEFAULT",)
-        ]
-    ),
+    "Registry Plugins": tuple([k for k in PLUGIN_REGISTRY if k not in ("ENABLE_ALL_PLUGINS_BY_DEFAULT",)]),
     **PLUGIN_SYSTEM_CONFIG_FIELDSETS,
 }

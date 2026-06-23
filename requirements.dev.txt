@@ -1,8 +1,8 @@
-bandit
-black
 coverage
 lxml-stubs
 mypy
+pre-commit
+ruff
 twine
 wheel
 setuptools

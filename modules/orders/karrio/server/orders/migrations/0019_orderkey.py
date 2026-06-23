@@ -1,11 +1,10 @@
 import functools
-from django.db import migrations, models
 
 import karrio.server.core.models.base
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("orders", "0018_ordercounter"),
     ]

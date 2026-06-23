@@ -1,8 +1,9 @@
 """
 karrio server core module urls
 """
-from django.urls import include, path
+
 from django.conf import settings
+from django.urls import include, path
 from health_check.views import HealthCheckView
 from karrio.server.core.views import metadata, router
 

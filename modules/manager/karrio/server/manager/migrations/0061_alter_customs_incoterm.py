@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("manager", "0060_pickup_meta_alter_address_country_code_and_more"),
     ]

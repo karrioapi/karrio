@@ -1,4 +1,3 @@
-from karrio.providers.dhl_universal.utils import Settings
 # from karrio.providers.dhl_universal.rate import parse_rate_response, rate_request
 # from karrio.providers.dhl_universal.address import (
 #     parse_address_validation_response,
@@ -22,3 +21,4 @@ from karrio.providers.dhl_universal.tracking import (
     parse_tracking_response,
     tracking_request,
 )
+from karrio.providers.dhl_universal.utils import Settings

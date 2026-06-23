@@ -1,48 +1,55 @@
+# ruff: noqa: F401, I001
 import attr
-import typing
 import jstruct
 import karrio.core.units as units
 from karrio.core.models import (
+    Address as BaseAddress,
+)
+from karrio.core.models import (
+    ChargeDetails,
+    Customs,
     DocumentDetails,
     Documents,
+    DutiesCalculationDetails,
     Images,
-    Parcel,
-    Message,
-    Address as BaseAddress,
-    TrackingRequest as BaseTrackingRequest,
-    ShipmentDetails,
-    Payment,
-    Customs,
-    RateRequest as BaseRateRequest,
-    ShipmentRequest as BaseShipmentRequest,
-    ShipmentCancelRequest,
-    ChargeDetails,
-    PickupRequest as BasePickupRequest,
-    PickupDetails,
-    PickupUpdateRequest as BasePickupUpdateRequest,
-    PickupCancelRequest as BasePickupCancelRequest,
-    ConfirmationDetails as Confirmation,
-    TrackingEvent,
-    TrackingInfo,
+    InsuranceDetails,
     ManifestDocument,
-    TrackingDetails,
-    DocumentFile,
-    DocumentUploadRequest,
-    ManifestRequest,
-    ManifestDetails,
-    RequestPayload,
+    Message,
     OAuthAuthorizePayload,
     OAuthAuthorizeRequest,
+    Parcel,
+    Payment,
+    RequestPayload,
+    TrackingEvent,
     WebhookEventDetails,
-    WebhookRegistrationDetails,
     WebhookDeregistrationRequest,
     WebhookRegistrationRequest,
-    DutiesCalculationRequest,
-    DutiesCalculationDetails,
-    InsuranceRequest,
-    InsuranceDetails,
+    TrackingInfo,
 )
-
+from karrio.core.models import (
+    ConfirmationDetails as Confirmation,
+)
+from karrio.core.models import (
+    PickupCancelRequest as BasePickupCancelRequest,
+)
+from karrio.core.models import (
+    PickupRequest as BasePickupRequest,
+)
+from karrio.core.models import (
+    PickupUpdateRequest as BasePickupUpdateRequest,
+)
+from karrio.core.models import (
+    RateRequest as BaseRateRequest,
+)
+from karrio.core.models import (
+    ShipmentRequest as BaseShipmentRequest,
+)
+from karrio.core.models import (
+    ShipmentCancelRequest,
+)
+from karrio.core.models import (
+    TrackingRequest as BaseTrackingRequest,
+)
 
 COUNTRIES = [(c.name, c.name) for c in units.Country]
 CURRENCIES = [(c.name, c.name) for c in units.Currency]
@@ -61,7 +68,7 @@ class CarrierSettings:
         active: bool = None,
         id: str = None,
         display_name: str = None,
-        **kwargs
+        **kwargs,
     ):
         self.carrier_name = carrier_name
         self.display_name = display_name
@@ -99,10 +106,7 @@ class CarrierSettings:
         from karrio.core.models import ServiceLevel
 
         services = getattr(self, "services", [])
-        return [
-            lib.to_object(ServiceLevel, s) if isinstance(s, dict) else s
-            for s in services
-        ]
+        return [lib.to_object(ServiceLevel, s) if isinstance(s, dict) else s for s in services]
 
     @property
     def account_country_code(self):
@@ -162,15 +166,15 @@ class PickupRequest(BasePickupRequest):
     closing_time: str
     address: Address = jstruct.JStruct[Address, jstruct.REQUIRED]
 
-    parcels: typing.List[Parcel] = jstruct.JList[Parcel]
+    parcels: list[Parcel] = jstruct.JList[Parcel]
     parcels_count: int = None
-    shipment_identifiers: typing.List[str] = []
+    shipment_identifiers: list[str] = []
     package_location: str = None
     instruction: str = None
     pickup_type: str = "one_time"  # one_time, daily, recurring
-    recurrence: typing.Dict = {}  # For recurring: {frequency, days_of_week, end_date}
-    metadata: typing.Dict = {}
-    options: typing.Dict = {}
+    recurrence: dict = {}  # For recurring: {frequency, days_of_week, end_date}
+    metadata: dict = {}
+    options: dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -181,13 +185,13 @@ class PickupUpdateRequest(BasePickupUpdateRequest):
     closing_time: str
     address: Address = jstruct.JStruct[Address, jstruct.REQUIRED]
 
-    parcels: typing.List[Parcel] = jstruct.JList[Parcel]
-    shipment_identifiers: typing.List[str] = []
+    parcels: list[Parcel] = jstruct.JList[Parcel]
+    shipment_identifiers: list[str] = []
     package_location: str = None
     instruction: str = None
     pickup_type: str = "one_time"  # one_time, daily, recurring
-    recurrence: typing.Dict = {}  # For recurring: {frequency, days_of_week, end_date}
-    options: typing.Dict = {}
+    recurrence: dict = {}  # For recurring: {frequency, days_of_week, end_date}
+    options: dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -197,7 +201,7 @@ class PickupCancelRequest(BasePickupCancelRequest):
     address: Address = jstruct.JStruct[Address]
     pickup_date: str = None
     reason: str = None
-    options: typing.Dict = {}
+    options: dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -209,7 +213,7 @@ class Rate:
     transit_days: int = None
     service: str = None
     total_charge: float = 0.0
-    extra_charges: typing.List[ChargeDetails] = []
+    extra_charges: list[ChargeDetails] = []
     estimated_delivery: str = None
     id: str = None
     meta: dict = None
@@ -221,19 +225,19 @@ class Rate:
 class RateRequest(BaseRateRequest):
     shipper: Address = jstruct.JStruct[Address, jstruct.REQUIRED]
     recipient: Address = jstruct.JStruct[Address, jstruct.REQUIRED]
-    parcels: typing.List[Parcel] = jstruct.JList[Parcel, jstruct.REQUIRED]
+    parcels: list[Parcel] = jstruct.JList[Parcel, jstruct.REQUIRED]
 
     payment: Payment = jstruct.JStruct[Payment]
     customs: Customs = jstruct.JStruct[Customs]
     return_address: Address = jstruct.JStruct[Address]
     billing_address: Address = jstruct.JStruct[Address]
 
-    services: typing.List[str] = []
-    options: typing.Dict = {}
+    services: list[str] = []
+    options: dict = {}
     reference: str = ""
     is_return: bool = False
 
-    carrier_ids: typing.List[str] = []
+    carrier_ids: list[str] = []
 
 
 @attr.s(auto_attribs=True)
@@ -243,22 +247,22 @@ class ShipmentRequest(BaseShipmentRequest):
 
     shipper: Address = jstruct.JStruct[Address, jstruct.REQUIRED]
     recipient: Address = jstruct.JStruct[Address, jstruct.REQUIRED]
-    parcels: typing.List[Parcel] = jstruct.JList[Parcel, jstruct.REQUIRED]
-    rates: typing.List[Rate] = jstruct.JList[Rate, jstruct.REQUIRED]
+    parcels: list[Parcel] = jstruct.JList[Parcel, jstruct.REQUIRED]
+    rates: list[Rate] = jstruct.JList[Rate, jstruct.REQUIRED]
 
     payment: Payment = jstruct.JStruct[Payment]
     customs: Customs = jstruct.JStruct[Customs]
     return_address: Address = jstruct.JStruct[Address]
     billing_address: Address = jstruct.JStruct[Address]
 
-    options: typing.Dict = {}
+    options: dict = {}
     reference: str = ""
     order_id: str = ""
     label_type: str = None
     is_return: bool = False
     id: str = None
 
-    metadata: typing.Dict = {}
+    metadata: dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -272,8 +276,8 @@ class Shipment:
 
     shipper: Address = jstruct.JStruct[Address, jstruct.REQUIRED]
     recipient: Address = jstruct.JStruct[Address, jstruct.REQUIRED]
-    parcels: typing.List[Parcel] = jstruct.JList[Parcel, jstruct.REQUIRED]
-    rates: typing.List[Rate] = jstruct.JList[Rate, jstruct.REQUIRED]
+    parcels: list[Parcel] = jstruct.JList[Parcel, jstruct.REQUIRED]
+    rates: list[Rate] = jstruct.JList[Rate, jstruct.REQUIRED]
     selected_rate: Rate = jstruct.JStruct[Rate, jstruct.REQUIRED]
     docs: Documents = jstruct.JStruct[Documents, jstruct.REQUIRED]
 
@@ -281,18 +285,18 @@ class Shipment:
     customs: Customs = jstruct.JStruct[Customs]
     billing_address: Address = jstruct.JStruct[Address]
 
-    options: typing.Dict = {}
+    options: dict = {}
     reference: str = ""
     label_type: str = None
     tracking_url: str = None
     tracker_id: str = None
     status: str = ""
-    metadata: typing.Dict = {}
+    metadata: dict = {}
     meta: dict = {}
     return_shipment: dict = None
     id: str = None
 
-    messages: typing.List[Message] = jstruct.JList[Message]
+    messages: list[Message] = jstruct.JList[Message]
     created_at: str = None
     test_mode: bool = None
 
@@ -307,28 +311,28 @@ class Pickup:
     closing_time: str
     confirmation_number: str
     address: Address = jstruct.JStruct[Address, jstruct.REQUIRED]
-    parcels: typing.List[Parcel] = jstruct.JList[Parcel, jstruct.REQUIRED]
+    parcels: list[Parcel] = jstruct.JList[Parcel, jstruct.REQUIRED]
 
     pickup_charge: ChargeDetails = jstruct.JStruct[ChargeDetails]
     instruction: str = None
     package_location: str = None
     pickup_type: str = None  # one_time, daily, recurring
-    recurrence: typing.Dict = {}  # For recurring: {frequency, days_of_week, end_date}
-    metadata: typing.Dict = {}
-    options: typing.Dict = {}
+    recurrence: dict = {}  # For recurring: {frequency, days_of_week, end_date}
+    metadata: dict = {}
+    options: dict = {}
     meta: dict = {}
     id: str = None
 
-    messages: typing.List[Message] = jstruct.JList[Message]
+    messages: list[Message] = jstruct.JList[Message]
     test_mode: bool = None
 
 
 @attr.s(auto_attribs=True)
 class TrackingRequest(BaseTrackingRequest):
-    tracking_numbers: typing.List[str]
+    tracking_numbers: list[str]
     account_numer: str = None
     reference: str = None
-    options: typing.Dict = {}
+    options: dict = {}
     info: TrackingInfo = jstruct.JStruct[TrackingInfo]
 
 
@@ -337,7 +341,7 @@ class Tracking:
     carrier_name: str
     carrier_id: str
     tracking_number: str
-    events: typing.List[TrackingEvent] = jstruct.JList[TrackingEvent]
+    events: list[TrackingEvent] = jstruct.JList[TrackingEvent]
 
     status: str = "unknown"
     info: TrackingInfo = jstruct.JStruct[TrackingInfo]
@@ -345,7 +349,7 @@ class Tracking:
     estimated_delivery: str = None
     delivered: bool = None
     test_mode: bool = None
-    options: typing.Dict = {}
+    options: dict = {}
     meta: dict = None
     id: str = None
 
@@ -354,14 +358,14 @@ class Tracking:
 class DocumentUploadResponse:
     carrier_name: str
     carrier_id: str
-    documents: typing.List[DocumentDetails] = jstruct.JList[DocumentDetails]
+    documents: list[DocumentDetails] = jstruct.JList[DocumentDetails]
     reference: str = ""
 
     test_mode: bool = None
-    options: typing.Dict = {}
+    options: dict = {}
     meta: dict = None
     id: str = None
-    messages: typing.List[Message] = jstruct.JList[Message]
+    messages: list[Message] = jstruct.JList[Message]
 
 
 @attr.s(auto_attribs=True)
@@ -369,59 +373,59 @@ class Manifest:
     carrier_id: str
     carrier_name: str
 
-    shipment_identifiers: typing.List[str]
+    shipment_identifiers: list[str]
     address: Address = jstruct.JStruct[Address, jstruct.REQUIRED]
     doc: ManifestDocument = jstruct.JStruct[ManifestDocument]
 
     reference: str = None
-    metadata: typing.Dict = {}
-    options: typing.Dict = {}
+    metadata: dict = {}
+    options: dict = {}
     meta: dict = {}
     id: str = None
 
-    messages: typing.List[Message] = jstruct.JList[Message]
+    messages: list[Message] = jstruct.JList[Message]
     test_mode: bool = None
 
 
 @attr.s(auto_attribs=True)
 class ConfirmationResponse:
-    messages: typing.List[Message] = jstruct.JList[Message]
+    messages: list[Message] = jstruct.JList[Message]
     confirmation: Confirmation = jstruct.JStruct[Confirmation]
 
 
 @attr.s(auto_attribs=True)
 class PickupResponse:
-    messages: typing.List[Message] = jstruct.JList[Message]
+    messages: list[Message] = jstruct.JList[Message]
     pickup: Pickup = jstruct.JStruct[Pickup]
 
 
 @attr.s(auto_attribs=True)
 class RateResponse:
-    messages: typing.List[Message] = jstruct.JList[Message]
-    rates: typing.List[Rate] = jstruct.JList[Rate]
+    messages: list[Message] = jstruct.JList[Message]
+    rates: list[Rate] = jstruct.JList[Rate]
 
 
 @attr.s(auto_attribs=True)
 class TrackingResponse:
-    messages: typing.List[Message] = jstruct.JList[Message]
+    messages: list[Message] = jstruct.JList[Message]
     tracking: Tracking = jstruct.JStruct[Tracking]
 
 
 @attr.s(auto_attribs=True)
 class ManifestResponse:
-    messages: typing.List[Message] = jstruct.JList[Message]
+    messages: list[Message] = jstruct.JList[Message]
     manifest: Manifest = jstruct.JStruct[Manifest]
 
 
 @attr.s(auto_attribs=True)
 class DutiesResponse:
-    messages: typing.List[Message] = jstruct.JList[Message]
+    messages: list[Message] = jstruct.JList[Message]
     duties: DutiesCalculationDetails = jstruct.JStruct[DutiesCalculationDetails]
 
 
 @attr.s(auto_attribs=True)
 class InsuranceResponse:
-    messages: typing.List[Message] = jstruct.JList[Message]
+    messages: list[Message] = jstruct.JList[Message]
     insurance: InsuranceDetails = jstruct.JStruct[InsuranceDetails]
 
 
@@ -430,4 +434,4 @@ class Error:
     code: str = None
     message: str = None
     level: str = None
-    details: typing.Dict = None
+    details: dict = None

@@ -1,12 +1,14 @@
 """DPD Global carrier shipment tests."""
 
-import unittest
-from unittest.mock import patch, ANY
-from .fixture import gateway
 import logging
-import karrio.sdk as karrio
-import karrio.lib as lib
+import unittest
+from unittest.mock import patch
+
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 logger = logging.getLogger(__name__)
 
@@ -32,18 +34,21 @@ class TestDPDGroupShipment(unittest.TestCase):
     def test_parse_shipment_response(self):
         with patch("karrio.mappers.dpd_meta.proxy.lib.request") as mock:
             mock.return_value = ShipmentResponse
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.dpd_meta.proxy.lib.request") as mock:
             mock.return_value = ErrorResponse
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
+
+    def test_create_multiparcel_shipment_request_rounds_weight_to_10g(self):
+        request = gateway.mapper.create_shipment_request(models.ShipmentRequest(**MultiparcelRoundingPayload))
+        serialized = lib.to_dict(request.serialize())
+        self.assertEqual(serialized[0]["shipmentInfos"]["weight"], "240")
+        self.assertEqual(serialized[0]["parcel"][0]["parcelInfos"]["weight"], "120")
+        self.assertEqual(serialized[0]["parcel"][1]["parcelInfos"]["weight"], "120")
 
 
 if __name__ == "__main__":
@@ -196,3 +201,42 @@ ParsedErrorResponse = [
         }
     ],
 ]
+
+MultiparcelRoundingPayload = {
+    "shipper": {
+        "address_line1": "Main Street",
+        "street_number": "42",
+        "city": "Berlin",
+        "postal_code": "10115",
+        "country_code": "DE",
+        "person_name": "John Sender",
+        "company_name": "Sender Corp",
+        "phone_number": "+49301234567",
+        "email": "sender@example.com",
+    },
+    "recipient": {
+        "address_line1": "Secondary Road",
+        "street_number": "88",
+        "city": "Hamburg",
+        "postal_code": "20095",
+        "country_code": "DE",
+        "person_name": "Jane Receiver",
+        "company_name": "Receiver Inc",
+        "phone_number": "+49401234567",
+        "email": "receiver@example.com",
+    },
+    "parcels": [
+        {
+            "weight": 0.115,
+            "weight_unit": "KG",
+            "dimension_unit": "CM",
+        },
+        {
+            "weight": 0.115,
+            "weight_unit": "KG",
+            "dimension_unit": "CM",
+        },
+    ],
+    "service": "dpd_meta_classic",
+    "reference": "MULTI001",
+}

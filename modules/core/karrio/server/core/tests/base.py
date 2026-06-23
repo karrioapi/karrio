@@ -1,10 +1,10 @@
+import karrio.server.providers.models as providers
 from django.contrib.auth import get_user_model
 from django.urls import reverse
-from rest_framework.test import APITestCase as BaseAPITestCase, APIClient
 from karrio.server.core.logging import logger
-
 from karrio.server.user.models import Token
-import karrio.server.providers.models as providers
+from rest_framework.test import APIClient
+from rest_framework.test import APITestCase as BaseAPITestCase
 
 
 class APITestCase(BaseAPITestCase):
@@ -20,9 +20,7 @@ class APITestCase(BaseAPITestCase):
     @classmethod
     def setUpTestData(cls) -> None:
         # Setup user and API Token (runs once per test class).
-        cls.user = get_user_model().objects.create_superuser(
-            "admin@example.com", "test"
-        )
+        cls.user = get_user_model().objects.create_superuser("admin@example.com", "test")
         cls.token = Token.objects.create(user=cls.user, test_mode=True)
 
         # Setup test carrier connections (shared across all test methods).
@@ -98,9 +96,7 @@ class APITestCase(BaseAPITestCase):
         is_ok = f"{response.status_code}".startswith("2")
 
         if is_ok is False or response.data.get("errors") is not None:
-            logger.error("Response has errors",
-                        status_code=response.status_code,
-                        response_data=response.data)
+            logger.error("Response has errors", status_code=response.status_code, response_data=response.data)
 
         self.assertTrue(is_ok)
         assert response.data.get("errors") is None

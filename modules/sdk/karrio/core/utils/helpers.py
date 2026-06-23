@@ -1,22 +1,26 @@
+import asyncio
+import base64
+import datetime
 import io
+import json
 import re
 import ssl
-import uuid
 import string
-import base64
-import json
-import PyPDF2
-import asyncio
-import datetime
 import urllib.parse
+import uuid
+from collections.abc import Callable
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from functools import reduce
+from typing import Any, TypeVar, cast
+from urllib.error import HTTPError
+from urllib.request import ProxyHandler, Request, build_opener, install_opener, urlopen
+
 import PIL.Image
 import PIL.ImageFile
-from functools import reduce
-from urllib.error import HTTPError
-from urllib.request import urlopen, Request, ProxyHandler, build_opener, install_opener
-from typing import List, TypeVar, Callable, Optional, Any, Union, cast
-from concurrent.futures import ThreadPoolExecutor, as_completed
+import PyPDF2
+
 from karrio.core.utils.logger import logger
+
 ssl._create_default_https_context = ssl._create_unverified_context  # type: ignore
 PIL.ImageFile.LOAD_TRUNCATED_IMAGES = True
 T = TypeVar("T")
@@ -50,23 +54,17 @@ def image_to_pdf(image_str: str, rotate: int = None, resize: dict = None) -> str
     buffer = to_buffer(image_str)
     _image = PIL.Image.open(buffer)
 
-    image = (
-        _image.rotate(rotate, PIL.Image.Resampling.NEAREST, expand=True)
-        if rotate is not None
-        else _image
-    )
+    image = _image.rotate(rotate, PIL.Image.Resampling.NEAREST, expand=True) if rotate is not None else _image
 
     if resize is not None:
         img = image.copy()
         wpercent = resize["width"] / float(img.size[0])
-        hsize = int((float(img.size[1]) * float(wpercent)))
+        hsize = int(float(img.size[1]) * float(wpercent))
         image = img.resize((resize["width"], hsize), PIL.Image.Resampling.LANCZOS)
 
     if resize is not None:
         img = image.copy()
-        image = img.resize(
-            (resize["width"], resize["height"]), PIL.Image.Resampling.LANCZOS
-        )
+        image = img.resize((resize["width"], resize["height"]), PIL.Image.Resampling.LANCZOS)
 
     new_buffer = io.BytesIO()
     image.save(new_buffer, format="PDF", dpi=(300, 300))
@@ -74,7 +72,7 @@ def image_to_pdf(image_str: str, rotate: int = None, resize: dict = None) -> str
     return base64.b64encode(new_buffer.getvalue()).decode("utf-8")
 
 
-def bundle_pdfs(base64_strings: List[str]) -> PyPDF2.PdfMerger:
+def bundle_pdfs(base64_strings: list[str]) -> PyPDF2.PdfMerger:
     merger = PyPDF2.PdfMerger(strict=False)
 
     for b64_str in base64_strings:
@@ -84,12 +82,10 @@ def bundle_pdfs(base64_strings: List[str]) -> PyPDF2.PdfMerger:
     return merger
 
 
-def bundle_imgs(base64_strings: List[str]):
-    image_buffers = [
-        io.BytesIO(base64.b64decode(b64_str)) for b64_str in base64_strings
-    ]
+def bundle_imgs(base64_strings: list[str]):
+    image_buffers = [io.BytesIO(base64.b64decode(b64_str)) for b64_str in base64_strings]
     images = [PIL.Image.open(buffer) for buffer in image_buffers]
-    widths, heights = zip(*(i.size for i in images))
+    widths, heights = zip(*(i.size for i in images), strict=False)
 
     max_width = max(widths)
     total_height = sum(heights)
@@ -104,15 +100,15 @@ def bundle_imgs(base64_strings: List[str]):
     return image
 
 
-def bundle_zpls(base64_strings: List[str]) -> str:
+def bundle_zpls(base64_strings: list[str]) -> str:
     doc = ""
     for b64_str in base64_strings:
-        doc += f'{base64.b64decode(b64_str).decode("utf-8")}{NEW_LINE}'
+        doc += f"{base64.b64decode(b64_str).decode('utf-8')}{NEW_LINE}"
 
     return doc
 
 
-def bundle_base64(base64_strings: List[str], format: str = "PDF") -> str:
+def bundle_base64(base64_strings: list[str], format: str = "PDF") -> str:
     """Return a base64 string from a list of base64 strings."""
     result = io.BytesIO()
 
@@ -153,11 +149,7 @@ def binary_to_base64(binary_str: str) -> str:
 
 
 def decode_bytes(byte):
-    return (
-        failsafe(lambda: byte.decode("utf-8"))
-        or failsafe(lambda: byte.decode("ISO-8859-1"))
-        or byte.decode("utf-8")
-    )
+    return failsafe(lambda: byte.decode("utf-8")) or failsafe(lambda: byte.decode("ISO-8859-1")) or byte.decode("utf-8")
 
 
 def process_request(
@@ -166,7 +158,6 @@ def process_request(
     proxy: str = None,
     **kwargs,
 ) -> Request:
-    from karrio.core.utils.redaction import redact_headers
 
     payload: dict[str, bytes] = {}
     if "data" in kwargs:
@@ -255,10 +246,7 @@ def process_error(
 ) -> str:
     logger.error("HTTP request failed", request_id=request_id, error_code=error.code, error_msg=str(error))
 
-    if on_error is not None:
-        _error = on_error(error)
-    else:
-        _error = decode_bytes(error.read())
+    _error = on_error(error) if on_error is not None else decode_bytes(error.read())
 
     if trace:
         _err_headers = (failsafe(lambda: dict(error.headers)) or {}) if error.headers else {}
@@ -276,7 +264,7 @@ def process_error(
     return _error
 
 
-def error_decoder(error: HTTPError) -> Union[dict, list]:
+def error_decoder(error: HTTPError) -> dict | list:
     """Generic on_error handler for lib.request that ensures error responses
     are always returned as parsed dicts/lists enriched with HTTP metadata.
 
@@ -299,7 +287,7 @@ def error_decoder(error: HTTPError) -> Union[dict, list]:
             return result
         if isinstance(result, list):
             return result
-    except Exception:
+    except Exception:  # noqa: S110 — JSON parse probe; fall through to non-JSON path
         pass
 
     # Non-JSON response — raise with contextual HTTP details
@@ -348,6 +336,7 @@ def _urlopen_with_span(req: Request, timeout=None):
     """
     try:
         import sentry_sdk  # type: ignore[import-not-found]
+
         with sentry_sdk.start_span(
             op="http.client",
             description=f"{req.get_method()} {req.full_url}",
@@ -382,13 +371,10 @@ def _urlopen_with_span(req: Request, timeout=None):
                     "client-secret",
                     "client_secret",
                 }
-                headers = {
-                    k: ("***" if k.lower() in _redacted else v)
-                    for k, v in req.headers.items()
-                }
+                headers = {k: ("***" if k.lower() in _redacted else v) for k, v in req.headers.items()}
                 span.set_data("http.request.headers", headers)
                 span.set_data("request.headers", headers)
-            except Exception:
+            except Exception:  # noqa: S110 — sentry header capture is best-effort
                 pass
 
             # Make the request and buffer the response body
@@ -403,7 +389,7 @@ def _urlopen_with_span(req: Request, timeout=None):
                 resp_body = buffered._raw.decode("utf-8", errors="replace")[:4096]
                 span.set_data("http.response.body", resp_body)
                 span.set_data("response.body", resp_body)
-            except Exception:
+            except Exception:  # noqa: S110 — sentry body capture is best-effort
                 pass
 
             return buffered
@@ -439,7 +425,7 @@ class HttpResponse:
         self,
         content: str,
         status_code: int = 200,
-        headers: Optional[dict] = None,
+        headers: dict | None = None,
         is_error: bool = False,
     ):
         self.content = content
@@ -450,7 +436,7 @@ class HttpResponse:
     def __str__(self) -> str:
         return self.content
 
-    def get_header(self, name: str, default: str = None) -> Optional[str]:
+    def get_header(self, name: str, default: str = None) -> str | None:
         """Get a header value (case-insensitive)."""
         for key, value in self.headers.items():
             if key.lower() == name.lower():
@@ -464,10 +450,10 @@ def request_with_response(
     on_error: Callable[[HTTPError], str] = None,
     trace: Callable[[Any, str], Any] = None,
     proxy: str = None,
-    timeout: Optional[int] = None,
+    timeout: int | None = None,
     max_retries: int = 0,
     retry_delay: float = 1.0,
-    retry_on_status: List[int] = None,
+    retry_on_status: list[int] = None,
     **kwargs,
 ) -> HttpResponse:
     """Return an HTTP response object with content, headers, and status.
@@ -494,7 +480,7 @@ def request_with_response(
 
     _retry_statuses = set(retry_on_status or RETRYABLE_STATUS_CODES)
     _request_id = _resolve_request_id(trace)
-    _last_error: Optional[Union[HTTPError, TimeoutError, ConnectionError, OSError]] = None
+    _last_error: HTTPError | TimeoutError | ConnectionError | OSError | None = None
     _last_response = None
 
     for attempt in range(max_retries + 1):
@@ -519,9 +505,7 @@ def request_with_response(
             _request = process_request(_request_id, trace if attempt == 0 else None, proxy, **kwargs)
 
             with _urlopen_with_span(_request, timeout=timeout) as f:
-                _content = process_response(
-                    _request_id, f, decoder, on_ok=on_ok, trace=trace if attempt == 0 else None
-                )
+                _content = process_response(_request_id, f, decoder, on_ok=on_ok, trace=trace if attempt == 0 else None)
                 return HttpResponse(
                     content=_content,
                     status_code=f.status,
@@ -582,10 +566,10 @@ def request(
     on_error: Callable[[HTTPError], str] = None,
     trace: Callable[[Any, str], Any] = None,
     proxy: str = None,
-    timeout: Optional[int] = None,
+    timeout: int | None = None,
     max_retries: int = 0,
     retry_delay: float = 1.0,
-    retry_on_status: List[int] = None,
+    retry_on_status: list[int] = None,
     **kwargs,
 ) -> str:
     """Return an HTTP response body.
@@ -611,7 +595,7 @@ def request(
 
     _retry_statuses = set(retry_on_status or RETRYABLE_STATUS_CODES)
     _request_id = _resolve_request_id(trace)
-    _last_error: Optional[Union[HTTPError, TimeoutError, ConnectionError, OSError]] = None
+    _last_error: HTTPError | TimeoutError | ConnectionError | OSError | None = None
     _last_response = None
 
     for attempt in range(max_retries + 1):
@@ -687,9 +671,7 @@ def request(
     return ""
 
 
-def exec_parrallel(
-    function: Callable, sequence: List[S], max_workers: int = None
-) -> List[T]:
+def exec_parrallel(function: Callable, sequence: list[S], max_workers: int = None) -> list[T]:
     """Return a list of result for function execution on each element of the sequence."""
     if not sequence:
         return []  # No work to do
@@ -711,7 +693,7 @@ def exec_parrallel(
         return results
 
 
-def exec_async(action: Callable, sequence: List[S]) -> List[T]:
+def exec_async(action: Callable, sequence: list[S]) -> list[T]:
     if not sequence:
         return []
 
@@ -724,7 +706,7 @@ def exec_async(action: Callable, sequence: List[S]) -> List[T]:
         import sentry_sdk  # noqa: PLC0415
 
         _parent_scope = sentry_sdk.get_isolation_scope()
-    except Exception:
+    except Exception:  # noqa: S110 — sentry unavailable; fall through without scope propagation
         pass
 
     _original_action = action
@@ -739,32 +721,30 @@ def exec_async(action: Callable, sequence: List[S]) -> List[T]:
         action = _action_with_scope
 
     async def run_tasks():
-        return await asyncio.gather(
-            *[asyncio.to_thread(action, args) for args in sequence]
-        )
+        return await asyncio.gather(*[asyncio.to_thread(action, args) for args in sequence])
 
     async def run_loop():
         return await run_tasks()
 
     result = asyncio.run(run_loop())
 
-    return cast(List[T], result)
+    return cast(list[T], result)
 
 
 class Location:
-    def __init__(self, value: Optional[str], **kwargs):
+    def __init__(self, value: str | None, **kwargs):
         self.value = value
         self.extra = kwargs
 
     @property
-    def as_zip4(self) -> Optional[str]:
+    def as_zip4(self) -> str | None:
         if re.match(r"/^SW\d{4}$/", self.value or ""):
             return self.value
 
         return None
 
     @property
-    def as_zip5(self) -> Optional[str]:
+    def as_zip5(self) -> str | None:
         if not self.value:
             return None
 
@@ -798,12 +778,10 @@ class Location:
 
             return self.value
         except KeyError as e:
-            raise Exception(
-                'Missing country code. e.g: Location(state_code, country="US").as_state_name'
-            ) from e
+            raise Exception('Missing country code. e.g: Location(state_code, country="US").as_state_name') from e
 
 
-def sort_events_chronologically(events: List[Any]) -> List[Any]:
+def sort_events_chronologically(events: list[Any]) -> list[Any]:
     """
     Sort tracking events chronologically with the most recent event first.
 
@@ -821,11 +799,11 @@ def sort_events_chronologically(events: List[Any]) -> List[Any]:
     if not events or len(events) < 2:
         return events
 
-    def try_parse_with_format(value: str, fmt: str) -> Optional[Any]:
+    def try_parse_with_format(value: str, fmt: str) -> Any | None:
         """Safely attempt to parse a value with a format"""
         return failsafe(lambda: datetime.datetime.strptime(value, fmt))
 
-    def parse_date(event) -> Optional[datetime.datetime]:
+    def parse_date(event) -> datetime.datetime | None:
         """Parse date from event using multiple format attempts"""
         date_formats = ["%Y-%m-%d", "%m/%d/%Y", "%-m/%d/%Y"]
         return (
@@ -838,7 +816,7 @@ def sort_events_chronologically(events: List[Any]) -> List[Any]:
             else None
         )
 
-    def parse_time(event) -> Optional[datetime.time]:
+    def parse_time(event) -> datetime.time | None:
         """Parse time from event using multiple format attempts"""
         time_formats = ["%I:%M %p", "%H:%M:%S", "%H:%M"]
         parsed = (
@@ -852,14 +830,12 @@ def sort_events_chronologically(events: List[Any]) -> List[Any]:
         )
         return parsed.time() if parsed else None
 
-    def parse_event_datetime(event) -> Optional[datetime.datetime]:
+    def parse_event_datetime(event) -> datetime.datetime | None:
         """Parse complete datetime from event date and time"""
         parsed_date = parse_date(event)
         parsed_time = parse_time(event) if parsed_date else None
         return (
-            datetime.datetime.combine(parsed_date.date(), parsed_time)
-            if parsed_date and parsed_time
-            else parsed_date
+            datetime.datetime.combine(parsed_date.date(), parsed_time) if parsed_date and parsed_time else parsed_date
         )
 
     # Create mapping of event index to parsed datetime
@@ -874,11 +850,7 @@ def sort_events_chronologically(events: List[Any]) -> List[Any]:
     # Sort events: dated events first (by datetime desc), undated last (by original index)
     def create_sort_key(item: tuple) -> tuple:
         idx, _ = item
-        return (
-            (0, datetime_map.get(idx, datetime.datetime.min))
-            if idx in datetime_map
-            else (1, idx)
-        )
+        return (0, datetime_map.get(idx, datetime.datetime.min)) if idx in datetime_map else (1, idx)
 
     sorted_indexed = sorted(indexed_events, key=create_sort_key, reverse=True)
     return [event for _, event in sorted_indexed]

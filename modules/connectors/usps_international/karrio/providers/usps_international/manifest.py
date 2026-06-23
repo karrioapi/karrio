@@ -1,29 +1,23 @@
 """Karrio USPS manifest API implementation."""
 
-import karrio.schemas.usps_international.scan_form_request as usps
-import karrio.schemas.usps_international.scan_form_response as manifest
-
 import time
-import typing
-import karrio.lib as lib
+
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.usps_international.error as error
 import karrio.providers.usps_international.utils as provider_utils
-import karrio.providers.usps_international.units as provider_units
+import karrio.schemas.usps_international.scan_form_request as usps
+import karrio.schemas.usps_international.scan_form_response as manifest
 
 
 def parse_manifest_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.ManifestDetails, typing.List[models.Message]]:
+) -> tuple[models.ManifestDetails, list[models.Message]]:
     response = _response.deserialize()
 
     messages = error.parse_error_response(response, settings)
-    details = lib.identity(
-        _extract_details(response, settings)
-        if response.get("SCANFormImage") is not None
-        else None
-    )
+    details = lib.identity(_extract_details(response, settings) if response.get("SCANFormImage") is not None else None)
 
     return details, messages
 
@@ -74,9 +68,7 @@ def manifest_request(
         mailingDate=lib.fdate(options.shipment_date.state or time.strftime("%Y-%m-%d")),
         overwriteMailingDate=options.usps_overwrite_mailing_date.state or False,
         entryFacilityZIPCode=address.postal_code,
-        destinationEntryFacilityType=lib.identity(
-            options.usps_destination_entry_facility_type.state or "NONE"
-        ),
+        destinationEntryFacilityType=lib.identity(options.usps_destination_entry_facility_type.state or "NONE"),
         shipment=usps.ShipmentType(
             trackingNumbers=payload.shipment_identifiers,
         ),
@@ -89,9 +81,7 @@ def manifest_request(
             ZIPCode=lib.to_zip5(address.postal_code) or "",
             ZIPPlus4=lib.to_zip4(address.postal_code) or "",
             urbanization=None,
-            firstName=lib.identity(
-                lib.failsafe(lambda: (address.person_name or "").split(" ")[0]) or ""
-            ),
+            firstName=lib.identity(lib.failsafe(lambda: (address.person_name or "").split(" ")[0]) or ""),
             lastName=lib.failsafe(lambda: (address.person_name or "").split(" ")[1]),
             firm=address.company_name,
         ),

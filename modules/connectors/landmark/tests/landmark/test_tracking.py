@@ -1,20 +1,19 @@
 """Landmark Global carrier tracking tests."""
 
 import unittest
-from unittest.mock import patch, ANY
-from .fixture import gateway
+from unittest.mock import patch
 
-import karrio.sdk as karrio
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 
 class TestLandmarkGlobalTracking(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        self.TrackingRequest = models.TrackingRequest(
-            tracking_numbers=TRACKING_REQUEST_PAYLOAD
-        )
+        self.TrackingRequest = models.TrackingRequest(tracking_numbers=TRACKING_REQUEST_PAYLOAD)
 
     def test_create_tracking_request(self):
         request = gateway.mapper.create_tracking_request(self.TrackingRequest)
@@ -26,36 +25,26 @@ class TestLandmarkGlobalTracking(unittest.TestCase):
             mock.return_value = "<a></a>"
             karrio.Tracking.fetch(self.TrackingRequest).from_(gateway)
 
-            self.assertEqual(
-                mock.call_args[1]["url"], f"{gateway.settings.server_url}/Track.php"
-            )
+            self.assertEqual(mock.call_args[1]["url"], f"{gateway.settings.server_url}/Track.php")
 
     def test_parse_tracking_response(self):
         with patch("karrio.mappers.landmark.proxy.lib.request") as mock:
             mock.return_value = TRACKING_RESPONSE_XML
-            parsed_response = (
-                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
 
             self.assertListEqual(lib.to_dict(parsed_response), PARSED_TRACKING_RESPONSE)
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.landmark.proxy.lib.request") as mock:
             mock.return_value = ERROR_RESPONSE_XML
-            parsed_response = (
-                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             self.assertListEqual(lib.to_dict(parsed_response), PARSED_ERROR_RESPONSE)
 
     def test_parse_in_transit_response(self):
         with patch("karrio.mappers.landmark.proxy.lib.request") as mock:
             mock.return_value = IN_TRANSIT_TRACKING_RESPONSE_XML
-            parsed_response = (
-                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
-            self.assertListEqual(
-                lib.to_dict(parsed_response), PARSED_IN_TRANSIT_RESPONSE
-            )
+            parsed_response = karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            self.assertListEqual(lib.to_dict(parsed_response), PARSED_IN_TRANSIT_RESPONSE)
 
     def test_parse_early_stage_pending_response(self):
         """Test that early Landmark fulfillment events (60/75/80/100) produce pending status.
@@ -66,76 +55,48 @@ class TestLandmarkGlobalTracking(unittest.TestCase):
         """
         with patch("karrio.mappers.landmark.proxy.lib.request") as mock:
             mock.return_value = EARLY_STAGE_TRACKING_RESPONSE_XML
-            parsed_response = (
-                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
-            self.assertListEqual(
-                lib.to_dict(parsed_response), PARSED_EARLY_STAGE_PENDING_RESPONSE
-            )
+            parsed_response = karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            self.assertListEqual(lib.to_dict(parsed_response), PARSED_EARLY_STAGE_PENDING_RESPONSE)
 
     def test_parse_out_for_delivery_response(self):
         with patch("karrio.mappers.landmark.proxy.lib.request") as mock:
             mock.return_value = OUT_FOR_DELIVERY_TRACKING_RESPONSE_XML
-            parsed_response = (
-                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
-            self.assertListEqual(
-                lib.to_dict(parsed_response), PARSED_OUT_FOR_DELIVERY_RESPONSE
-            )
+            parsed_response = karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            self.assertListEqual(lib.to_dict(parsed_response), PARSED_OUT_FOR_DELIVERY_RESPONSE)
 
     def test_parse_delivered_response(self):
         with patch("karrio.mappers.landmark.proxy.lib.request") as mock:
             mock.return_value = DELIVERED_TRACKING_RESPONSE_XML
-            parsed_response = (
-                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
-            self.assertListEqual(
-                lib.to_dict(parsed_response), PARSED_DELIVERED_RESPONSE
-            )
+            parsed_response = karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            self.assertListEqual(lib.to_dict(parsed_response), PARSED_DELIVERED_RESPONSE)
 
     def test_parse_delivery_failed_response(self):
         with patch("karrio.mappers.landmark.proxy.lib.request") as mock:
             mock.return_value = DELIVERY_FAILED_TRACKING_RESPONSE_XML
-            parsed_response = (
-                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
-            self.assertListEqual(
-                lib.to_dict(parsed_response), PARSED_DELIVERY_FAILED_RESPONSE
-            )
+            parsed_response = karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            self.assertListEqual(lib.to_dict(parsed_response), PARSED_DELIVERY_FAILED_RESPONSE)
 
     def test_parse_midnight_time_sorting_response(self):
         """Test that events with midnight times (12:35 AM, 01:35 AM) are sorted correctly"""
         with patch("karrio.mappers.landmark.proxy.lib.request") as mock:
             mock.return_value = MIDNIGHT_TIME_SORTING_RESPONSE_XML
-            parsed_response = (
-                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
-            self.assertListEqual(
-                lib.to_dict(parsed_response), PARSED_MIDNIGHT_TIME_SORTING_RESPONSE
-            )
+            parsed_response = karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            self.assertListEqual(lib.to_dict(parsed_response), PARSED_MIDNIGHT_TIME_SORTING_RESPONSE)
 
     def test_parse_multi_leg_delivered_response(self):
         """Test that multi-leg shipments with origin-side events after delivery are correctly marked as delivered"""
         with patch("karrio.mappers.landmark.proxy.lib.request") as mock:
             mock.return_value = MULTI_LEG_DELIVERED_TRACKING_RESPONSE_XML
-            parsed_response = (
-                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             print(parsed_response)
-            self.assertListEqual(
-                lib.to_dict(parsed_response), PARSED_MULTI_LEG_DELIVERED_RESPONSE
-            )
+            self.assertListEqual(lib.to_dict(parsed_response), PARSED_MULTI_LEG_DELIVERED_RESPONSE)
 
     def test_parse_to_be_routed_response(self):
         """Test that 'To Be Routed' EndDeliveryCarrier excludes last_mile_carrier from meta"""
         with patch("karrio.mappers.landmark.proxy.lib.request") as mock:
             mock.return_value = TO_BE_ROUTED_TRACKING_RESPONSE_XML
-            parsed_response = (
-                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
-            self.assertListEqual(
-                lib.to_dict(parsed_response), PARSED_TO_BE_ROUTED_RESPONSE
-            )
+            parsed_response = karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            self.assertListEqual(lib.to_dict(parsed_response), PARSED_TO_BE_ROUTED_RESPONSE)
 
 
 if __name__ == "__main__":
@@ -170,9 +131,7 @@ PARSED_TRACKING_RESPONSE = [
                     "timestamp": "2025-09-30T11:45:00.000Z",
                 },
             ],
-            "info": {
-                "carrier_tracking_link": "https://track.landmarkglobal.com/?search=LTN38570269N1"
-            },
+            "info": {"carrier_tracking_link": "https://track.landmarkglobal.com/?search=LTN38570269N1"},
             "meta": {
                 "last_mile_tracking_number": "LTN123121",
                 "last_mile_carrier": "Sample Carrier",
@@ -241,9 +200,7 @@ PARSED_IN_TRANSIT_RESPONSE = [
                     "timestamp": "2025-09-28T08:12:00.000Z",
                 },
             ],
-            "info": {
-                "carrier_tracking_link": "https://track.landmarkglobal.com/?search=LTN48392101N1"
-            },
+            "info": {"carrier_tracking_link": "https://track.landmarkglobal.com/?search=LTN48392101N1"},
             "meta": {
                 "last_mile_tracking_number": "1Z999AA10123456784",
                 "last_mile_carrier": "Canada Post",
@@ -358,9 +315,7 @@ PARSED_EARLY_STAGE_PENDING_RESPONSE = [
                     "timestamp": "2025-10-01T08:00:00.000Z",
                 },
             ],
-            "info": {
-                "carrier_tracking_link": "https://track.landmarkglobal.com/?search=LTN38570299N1"
-            },
+            "info": {"carrier_tracking_link": "https://track.landmarkglobal.com/?search=LTN38570299N1"},
             "meta": {
                 "last_mile_tracking_number": "1Z999AA10123456784",
                 "last_mile_carrier": "Canada Post",
@@ -425,9 +380,7 @@ PARSED_OUT_FOR_DELIVERY_RESPONSE = [
                     "timestamp": "2025-09-29T06:20:00.000Z",
                 },
             ],
-            "info": {
-                "carrier_tracking_link": "https://track.landmarkglobal.com/?search=LTN49831232N2"
-            },
+            "info": {"carrier_tracking_link": "https://track.landmarkglobal.com/?search=LTN49831232N2"},
             "meta": {
                 "last_mile_tracking_number": "1Z999BB20234567895",
                 "last_mile_carrier": "La Poste",
@@ -492,9 +445,7 @@ PARSED_DELIVERED_RESPONSE = [
                     "timestamp": "2025-09-25T09:10:00.000Z",
                 },
             ],
-            "info": {
-                "carrier_tracking_link": "https://track.landmarkglobal.com/?search=LTN49100231N3"
-            },
+            "info": {"carrier_tracking_link": "https://track.landmarkglobal.com/?search=LTN49100231N3"},
             "meta": {
                 "last_mile_tracking_number": "1Z999CC30345678906",
                 "last_mile_carrier": "Canada Post",
@@ -561,9 +512,7 @@ PARSED_DELIVERY_FAILED_RESPONSE = [
                     "timestamp": "2025-09-29T07:00:00.000Z",
                 },
             ],
-            "info": {
-                "carrier_tracking_link": "https://track.landmarkglobal.com/?search=LTN49678120N4"
-            },
+            "info": {"carrier_tracking_link": "https://track.landmarkglobal.com/?search=LTN49678120N4"},
             "meta": {
                 "last_mile_carrier": "DHL",
                 "last_mile_tracking_number": "1Z999DD40456789017",
@@ -1095,9 +1044,7 @@ PARSED_MIDNIGHT_TIME_SORTING_RESPONSE = [
                     "timestamp": "2025-10-27T05:48:01.000Z",
                 },
             ],
-            "info": {
-                "carrier_tracking_link": "https://track.landmarkglobal.com/?search=LTN408798880N1"
-            },
+            "info": {"carrier_tracking_link": "https://track.landmarkglobal.com/?search=LTN408798880N1"},
             "meta": {
                 "last_mile_carrier": "BPost International",
                 "last_mile_tracking_number": "LE223553042BE",
@@ -1242,9 +1189,7 @@ PARSED_MULTI_LEG_DELIVERED_RESPONSE = [
                     "timestamp": "2025-02-18T04:30:00.000Z",
                 },
             ],
-            "info": {
-                "carrier_tracking_link": "https://track.landmarkglobal.com/?search=LTN450000001N1"
-            },
+            "info": {"carrier_tracking_link": "https://track.landmarkglobal.com/?search=LTN450000001N1"},
             "meta": {
                 "last_mile_carrier": "An Post",
                 "last_mile_tracking_number": "RR123456789IE",
@@ -1299,9 +1244,7 @@ PARSED_TO_BE_ROUTED_RESPONSE = [
                     "timestamp": "2026-01-28T03:40:52.000Z",
                 },
             ],
-            "info": {
-                "carrier_tracking_link": "https://track.landmarkglobal.com/?search=LTN433006705N1"
-            },
+            "info": {"carrier_tracking_link": "https://track.landmarkglobal.com/?search=LTN433006705N1"},
             "meta": {
                 "last_mile_tracking_number": "H00TCC0028567558",
             },

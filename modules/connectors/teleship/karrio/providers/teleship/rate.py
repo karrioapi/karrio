@@ -1,28 +1,26 @@
 """Karrio Teleship rate API implementation."""
 
+import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
+import karrio.providers.teleship.error as error
+import karrio.providers.teleship.units as provider_units
+import karrio.providers.teleship.utils as provider_utils
 import karrio.schemas.teleship.rate_request as teleship_req
 import karrio.schemas.teleship.rate_response as teleship_res
 
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
-import karrio.core.models as models
-import karrio.providers.teleship.error as error
-import karrio.providers.teleship.utils as provider_utils
-import karrio.providers.teleship.units as provider_units
-
 
 def parse_rate_response(
-    _response: lib.Deserializable[typing.List[dict]],
+    _response: lib.Deserializable[list[dict]],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+) -> tuple[list[models.RateDetails], list[models.Message]]:
     responses = _response.deserialize()
 
-    messages: typing.List[models.Message] = sum(
+    messages: list[models.Message] = sum(
         [error.parse_error_response(response, settings) for response in responses],
         start=[],
     )
-    package_rates: typing.List[typing.Tuple[str, typing.List[models.RateDetails]]] = [
+    package_rates: list[tuple[str, list[models.RateDetails]]] = [
         (
             f"{_}",
             [_extract_details(rate, settings) for rate in response.get("rates") or []],
@@ -40,9 +38,7 @@ def _extract_details(
 ) -> models.RateDetails:
     """Extract rate details from carrier response data"""
     rate = lib.to_object(teleship_res.RateType, data)
-    service = provider_units.ShippingService.map(
-        rate.service.code if rate.service else ""
-    )
+    service = provider_units.ShippingService.map(rate.service.code if rate.service else "")
 
     return models.RateDetails(
         carrier_id=settings.carrier_id,
@@ -105,9 +101,7 @@ def rate_request(
             shipDate=options.shipping_date.state,
             orderTrackingReference=options.teleship_order_tracking_reference.state,
             commercialInvoiceReference=customs.invoice,
-            packageType=provider_units.PackagingType.map(
-                package.packaging_type or "your_packaging"
-            ).value_or_key,
+            packageType=provider_units.PackagingType.map(package.packaging_type or "your_packaging").value_or_key,
             shipTo=teleship_req.BillToType(
                 name=recipient.contact or "N/A",
                 company=recipient.company_name,
@@ -218,9 +212,7 @@ def rate_request(
                     sku=commodity.sku,
                     hsCode=commodity.hs_code,
                     title=lib.text(commodity.title or commodity.description, max=200),
-                    description=lib.text(
-                        commodity.description if commodity.title else None, max=200
-                    ),
+                    description=lib.text(commodity.description if commodity.title else None, max=200),
                     category=commodity.category,
                     value=teleship_req.ValueType(
                         amount=commodity.value_amount,
@@ -236,9 +228,7 @@ def rate_request(
                     productUrl=commodity.product_url,
                     compliance=None,
                 )
-                for commodity in (
-                    package.items if any(package.items) else customs.commodities or []
-                )
+                for commodity in (package.items if any(package.items) else customs.commodities or [])
             ],
             customs=lib.identity(
                 teleship_req.CustomsType(
@@ -250,9 +240,7 @@ def rate_request(
                     importerGST=customs.options.importer_gst.state,
                     exporterGST=customs.options.exporter_gst.state,
                     consigneeGST=customs.options.consignee_gst.state,
-                    contentType=provider_units.CustomsContentType.map(
-                        customs.content_type or "other"
-                    ).value,
+                    contentType=provider_units.CustomsContentType.map(customs.content_type or "other").value,
                     invoiceDate=customs.invoice_date,
                     invoiceNumber=customs.invoice,
                     GPSRContactInfo=options.teleship_gpsr_contact_info.state,

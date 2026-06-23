@@ -10,11 +10,7 @@ def deduplicate_and_fix_stale(apps, schema_editor):
     from django.db.models import Count
 
     # 1. Deduplicate: find task_ids with multiple records
-    dupes = (
-        TaskExecution.objects.values("task_id")
-        .annotate(cnt=Count("id"))
-        .filter(cnt__gt=1)
-    )
+    dupes = TaskExecution.objects.values("task_id").annotate(cnt=Count("id")).filter(cnt__gt=1)
 
     for entry in dupes:
         task_id = entry["task_id"]
@@ -33,7 +29,6 @@ def deduplicate_and_fix_stale(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         (
             "karrio_admin",

@@ -3,7 +3,6 @@ import karrio.mappers.gls as mappers
 import karrio.providers.gls.units as units
 import karrio.providers.gls.utils as utils
 
-
 METADATA = metadata.PluginMetadata(
     status="development",
     id="gls",

@@ -1,8 +1,10 @@
 import typing
+
 import pysoap.envelope as soap
-from karrio.core.utils.xml import GenerateDSAbstract, Element, XMLPARSER
-from karrio.core.settings import Settings
+
 from karrio.core.models import Message
+from karrio.core.settings import Settings
+from karrio.core.utils.xml import XMLPARSER, Element, GenerateDSAbstract
 
 
 class Header(soap.Header):
@@ -46,9 +48,7 @@ class Envelope(soap.Envelope):
             apply_namespaceprefix(node, _prefix, ns_prefixes)
 
 
-def mutate_xml_object_type(
-    _type: typing.Type, tag_name: str = None, ns_prefix: str = None
-):
+def mutate_xml_object_type(_type: type, tag_name: str = None, ns_prefix: str = None):
     class _Def(_type):  # type:ignore
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
@@ -63,8 +63,8 @@ def mutate_xml_object_type(
 
 
 def create_envelope(
-    body_content: typing.Union[GenerateDSAbstract, typing.Any],
-    header_content: typing.Union[GenerateDSAbstract, typing.Any] = None,
+    body_content: GenerateDSAbstract | typing.Any,
+    header_content: GenerateDSAbstract | typing.Any = None,
     header_prefix: str = None,
     body_prefix: str = None,
     header_tag_name: str = None,
@@ -74,9 +74,7 @@ def create_envelope(
     header = None
     if header_content is not None:
         header_content.ns_prefix_ = header_prefix or header_content.ns_prefix_
-        header_content.original_tagname_ = (
-            header_tag_name or header_content.original_tagname_
-        )
+        header_content.original_tagname_ = header_tag_name or header_content.original_tagname_
         header = Header()
         header.add_anytypeobjs_(header_content)
 
@@ -131,29 +129,21 @@ def apply_namespaceprefix(
         special_prefixes = {}
 
     if isinstance(item, list):
-        [
-            apply_namespaceprefix(child, prefix, special_prefixes, item_name)
-            for child in item
-        ]
+        [apply_namespaceprefix(child, prefix, special_prefixes, item_name) for child in item]
 
     elif hasattr(item, "export"):
         item.ns_prefix_ = prefix
         children_prefix = special_prefixes.get(f"{item_name}_children", prefix)
-        children = [
-            (name, node)
-            for name, node in item.__dict__.items()
-            if name[-1:] != "_" and node is not None
-        ]
+        children = [(name, node) for name, node in item.__dict__.items() if name[-1:] != "_" and node is not None]
         for name, node in children:
             special_prefix = special_prefixes.get(name, children_prefix)
             setattr(item, f"{name}_nsprefix_", special_prefix)
             apply_namespaceprefix(node, special_prefix, special_prefixes, name)
 
 
-def extract_fault(response: Element, settings: Settings) -> typing.List[Message]:
+def extract_fault(response: Element, settings: Settings) -> list[Message]:
     faults = [
-        XMLPARSER.to_object(soap.Fault, node)
-        for node in response.xpath(".//*[local-name() = $name]", name="Fault")
+        XMLPARSER.to_object(soap.Fault, node) for node in response.xpath(".//*[local-name() = $name]", name="Fault")
     ]
     return [
         Message(

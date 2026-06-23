@@ -1,14 +1,15 @@
 import json
-from django.db.models import Q
-from import_export import resources
 
 import karrio.lib as lib
+from django.db.models import Q
+from import_export import resources
 from karrio.core.units import Packages
-from karrio.server.manager import models
+from karrio.server.core import datatypes as types
+from karrio.server.core import dataunits as units
 from karrio.server.core import serializers as core
 from karrio.server.core.filters import ShipmentFilters
+from karrio.server.manager import models
 from karrio.server.manager.serializers import ShipmentSerializer
-from karrio.server.core import datatypes as types, dataunits as units
 
 DEFAULT_HEADERS = {
     "id": "ID",
@@ -112,7 +113,7 @@ def shipment_export_resource(query_params: dict, context, **kwargs):
             model = models.Shipment
             fields = _fields
             exclude = _exclude
-            export_order = [k for k in DEFAULT_HEADERS.keys() if k not in _exclude]
+            export_order = [k for k in DEFAULT_HEADERS if k not in _exclude]
 
         def get_queryset(self):
             return ShipmentFilters(query_params, queryset).qs
@@ -130,10 +131,8 @@ def shipment_export_resource(query_params: dict, context, **kwargs):
             service = resources.Field()
 
             def dehydrate_service(self, row):
-                rate = getattr(row, "selected_rate") or {}
-                return (rate.get("meta") or {}).get("service_name") or rate.get(
-                    "service"
-                )
+                rate = row.selected_rate or {}
+                return (rate.get("meta") or {}).get("service_name") or rate.get("service")
 
         if "carrier" not in _exclude:
             carrier = resources.Field()
@@ -155,19 +154,19 @@ def shipment_export_resource(query_params: dict, context, **kwargs):
             rate = resources.Field()
 
             def dehydrate_rate(self, row):
-                return (getattr(row, "selected_rate") or {}).get("total_charge", None)
+                return (row.selected_rate or {}).get("total_charge", None)
 
         if "currency" not in _exclude:
             currency = resources.Field()
 
             def dehydrate_currency(self, row):
-                return (getattr(row, "selected_rate") or {}).get("currency", None)
+                return (row.selected_rate or {}).get("currency", None)
 
         if "paid_by" not in _exclude:
             paid_by = resources.Field()
 
             def dehydrate_paid_by(self, row):
-                return (getattr(row, "payment") or {}).get("paid_by", None)
+                return (row.payment or {}).get("paid_by", None)
 
         if "parcel_weight" not in _exclude:
             parcel_weight = resources.Field()
@@ -216,7 +215,7 @@ def shipment_export_resource(query_params: dict, context, **kwargs):
             shipment_date = resources.Field()
 
             def dehydrate_shipment_date(self, row):
-                return (getattr(row, "options") or {}).get("shipment_date", None) or (
+                return (row.options or {}).get("shipment_date", None) or (
                     lib.fdate(row.created_at, "%Y-%m-%m %H:%M:%M")
                 )
 
@@ -373,13 +372,7 @@ def shipment_export_resource(query_params: dict, context, **kwargs):
     return Resource()
 
 
-def shipment_import_resource(
-    query_params: dict,
-    context,
-    data_fields: dict = None,
-    batch_id: str = None,
-    **kwargs
-):
+def shipment_import_resource(query_params: dict, context, data_fields: dict = None, batch_id: str = None, **kwargs):
     queryset = models.Shipment.access_by(context)
     field_headers = data_fields if data_fields is not None else DEFAULT_HEADERS
     _exclude = query_params.get("exclude", "").split(",")
@@ -417,11 +410,7 @@ def shipment_import_resource(
     _Base = type(
         "ResourceFields",
         (resources.ModelResource,),
-        {
-            k: resources.Field(readonly=(k not in models.Shipment.__dict__))
-            for k in field_headers.keys()
-            if k not in _exclude
-        },
+        {k: resources.Field(readonly=(k not in models.Shipment.__dict__)) for k in field_headers if k not in _exclude},
     )
 
     class Resource(_Base, resources.ModelResource):
@@ -429,7 +418,7 @@ def shipment_import_resource(
             model = models.Shipment
             fields = _fields
             exclude = _exclude
-            export_order = [k for k in field_headers.keys() if k not in _exclude]
+            export_order = [k for k in field_headers if k not in _exclude]
 
         def get_queryset(self):
             return queryset
@@ -479,28 +468,18 @@ def shipment_import_resource(
                     parcels=[
                         dict(
                             weight=row.get(field_headers["parcel_weight"]),
-                            weight_unit=row.get(field_headers["parcel_weight_unit"])
-                            or "KG",
+                            weight_unit=row.get(field_headers["parcel_weight_unit"]) or "KG",
                             width=row.get(field_headers["parcel_width"]),
                             height=row.get(field_headers["parcel_height"]),
                             length=row.get(field_headers["parcel_length"]),
-                            dimension_unit=row.get(
-                                field_headers["parcel_dimension_unit"]
-                            )
-                            or "CM",
-                            package_preset=row.get(
-                                field_headers["parcel_package_preset"]
-                            ),
+                            dimension_unit=row.get(field_headers["parcel_dimension_unit"]) or "CM",
+                            package_preset=row.get(field_headers["parcel_package_preset"]),
                         )
                     ],
                 )
             )
 
-            instance = (
-                ShipmentSerializer.map(data=data, context=context)
-                .save(fetch_rates=False)
-                .instance
-            )
+            instance = ShipmentSerializer.map(data=data, context=context).save(fetch_rates=False).instance
 
             return instance
 

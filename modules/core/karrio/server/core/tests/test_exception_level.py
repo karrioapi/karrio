@@ -6,6 +6,7 @@ without requiring the full Django setup.
 
 import unittest
 from unittest.mock import MagicMock
+
 from rest_framework import status
 
 
@@ -14,7 +15,8 @@ class TestGetDefaultLevel(unittest.TestCase):
 
     def setUp(self):
         # Import here to avoid Django setup issues
-        from karrio.server.core.exceptions import get_default_level, ERROR_LEVEL_DEFAULTS
+        from karrio.server.core.exceptions import ERROR_LEVEL_DEFAULTS, get_default_level
+
         self.get_default_level = get_default_level
         self.ERROR_LEVEL_DEFAULTS = ERROR_LEVEL_DEFAULTS
 
@@ -74,6 +76,7 @@ class TestAPIException(unittest.TestCase):
 
     def setUp(self):
         from karrio.server.core.exceptions import APIException, IndexedAPIException
+
         self.APIException = APIException
         self.IndexedAPIException = IndexedAPIException
 
@@ -99,6 +102,7 @@ class TestIndexedAPIException(unittest.TestCase):
 
     def setUp(self):
         from karrio.server.core.exceptions import IndexedAPIException
+
         self.IndexedAPIException = IndexedAPIException
 
     def test_index_is_set(self):
@@ -115,6 +119,7 @@ class TestErrorLevelDefaults(unittest.TestCase):
 
     def setUp(self):
         from karrio.server.core.exceptions import ERROR_LEVEL_DEFAULTS
+
         self.ERROR_LEVEL_DEFAULTS = ERROR_LEVEL_DEFAULTS
 
     def test_client_errors_mapped(self):
@@ -148,6 +153,7 @@ class TestErrorDatatype(unittest.TestCase):
 
     def setUp(self):
         from karrio.server.core.datatypes import Error
+
         self.Error = Error
 
     def test_error_has_level_field(self):

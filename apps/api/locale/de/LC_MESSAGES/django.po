@@ -4230,95 +4230,10 @@ msgstr ""
 msgid "JTL Shipping"
 msgstr "Versand"
 
-#~ msgid "Password"
-#~ msgstr "Passwort"
-
-#~ msgid "API Key"
-#~ msgstr "API-Schlüssel"
-
-#~ msgid "API Secret"
-#~ msgstr "API-Geheimnis"
-
-#~ msgid "Account Number"
-#~ msgstr "Kontonummer"
-
-#~ msgid "Site ID"
-#~ msgstr "Standort-ID"
-
-#~ msgid "Secret Key"
-#~ msgstr "Geheimer Schlüssel"
-
-#~ msgid "Client ID"
-#~ msgstr "Client-ID"
-
-#~ msgid "Client Secret"
-#~ msgstr "Client-Geheimnis"
-
-#~ msgid "Customer Number"
-#~ msgstr "Kundennummer"
-
-#~ msgid "Contract ID"
-#~ msgstr "Vertrags-ID"
-
-#~ msgid "Access License Number"
-#~ msgstr "Zugangslizenz-Nummer"
-
-#~ msgid "Meter Number"
-#~ msgstr "Zählernummer"
-
-#~ msgid "Account PIN"
-#~ msgstr "Konto-PIN"
-
-#~ msgid "Account Entity"
-#~ msgstr "Kontoeinheit"
-
 #~ msgid "Account Country Code"
 #~ msgstr "Konto-Ländercode"
 
-#~ msgid "Test Mode"
-#~ msgstr "Testmodus"
 
-#~ msgid "Carrier ID"
-#~ msgstr "Carrier-ID"
-
-#~ msgid "Tracking URL"
-#~ msgstr "Sendungsverfolgungs-URL"
-
-#~ msgid "Server URL"
-#~ msgstr "Server-URL"
-
-#~ msgid "Label Type"
-#~ msgstr "Etikettentyp"
-
-#~ msgid "Label Template"
-#~ msgstr "Etikettenvorlage"
-
-#~ msgid "Brand Color"
-#~ msgstr "Markenfarbe"
-
-#~ msgid "Text Color"
-#~ msgstr "Textfarbe"
-
-#~ msgid "Cost Center"
-#~ msgstr "Kostenstelle"
-
-#~ msgid "Shipping Options"
-#~ msgstr "Versandoptionen"
-
-#~ msgid "Shipping Services"
-#~ msgstr "Versanddienste"
-
-#~ msgid "Enforce ZPL"
-#~ msgstr "ZPL erzwingen"
-
-#~ msgid "Skip Service Filter"
-#~ msgstr "Dienstfilter überspringen"
-
-#~ msgid "Service Suffix"
-#~ msgstr "Dienstsuffix"
-
-#~ msgid "Billing Numbers"
-#~ msgstr "Abrechnungsnummern"
 
 #~ msgid "Rating"
 #~ msgstr "Tarifberechnung"
@@ -4586,3 +4501,427 @@ msgstr "Versand"
 
 #~ msgid "Colombia"
 #~ msgstr "Kolumbien"
+
+msgid "Draft"
+msgstr "Entwurf"
+
+msgid "Created"
+msgstr "Erstellt"
+
+msgid "Cancelled"
+msgstr "Storniert"
+
+msgid "Shipped"
+msgstr "Versandt"
+
+msgid "In Transit"
+msgstr "Unterwegs"
+
+msgid "Delivered"
+msgstr "Zugestellt"
+
+msgid "Needs Attention"
+msgstr "Aufmerksamkeit erforderlich"
+
+msgid "Out For Delivery"
+msgstr "In Zustellung"
+
+msgid "Delivery Failed"
+msgstr "Zustellung fehlgeschlagen"
+
+msgid "Scheduled"
+msgstr "Geplant"
+
+msgid "Picked Up"
+msgstr "Abgeholt"
+
+msgid "Closed"
+msgstr "Geschlossen"
+
+msgid "Pending"
+msgstr "Ausstehend"
+
+msgid "On Hold"
+msgstr "Zurückgestellt"
+
+msgid "Delivery Delayed"
+msgstr "Zustellung verzögert"
+
+msgid "Ready For Pickup"
+msgstr "Abholbereit"
+
+msgid "Return To Sender"
+msgstr "Rücksendung an Absender"
+
+msgid "Unknown"
+msgstr "Unbekannt"
+
+msgid "Carrier Damaged Parcel"
+msgstr "Beim Transport beschädigt"
+
+msgid "Carrier Sorting Error"
+msgstr "Sortierfehler beim Zusteller"
+
+msgid "Carrier Address Not Found"
+msgstr "Adresse durch Zusteller nicht gefunden"
+
+msgid "Carrier Parcel Lost"
+msgstr "Paket beim Zusteller verloren"
+
+msgid "Carrier Not Enough Time"
+msgstr "Nicht genug Zeit für die Zustellung"
+
+msgid "Carrier Vehicle Issue"
+msgstr "Fahrzeugproblem beim Zusteller"
+
+msgid "Carrier Capacity Exceeded"
+msgstr "Kapazität des Zustellers überschritten"
+
+msgid "Carrier Mechanical Delay"
+msgstr "Technische Verzögerung beim Zusteller"
+
+msgid "Retailer Cancelled"
+msgstr "Vom Händler storniert"
+
+msgid "Retailer Incorrect Data"
+msgstr "Fehlerhafte Daten vom Händler"
+
+msgid "Retailer Not Ready"
+msgstr "Vom Händler nicht bereitgestellt"
+
+msgid "Retailer Incorrect Parcel"
+msgstr "Falsches Paket vom Händler"
+
+msgid "Retailer Incorrect Dimensions"
+msgstr "Falsche Abmessungen vom Händler"
+
+msgid "Retailer Packaging Issue"
+msgstr "Verpackungsproblem beim Händler"
+
+msgid "Consignee Refused"
+msgstr "Vom Empfänger abgelehnt"
+
+msgid "Consignee Business Closed"
+msgstr "Geschäft des Empfängers geschlossen"
+
+msgid "Consignee Not Available"
+msgstr "Empfänger nicht verfügbar"
+
+msgid "Consignee Not Home"
+msgstr "Empfänger nicht zu Hause"
+
+msgid "Consignee Cancelled"
+msgstr "Vom Empfänger storniert"
+
+msgid "Consignee Verification Failed"
+msgstr "Verifizierung des Empfängers fehlgeschlagen"
+
+msgid "Consignee Incorrect Address"
+msgstr "Falsche Empfängeradresse"
+
+msgid "Consignee Access Restricted"
+msgstr "Zugang zum Empfänger eingeschränkt"
+
+msgid "Consignee Safe Place Unavailable"
+msgstr "Kein sicherer Ablageort verfügbar"
+
+msgid "Customs Delay"
+msgstr "Verzögerung beim Zoll"
+
+msgid "Customs Documentation"
+msgstr "Zollunterlagen fehlen"
+
+msgid "Customs Duties Unpaid"
+msgstr "Zollgebühren unbezahlt"
+
+msgid "Customs Prohibited"
+msgstr "Vom Zoll untersagt"
+
+msgid "Customs Inspection"
+msgstr "Zollinspektion"
+
+msgid "Weather Delay"
+msgstr "Wetterbedingte Verzögerung"
+
+msgid "Natural Disaster"
+msgstr "Naturkatastrophe"
+
+msgid "Force Majeure"
+msgstr "Höhere Gewalt"
+
+msgid "Parcel Being Researched"
+msgstr "Paket wird untersucht"
+
+msgid "Security Issue"
+msgstr "Sicherheitsproblem"
+
+msgid "Regulatory Hold"
+msgstr "Behördlicher Halt"
+
+msgid "Base Charge"
+msgstr "Grundpreis"
+
+msgid "Fuel Surcharge"
+msgstr "Kraftstoffzuschlag"
+
+msgid "Residential Surcharge"
+msgstr "Zuschlag für Wohnadresse"
+
+msgid "Remote Area Surcharge"
+msgstr "Zuschlag für entlegene Gebiete"
+
+msgid "Handling"
+msgstr "Bearbeitungsgebühr"
+
+msgid "Oversize"
+msgstr "Sperrgutzuschlag"
+
+msgid "Drop Off"
+msgstr "Abgabe"
+
+msgid "Pick Up"
+msgstr "Abholung"
+
+msgid "Pick Up And Drop Off"
+msgstr "Abholung und Abgabe"
+
+msgid "Home Delivery"
+msgstr "Hauszustellung"
+
+msgid "Service Point"
+msgstr "Servicestelle"
+
+msgid "Mailbox"
+msgstr "Briefkasten"
+
+msgid "Po Box"
+msgstr "Postfach"
+
+msgid "Envelope"
+msgstr "Umschlag"
+
+msgid "Parcel"
+msgstr "Paket"
+
+msgid "Pallet"
+msgstr "Palette"
+
+#. DHL Parcel DE option translations
+msgid "Preferred Neighbour"
+msgstr "Wunschnachbar"
+
+msgid "Preferred Location"
+msgstr "Wunschort"
+
+msgid "Named Person Only"
+msgstr "Nur persönliche Übergabe"
+
+msgid "Preferred Day"
+msgstr "Wunschtag"
+
+msgid "No Neighbour Delivery"
+msgstr "Keine Nachbarzustellung"
+
+msgid "Bulky Goods"
+msgstr "Sperrgut"
+
+msgid "Premium"
+msgstr "Premium"
+
+msgid "Economy"
+msgstr "Economy"
+
+msgid "Endorsement"
+msgstr "Versendungsanweisung"
+
+msgid "Visual Check of Age"
+msgstr "Alterssichtprüfung"
+
+msgid "GoGreen Plus"
+msgstr "GoGreen Plus"
+
+msgid "Signed for by Recipient"
+msgstr "Empfängerunterschrift"
+
+msgid "Individual Sender Requirement"
+msgstr "Individuelle Absenderanforderung"
+
+msgid "Additional Insurance"
+msgstr "Zusatzversicherung"
+
+msgid "Closest Drop Point"
+msgstr "Nächster Abgabepunkt"
+
+msgid "Parcel Outlet Routing"
+msgstr "Filialrouting"
+
+msgid "Post Number"
+msgstr "Postnummer"
+
+msgid "Retail ID"
+msgstr "Filial-ID"
+
+msgid "PO Box ID"
+msgstr "Postfach-ID"
+
+msgid "Locker ID"
+msgstr "Packstation-ID"
+
+msgid "Shipper Customs Reference"
+msgstr "EORI-Nummer Absender"
+
+msgid "Consignee Customs Reference"
+msgstr "Zollreferenz Empfänger"
+
+msgid "Permit Number"
+msgstr "Genehmigungsnummer"
+
+msgid "Attestation Number"
+msgstr "Bescheinigungsnummer"
+
+msgid "Movement Reference Number (MRN)"
+msgstr "Registriernummer (MRN)"
+
+msgid "Cost Center"
+msgstr "Kostenstelle"
+
+msgid "Postal Delivery Duty Paid"
+msgstr "Postversand verzollt (pDDP)"
+
+msgid "Electronic Export Notification"
+msgstr "Elektronische Ausfuhranmeldung"
+
+msgid "Return Enabled"
+msgstr "Retoure aktiviert"
+
+msgid "Return Receiver ID"
+msgstr "Retouren-Empfänger-ID"
+
+msgid "Return Billing Number"
+msgstr "Retouren-Abrechnungsnummer"
+
+msgid "Return Reference"
+msgstr "Retourenreferenz"
+
+msgid "Return Service Code"
+msgstr "Retouren-Servicecode"
+
+msgid "Label Type"
+msgstr "Etikettenformat"
+
+msgid "Profile"
+msgstr "Profil"
+
+#. Connection config field translations
+msgid "Language"
+msgstr "Sprache"
+
+msgid "Default Billing Number"
+msgstr "Standard-Abrechnungsnummer"
+
+msgid "Service Billing Numbers"
+msgstr "Service-Abrechnungsnummern"
+
+msgid "Pickup Billing Number"
+msgstr "Abholungs-Abrechnungsnummer"
+
+msgid "Creation Software"
+msgstr "Erstellungssoftware"
+
+msgid "Service"
+msgstr "Service"
+
+msgid "Billing Number"
+msgstr "Abrechnungsnummer"
+
+msgid "Name"
+msgstr "Name"
+
+#. Connection credential field translations
+msgid "Username"
+msgstr "Benutzername"
+
+msgid "Password"
+msgstr "Passwort"
+
+msgid "API Key"
+msgstr "API-Schlüssel"
+
+msgid "API Secret"
+msgstr "API-Geheimnis"
+
+msgid "Account Number"
+msgstr "Kontonummer"
+
+msgid "Site ID"
+msgstr "Standort-ID"
+
+msgid "Secret Key"
+msgstr "Geheimer Schlüssel"
+
+msgid "Client ID"
+msgstr "Client-ID"
+
+msgid "Client Secret"
+msgstr "Client-Geheimnis"
+
+msgid "Customer Number"
+msgstr "Kundennummer"
+
+msgid "Contract ID"
+msgstr "Vertrags-ID"
+
+msgid "Access License Number"
+msgstr "Zugangslizenz-Nummer"
+
+msgid "Meter Number"
+msgstr "Zählernummer"
+
+msgid "Account PIN"
+msgstr "Konto-PIN"
+
+msgid "Account Entity"
+msgstr "Kontoeinheit"
+
+msgid "Test Mode"
+msgstr "Testmodus"
+
+msgid "Carrier ID"
+msgstr "Spediteur-ID"
+
+msgid "Tracking URL"
+msgstr "Tracking-URL"
+
+msgid "Server URL"
+msgstr "Server-URL"
+
+msgid "Software Name"
+msgstr "Software-Name"
+
+#. Config field translations
+msgid "Label Template"
+msgstr "Etikettenvorlage"
+
+msgid "Brand Color"
+msgstr "Markenfarbe"
+
+msgid "Text Color"
+msgstr "Textfarbe"
+
+msgid "Shipping Options"
+msgstr "Versandoptionen"
+
+msgid "Shipping Services"
+msgstr "Versandservices"
+
+msgid "Enforce ZPL"
+msgstr "ZPL erzwingen"
+
+msgid "Skip Service Filter"
+msgstr "Servicefilter überspringen"
+
+msgid "Service Suffix"
+msgstr "Service-Suffix"
+
+msgid "Billing Numbers"
+msgstr "Abrechnungsnummern"

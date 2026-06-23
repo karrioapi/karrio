@@ -15,9 +15,8 @@ Usage:
 
 import os
 import sys
-from loguru import logger as _logger
-from typing import Optional
 
+from loguru import logger as _logger
 
 # Remove default handler
 _logger.remove()
@@ -44,17 +43,17 @@ def should_log_to_file() -> bool:
     return os.getenv("KARRIO_LOG_FILE", "").strip() != ""
 
 
-def get_log_file_path() -> Optional[str]:
+def get_log_file_path() -> str | None:
     """Get the log file path from environment variable."""
     log_file = os.getenv("KARRIO_LOG_FILE", "").strip()
     return log_file if log_file else None
 
 
 def configure_logger(
-    level: Optional[str] = None,
-    log_file: Optional[str] = None,
-    diagnose: Optional[bool] = None,
-    backtrace: Optional[bool] = None,
+    level: str | None = None,
+    log_file: str | None = None,
+    diagnose: bool | None = None,
+    backtrace: bool | None = None,
     serialize: bool = False,
     enqueue: bool = False,
 ):
@@ -156,9 +155,7 @@ def intercept_standard_logging():
                 frame = frame.f_back
                 depth += 1
 
-            _logger.opt(depth=depth, exception=record.exc_info).log(
-                level, record.getMessage()
-            )
+            _logger.opt(depth=depth, exception=record.exc_info).log(level, record.getMessage())
 
     # Remove all existing handlers and add our interceptor
     logging.basicConfig(handlers=[InterceptHandler()], level=0, force=True)

@@ -1,20 +1,21 @@
 """Karrio Teleship webhook event processing implementation."""
 
+import hashlib
 import hmac
 import typing
-import hashlib
-import karrio.lib as lib
+
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.teleship.error as error
-import karrio.providers.teleship.utils as provider_utils
 import karrio.providers.teleship.units as provider_units
+import karrio.providers.teleship.utils as provider_utils
 import karrio.schemas.teleship.tracking_response as tracking_res
 
 
 def on_webhook_event(
     payload: models.RequestPayload,
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.WebhookEventDetails, typing.List[models.Message]]:
+) -> tuple[models.WebhookEventDetails, list[models.Message]]:
     """
     webhook payloads follow a structure:
     {
@@ -97,9 +98,7 @@ def _extract_webhook_tracking(
         ],
         delivered=status == "delivered",
         status=status,
-        estimated_delivery=lib.fdate(
-            tracking.estimatedDelivery, try_formats=timestamp_formats
-        ),
+        estimated_delivery=lib.fdate(tracking.estimatedDelivery, try_formats=timestamp_formats),
         info=models.TrackingInfo(
             shipment_service=tracking.firstMile.carrier,
             carrier_tracking_link=settings.tracking_url.format(tracking.trackingNumber),

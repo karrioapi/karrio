@@ -14,30 +14,25 @@ carrier.  Each sub-task (`process_carrier_trackers`) fetches tracking info
 in batches of 10 with a flat inter-batch delay — O(n) total wall-clock.
 """
 
-import time
-import typing
 import datetime
 import functools
+import time
 from itertools import groupby
 
+import karrio.lib as lib
+import karrio.sdk as karrio
+import karrio.server.core.datatypes as datatypes
+import karrio.server.core.utils as utils
+import karrio.server.manager.models as models
+import karrio.server.manager.serializers as serializers
+import karrio.server.tracing.utils as tracing
 from django.conf import settings
 from django.utils import timezone
-
-import karrio.sdk as karrio
-import karrio.lib as lib
 from karrio.api.gateway import Gateway
-
-import karrio.server.core.utils as utils
 from karrio.server.core.logging import logger
 from karrio.server.core.utils import resolve_carrier
-import karrio.server.manager.models as models
-import karrio.server.tracing.utils as tracing
-import karrio.server.core.datatypes as datatypes
-import karrio.server.manager.serializers as serializers
 
-DEFAULT_TRACKERS_UPDATE_INTERVAL = getattr(
-    settings, "DEFAULT_TRACKERS_UPDATE_INTERVAL", 7200
-)
+DEFAULT_TRACKERS_UPDATE_INTERVAL = getattr(settings, "DEFAULT_TRACKERS_UPDATE_INTERVAL", 7200)
 TRACKER_BATCH_SIZE = 10
 TRACKER_BATCH_DELAY = int(getattr(settings, "TRACKER_BATCH_DELAY", 3))
 TRACKER_MAX_ACTIVE_DAYS = int(getattr(settings, "TRACKER_MAX_ACTIVE_DAYS", 90))
@@ -52,6 +47,7 @@ def _get_max_active_days() -> int:
     """Return the live TRACKER_MAX_ACTIVE_DAYS value from constance (falls back to settings)."""
     try:
         from constance import config as constance_config
+
         return int(getattr(constance_config, "TRACKER_MAX_ACTIVE_DAYS", TRACKER_MAX_ACTIVE_DAYS))
     except Exception:
         return TRACKER_MAX_ACTIVE_DAYS
@@ -75,10 +71,8 @@ def _retire_aged_out_trackers(max_age_cutoff: datetime.datetime) -> int:
 
 
 def update_trackers(
-    delta: datetime.timedelta = datetime.timedelta(
-        seconds=DEFAULT_TRACKERS_UPDATE_INTERVAL
-    ),
-    tracker_ids: typing.Optional[typing.List[str]] = None,
+    delta: datetime.timedelta = datetime.timedelta(seconds=DEFAULT_TRACKERS_UPDATE_INTERVAL),
+    tracker_ids: list[str] | None = None,
     schema: str = None,
 ):
     """Group stale trackers by carrier and enqueue one sub-task per carrier."""
@@ -121,9 +115,7 @@ def update_trackers(
     sorted_data = sorted(active_tracker_data, key=lambda item: _carrier_id(item[1]))
     carrier_groups = 0
 
-    for carrier_key, group in groupby(
-        sorted_data, key=lambda item: _carrier_id(item[1])
-    ):
+    for carrier_key, group in groupby(sorted_data, key=lambda item: _carrier_id(item[1])):
         ids_for_carrier = [tid for tid, _ in group]
         carrier_groups += 1
         logger.info(
@@ -152,7 +144,7 @@ def update_trackers(
 # ─────────────────────────────────────────────────────────────────
 
 
-def process_carrier_trackers(tracker_ids: typing.List[str], **kwargs):
+def process_carrier_trackers(tracker_ids: list[str], **kwargs):
     """Fetch tracking info for one carrier's trackers in batches of 10."""
     trackers = list(models.Tracking.objects.filter(id__in=tracker_ids))
 
@@ -200,7 +192,7 @@ def process_carrier_trackers(tracker_ids: typing.List[str], **kwargs):
 # ─────────────────────────────────────────────────────────────────
 
 
-def _carrier_id(carrier_snapshot: typing.Optional[dict]) -> str:
+def _carrier_id(carrier_snapshot: dict | None) -> str:
     if carrier_snapshot is None:
         return ""
     return carrier_snapshot.get("carrier_id") or ""
@@ -208,22 +200,16 @@ def _carrier_id(carrier_snapshot: typing.Optional[dict]) -> str:
 
 def _process_batch(
     gateway: Gateway,
-    batch: typing.List[models.Tracking],
+    batch: list[models.Tracking],
     batch_num: int,
     total_batches: int,
 ):
     """Fetch + save a single batch of up to 10 trackers."""
     try:
         tracking_numbers = [t.tracking_number for t in batch]
-        options: dict = functools.reduce(
-            lambda acc, t: {**acc, **(t.options or {})}, batch, {}
-        )
+        options: dict = functools.reduce(lambda acc, t: {**acc, **(t.options or {})}, batch, {})
 
-        request = karrio.Tracking.fetch(
-            datatypes.TrackingRequest(
-                tracking_numbers=tracking_numbers, options=options
-            )
-        )
+        request = karrio.Tracking.fetch(datatypes.TrackingRequest(tracking_numbers=tracking_numbers, options=options))
         response = request.from_(gateway).parse()
 
         _save_tracing(gateway, batch)
@@ -244,7 +230,7 @@ def _process_batch(
         logger.exception("Tracking batch error")
 
 
-def _save_results(response, batch: typing.List[models.Tracking]):
+def _save_results(response, batch: list[models.Tracking]):
     """Persist tracking details for a single batch using bulk operations.
 
     Applies change detection in memory for each tracker, then saves all
@@ -310,7 +296,7 @@ def _save_results(response, batch: typing.List[models.Tracking]):
                 )
 
 
-def _save_tracing(gateway: Gateway, batch: typing.List[models.Tracking]):
+def _save_tracing(gateway: Gateway, batch: list[models.Tracking]):
     """Persist API tracing records for a single batch."""
     try:
         context = serializers.get_object_context(batch[0])

@@ -1,12 +1,12 @@
 """Karrio Teleship client proxy."""
 
 import datetime
-import karrio.lib as lib
+
 import karrio.api.proxy as proxy
 import karrio.core.errors as errors
-import karrio.core.models as models
-import karrio.providers.teleship.error as provider_error
+import karrio.lib as lib
 import karrio.mappers.teleship.settings as provider_settings
+import karrio.providers.teleship.error as provider_error
 
 
 class Proxy(proxy.Proxy):
@@ -41,9 +41,7 @@ class Proxy(proxy.Proxy):
             if any(messages):
                 raise errors.ParsedMessagesError(messages)
 
-            expiry = datetime.datetime.now() + datetime.timedelta(
-                seconds=float(response.get("expiresIn", 0))
-            )
+            expiry = datetime.datetime.now() + datetime.timedelta(seconds=float(response.get("expiresIn", 0)))
 
             return {**response, "expiry": lib.fdatetime(expiry)}
 
@@ -135,9 +133,7 @@ class Proxy(proxy.Proxy):
 
         return lib.Deserializable(
             responses,
-            lambda res: [
-                (num, lib.to_dict(track)) for num, track in res if any(track.strip())
-            ],
+            lambda res: [(num, lib.to_dict(track)) for num, track in res if any(track.strip())],
         )
 
     def schedule_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:

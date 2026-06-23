@@ -1,12 +1,14 @@
 """GLS Group carrier shipment tests."""
 
-import unittest
-from unittest.mock import patch, ANY
-from .fixture import gateway, shipper_address, recipient_address
 import logging
-import karrio.sdk as karrio
-import karrio.lib as lib
+import unittest
+from unittest.mock import patch
+
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 logger = logging.getLogger(__name__)
 
@@ -29,30 +31,19 @@ class TestGLSGroupShipment(unittest.TestCase):
         with patch("karrio.mappers.gls.proxy.lib.request") as mock:
             mock.return_value = "{}"
             karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
-            self.assertEqual(
-                mock.call_args[1]["url"],
-                f"{gateway.settings.shipment_api_url}/rs/shipments"
-            )
+            self.assertEqual(mock.call_args[1]["url"], f"{gateway.settings.shipment_api_url}/rs/shipments")
 
     def test_parse_shipment_response(self):
         with patch("karrio.mappers.gls.proxy.lib.request") as mock:
             mock.return_value = ShipmentResponse
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest)
-                .from_(gateway)
-                .parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             print(parsed_response)
             self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.gls.proxy.lib.request") as mock:
             mock.return_value = ErrorResponse
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest)
-                .from_(gateway)
-                .parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             print(parsed_response)
             self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentErrorResponse)
 
@@ -137,25 +128,17 @@ ParsedShipmentResponse = [
         "tracking_number": "12345678901234567890",
         "shipment_identifier": "GLS123456789",
         "label_type": "PDF",
-        "docs": {
-            "label": "JVBERi0xLjQKJeLjz9MK"
-        },
+        "docs": {"label": "JVBERi0xLjQKJeLjz9MK"},
         "meta": {
             "shipment_id": "GLS123456789",
             "tracking_numbers": ["12345678901234567890"],
             "created_at": "2025-01-15T10:30:00Z",
             "shipping_date": "2025-01-16",
             "status": "CREATED",
-            "parcels": [
-                {
-                    "parcel_id": "P001",
-                    "tracking_number": "12345678901234567890",
-                    "weight": 5.5
-                }
-            ]
-        }
+            "parcels": [{"parcel_id": "P001", "tracking_number": "12345678901234567890", "weight": 5.5}],
+        },
     },
-    []
+    [],
 ]
 
 ParsedShipmentErrorResponse = [
@@ -166,9 +149,7 @@ ParsedShipmentErrorResponse = [
             "carrier_name": "gls",
             "code": "VALIDATION_ERROR",
             "message": "Invalid request parameters",
-            "details": {
-                "field": "shipment.recipient.postalCode"
-            }
+            "details": {"field": "shipment.recipient.postalCode"},
         }
-    ]
+    ],
 ]

@@ -1,24 +1,20 @@
-import karrio.schemas.bpost.tracking_info_v1 as bpost
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
 import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
 import karrio.providers.bpost.error as error
-import karrio.providers.bpost.utils as provider_utils
 import karrio.providers.bpost.units as provider_units
+import karrio.providers.bpost.utils as provider_utils
+import karrio.schemas.bpost.tracking_info_v1 as bpost
 
 
 def parse_tracking_response(
-    _response: lib.Deserializable[typing.List[typing.Tuple[str, lib.Element]]],
+    _response: lib.Deserializable[list[tuple[str, lib.Element]]],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+) -> tuple[list[models.TrackingDetails], list[models.Message]]:
     responses = _response.deserialize()
 
-    messages: typing.List[models.Message] = sum(
-        [
-            error.parse_error_response(response, settings, tracking_number=_)
-            for _, response in responses
-        ],
+    messages: list[models.Message] = sum(
+        [error.parse_error_response(response, settings, tracking_number=_) for _, response in responses],
         start=[],
     )
     tracking_details = [
@@ -56,23 +52,15 @@ def _extract_details(
                 code=event.stateCode,
                 time=lib.flocaltime(event.time, "%Y-%m-%dT%H:%M:%S%z"),
                 timestamp=lib.fiso_timestamp(
-                    event.time.isoformat() if hasattr(event.time, 'isoformat') else event.time,
+                    event.time.isoformat() if hasattr(event.time, "isoformat") else event.time,
                     current_format="%Y-%m-%dT%H:%M:%S%z",
                 ),
                 status=next(
-                    (
-                        s.name
-                        for s in list(provider_units.TrackingStatus)
-                        if event.stateCode in s.value
-                    ),
+                    (s.name for s in list(provider_units.TrackingStatus) if event.stateCode in s.value),
                     None,
                 ),
                 reason=next(
-                    (
-                        r.name
-                        for r in list(provider_units.TrackingIncidentReason)
-                        if event.stateCode in r.value
-                    ),
+                    (r.name for r in list(provider_units.TrackingIncidentReason) if event.stateCode in r.value),
                     None,
                 ),
             )
@@ -85,22 +73,12 @@ def _extract_details(
             carrier_tracking_link=settings.tracking_url.format(details.itemCode),
             customer_name=lib.failsafe(lambda: details.addressee.name),
             expected_delivery=delivery,
-            package_weight=lib.failsafe(
-                lambda: details.itemDetail.weightInGrams / 1000
-            ),
+            package_weight=lib.failsafe(lambda: details.itemDetail.weightInGrams / 1000),
             package_weight_unit=units.WeightUnit.KG,
-            shipment_origin_country=lib.failsafe(
-                lambda: details.sender.address.countryCode
-            ),
-            shipment_origin_postal_code=lib.failsafe(
-                lambda: details.sender.address.postalCode
-            ),
-            shipment_destination_country=lib.failsafe(
-                lambda: details.addressee.address.countryCode
-            ),
-            shipment_destination_postal_code=lib.failsafe(
-                lambda: details.addressee.address.postalCode
-            ),
+            shipment_origin_country=lib.failsafe(lambda: details.sender.address.countryCode),
+            shipment_origin_postal_code=lib.failsafe(lambda: details.sender.address.postalCode),
+            shipment_destination_country=lib.failsafe(lambda: details.addressee.address.countryCode),
+            shipment_destination_postal_code=lib.failsafe(lambda: details.addressee.address.postalCode),
         ),
         meta=dict(
             costCenter=details.costCenter,

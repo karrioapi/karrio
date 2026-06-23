@@ -1,16 +1,15 @@
 import json
 from unittest.mock import ANY, patch
-from requests import Response
 
 from django.urls import reverse
 from django.utils import timezone
-from rest_framework import status
-
 from karrio.server.core.tests import APITestCase
 from karrio.server.events.models import Webhook
 from karrio.server.events.task_definitions.base.webhook import (
     notify_webhook_subscribers,
 )
+from requests import Response
+from rest_framework import status
 
 NOTIFICATION_DATETIME = timezone.now()
 
@@ -44,9 +43,7 @@ class TestWebhookDetails(APITestCase):
         )
 
     def test_update_webhook(self):
-        url = reverse(
-            "karrio.server.events:webhook-details", kwargs=dict(pk=self.webhook.pk)
-        )
+        url = reverse("karrio.server.events:webhook-details", kwargs=dict(pk=self.webhook.pk))
         data = WEBHOOK_UPDATE_DATA
 
         response = self.client.patch(url, data)
@@ -56,13 +53,9 @@ class TestWebhookDetails(APITestCase):
         self.assertDictEqual(response_data, WEBHOOK_UPDATED_RESPONSE)
 
     def test_webhook_notify(self):
-        url = reverse(
-            "karrio.server.events:webhook-details", kwargs=dict(pk=self.webhook.pk)
-        )
+        url = reverse("karrio.server.events:webhook-details", kwargs=dict(pk=self.webhook.pk))
 
-        with patch(
-            "karrio.server.events.task_definitions.base.webhook.identity"
-        ) as mocks:
+        with patch("karrio.server.events.task_definitions.base.webhook.identity") as mocks:
             response = Response()
             response.status_code = 200
             mocks.return_value = response
@@ -84,9 +77,7 @@ class TestWebhookDetails(APITestCase):
 
     def test_tracker_updated_payload_structure(self):
         """Webhook payload for tracker_updated contains tracking-specific fields."""
-        with patch(
-            "karrio.server.events.task_definitions.base.webhook.requests.post"
-        ) as mock_post:
+        with patch("karrio.server.events.task_definitions.base.webhook.requests.post") as mock_post:
             response = Response()
             response.status_code = 200
             mock_post.return_value = response
@@ -113,9 +104,7 @@ class TestWebhookDetails(APITestCase):
 
     def test_shipment_purchased_payload_structure(self):
         """Webhook payload for shipment_purchased contains shipment-specific fields."""
-        with patch(
-            "karrio.server.events.task_definitions.base.webhook.requests.post"
-        ) as mock_post:
+        with patch("karrio.server.events.task_definitions.base.webhook.requests.post") as mock_post:
             response = Response()
             response.status_code = 200
             mock_post.return_value = response

@@ -1,7 +1,6 @@
 # type: ignore
 from karrio.server.settings.base import *
 
-
 INSTALLED_APPS += ["import_export"]
 
 IMPORT_EXPORT_USE_TRANSACTIONS = True

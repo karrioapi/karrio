@@ -16,9 +16,8 @@ import re
 import typing
 import urllib.parse
 
-
 # Header names (lowercase) whose values should be redacted.
-SENSITIVE_HEADER_NAMES: typing.FrozenSet[str] = frozenset(
+SENSITIVE_HEADER_NAMES: frozenset[str] = frozenset(
     [
         "authorization",
         "x-api-key",
@@ -36,7 +35,7 @@ SENSITIVE_HEADER_NAMES: typing.FrozenSet[str] = frozenset(
 )
 
 # Header name substrings (lowercase) that indicate a sensitive header.
-SENSITIVE_HEADER_SUBSTRINGS: typing.Tuple[str, ...] = (
+SENSITIVE_HEADER_SUBSTRINGS: tuple[str, ...] = (
     "secret",
     "password",
     "credential",
@@ -49,7 +48,7 @@ SENSITIVE_HEADER_SUBSTRINGS: typing.Tuple[str, ...] = (
 )
 
 # Query parameter names (lowercase) whose values should be redacted.
-SENSITIVE_PARAM_NAMES: typing.FrozenSet[str] = frozenset(
+SENSITIVE_PARAM_NAMES: frozenset[str] = frozenset(
     [
         "client_id",
         "client_secret",
@@ -102,7 +101,7 @@ def _redact_header_value(name: str, value: str) -> str:
     return REDACTED
 
 
-def redact_headers(headers: typing.Any) -> typing.Dict[str, str]:
+def redact_headers(headers: typing.Any) -> dict[str, str]:
     """
     Return a copy of the headers dict with sensitive values redacted.
 
@@ -112,7 +111,7 @@ def redact_headers(headers: typing.Any) -> typing.Dict[str, str]:
     if not isinstance(headers, dict):
         return {}
 
-    result: typing.Dict[str, str] = {}
+    result: dict[str, str] = {}
     for name, value in headers.items():
         str_value = str(value) if not isinstance(value, str) else value
         if _is_sensitive_header(str(name)):
@@ -123,7 +122,7 @@ def redact_headers(headers: typing.Any) -> typing.Dict[str, str]:
     return result
 
 
-def redact_query_params(params: typing.Union[str, dict, None]) -> typing.Union[str, dict]:
+def redact_query_params(params: str | dict | None) -> str | dict:
     """
     Redact sensitive query parameter values.
 
@@ -134,18 +133,12 @@ def redact_query_params(params: typing.Union[str, dict, None]) -> typing.Union[s
         return {}
 
     if isinstance(params, dict):
-        return {
-            k: (REDACTED if k.lower() in SENSITIVE_PARAM_NAMES else v)
-            for k, v in params.items()
-        }
+        return {k: (REDACTED if k.lower() in SENSITIVE_PARAM_NAMES else v) for k, v in params.items()}
 
     if isinstance(params, str):
         try:
             parsed = urllib.parse.parse_qs(params, keep_blank_values=True)
-            redacted = {
-                k: ([REDACTED] if k.lower() in SENSITIVE_PARAM_NAMES else v)
-                for k, v in parsed.items()
-            }
+            redacted = {k: ([REDACTED] if k.lower() in SENSITIVE_PARAM_NAMES else v) for k, v in parsed.items()}
             return urllib.parse.urlencode(redacted, doseq=True)
         except (ValueError, TypeError):
             return params

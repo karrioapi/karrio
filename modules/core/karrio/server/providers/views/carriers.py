@@ -1,24 +1,23 @@
-import io
 import base64
-import re
+import io
+
+import karrio.lib as lib
+import karrio.server.core.views.api as api
+import karrio.server.openapi as openapi
+import karrio.server.providers.models as models
+import karrio.server.samples as samples
+from django.conf import settings
+from django.core.files.base import ContentFile
 from django.http import JsonResponse
 from django.urls import path, re_path
-from django.conf import settings
 from django.utils import translation
+from django_downloadview import VirtualDownloadView
+from karrio.server.core import datatypes, dataunits, serializers
 from rest_framework import status, views
 from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.request import Request
 from rest_framework.response import Response
-from django.core.files.base import ContentFile
-from django_downloadview import VirtualDownloadView
 
-import karrio.lib as lib
-import karrio.server.openapi as openapi
-import karrio.server.samples as samples
-import karrio.server.core.views.api as api
-import karrio.server.providers.models as models
-from karrio.server.core.logging import logger
-from karrio.server.core import datatypes, dataunits, serializers
 ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 
@@ -37,7 +36,7 @@ def _validate_lang(request: Request):
 
 def _resolve_lang(request: Request, lang: str = None) -> str:
     """Resolve language: explicit param > Accept-Language header > default."""
-    return lang or getattr(request, 'LANGUAGE_CODE', settings.LANGUAGE_CODE)
+    return lang or getattr(request, "LANGUAGE_CODE", settings.LANGUAGE_CODE)
 
 
 def _translated_references(request: Request, lang: str = None, reduced: bool = False):
@@ -92,7 +91,7 @@ class CarrierList(views.APIView):
                 carrier_name,
                 contextual_reference=references,
             )
-            for carrier_name in references["carriers"].keys()
+            for carrier_name in references["carriers"]
         ]
 
         return Response(carriers, status=status.HTTP_200_OK)
@@ -113,8 +112,7 @@ class CarrierDetails(api.APIView):
                 location=openapi.OpenApiParameter.PATH,
                 type=openapi.OpenApiTypes.STR,
                 description=(
-                    "The unique carrier slug. <br/>"
-                    f"Values: {', '.join([f'`{c}`' for c in dataunits.CARRIER_NAMES])}"
+                    f"The unique carrier slug. <br/>Values: {', '.join([f'`{c}`' for c in dataunits.CARRIER_NAMES])}"
                 ),
             )
         ],
@@ -160,8 +158,7 @@ class CarrierServices(api.APIView):
                 location=openapi.OpenApiParameter.PATH,
                 type=openapi.OpenApiTypes.STR,
                 description=(
-                    "The unique carrier slug. <br/>"
-                    f"Values: {', '.join([f'`{c}`' for c in dataunits.CARRIER_NAMES])}"
+                    f"The unique carrier slug. <br/>Values: {', '.join([f'`{c}`' for c in dataunits.CARRIER_NAMES])}"
                 ),
             )
         ],
@@ -210,8 +207,7 @@ class CarrierOptions(api.APIView):
                 location=openapi.OpenApiParameter.PATH,
                 type=openapi.OpenApiTypes.STR,
                 description=(
-                    "The unique carrier slug. <br/>"
-                    f"Values: {', '.join([f'`{c}`' for c in dataunits.CARRIER_NAMES])}"
+                    f"The unique carrier slug. <br/>Values: {', '.join([f'`{c}`' for c in dataunits.CARRIER_NAMES])}"
                 ),
             )
         ],
@@ -264,9 +260,7 @@ class CarrierLabelPreview(VirtualDownloadView):
             self.name = f"{carrier.custom_carrier_name}_label.{format}"
             self.attachment = query_params.get("download", False)
 
-            response = super(CarrierLabelPreview, self).get(
-                request, pk, format, **kwargs
-            )
+            response = super().get(request, pk, format, **kwargs)
             response["X-Frame-Options"] = "ALLOWALL"
             return response
         except Exception as e:
@@ -280,8 +274,8 @@ class CarrierLabelPreview(VirtualDownloadView):
         return ContentFile(buffer.getvalue(), name=self.name)
 
     def _generate_label(self, carrier, format):
-        import karrio.sdk as karrio
         import karrio.providers.generic.units as units
+        import karrio.sdk as karrio
 
         template = carrier.label_template
         data = lib.identity(
@@ -289,9 +283,7 @@ class CarrierLabelPreview(VirtualDownloadView):
             if template is not None and len(template.shipment_sample.items()) > 0
             else units.SAMPLE_SHIPMENT_REQUEST
         )
-        service = lib.identity(
-            data.get("service") or next((s.service_code for s in carrier.services))
-        )
+        service = lib.identity(data.get("service") or next(s.service_code for s in carrier.services))
         request = lib.to_object(
             datatypes.ShipmentRequest,
             {

@@ -1,15 +1,13 @@
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.teleship.utils as provider_utils
-import karrio.schemas.teleship.error_response as teleship
 
 
 def parse_error_response(
-    response: typing.Union[dict, list],
+    response: dict | list,
     settings: provider_utils.Settings,
     **kwargs,
-) -> typing.List[models.Message]:
+) -> list[models.Message]:
     """Parse Teleship error response"""
 
     errors = lib.failsafe(lambda: response.get("messages")) or []

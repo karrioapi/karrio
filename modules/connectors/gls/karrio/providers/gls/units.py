@@ -1,12 +1,14 @@
 import csv
 import pathlib
-import karrio.lib as lib
-import karrio.core.units as units
+
 import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
 
 
 class PackagingType(lib.StrEnum):
     """GLS Group specific packaging types"""
+
     gls_parcel = "PARCEL"
     gls_envelope = "ENVELOPE"
     gls_pallet = "PALLET"
@@ -22,6 +24,7 @@ class PackagingType(lib.StrEnum):
 
 class ShippingService(lib.StrEnum):
     """GLS Group specific services"""
+
     gls_parcel = "PARCEL"
     gls_express = "EXPRESS"
     gls_guaranteed24 = "GUARANTEED24"
@@ -34,135 +37,141 @@ class ShippingOption(lib.Enum):
 
     # Delivery Options (Zustelloptionen tab)
     gls_guaranteed24 = lib.OptionEnum(
-        "GUARANTEED24", bool,
+        "GUARANTEED24",
+        bool,
         help="Guaranteed next-day delivery service",
-        meta=dict(category="DELIVERY_OPTIONS", configurable=True)
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True),
     )
     gls_saturday_delivery = lib.OptionEnum(
-        "SaturdayService", bool,
+        "SaturdayService",
+        bool,
         help="Enable Saturday delivery",
-        meta=dict(category="DELIVERY_OPTIONS", configurable=True)
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True),
     )
     gls_flex_delivery = lib.OptionEnum(
-        "FlexDeliveryService", bool,
+        "FlexDeliveryService",
+        bool,
         help="Notify recipient about delivery options",
-        meta=dict(category="NOTIFICATION", configurable=True)
+        meta=dict(category="NOTIFICATION", configurable=True),
     )
     gls_deposit_service = lib.OptionEnum(
-        "DepositService", bool,
+        "DepositService",
+        bool,
         help="Enable delivery to a predefined deposit location",
-        meta=dict(category="DELIVERY_OPTIONS", configurable=True)
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True),
     )
     gls_deposit_description = lib.OptionEnum(
-        "DepositDescription", str,
+        "DepositDescription",
+        str,
         help="Description of the deposit location (e.g., 'Behind the garage')",
-        meta=dict(category="DELIVERY_OPTIONS", configurable=True)
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True),
     )
     gls_deposit_contact = lib.OptionEnum(
-        "DepositContact", str,
+        "DepositContact",
+        str,
         help="Contact person at the deposit location",
-        meta=dict(category="DELIVERY_OPTIONS", configurable=True)
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True),
     )
     gls_express_parcel = lib.OptionEnum(
-        "ExpressParcel", bool,
-        help="Enable express shipping",
-        meta=dict(category="DELIVERY_OPTIONS", configurable=True)
+        "ExpressParcel", bool, help="Enable express shipping", meta=dict(category="DELIVERY_OPTIONS", configurable=True)
     )
     gls_time_definite_service = lib.OptionEnum(
-        "TimeDefiniteService", str,
+        "TimeDefiniteService",
+        str,
         help="Set specific delivery time (before 8 AM, 9 AM, 10 AM, 12 PM)",
-        meta=dict(category="DELIVERY_OPTIONS", configurable=True)
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True),
     )
 
     # PUDO Options (Parcel Shop)
     gls_shop_delivery = lib.OptionEnum(
-        "ShopDeliveryService", bool,
-        help="Delivery to a GLS ParcelShop",
-        meta=dict(category="PUDO", configurable=True)
+        "ShopDeliveryService", bool, help="Delivery to a GLS ParcelShop", meta=dict(category="PUDO", configurable=True)
     )
     gls_shop_id = lib.OptionEnum(
-        "ShopID", str,
-        help="GLS ParcelShop ID for delivery",
-        meta=dict(category="PUDO", configurable=True)
+        "ShopID", str, help="GLS ParcelShop ID for delivery", meta=dict(category="PUDO", configurable=True)
     )
     gls_shop_auto_determine = lib.OptionEnum(
-        "ShopAutoSelect", bool,
+        "ShopAutoSelect",
+        bool,
         help="Automatically determine nearest GLS ParcelShop based on recipient address",
-        meta=dict(category="PUDO", configurable=True)
+        meta=dict(category="PUDO", configurable=True),
     )
 
     # Signature Options
     gls_addressee_only = lib.OptionEnum(
-        "AddresseeOnlyService", bool,
+        "AddresseeOnlyService",
+        bool,
         help="Delivery only to the addressee (no neighbor delivery)",
-        meta=dict(category="SIGNATURE", configurable=True)
+        meta=dict(category="SIGNATURE", configurable=True),
     )
     gls_signature_service = lib.OptionEnum(
-        "SignatureService", bool,
+        "SignatureService",
+        bool,
         help="Require signature upon delivery",
-        meta=dict(category="SIGNATURE", configurable=True)
+        meta=dict(category="SIGNATURE", configurable=True),
     )
     gls_ident_pin_service = lib.OptionEnum(
-        "IdentPINService", bool,
+        "IdentPINService",
+        bool,
         help="Identification via PIN code at delivery",
-        meta=dict(category="SIGNATURE", configurable=True)
+        meta=dict(category="SIGNATURE", configurable=True),
     )
 
     # Insurance Options
     gls_add_on_liability = lib.OptionEnum(
-        "AddOnLiabilityService", bool,
+        "AddOnLiabilityService",
+        bool,
         help="Add extra liability coverage for shipments",
-        meta=dict(category="INSURANCE", configurable=True)
+        meta=dict(category="INSURANCE", configurable=True),
     )
 
     # Return Options
     gls_pick_and_return = lib.OptionEnum(
-        "PickAndReturnService", bool,
+        "PickAndReturnService",
+        bool,
         help="Enable pick and return service",
-        meta=dict(category="RETURN", configurable=True)
+        meta=dict(category="RETURN", configurable=True),
     )
     gls_shop_return = lib.OptionEnum(
-        "ShopReturnService", bool,
+        "ShopReturnService",
+        bool,
         help="Add a pre-printed return label inside the package",
-        meta=dict(category="RETURN", configurable=True)
+        meta=dict(category="RETURN", configurable=True),
     )
     gls_return_enabled = lib.OptionEnum(
-        "ReturnService", bool,
+        "ReturnService",
+        bool,
         help="Enable return label generation for this shipment",
-        meta=dict(category="RETURN", configurable=True)
+        meta=dict(category="RETURN", configurable=True),
     )
 
     # Dangerous Goods
     gls_limited_quantity = lib.OptionEnum(
-        "LimitedQuantity", bool,
+        "LimitedQuantity",
+        bool,
         help="Mark shipment as containing limited quantity hazardous materials",
-        meta=dict(category="DANGEROUS_GOOD", configurable=True)
+        meta=dict(category="DANGEROUS_GOOD", configurable=True),
     )
     gls_limited_quantity_weight = lib.OptionEnum(
-        "LimitedQuantityWeight", float,
+        "LimitedQuantityWeight",
+        float,
         help="Weight of limited quantity hazardous material in kg",
-        meta=dict(category="DANGEROUS_GOOD", configurable=True)
+        meta=dict(category="DANGEROUS_GOOD", configurable=True),
     )
 
     # COD Options (Cash on Delivery)
     gls_cod_reference = lib.OptionEnum(
-        "CODReference", str,
+        "CODReference",
+        str,
         help="Reference number for cash on delivery payment",
-        meta=dict(category="COD", configurable=True)
+        meta=dict(category="COD", configurable=True),
     )
 
     # Premium/Other
-    gls_premium = lib.OptionEnum(
-        "PremiumService", bool,
-        help="Enable premium service",
-        meta=dict(configurable=True)
-    )
+    gls_premium = lib.OptionEnum("PremiumService", bool, help="Enable premium service", meta=dict(configurable=True))
 
     """Standard option mappings"""
     insurance = lib.OptionEnum(
-        "insurance", float,
-        help="Insurance value for the shipment",
-        meta=dict(category="INSURANCE", configurable=True)
+        "insurance", float, help="Insurance value for the shipment", meta=dict(category="INSURANCE", configurable=True)
     )
     saturday_delivery = gls_saturday_delivery
     dangerous_good = gls_limited_quantity
@@ -184,6 +193,7 @@ def shipping_options_initializer(
 
 class TrackingStatus(lib.Enum):
     """GLS Group tracking status mapping - based on ecitrackandtrace.yaml ParcelDTO.status enum."""
+
     pending = ["PLANNEDPICKUP", "INPICKUP", "PREADVICE"]
     in_transit = ["INTRANSIT", "INWAREHOUSE"]
     out_for_delivery = ["INDELIVERY"]
@@ -195,12 +205,14 @@ class TrackingStatus(lib.Enum):
 
 class WeightUnit(lib.StrEnum):
     """Weight unit mapping"""
+
     KG = "kg"
     LB = "lb"
 
 
 class DimensionUnit(lib.StrEnum):
     """Dimension unit mapping"""
+
     CM = "cm"
     IN = "in"
 
@@ -227,7 +239,7 @@ def load_services_from_csv() -> list:
     # Group zones by service
     services_dict: dict[str, dict] = {}
 
-    with open(csv_path, "r", encoding="utf-8") as f:
+    with open(csv_path, encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
             service_code = row["service_code"]
@@ -247,37 +259,29 @@ def load_services_from_csv() -> list:
                     "currency": row.get("currency", "EUR"),
                     "min_weight": row_min_weight,
                     "max_weight": row_max_weight,
-                    "max_length": (
-                        float(row["max_length"]) if row.get("max_length") else None
-                    ),
-                    "max_width": (
-                        float(row["max_width"]) if row.get("max_width") else None
-                    ),
-                    "max_height": (
-                        float(row["max_height"]) if row.get("max_height") else None
-                    ),
+                    "max_length": (float(row["max_length"]) if row.get("max_length") else None),
+                    "max_width": (float(row["max_width"]) if row.get("max_width") else None),
+                    "max_height": (float(row["max_height"]) if row.get("max_height") else None),
                     "weight_unit": "KG",
                     "dimension_unit": "CM",
                     "domicile": row.get("domicile", "").lower() == "true",
-                    "international": (
-                        True if row.get("international", "").lower() == "true" else None
-                    ),
+                    "international": (True if row.get("international", "").lower() == "true" else None),
                     "zones": [],
                 }
             else:
                 # Update service-level weight bounds to cover all zones
                 current = services_dict[karrio_service_code]
-                if row_min_weight is not None:
-                    if current["min_weight"] is None or row_min_weight < current["min_weight"]:
-                        current["min_weight"] = row_min_weight
-                if row_max_weight is not None:
-                    if current["max_weight"] is None or row_max_weight > current["max_weight"]:
-                        current["max_weight"] = row_max_weight
+                if row_min_weight is not None and (
+                    current["min_weight"] is None or row_min_weight < current["min_weight"]
+                ):
+                    current["min_weight"] = row_min_weight
+                if row_max_weight is not None and (
+                    current["max_weight"] is None or row_max_weight > current["max_weight"]
+                ):
+                    current["max_weight"] = row_max_weight
 
             # Parse country codes
-            country_codes = [
-                c.strip() for c in row.get("country_codes", "").split(",") if c.strip()
-            ]
+            country_codes = [c.strip() for c in row.get("country_codes", "").split(",") if c.strip()]
 
             # Create zone
             zone = models.ServiceZone(
@@ -285,18 +289,14 @@ def load_services_from_csv() -> list:
                 rate=float(row.get("rate", 0.0)),
                 min_weight=row_min_weight,
                 max_weight=row_max_weight,
-                transit_days=(
-                    int(row["transit_days"].split("-")[0]) if row.get("transit_days") else None
-                ),
+                transit_days=(int(row["transit_days"].split("-")[0]) if row.get("transit_days") else None),
                 country_codes=country_codes if country_codes else None,
             )
 
             services_dict[karrio_service_code]["zones"].append(zone)
 
     # Convert to ServiceLevel objects
-    return [
-        models.ServiceLevel(**service_data) for service_data in services_dict.values()
-    ]
+    return [models.ServiceLevel(**service_data) for service_data in services_dict.values()]
 
 
 DEFAULT_SERVICES = load_services_from_csv()

@@ -1,12 +1,14 @@
 """MyDHL carrier rate tests."""
 
-import unittest
-from unittest.mock import patch, ANY
-from .fixture import gateway
 import logging
-import karrio.sdk as karrio
-import karrio.lib as lib
+import unittest
+from unittest.mock import ANY, patch
+
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 logger = logging.getLogger(__name__)
 
@@ -24,29 +26,18 @@ class TestMyDHLRating(unittest.TestCase):
         with patch("karrio.mappers.mydhl.proxy.lib.request") as mock:
             mock.return_value = "{}"
             karrio.Rating.fetch(self.RateRequest).from_(gateway)
-            self.assertEqual(
-                mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/rates"
-            )
+            self.assertEqual(mock.call_args[1]["url"], f"{gateway.settings.server_url}/rates")
 
     def test_parse_rate_response(self):
         with patch("karrio.mappers.mydhl.proxy.lib.request") as mock:
             mock.return_value = RateResponse
-            parsed_response = (
-                karrio.Rating.fetch(self.RateRequest)
-                .from_(gateway)
-                .parse()
-            )
+            parsed_response = karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertListEqual(lib.to_dict(parsed_response), ParsedRateResponse)
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.mydhl.proxy.lib.request") as mock:
             mock.return_value = ErrorResponse
-            parsed_response = (
-                karrio.Rating.fetch(self.RateRequest)
-                .from_(gateway)
-                .parse()
-            )
+            parsed_response = karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
 
@@ -64,7 +55,7 @@ RatePayload = {
         "person_name": "Test Person",
         "company_name": "Test Company",
         "phone_number": "1234567890",
-        "email": "test@example.com"
+        "email": "test@example.com",
     },
     "recipient": {
         "address_line1": "123 Test Street",
@@ -75,16 +66,18 @@ RatePayload = {
         "person_name": "Test Person",
         "company_name": "Test Company",
         "phone_number": "1234567890",
-        "email": "test@example.com"
+        "email": "test@example.com",
     },
-    "parcels": [{
-        "weight": 10.0,
-        "width": 10.0,
-        "height": 10.0,
-        "length": 10.0,
-        "weight_unit": "KG",
-        "dimension_unit": "CM",
-    }]
+    "parcels": [
+        {
+            "weight": 10.0,
+            "width": 10.0,
+            "height": 10.0,
+            "length": 10.0,
+            "weight_unit": "KG",
+            "dimension_unit": "CM",
+        }
+    ],
 }
 
 RateRequest = {
@@ -94,35 +87,21 @@ RateRequest = {
             "cityName": "Test City",
             "countryCode": "US",
             "provinceCode": "CA",
-            "addressLine1": "123 Test Street"
+            "addressLine1": "123 Test Street",
         },
         "receiverDetails": {
             "postalCode": "12345",
             "cityName": "Test City",
             "countryCode": "US",
             "provinceCode": "CA",
-            "addressLine1": "123 Test Street"
-        }
+            "addressLine1": "123 Test Street",
+        },
     },
-    "accounts": [
-        {
-            "typeCode": "shipper",
-            "number": "123456789"
-        }
-    ],
+    "accounts": [{"typeCode": "shipper", "number": "123456789"}],
     "plannedShippingDateAndTime": ANY,
     "unitOfMeasurement": "metric",
     "isCustomsDeclarable": False,
-    "packages": [
-        {
-            "weight": 10.0,
-            "dimensions": {
-                "length": 10,
-                "width": 10,
-                "height": 10
-            }
-        }
-    ]
+    "packages": [{"weight": 10.0, "dimensions": {"length": 10, "width": 10, "height": 10}}],
 }
 
 RateResponse = """{
@@ -192,20 +171,14 @@ ParsedRateResponse = [
             "service": "mydhl_express_worldwide",
             "currency": "USD",
             "total_charge": 25.99,
-            "extra_charges": [
-                {
-                    "name": "SPRQT",
-                    "amount": 23.5,
-                    "currency": "USD"
-                }
-            ],
+            "extra_charges": [{"name": "SPRQT", "amount": 23.5, "currency": "USD"}],
             "meta": {
                 "service_name": "EXPRESS WORLDWIDE",
                 "product_code": "P",
                 "network_type_code": "TD",
                 "local_product_code": "P",
-                "estimated_delivery": "2024-01-15T17:00:00"
-            }
+                "estimated_delivery": "2024-01-15T17:00:00",
+            },
         },
         {
             "carrier_id": "mydhl",
@@ -218,11 +191,11 @@ ParsedRateResponse = [
                 "product_code": "Y",
                 "network_type_code": "TD",
                 "local_product_code": "Y",
-                "estimated_delivery": "2024-01-14T12:00:00"
-            }
-        }
+                "estimated_delivery": "2024-01-14T12:00:00",
+            },
+        },
     ],
-    []
+    [],
 ]
 
 ParsedErrorResponse = [
@@ -233,10 +206,7 @@ ParsedErrorResponse = [
             "carrier_name": "mydhl",
             "code": "400",
             "message": "Invalid postal code provided",
-            "details": {
-                "instance": "/rates",
-                "title": "Bad Request"
-            }
+            "details": {"instance": "/rates", "title": "Bad Request"},
         }
-    ]
+    ],
 ]

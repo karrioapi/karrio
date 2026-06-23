@@ -1,6 +1,7 @@
 import os
-import typer
+
 import requests
+import typer
 
 app = typer.Typer()
 
@@ -10,7 +11,7 @@ DEFAULT_HOST = "http://localhost:5002"
 def get_config():
     config_file = os.path.expanduser("~/.karrio/config")
     if os.path.exists(config_file):
-        with open(config_file, "r") as f:
+        with open(config_file) as f:
             return dict(line.strip().split("=") for line in f)
     return {}
 
@@ -67,7 +68,7 @@ def login(
 
     except requests.RequestException as e:
         typer.echo(f"Error connecting to Karrio instance: {str(e)}", err=True)
-    except IOError as e:
+    except OSError as e:
         typer.echo(f"Error saving configuration: {str(e)}", err=True)
 
 
@@ -87,7 +88,7 @@ def logout():
         typer.echo("Successfully logged out. Karrio configuration removed.")
     except FileNotFoundError:
         typer.echo("No saved Karrio configuration found.")
-    except IOError as e:
+    except OSError as e:
         typer.echo(f"Error removing configuration: {str(e)}", err=True)
 
 

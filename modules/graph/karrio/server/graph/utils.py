@@ -1,22 +1,21 @@
-from karrio.server.core.utils import *
-import typing
 import base64
-import functools
-import strawberry
 import dataclasses
-from strawberry.types import Info
-from rest_framework import exceptions
-from django.utils.translation import gettext_lazy as _
+import functools
+import typing
 
 import karrio.lib as lib
-import karrio.server.core.utils as utils
 import karrio.server.core.models as core
-import karrio.server.orders.models as orders
-import karrio.server.manager.models as manager
-import karrio.server.providers.models as providers
 import karrio.server.core.permissions as permissions
 import karrio.server.core.serializers as serializers
-from karrio.server.core.logging import logger
+import karrio.server.core.utils as utils
+import karrio.server.manager.models as manager
+import karrio.server.orders.models as orders
+import karrio.server.providers.models as providers
+import strawberry
+from django.utils.translation import gettext_lazy as _
+from karrio.server.core.utils import *
+from rest_framework import exceptions
+from strawberry.types import Info
 
 Cursor = str
 T = typing.TypeVar("T")
@@ -94,9 +93,7 @@ LABEL_SIZES = [
     ("SIZE_4_x_6", "4x6"),
     ("SIZE_4_x_8", "4x8"),
 ]
-LabelSizeEnum: typing.Any = strawberry.enum(
-    lib.Enum("LabelSizeEnum", LABEL_SIZES)
-)
+LabelSizeEnum: typing.Any = strawberry.enum(lib.Enum("LabelSizeEnum", LABEL_SIZES))
 
 EXPORT_REASONS = [
     ("sale", "sale"),
@@ -107,17 +104,13 @@ EXPORT_REASONS = [
     ("personal_effects", "personal_effects"),
     ("other", "other"),
 ]
-ExportReasonEnum: typing.Any = strawberry.enum(
-    lib.Enum("ExportReasonEnum", EXPORT_REASONS)
-)
+ExportReasonEnum: typing.Any = strawberry.enum(lib.Enum("ExportReasonEnum", EXPORT_REASONS))
 
 FIRST_MILE_OPTIONS = [
     ("pickup", "pickup"),
     ("drop_off", "drop_off"),
 ]
-FirstMileEnum: typing.Any = strawberry.enum(
-    lib.Enum("FirstMileEnum", FIRST_MILE_OPTIONS)
-)
+FirstMileEnum: typing.Any = strawberry.enum(lib.Enum("FirstMileEnum", FIRST_MILE_OPTIONS))
 
 LAST_MILE_OPTIONS = [
     ("home_delivery", "home_delivery"),
@@ -125,9 +118,7 @@ LAST_MILE_OPTIONS = [
     ("mailbox", "mailbox"),
     ("po_box", "po_box"),
 ]
-LastMileEnum: typing.Any = strawberry.enum(
-    lib.Enum("LastMileEnum", LAST_MILE_OPTIONS)
-)
+LastMileEnum: typing.Any = strawberry.enum(lib.Enum("LastMileEnum", LAST_MILE_OPTIONS))
 
 FORM_FACTOR_OPTIONS = [
     ("letter", "letter"),
@@ -136,17 +127,13 @@ FORM_FACTOR_OPTIONS = [
     ("pallet", "pallet"),
     ("long", "long"),
 ]
-FormFactorEnum: typing.Any = strawberry.enum(
-    lib.Enum("FormFactorEnum", FORM_FACTOR_OPTIONS)
-)
+FormFactorEnum: typing.Any = strawberry.enum(lib.Enum("FormFactorEnum", FORM_FACTOR_OPTIONS))
 
 AGE_CHECK_OPTIONS = [
     ("AGE_16", "16"),
     ("AGE_18", "18"),
 ]
-AgeCheckEnum: typing.Any = strawberry.enum(
-    lib.Enum("AgeCheckEnum", AGE_CHECK_OPTIONS)
-)
+AgeCheckEnum: typing.Any = strawberry.enum(lib.Enum("AgeCheckEnum", AGE_CHECK_OPTIONS))
 
 
 class MetadataObjectType(lib.Enum):
@@ -158,26 +145,20 @@ class MetadataObjectType(lib.Enum):
 
 
 MetadataObjectTypeEnum: typing.Any = strawberry.enum(  # type: ignore
-    lib.StrEnum(
-        "MetadataObjectTypeEnum", [(c.name, c.name) for c in list(MetadataObjectType)]
-    )
+    lib.StrEnum("MetadataObjectTypeEnum", [(c.name, c.name) for c in list(MetadataObjectType)])
 )
 
 
 def authentication_required(func):
     @functools.wraps(func)
     def wrapper(info: Info, **kwargs):
-        user = getattr(info.context.request, 'user', None)
+        user = getattr(info.context.request, "user", None)
 
         if user is None or user.is_anonymous:
-            raise exceptions.AuthenticationFailed(
-                _("You are not authenticated"), code="authentication_required"
-            )
+            raise exceptions.AuthenticationFailed(_("You are not authenticated"), code="authentication_required")
 
         if not user.is_verified():
-            raise exceptions.AuthenticationFailed(
-                _("Authentication Token not verified"), code="two_factor_required"
-            )
+            raise exceptions.AuthenticationFailed(_("Authentication Token not verified"), code="two_factor_required")
 
         return func(info, **kwargs)
 
@@ -197,7 +178,7 @@ def password_required(func):
     return wrapper
 
 
-def authorization_required(keys: typing.List[str] = None):
+def authorization_required(keys: list[str] = None):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(info: Info, **kwargs):
@@ -216,7 +197,7 @@ def authorization_required(keys: typing.List[str] = None):
 @strawberry.type
 class ErrorType:
     field: str
-    messages: typing.List[str]
+    messages: list[str]
 
     @staticmethod
     def from_errors(errors):
@@ -225,45 +206,43 @@ class ErrorType:
 
 @strawberry.input
 class BaseInput:
-    def pagination(self) -> typing.Dict[str, typing.Any]:
-        return {
-            k: v
-            for k, v in dataclass_to_dict(self).items()
-            if k in ["offset", "before", "after", "first", "last"]
-        }
+    def pagination(self) -> dict[str, typing.Any]:
+        return {k: v for k, v in dataclass_to_dict(self).items() if k in ["offset", "before", "after", "first", "last"]}
 
-    def to_dict(self) -> typing.Dict[str, typing.Any]:
+    def to_dict(self) -> dict[str, typing.Any]:
         return dataclass_to_dict(self)
 
 
 @strawberry.type
 class BaseMutation:
-    errors: typing.Optional[typing.List[ErrorType]] = None
+    errors: list[ErrorType] | None = None
 
 
 @strawberry.type
 class UsageStatType:
-    date: typing.Optional[str] = None
-    label: typing.Optional[str] = None
-    count: typing.Optional[float] = None
-    amount: typing.Optional[float] = None
-    currency: typing.Optional[str] = None
+    date: str | None = None
+    label: str | None = None
+    count: float | None = None
+    amount: float | None = None
+    currency: str | None = None
 
     @staticmethod
     def parse(value: dict, label: str = None) -> "UsageStatType":
-        return UsageStatType(**{
-            **(dict(label=label) if label else {}),
-            **{k: v for k, v in value.items() if k in UsageStatType.__annotations__},
-            "amount": lib.to_decimal(value.get("amount")),
-        })
+        return UsageStatType(
+            **{
+                **(dict(label=label) if label else {}),
+                **{k: v for k, v in value.items() if k in UsageStatType.__annotations__},
+                "amount": lib.to_decimal(value.get("amount")),
+            }
+        )
 
 
 @strawberry.input
 class UsageFilter(BaseInput):
-    date_after: typing.Optional[str] = strawberry.UNSET
-    date_before: typing.Optional[str] = strawberry.UNSET
-    omit: typing.Optional[typing.List[str]] = strawberry.UNSET
-    surcharge_id: typing.Optional[str] = strawberry.UNSET
+    date_after: str | None = strawberry.UNSET
+    date_before: str | None = strawberry.UNSET
+    omit: list[str] | None = strawberry.UNSET
+    surcharge_id: str | None = strawberry.UNSET
 
 
 @dataclasses.dataclass
@@ -276,7 +255,7 @@ class Connection(typing.Generic[GenericType]):
     """
 
     page_info: "PageInfo"
-    edges: typing.List["Edge[GenericType]"]
+    edges: list["Edge[GenericType]"]
 
 
 @dataclasses.dataclass
@@ -293,8 +272,8 @@ class PageInfo:
     count: int
     has_next_page: bool
     has_previous_page: bool
-    start_cursor: typing.Optional[str]
-    end_cursor: typing.Optional[str]
+    start_cursor: str | None
+    end_cursor: str | None
 
 
 @dataclasses.dataclass
@@ -308,13 +287,13 @@ class Edge(typing.Generic[GenericType]):
 
 @strawberry.input
 class Paginated(BaseInput):
-    offset: typing.Optional[int] = strawberry.UNSET
-    first: typing.Optional[int] = strawberry.UNSET
+    offset: int | None = strawberry.UNSET
+    first: int | None = strawberry.UNSET
 
 
 def build_entity_cursor(entity: T):
     """Adapt this method to build an *opaque* ID from an instance"""
-    entityid = f"{getattr(entity, 'id', id(entity))}".encode("utf-8")
+    entityid = f"{getattr(entity, 'id', id(entity))}".encode()
     return base64.b64encode(entityid).decode()
 
 
@@ -333,9 +312,8 @@ def paginated_connection(
     results = queryset[offset:offset+first+1]
     # fmt: on
 
-    edges: typing.List[typing.Any] = [
-        Edge(node=typing.cast(T, entity), cursor=build_entity_cursor(entity))
-        for entity in results
+    edges: list[typing.Any] = [
+        Edge(node=typing.cast(T, entity), cursor=build_entity_cursor(entity)) for entity in results
     ]
     return Connection(
         page_info=PageInfo(

@@ -1,9 +1,11 @@
 import re
 import unittest
 from unittest.mock import patch
-from karrio.core.utils import DP
+
 from karrio.core.models import TrackingRequest
+from karrio.core.utils import DP
 from karrio.sdk import Tracking
+
 from .fixture import gateway
 
 
@@ -20,9 +22,7 @@ class TestDHLTracking(unittest.TestCase):
             re.sub(
                 "<MessageTime>[^>]+</MessageTime>",
                 "",
-                request.serialize().replace(
-                    "            <MessageTime>", "<MessageTime>"
-                ),
+                request.serialize().replace("            <MessageTime>", "<MessageTime>"),
             ),
             TrackingRequestXML,
         )
@@ -40,40 +40,28 @@ class TestDHLTracking(unittest.TestCase):
     def test_tracking_auth_error_parsing(self):
         with patch("karrio.mappers.dhl_express.proxy.lib.request") as mock:
             mock.return_value = AuthError
-            parsed_response = (
-                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
+            parsed_response = Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedAuthError))
 
     def test_parse_tracking_response(self):
         with patch("karrio.mappers.dhl_express.proxy.lib.request") as mock:
             mock.return_value = TrackingResponseXML
-            parsed_response = (
-                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
+            parsed_response = Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
 
             self.assertListEqual(DP.to_dict(parsed_response), ParsedTrackingResponse)
 
     def test_parse_in_transit_tracking_response(self):
         with patch("karrio.mappers.dhl_express.proxy.lib.request") as mock:
             mock.return_value = IntransitTrackingResponseXML
-            parsed_response = (
-                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
+            parsed_response = Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
 
-            self.assertListEqual(
-                DP.to_dict(parsed_response), ParsedInTransitTrackingResponse
-            )
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedInTransitTrackingResponse)
 
     def test_tracking_single_not_found_parsing(self):
         with patch("karrio.mappers.dhl_express.proxy.lib.request") as mock:
             mock.return_value = TrackingSingleNotFound
-            parsed_response = (
-                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
-            self.assertListEqual(
-                DP.to_dict(parsed_response), ParsedTrackingSingNotFound
-            )
+            parsed_response = Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedTrackingSingNotFound)
 
 
 if __name__ == "__main__":

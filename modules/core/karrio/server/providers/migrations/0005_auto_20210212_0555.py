@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('providers', '0004_auto_20210212_0554'),
+        ("providers", "0004_auto_20210212_0554"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='purolatorcouriersettings',
-            name='user_token',
+            model_name="purolatorcouriersettings",
+            name="user_token",
             field=models.CharField(max_length=200),
         ),
     ]

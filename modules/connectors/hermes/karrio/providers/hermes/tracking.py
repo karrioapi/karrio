@@ -1,15 +1,13 @@
 """Karrio Hermes tracking API implementation."""
 
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
-import karrio.providers.hermes.error as error
-import karrio.providers.hermes.utils as provider_utils
+import karrio.lib as lib
 import karrio.providers.hermes.units as provider_units
+import karrio.providers.hermes.utils as provider_utils
 import karrio.schemas.hermes.tracking_response as hermes_res
 
 
-def _match_status(code: str) -> typing.Optional[str]:
+def _match_status(code: str) -> str | None:
     """Match Hermes event code against TrackingStatus enum values."""
     if not code:
         return None
@@ -19,7 +17,7 @@ def _match_status(code: str) -> typing.Optional[str]:
     return None
 
 
-def _match_reason(code: str) -> typing.Optional[str]:
+def _match_reason(code: str) -> str | None:
     """Match Hermes event code against incident reasons.
 
     Hermes uses numeric codes that map to statuses, not specific incident reasons.
@@ -31,7 +29,7 @@ def _match_reason(code: str) -> typing.Optional[str]:
 def parse_tracking_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+) -> tuple[list[models.TrackingDetails], list[models.Message]]:
     """Parse tracking response from Hermes Shipment Info API."""
     response = _response.deserialize()
 
@@ -39,25 +37,24 @@ def parse_tracking_response(
     tracking_response = lib.to_object(hermes_res.TrackingResponseType, response)
 
     # Collect error messages
-    messages: typing.List[models.Message] = []
+    messages: list[models.Message] = []
 
     # Extract tracking details for each shipment
-    tracking_details: typing.List[models.TrackingDetails] = []
+    tracking_details: list[models.TrackingDetails] = []
 
     for shipment_info in tracking_response.shipmentinfo or []:
         # Check for errors in individual shipment result
-        if shipment_info.result and shipment_info.result.code:
-            if shipment_info.result.code.startswith("e"):
-                messages.append(
-                    models.Message(
-                        carrier_id=settings.carrier_id,
-                        carrier_name=settings.carrier_name,
-                        code=shipment_info.result.code,
-                        message=shipment_info.result.message or "",
-                        details=dict(shipment_id=shipment_info.shipmentID),
-                    )
+        if shipment_info.result and shipment_info.result.code and shipment_info.result.code.startswith("e"):
+            messages.append(
+                models.Message(
+                    carrier_id=settings.carrier_id,
+                    carrier_name=settings.carrier_name,
+                    code=shipment_info.result.code,
+                    message=shipment_info.result.message or "",
+                    details=dict(shipment_id=shipment_info.shipmentID),
                 )
-                continue
+            )
+            continue
 
         # Extract tracking details
         details = _extract_details(shipment_info, settings)
@@ -70,7 +67,7 @@ def parse_tracking_response(
 def _extract_details(
     shipment_info: hermes_res.ShipmentinfoType,
     settings: provider_utils.Settings,
-) -> typing.Optional[models.TrackingDetails]:
+) -> models.TrackingDetails | None:
     """Extract tracking details from Hermes shipment info."""
     if not shipment_info.shipmentID:
         return None
@@ -123,9 +120,7 @@ def _extract_details(
             carrier_tracking_link=shipment_info.trackingLink,
             customer_name=None,
             shipment_destination_country=(
-                shipment_info.receiverAddress.countryCode
-                if shipment_info.receiverAddress
-                else None
+                shipment_info.receiverAddress.countryCode if shipment_info.receiverAddress else None
             ),
             shipment_destination_postal_code=(
                 str(shipment_info.receiverAddress.zipCode)

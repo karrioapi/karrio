@@ -1,18 +1,17 @@
 """Karrio Google Geocoding address validation implementation."""
 
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.googlegeocoding.utils as provider_utils
 
 
 def parse_address_validation_response(
     response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.AddressValidationDetails, typing.List[models.Message]]:
+) -> tuple[models.AddressValidationDetails, list[models.Message]]:
     """Parse address validation response from Google Geocoding API."""
     result = response.deserialize()
-    messages: typing.List[models.Message] = []
+    messages: list[models.Message] = []
 
     status = result.get("status", "")
 
@@ -32,10 +31,7 @@ def parse_address_validation_response(
 
     # Find a ROOFTOP location (most accurate)
     rooftop_match = next(
-        (
-            r for r in results
-            if r.get("geometry", {}).get("location_type") == "ROOFTOP"
-        ),
+        (r for r in results if r.get("geometry", {}).get("location_type") == "ROOFTOP"),
         None,
     )
 
@@ -59,6 +55,7 @@ def parse_address_validation_response(
 
 def _parse_address_components(components: list) -> models.Address:
     """Parse Google address components into a unified Address model."""
+
     def get_component(types: list) -> str:
         for comp in components:
             if any(t in comp.get("types", []) for t in types):
@@ -96,9 +93,7 @@ def address_validation_request(
     address_string = " ".join(part for part in address_parts if part)
 
     if not address_string:
-        raise Exception(
-            "At least one address info must be provided (address_line1, city and/or postal_code)"
-        )
+        raise Exception("At least one address info must be provided (address_line1, city and/or postal_code)")
 
     # Add state and country for better accuracy
     if address.state_code:

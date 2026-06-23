@@ -3,7 +3,6 @@ import karrio.mappers.usps_international as mappers
 import karrio.providers.usps_international.units as units
 import karrio.providers.usps_international.utils as utils
 
-
 METADATA = metadata.PluginMetadata(
     status="production-ready",
     id="usps_international",

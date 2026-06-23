@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("providers", "0044_carrier_carrier_capabilities"),
     ]

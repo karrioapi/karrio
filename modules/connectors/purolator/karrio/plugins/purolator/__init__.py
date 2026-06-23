@@ -2,7 +2,6 @@ import karrio.core.metadata as metadata
 import karrio.mappers.purolator as mappers
 import karrio.providers.purolator.units as units
 
-
 METADATA = metadata.PluginMetadata(
     status="production-ready",
     id="purolator",

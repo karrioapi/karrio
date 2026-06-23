@@ -1,8 +1,5 @@
-import base64
-import datetime
-import karrio.lib as lib
 import karrio.core as core
-import karrio.core.errors as errors
+import karrio.lib as lib
 
 
 class Settings(core.Settings):
@@ -17,11 +14,7 @@ class Settings(core.Settings):
 
     @property
     def server_url(self):
-        return (
-            "https://staging.omniparcel.com"
-            if self.test_mode
-            else "https://api.omniparcel.com"
-        )
+        return "https://staging.omniparcel.com" if self.test_mode else "https://api.omniparcel.com"
 
     # """uncomment the following code block to expose a carrier tracking url."""
     # @property
@@ -112,6 +105,4 @@ def parse_error_response(response):
     if any(content or ""):
         return content
 
-    return lib.to_json(
-        dict(Errors=[dict(code=str(response.code), Message=response.reason)])
-    )
+    return lib.to_json(dict(Errors=[dict(code=str(response.code), Message=response.reason)]))

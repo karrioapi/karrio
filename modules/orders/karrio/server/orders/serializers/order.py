@@ -1,19 +1,17 @@
-from typing import Optional
-from django.conf import settings
+import karrio.server.manager.models as manager_models
+import karrio.server.orders.models as models
+import karrio.server.orders.serializers as serializers
 from django.apps import apps as django_apps
-from django.db import transaction, IntegrityError
-from rest_framework import status
+from django.conf import settings
+from django.db import transaction
 from django.utils.functional import SimpleLazyObject
-
 from karrio.server.core.exceptions import APIException
 from karrio.server.serializers import (
     owned_model_serializer,
-    process_json_object_mutation,
     process_json_array_mutation,
+    process_json_object_mutation,
 )
-import karrio.server.manager.models as manager_models
-import karrio.server.orders.serializers as serializers
-import karrio.server.orders.models as models
+from rest_framework import status
 
 
 class ScopeResolver:
@@ -64,12 +62,9 @@ class ScopeResolver:
         return user, org
 
     @staticmethod
-    def _resolve_org_scope(org, user) -> Optional[str]:
+    def _resolve_org_scope(org, user) -> str | None:
         """Try to resolve organization scope if multi-org is enabled."""
-        if not (
-            settings.MULTI_ORGANIZATIONS
-            and django_apps.is_installed("karrio.server.orgs")
-        ):
+        if not (settings.MULTI_ORGANIZATIONS and django_apps.is_installed("karrio.server.orgs")):
             return None
 
         # Try direct org first
@@ -82,9 +77,7 @@ class ScopeResolver:
             try:
                 import karrio.server.orgs.models as orgs
 
-                org_obj = orgs.Organization.objects.filter(
-                    users__id=user_id, is_active=True
-                ).first()
+                org_obj = orgs.Organization.objects.filter(users__id=user_id, is_active=True).first()
                 return getattr(org_obj, "id", None)
             except (ModuleNotFoundError, AttributeError):
                 pass
@@ -106,16 +99,16 @@ def process_order_line_items(payload: dict, instance=None):
 
     # Get existing items to preserve fulfilled_quantity
     existing_items = (instance.line_items or []) if instance else []
-    existing_by_id = {
-        item.get("id"): item
-        for item in existing_items
-        if isinstance(item, dict) and item.get("id")
-    }
+    existing_by_id = {item.get("id"): item for item in existing_items if isinstance(item, dict) and item.get("id")}
 
     result = process_json_array_mutation(
-        "line_items", payload, instance,
-        id_prefix="oli", model_class=manager_models.Commodity,
-        data_field_name="line_items", object_type="commodity",
+        "line_items",
+        payload,
+        instance,
+        id_prefix="oli",
+        model_class=manager_models.Commodity,
+        data_field_name="line_items",
+        object_type="commodity",
     )
 
     # Preserve fulfilled_quantity from existing items and initialize for new items
@@ -146,27 +139,46 @@ class OrderSerializer(serializers.OrderData):
         json_fields = {}
 
         if "shipping_to" in validated_data:
-            json_fields.update(shipping_to=process_json_object_mutation(
-                "shipping_to", validated_data, None,
-                model_class=manager_models.Address, object_type="address", id_prefix="adr",
-            ))
+            json_fields.update(
+                shipping_to=process_json_object_mutation(
+                    "shipping_to",
+                    validated_data,
+                    None,
+                    model_class=manager_models.Address,
+                    object_type="address",
+                    id_prefix="adr",
+                )
+            )
 
         if "shipping_from" in validated_data:
-            json_fields.update(shipping_from=process_json_object_mutation(
-                "shipping_from", validated_data, None,
-                model_class=manager_models.Address, object_type="address", id_prefix="adr",
-            ))
+            json_fields.update(
+                shipping_from=process_json_object_mutation(
+                    "shipping_from",
+                    validated_data,
+                    None,
+                    model_class=manager_models.Address,
+                    object_type="address",
+                    id_prefix="adr",
+                )
+            )
 
         if "billing_address" in validated_data:
-            json_fields.update(billing_address=process_json_object_mutation(
-                "billing_address", validated_data, None,
-                model_class=manager_models.Address, object_type="address", id_prefix="adr",
-            ))
+            json_fields.update(
+                billing_address=process_json_object_mutation(
+                    "billing_address",
+                    validated_data,
+                    None,
+                    model_class=manager_models.Address,
+                    object_type="address",
+                    id_prefix="adr",
+                )
+            )
 
         json_fields.update(line_items=process_order_line_items(validated_data))
 
         # Merge request_id into meta for request correlation
         from karrio.server.core.middleware import get_request_id
+
         _request_id = get_request_id()
 
         order_data = {
@@ -193,9 +205,7 @@ class OrderSerializer(serializers.OrderData):
         return order
 
     @transaction.atomic
-    def update(
-        self, instance: models.Order, validated_data: dict, context: dict
-    ) -> models.Order:
+    def update(self, instance: models.Order, validated_data: dict, context: dict) -> models.Order:
         changes = []
         data = validated_data.copy()
 
@@ -236,9 +246,7 @@ class OrderUpdateData(serializers.Serializer):
         </details>
         """,
     )
-    metadata = serializers.PlainDictField(
-        required=False, help_text="User metadata for the shipment"
-    )
+    metadata = serializers.PlainDictField(required=False, help_text="User metadata for the shipment")
 
 
 def compute_order_status(order: models.Order) -> str:
@@ -261,10 +269,7 @@ def compute_order_status(order: models.Order) -> str:
     line_items_are_fulfilled = True
     line_items_are_partially_fulfilled = False
     shipments_are_delivered = all(
-        [
-            shipment.status == serializers.ShipmentStatus.delivered.value
-            for shipment in order.shipments.all()
-        ]
+        [shipment.status == serializers.ShipmentStatus.delivered.value for shipment in order.shipments.all()]
     )
 
     # Use JSON field for line_items

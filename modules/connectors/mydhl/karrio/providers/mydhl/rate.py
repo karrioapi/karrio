@@ -1,13 +1,13 @@
 """Karrio MyDHL rate API implementation."""
 
 import datetime
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
+
 import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
 import karrio.providers.mydhl.error as error
-import karrio.providers.mydhl.utils as provider_utils
 import karrio.providers.mydhl.units as provider_units
+import karrio.providers.mydhl.utils as provider_utils
 import karrio.schemas.mydhl.rate_request as mydhl_req
 import karrio.schemas.mydhl.rate_response as mydhl_res
 
@@ -15,7 +15,7 @@ import karrio.schemas.mydhl.rate_response as mydhl_res
 def parse_rate_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+) -> tuple[list[models.RateDetails], list[models.Message]]:
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
 
@@ -45,21 +45,14 @@ def _extract_details(
     Returns a RateDetails object with extracted rate information
     """
     # Get the primary price (usually BILLC - billing currency)
-    total_price = next(
-        (price for price in (product.totalPrice or []) if price.price),
-        None
-    )
+    total_price = next((price for price in (product.totalPrice or []) if price.price), None)
 
     # Extract pricing information
     currency = total_price.priceCurrency if total_price else "USD"
     total_charge = float(total_price.price) if total_price and total_price.price else 0.0
 
     # Get transit days from deliveryCapabilities (more reliable than calculating from date)
-    transit_days = (
-        product.deliveryCapabilities.totalTransitDays
-        if product.deliveryCapabilities
-        else None
-    )
+    transit_days = product.deliveryCapabilities.totalTransitDays if product.deliveryCapabilities else None
 
     # Extract charges from price breakdown
     charges = [
@@ -93,9 +86,7 @@ def _extract_details(
             network_type_code=product.networkTypeCode,
             local_product_code=product.localProductCode,
             estimated_delivery=(
-                product.deliveryCapabilities.estimatedDeliveryDateAndTime
-                if product.deliveryCapabilities
-                else None
+                product.deliveryCapabilities.estimatedDeliveryDateAndTime if product.deliveryCapabilities else None
             ),
         ),
     )
@@ -175,9 +166,7 @@ def rate_request(
         packages=[
             mydhl_req.PackageType(
                 typeCode=lib.identity(
-                    provider_units.PackagingType.map(package.packaging_type).value
-                    if package.packaging_type
-                    else None
+                    provider_units.PackagingType.map(package.packaging_type).value if package.packaging_type else None
                 ),
                 weight=package.weight.value,
                 dimensions=(

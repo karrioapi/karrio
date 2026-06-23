@@ -1,4 +1,5 @@
 import base64
+
 import karrio.core as core
 
 
@@ -18,11 +19,7 @@ class Settings(core.Settings):
 
     @property
     def server_url(self):
-        return (
-            "https://digitalapi.auspost.com.au/test"
-            if self.test_mode
-            else "https://digitalapi.auspost.com.au"
-        )
+        return "https://digitalapi.auspost.com.au/test" if self.test_mode else "https://digitalapi.auspost.com.au"
 
     @property
     def tracking_url(self):
@@ -30,5 +27,5 @@ class Settings(core.Settings):
 
     @property
     def authorization(self):
-        pair = "%s:%s" % (self.api_key, self.password)
+        pair = f"{self.api_key}:{self.password}"
         return base64.b64encode(pair.encode("utf-8")).decode("ascii")

@@ -20,9 +20,8 @@ Usage in code:
 import os
 import sys
 from pathlib import Path
-from loguru import logger as _logger
-from typing import Optional
 
+from loguru import logger as _logger
 
 # Remove default handler
 _logger.remove()
@@ -89,6 +88,7 @@ def _is_sentry_enabled() -> bool:
     """Check if Sentry is configured and enabled."""
     try:
         from django.conf import settings
+
         return bool(getattr(settings, "SENTRY_DSN", None))
     except Exception:
         return False
@@ -131,10 +131,7 @@ def _sentry_sink(message):
                 with sentry_sdk.push_scope() as scope:
                     scope.set_context("loguru", extra)
                     scope.set_tag("log_level", level)
-                    sentry_sdk.capture_message(
-                        log_message,
-                        level="error" if level == "ERROR" else "fatal"
-                    )
+                    sentry_sdk.capture_message(log_message, level="error" if level == "ERROR" else "fatal")
 
         elif level == "WARNING":
             # Add as breadcrumb for context
@@ -150,12 +147,12 @@ def _sentry_sink(message):
         pass
     except Exception:
         # Fail silently - don't let logging errors break the app
-        pass
+        return
 
 
 def setup_django_loguru(
-    level: Optional[str] = None,
-    log_file: Optional[str] = None,
+    level: str | None = None,
+    log_file: str | None = None,
     intercept_django: bool = True,
     serialize: bool = False,
     enqueue: bool = True,
@@ -269,16 +266,14 @@ def intercept_standard_logging():
                 extra["request_id"] = getattr(record.request, "id", None)
                 extra["user"] = getattr(record.request, "user", None)
 
-            _logger.opt(depth=depth, exception=record.exc_info).bind(**extra).log(
-                level, record.getMessage()
-            )
+            _logger.opt(depth=depth, exception=record.exc_info).bind(**extra).log(level, record.getMessage())
 
     # Configure root logger to use our interceptor
     logging.root.handlers = [InterceptHandler()]
     logging.root.setLevel(0)
 
     # Update all existing loggers
-    for name in logging.root.manager.loggerDict.keys():
+    for name in logging.root.manager.loggerDict:
         logging.getLogger(name).handlers = []
         logging.getLogger(name).propagate = True
 

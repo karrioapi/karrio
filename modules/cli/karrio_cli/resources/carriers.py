@@ -1,8 +1,9 @@
 import typer
+
 import karrio_cli.common.utils as utils
-import typing
 
 app = typer.Typer()
+
 
 @app.command("list")
 def list_carriers(
@@ -45,9 +46,8 @@ def list_carriers(
     }
     ```
     """
-    utils.make_get_request(
-        "v1/carriers", params=None, pretty_print=pretty, line_numbers=line_numbers
-    )
+    utils.make_get_request("v1/carriers", params=None, pretty_print=pretty, line_numbers=line_numbers)
+
 
 @app.command("retrieve")
 def retrieve_carrier(
@@ -86,6 +86,4 @@ def retrieve_carrier(
     }
     ```
     """
-    utils.make_get_request(
-        f"v1/carriers/{carrier_name}", pretty_print=pretty, line_numbers=line_numbers
-    )
+    utils.make_get_request(f"v1/carriers/{carrier_name}", pretty_print=pretty, line_numbers=line_numbers)

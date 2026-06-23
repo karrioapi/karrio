@@ -1,25 +1,22 @@
-from django.urls import path
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.request import Request
-
-import karrio.server.openapi as openapi
-import karrio.server.core.utils as utils
 import karrio.server.core.dataunits as dataunits
-import karrio.server.providers.models as providers
-from karrio.server.core.logging import logger
-from karrio.server.proxy.router import router
+import karrio.server.openapi as openapi
+from django.urls import path
 from karrio.server.core.gateway import Pickups
-from karrio.server.core.views.api import APIView
 from karrio.server.core.serializers import (
-    PickupCancelRequest,
-    PickupUpdateRequest,
-    OperationResponse,
-    PickupResponse,
-    PickupRequest,
-    ErrorResponse,
     ErrorMessages,
+    ErrorResponse,
+    OperationResponse,
+    PickupCancelRequest,
+    PickupRequest,
+    PickupResponse,
+    PickupUpdateRequest,
 )
+from karrio.server.core.views.api import APIView
+from karrio.server.proxy.router import router
+from rest_framework import status
+from rest_framework.request import Request
+from rest_framework.response import Response
+
 ENDPOINT_ID = "@"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 
@@ -128,11 +125,7 @@ class PickupCancel(APIView):
         return Response(OperationResponse(response).data, status=status.HTTP_200_OK)
 
 
-router.urls.append(
-    path(
-        "proxy/pickups/<carrier_name>", PickupSchedule.as_view(), name="pickup-schedule"
-    )
-)
+router.urls.append(path("proxy/pickups/<carrier_name>", PickupSchedule.as_view(), name="pickup-schedule"))
 router.urls.append(
     path(
         "proxy/pickups/<carrier_name>/update",

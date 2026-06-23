@@ -1,25 +1,20 @@
 """Karrio SEKO Logistics tracking API implementation."""
 
-import karrio.schemas.seko.tracking_response as tracking
-
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.seko.error as error
-import karrio.providers.seko.utils as provider_utils
 import karrio.providers.seko.units as provider_units
+import karrio.providers.seko.utils as provider_utils
+import karrio.schemas.seko.tracking_response as tracking
 
 
 def parse_tracking_response(
-    _response: lib.Deserializable[typing.List[dict]],
+    _response: lib.Deserializable[list[dict]],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+) -> tuple[list[models.TrackingDetails], list[models.Message]]:
     responses = _response.deserialize()
 
-    messages: typing.List[models.Message] = error.parse_error_response(
-        responses, settings
-    )
+    messages: list[models.Message] = error.parse_error_response(responses, settings)
     tracking_details = [
         _extract_details(_, settings)
         for _ in (responses if isinstance(responses, list) else [responses])
@@ -35,15 +30,9 @@ def _extract_details(
 ) -> models.TrackingDetails:
     details = lib.to_object(tracking.TrackingResponseElementType, data)
     events = list(reversed(details.Events))
-    latest_status = lib.identity(
-        events[0].OmniCode if any(events) else getattr(details, "Status", None)
-    )
+    latest_status = lib.identity(events[0].OmniCode if any(events) else getattr(details, "Status", None))
     status = next(
-        (
-            status.name
-            for status in list(provider_units.TrackingStatus)
-            if latest_status in status.value
-        ),
+        (status.name for status in list(provider_units.TrackingStatus) if latest_status in status.value),
         provider_units.TrackingStatus.in_transit.name,
     )
 
@@ -69,11 +58,7 @@ def _extract_details(
                     try_formats=["%Y-%m-%dT%H:%M:%S.%f", "%Y-%m-%dT%H:%M:%S"],
                 ),
                 status=next(
-                    (
-                        s.name
-                        for s in list(provider_units.TrackingStatus)
-                        if (event.OmniCode or event.Code) in s.value
-                    ),
+                    (s.name for s in list(provider_units.TrackingStatus) if (event.OmniCode or event.Code) in s.value),
                     None,
                 ),
                 reason=next(

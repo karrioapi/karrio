@@ -1,12 +1,12 @@
-import re
 import json
-import uuid
+import re
 import threading
+import uuid
+
 from django.db.models import Q
 from django.http import HttpResponse
 from karrio.core.utils import Tracer
 from karrio.server.conf import settings
-
 
 # --- X-Request-ID utilities ---
 
@@ -45,10 +45,7 @@ class RequestIDMiddleware:
     def __call__(self, request):
         try:
             client_id = request.META.get("HTTP_X_REQUEST_ID", "").strip()
-            request.request_id = (
-                client_id if _is_valid_request_id(client_id)
-                else _generate_request_id()
-            )
+            request.request_id = client_id if _is_valid_request_id(client_id) else _generate_request_id()
         except (AttributeError, TypeError):
             request.request_id = _generate_request_id()
 
@@ -121,18 +118,22 @@ class SessionContext:
         # (in case it was set/modified during request processing)
         try:
             import sentry_sdk
+
             request_id = getattr(request, "request_id", None)
             if request_id:
                 sentry_sdk.set_tag("request_id", request_id)
                 with sentry_sdk.configure_scope() as scope:
                     scope.set_tag("request_id", request_id)
-                    scope.set_context("request_tracking", {
-                        "request_id": request_id,
-                        "method": request.method,
-                        "path": request.path,
-                    })
+                    scope.set_context(
+                        "request_tracking",
+                        {
+                            "request_id": request_id,
+                            "method": request.method,
+                            "path": request.path,
+                        },
+                    )
         except Exception:
-            pass
+            ...
 
         # Record request metrics
         self._record_request_metrics(request, response, start_time)
@@ -187,10 +188,11 @@ class SessionContext:
             # (Sentry Django integration doesn't pick up custom request attributes automatically)
             try:
                 import sentry_sdk
+
                 if request_id:
                     sentry_sdk.set_tag("request_id", request_id)
             except Exception:
-                pass
+                ...
 
             # Set test_mode tag if available
             test_mode = getattr(request, "test_mode", None)
@@ -235,7 +237,9 @@ class SessionContext:
             telemetry.record_metric("karrio.http.request", 1, tags=tags, metric_type="counter")
 
             # Record response time distribution
-            telemetry.record_metric("karrio.http.duration", duration_ms, unit="millisecond", tags=tags, metric_type="distribution")
+            telemetry.record_metric(
+                "karrio.http.duration", duration_ms, unit="millisecond", tags=tags, metric_type="distribution"
+            )
 
             # Record error count for 4xx/5xx responses
             if response.status_code >= 400:
@@ -272,10 +276,7 @@ class NonHtmlDebugToolbarMiddleware:
 
         if request.GET.get("debug") == "":
             if response["Content-Type"] == "application/octet-stream":
-                new_content = (
-                    "<html><body>Binary Data, "
-                    "Length: {}</body></html>".format(len(response.content))
-                )
+                new_content = f"<html><body>Binary Data, Length: {len(response.content)}</body></html>"
                 response = HttpResponse(new_content)
             elif response["Content-Type"] != "text/html":
                 content = response.content
@@ -284,8 +285,6 @@ class NonHtmlDebugToolbarMiddleware:
                     content = json.dumps(json_, sort_keys=True, indent=2)
                 except ValueError:
                     pass
-                response = HttpResponse(
-                    "<html><body><pre>{}" "</pre></body></html>".format(content)
-                )
+                response = HttpResponse(f"<html><body><pre>{content}</pre></body></html>")
 
         return response
