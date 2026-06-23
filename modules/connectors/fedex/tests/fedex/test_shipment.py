@@ -29,6 +29,73 @@ class TestFedExShipping(unittest.TestCase):
 
         self.assertEqual(request.serialize(), ShipmentRequest)
 
+    def test_create_shipment_request_with_customer_references(self):
+        request = gateway.mapper.create_shipment_request(
+            models.ShipmentRequest(
+                **{
+                    **ShipmentPayload,
+                    "reference": "ORDER-42",
+                    "options": {
+                        **ShipmentPayload["options"],
+                        "fedex_department_number": "DEPT-7",
+                        "fedex_po_number": "PO-99",
+                        "fedex_rma_association": "RMA-123",
+                    },
+                }
+            )
+        )
+        requested = request.serialize()["requestedShipment"]
+
+        self.assertEqual(
+            requested["customsClearanceDetail"]["commercialInvoice"][
+                "customerReferences"
+            ],
+            [
+                {"customerReferenceType": "INVOICE_NUMBER", "value": "123456789"},
+                {"customerReferenceType": "CUSTOMER_REFERENCE", "value": "ORDER-42"},
+                {"customerReferenceType": "DEPARTMENT_NUMBER", "value": "DEPT-7"},
+            ],
+        )
+        self.assertEqual(
+            requested["requestedPackageLineItems"][0]["customerReferences"],
+            [
+                {"customerReferenceType": "CUSTOMER_REFERENCE", "value": "ORDER-42"},
+                {"customerReferenceType": "DEPARTMENT_NUMBER", "value": "DEPT-7"},
+                {"customerReferenceType": "P_O_NUMBER", "value": "PO-99"},
+                {"customerReferenceType": "RMA_ASSOCIATION", "value": "RMA-123"},
+            ],
+        )
+
+    def test_create_shipment_request_with_use_scheduled_pickup(self):
+        request = gateway.mapper.create_shipment_request(
+            models.ShipmentRequest(
+                **{
+                    **ShipmentPayload,
+                    "options": {
+                        **ShipmentPayload["options"],
+                        "fedex_pickup_type": "USE_SCHEDULED_PICKUP",
+                    },
+                }
+            )
+        )
+
+        self.assertEqual(request.serialize(), ShipmentUseScheduledPickupRequest)
+
+    def test_create_shipment_request_with_contact_fedex_pickup(self):
+        request = gateway.mapper.create_shipment_request(
+            models.ShipmentRequest(
+                **{
+                    **ShipmentPayload,
+                    "options": {
+                        **ShipmentPayload["options"],
+                        "fedex_pickup_type": "CONTACT_FEDEX_TO_SCHEDULE",
+                    },
+                }
+            )
+        )
+
+        self.assertEqual(request.serialize(), ShipmentContactFedexPickupRequest)
+
     def test_create_shipment_request_paid_by_recipient(self):
         request = gateway.mapper.create_shipment_request(
             self.ShipmentPaidByRecipientRequest
@@ -335,7 +402,8 @@ ShipmentRequest = {
         "customsClearanceDetail": {
             "commercialInvoice": {
                 "customerReferences": [
-                    {"customerReferenceType": "INVOICE_NUMBER", "value": "123456789"}
+                    {"customerReferenceType": "INVOICE_NUMBER", "value": "123456789"},
+                    {"customerReferenceType": "CUSTOMER_REFERENCE", "value": "#Order 11111"},
                 ],
                 "originatorName": "Input Your Information",
                 "termsOfSale": "DDU",
@@ -418,6 +486,12 @@ ShipmentRequest = {
                     "units": "IN",
                     "width": 12.0,
                 },
+                "customerReferences": [
+                    {
+                        "customerReferenceType": "CUSTOMER_REFERENCE",
+                        "value": "#Order 11111",
+                    }
+                ],
                 "groupPackageCount": 1,
                 "packageSpecialServices": {},
                 "subPackagingType": "OTHER",
@@ -480,6 +554,22 @@ ShipmentRequest = {
     "shipAction": "CONFIRM",
 }
 
+ShipmentUseScheduledPickupRequest = {
+    **ShipmentRequest,
+    "requestedShipment": {
+        **ShipmentRequest["requestedShipment"],
+        "pickupType": "USE_SCHEDULED_PICKUP",
+    },
+}
+
+ShipmentContactFedexPickupRequest = {
+    **ShipmentRequest,
+    "requestedShipment": {
+        **ShipmentRequest["requestedShipment"],
+        "pickupType": "CONTACT_FEDEX_TO_SCHEDULE",
+    },
+}
+
 ShipmentPaidByRecipientRequest = {
     "accountNumber": {"value": "2349857"},
     "labelResponseOptions": "LABEL",
@@ -523,6 +613,12 @@ ShipmentPaidByRecipientRequest = {
                     "units": "IN",
                     "width": 12.0,
                 },
+                "customerReferences": [
+                    {
+                        "customerReferenceType": "CUSTOMER_REFERENCE",
+                        "value": "#Order 11111",
+                    }
+                ],
                 "groupPackageCount": 1,
                 "packageSpecialServices": {},
                 "subPackagingType": "OTHER",
@@ -594,7 +690,8 @@ MultiPieceShipmentRequest = {
         "customsClearanceDetail": {
             "commercialInvoice": {
                 "customerReferences": [
-                    {"customerReferenceType": "INVOICE_NUMBER", "value": "123456789"}
+                    {"customerReferenceType": "INVOICE_NUMBER", "value": "123456789"},
+                    {"customerReferenceType": "CUSTOMER_REFERENCE", "value": "#Order 11111"},
                 ],
                 "originatorName": "Input Your Information",
                 "termsOfSale": "DDU",
@@ -677,6 +774,12 @@ MultiPieceShipmentRequest = {
                     "units": "IN",
                     "width": 12,
                 },
+                "customerReferences": [
+                    {
+                        "customerReferenceType": "CUSTOMER_REFERENCE",
+                        "value": "#Order 11111",
+                    }
+                ],
                 "groupPackageCount": 1,
                 "packageSpecialServices": {},
                 "subPackagingType": "OTHER",
@@ -690,6 +793,12 @@ MultiPieceShipmentRequest = {
                     "units": "IN",
                     "width": 11,
                 },
+                "customerReferences": [
+                    {
+                        "customerReferenceType": "CUSTOMER_REFERENCE",
+                        "value": "#Order 11111",
+                    }
+                ],
                 "groupPackageCount": 1,
                 "packageSpecialServices": {},
                 "subPackagingType": "OTHER",

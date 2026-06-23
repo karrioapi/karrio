@@ -232,6 +232,34 @@ class PaymentType(lib.Enum):
     third_party = "THIRD_PARTY"
 
 
+class FedExPickupType(lib.Enum):
+    """How the shipper will tender the package to FedEx (Ship API / Rate API).
+
+    Member name == value so OptionEnum resolves `.state` to the FedEx API value.
+    """
+
+    DROPOFF_AT_FEDEX_LOCATION = "DROPOFF_AT_FEDEX_LOCATION"
+    CONTACT_FEDEX_TO_SCHEDULE = "CONTACT_FEDEX_TO_SCHEDULE"
+    USE_SCHEDULED_PICKUP = "USE_SCHEDULED_PICKUP"
+
+
+class FedExPickupAddressType(lib.Enum):
+    """Whose address a FedEx pickup is tied to. Member name == value."""
+
+    ACCOUNT = "ACCOUNT"
+    SHIPPER = "SHIPPER"
+    OTHER = "OTHER"
+
+
+class FedExPackageLocation(lib.Enum):
+    """Where the package waits for FedEx pickup. Member name == value."""
+
+    FRONT = "FRONT"
+    NONE = "NONE"
+    REAR = "REAR"
+    SIDE = "SIDE"
+
+
 class ConnectionConfig(lib.Enum):
     label_type = lib.OptionEnum("label_type", LabelType)
     smart_post_hub_id = lib.OptionEnum("smart_post_hub_id")
@@ -327,6 +355,19 @@ class ShippingOption(lib.Enum):
     fedex_one_rate = lib.OptionEnum("FEDEX_ONE_RATE", bool)
     fedex_freight_guarantee = lib.OptionEnum("FREIGHT_GUARANTEE", bool)
     fedex_saturday_delivery = lib.OptionEnum("SATURDAY_DELIVERY", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    fedex_pickup_type = lib.OptionEnum(
+        "fedex_pickup_type",
+        FedExPickupType,
+        help=(
+            "How the shipper will tender the package to FedEx. "
+            "Valid values: DROPOFF_AT_FEDEX_LOCATION, CONTACT_FEDEX_TO_SCHEDULE, USE_SCHEDULED_PICKUP. "
+            "Defaults to DROPOFF_AT_FEDEX_LOCATION."
+        ),
+        meta=dict(category="DELIVERY_OPTIONS"),
+    )
+    fedex_department_number = lib.OptionEnum("fedex_department_number")
+    fedex_po_number = lib.OptionEnum("fedex_po_number")
+    fedex_rma_association = lib.OptionEnum("fedex_rma_association")
     fedex_smart_post_hub_id = lib.OptionEnum("SMART_POST_HUB_ID")
     fedex_smart_post_allowed_indicia = lib.OptionEnum("SMART_POST_ALLOWED_INDICIA")
 
