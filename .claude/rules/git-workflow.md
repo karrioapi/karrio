@@ -1,5 +1,20 @@
 # Git & Commit Guidelines
 
+## ⛔ `main` is protected — never write to it without explicit permission
+
+NEVER merge, push, force-push, revert, or otherwise modify the `main` (default)
+branch — directly or via `gh pr merge` — without the user's **explicit,
+per-action** go-ahead. This includes merging community/contributor PRs: their
+base must be the active release branch, not `main`.
+
+- All integration happens on the release branch (e.g. `patch/YYYY.M.PATCH`) or a
+  feature branch. `main` only advances when the user explicitly says to land it.
+- "Merge this PR" / "approve this PR" defaults to the **release branch**, not
+  `main`. If `main` ever seems required, stop and ask first.
+- Branch-protection settings are off-limits unless the user explicitly asks you
+  to change them, and then only with an exact snapshot-and-restore.
+- A blanket approval of one action is not standing permission for the next.
+
 ## Commit Format
 - `type: summary` (e.g., `fix:`, `feat:`, `chore:`, `refactor:`, `docs:`, `test:`)
 - `type(scope): summary` for scoped changes (e.g., `fix(smartkargo): ...`)
@@ -10,6 +25,7 @@
 - Keep commits focused and atomic
 
 ## Rules
+- Never write to `main` without explicit per-action permission (see top of file)
 - Never commit without explicit user permission
 - Never add AI co-author lines (e.g., `Co-Authored-By: Claude ...`)
 - Never add "Generated with Claude Code" or similar AI footers

@@ -39,6 +39,7 @@ npm run build                                                    # Turbo build a
 
 ## Commit Rules
 
+- **NEVER write to `main` (merge/push/force-push/revert, incl. `gh pr merge`) without explicit per-action permission.** Integrate on the release/feature branch; merge contributor PRs into the release branch, not `main`. See `.claude/rules/git-workflow.md`.
 - Format: `type(scope): summary` — never commit without user permission
 - Never add `Co-Authored-By` lines
 - Run tests before pushing
