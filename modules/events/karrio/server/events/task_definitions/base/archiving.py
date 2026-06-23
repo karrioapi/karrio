@@ -10,6 +10,36 @@ import karrio.server.orders.models as orders
 import karrio.server.tracing.models as tracing
 import karrio.server.manager.models as manager
 
+# Delete in bounded batches so a large first-run backlog cannot load every id
+# into memory and OOM the worker in a single unbounded transaction (GH #1125).
+BATCH_SIZE = 1000
+
+
+def _batched_delete(queryset, pk_field="id"):
+    """Delete a queryset in fixed-size batches, one transaction per batch.
+
+    Returns the total number of deleted rows. Each batch resolves a bounded
+    page of primary keys and deletes only those, so memory stays flat
+    regardless of how much backlog has accumulated.
+    """
+    ordered = queryset.order_by("pk")
+    total_deleted = 0
+
+    while True:
+        batch_ids = list(ordered.values_list(pk_field, flat=True)[:BATCH_SIZE])
+        if not batch_ids:
+            break
+
+        deleted_count = ordered.filter(**{f"{pk_field}__in": batch_ids}).delete()[0]
+        total_deleted += deleted_count
+
+        # Stop if a batch deleted nothing to avoid an infinite loop on rows that
+        # cannot be removed (e.g. protected relations).
+        if not deleted_count:
+            break
+
+    return total_deleted
+
 
 def run_data_archiving(*args, **kwargs):
     now = timezone.now()
@@ -38,7 +68,7 @@ def run_data_archiving(*args, **kwargs):
             deleted_records=tracing_deleted,
         )
 
-    events_deleted = utils.failsafe(lambda: event_data.delete()[0]) or 0
+    events_deleted = utils.failsafe(lambda: _batched_delete(event_data)) or 0
     if events_deleted:
         logger.info(
             "Archiving events backlog",
@@ -46,7 +76,7 @@ def run_data_archiving(*args, **kwargs):
             deleted_records=events_deleted,
         )
 
-    api_logs_deleted = utils.failsafe(lambda: api_log_data.delete()[0]) or 0
+    api_logs_deleted = utils.failsafe(lambda: _batched_delete(api_log_data)) or 0
     if api_logs_deleted:
         logger.info(
             "Archiving API request logs backlog",
@@ -127,74 +157,62 @@ def _bulk_delete_tracing_data(tracing_queryset):
         return total_deleted
 
 
+def _batched_delete_with_links(queryset, link_model):
+    """Delete a queryset in batches, clearing matching org links per batch.
+
+    Mirrors ``_batched_delete`` but first removes the organization link rows
+    (``item_id`` based) for each batch to avoid CASCADE N+1 queries, then
+    deletes the batch itself. Bounded memory regardless of backlog (GH #1125).
+    """
+    ordered = queryset.order_by("pk")
+    total_deleted = 0
+
+    while True:
+        batch_ids = list(ordered.values_list("id", flat=True)[:BATCH_SIZE])
+        if not batch_ids:
+            break
+
+        if link_model is not None:
+            link_model.objects.filter(item_id__in=batch_ids).delete()
+
+        deleted_count = ordered.filter(id__in=batch_ids).delete()[0]
+        total_deleted += deleted_count
+
+        if not deleted_count:
+            break
+
+    return total_deleted
+
+
 def _bulk_delete_tracking_data(tracking_queryset):
-    """Bulk delete tracking data to avoid N+1 queries with organization links."""
-    queryset = tracking_queryset.order_by("pk")
-
+    """Batch-delete tracking data, clearing organization links per batch."""
     try:
-        from karrio.server.orgs.models import TrackingLink
-
-        # Get the tracking record IDs that will be deleted
-        tracking_ids = list(queryset.values_list("id", flat=True))
-
-        if tracking_ids:
-            # Bulk delete TrackingLink entries first to avoid CASCADE N+1 queries
-            TrackingLink.objects.filter(item_id__in=tracking_ids).delete()
-
-        # Now delete the tracking records themselves
-        deleted = queryset.delete()[0]
-
+        from karrio.server.orgs.models import TrackingLink as link_model
     except ImportError:
-        # Organizations module not installed, just delete normally
-        deleted = queryset.delete()[0]
+        # Organizations module not installed.
+        link_model = None
 
-    return deleted
+    return _batched_delete_with_links(tracking_queryset, link_model)
 
 
 def _bulk_delete_shipment_data(shipment_queryset):
-    """Bulk delete shipment data to avoid N+1 queries with organization links."""
-    queryset = shipment_queryset.order_by("pk")
-
+    """Batch-delete shipment data, clearing organization links per batch."""
     try:
-        from karrio.server.orgs.models import ShipmentLink
-
-        # Get the shipment record IDs that will be deleted
-        shipment_ids = list(queryset.values_list("id", flat=True))
-
-        if shipment_ids:
-            # Bulk delete ShipmentLink entries first to avoid CASCADE N+1 queries
-            ShipmentLink.objects.filter(item_id__in=shipment_ids).delete()
-
-        # Now delete the shipment records themselves
-        deleted = queryset.delete()[0]
-
+        from karrio.server.orgs.models import ShipmentLink as link_model
     except ImportError:
-        # Organizations module not installed, just delete normally
-        deleted = queryset.delete()[0]
+        # Organizations module not installed.
+        link_model = None
 
-    return deleted
+    return _batched_delete_with_links(shipment_queryset, link_model)
 
 
 def _bulk_delete_order_data(order_queryset):
-    """Bulk delete order data to avoid N+1 queries with organization links."""
-    queryset = order_queryset.order_by("pk")
-
+    """Batch-delete order data, clearing organization links per batch."""
     try:
-        from karrio.server.orgs.models import OrderLink
-
-        # Get the order record IDs that will be deleted
-        order_ids = list(queryset.values_list("id", flat=True))
-
-        if order_ids:
-            # Bulk delete OrderLink entries first to avoid CASCADE N+1 queries
-            OrderLink.objects.filter(item_id__in=order_ids).delete()
-
-        # Now delete the order records themselves
-        deleted = queryset.delete()[0]
-
+        from karrio.server.orgs.models import OrderLink as link_model
     except ImportError:
-        # Organizations module not installed, just delete normally
-        deleted = queryset.delete()[0]
+        # Organizations module not installed.
+        link_model = None
 
-    return deleted
+    return _batched_delete_with_links(order_queryset, link_model)
 
