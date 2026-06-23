@@ -2096,6 +2096,7 @@ export enum CarrierNameEnum {
   seko = "seko",
   sendle = "sendle",
   shipengine = "shipengine",
+  smartkargo = "smartkargo",
   spring = "spring",
   teleship = "teleship",
   tge = "tge",
@@ -2605,6 +2606,7 @@ export interface SystemShipmentFilter {
   has_manifest?: boolean | null;
   is_return?: boolean | null;
   request_id?: string | null;
+  is_archived?: boolean | null;
   account_id?: string | null;
 }
 
@@ -2619,6 +2621,7 @@ export interface SystemTrackerFilter {
   status?: string[] | null;
   keyword?: string | null;
   request_id?: string | null;
+  is_archived?: boolean | null;
   account_id?: string | null;
 }
 
@@ -2740,6 +2743,9 @@ export interface CreateServiceLevelInput {
   domicile?: boolean | null;
   international?: boolean | null;
   features?: ServiceLevelFeaturesInput | null;
+  age_check?: string | null;
+  neighbor_delivery?: boolean | null;
+  saturday_delivery?: boolean | null;
   zone_ids?: string[] | null;
   surcharge_ids?: string[] | null;
   metadata?: any | null;
@@ -2846,6 +2852,9 @@ export interface UpdateServiceLevelInput {
   domicile?: boolean | null;
   international?: boolean | null;
   features?: ServiceLevelFeaturesInput | null;
+  age_check?: string | null;
+  neighbor_delivery?: boolean | null;
+  saturday_delivery?: boolean | null;
   zone_ids?: string[] | null;
   surcharge_ids?: string[] | null;
   metadata?: any | null;

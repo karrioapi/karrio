@@ -18,6 +18,8 @@ Name | Type | Description | Notes
 **meta** | **{ [key: string]: any; }** | provider specific metadata | [optional] [default to undefined]
 **images** | [**Images**](Images.md) | The tracker documents | [optional] [default to undefined]
 **object_type** | **string** | Specifies the object type | [optional] [default to 'tracker']
+**is_archived** | **boolean** | Indicates whether this tracker is archived. | [optional] [default to false]
+**archived_at** | **string** | Timestamp when the tracker was archived. | [optional] [default to undefined]
 **metadata** | **{ [key: string]: any; }** | User metadata for the tracker | [optional] [default to undefined]
 **messages** | [**Array&lt;Message&gt;**](Message.md) | The list of note or warning messages | [optional] [default to undefined]
 
@@ -40,6 +42,8 @@ const instance: TrackerDetails = {
     meta,
     images,
     object_type,
+    is_archived,
+    archived_at,
     metadata,
     messages,
 };

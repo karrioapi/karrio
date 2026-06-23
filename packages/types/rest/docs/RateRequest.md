@@ -15,6 +15,7 @@ Name | Type | Description | Notes
 **customs** | [**CustomsData**](CustomsData.md) | The customs details.&lt;br/&gt;         **Note that this is required for international shipments.**          | [optional] [default to undefined]
 **return_address** | [**AddressData**](AddressData.md) | The return address for this shipment. Defaults to the shipper address. | [optional] [default to undefined]
 **billing_address** | [**AddressData**](AddressData.md) | The billing address for this shipment. | [optional] [default to undefined]
+**is_return** | **boolean** | Indicates whether this is a return shipment rate request. | [optional] [default to false]
 **carrier_ids** | **Array&lt;string&gt;** | The list of configured carriers you wish to get rates from. | [optional] [default to undefined]
 
 ## Example
@@ -33,6 +34,7 @@ const instance: RateRequest = {
     customs,
     return_address,
     billing_address,
+    is_return,
     carrier_ids,
 };
 ```
