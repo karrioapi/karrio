@@ -1,0 +1,102 @@
+import { test, expect, type Route } from "@playwright/test";
+
+// Dashboard-parity screens: Manifests, Batches (REST), Workflows, Rate sheets
+// (GraphQL), Usage (REST). List render + row→detail sheet (where applicable).
+const CORS = {
+  "access-control-allow-origin": "*",
+  "access-control-allow-methods": "GET,POST,OPTIONS",
+  "access-control-allow-headers": "authorization,x-org-id,x-test-mode,content-type",
+};
+const json = (route: Route, body: unknown) =>
+  route.request().method() === "OPTIONS"
+    ? route.fulfill({ status: 204, headers: CORS, body: "" })
+    : route.fulfill({ status: 200, headers: { ...CORS, "content-type": "application/json" }, body: JSON.stringify(body) });
+const paged = (results: unknown[]) => ({ count: results.length, next: null, previous: null, results });
+const edges = (field: string, nodes: unknown[]) => ({ data: { [field]: { edges: nodes.map((node) => ({ node })) } } });
+
+const REST: Record<string, unknown> = {
+};
+const GQL: Record<string, unknown> = {
+  manifests: edges("manifests", [{ id: "mf_1", carrier_name: "ups", reference: "MAN-1001", created_at: "2026-05-28T10:00:00Z", manifest_url: "http://x/m.pdf", shipment_identifiers: ["shp_1", "shp_2"] }]),
+  batch_operations: edges("batch_operations", [{ id: "bat_1", status: "completed", resource_type: "shipments", created_at: "2026-05-28T09:00:00Z", resources: [{ id: "r1" }] }]),
+  workflows: edges("workflows", [{ id: "wf_1", name: "Auto-fulfill", description: "Fulfill paid orders", is_active: true, trigger: "order.paid", action_count: 3 }]),
+  rate_sheets: edges("rate_sheets", [{ id: "rs_1", name: "UPS Negotiated", carrier_name: "ups", services_count: 8, is_system: false }]),
+  // Usage now comes from GraphQL `system_usage` (mapped to plan/metrics by the hook).
+  system_usage: { data: { system_usage: {
+    total_shipments: 2143, total_trackers: 1002, total_requests: 142300, total_shipping_spend: 18402, order_volume: 219,
+    shipment_count: [{ date: "2026-05-01", count: 12 }, { date: "2026-05-02", count: 31 }, { date: "2026-05-03", count: 22 }],
+    shipping_spend: [{ date: "2026-05-01", count: 140 }, { date: "2026-05-02", count: 380 }, { date: "2026-05-03", count: 210 }],
+    api_requests: [], order_volumes: [], tracker_count: [],
+  } } },
+};
+
+test.describe("Dashboard parity screens", () => {
+  test.beforeEach(async ({ page }) => {
+    for (const [path, body] of Object.entries(REST)) {
+      await page.route(`**${path}**`, (route) => json(route, body));
+    }
+    await page.route("**/graphql", (route) => {
+      if (route.request().method() === "OPTIONS") return route.fulfill({ status: 204, headers: CORS, body: "" });
+      const q = route.request().postData() ?? "";
+      const field = Object.keys(GQL).find((f) => q.includes(f));
+      return json(route, field ? GQL[field] : { data: {} });
+    });
+  });
+
+  test("Manifests: list + row → sheet", async ({ page }) => {
+    await page.goto("/manifests");
+    await expect(page.getByTestId("screen-manifests")).toBeVisible();
+    await expect(page.getByTestId("manifest-row-mf_1")).toContainText("MAN-1001");
+    await page.getByTestId("manifest-row-mf_1").click();
+    await expect(page.getByTestId("manifest-sheet-body")).toBeVisible();
+  });
+
+  test("Batches: list + row → sheet", async ({ page }) => {
+    await page.goto("/batches");
+    await expect(page.getByTestId("batch-row-bat_1")).toContainText("shipments");
+    await page.getByTestId("batch-row-bat_1").click();
+    await expect(page.getByTestId("batch-sheet-body")).toBeVisible();
+  });
+
+  test("Workflows: list + row → sheet", async ({ page }) => {
+    await page.goto("/workflows");
+    await expect(page.getByTestId("workflow-row-wf_1")).toContainText("Auto-fulfill");
+    await page.getByTestId("workflow-row-wf_1").click();
+    await expect(page.getByTestId("workflow-sheet-body")).toBeVisible();
+  });
+
+  test("Rate sheets: list + row → editor", async ({ page }) => {
+    await page.goto("/ratesheets");
+    await expect(page.getByTestId("ratesheet-row-rs_1")).toContainText("UPS Negotiated");
+    await page.getByTestId("ratesheet-row-rs_1").click();
+    await expect(page.getByTestId("ratesheet-sheet-body")).toBeVisible();
+    await expect(page.getByTestId("rs-services")).toBeVisible();
+  });
+
+  test("Rate sheets: create with CSV import of services", async ({ page }) => {
+    await page.route("**/v1/references**", (route) =>
+      route.fulfill({ status: 200, headers: { "content-type": "application/json", "access-control-allow-origin": "*" }, body: JSON.stringify({ carriers: { ups: "UPS", fedex: "FedEx" }, connection_fields: {} }) }));
+    await page.goto("/ratesheets");
+    await expect(page.getByTestId("ratesheet-row-rs_1")).toBeVisible();
+    await page.getByTestId("ratesheet-create").click();
+    await expect(page.getByTestId("ratesheet-sheet-body")).toBeVisible();
+    await page.getByTestId("rs-name").fill("My negotiated rates");
+    await page.getByTestId("rs-carrier").selectOption("fedex");
+    // Import services from CSV.
+    await page.getByTestId("rs-csv").fill("service_code,service_name,currency,cost,transit_days\nfedex_ground,Ground,USD,9.99,3\nfedex_2day,2 Day,USD,18.5,2");
+    await page.getByTestId("rs-csv-import").click();
+    await expect(page.getByTestId("rs-service-code-0")).toHaveValue("fedex_ground");
+    await expect(page.getByTestId("rs-service-code-1")).toHaveValue("fedex_2day");
+    await page.getByTestId("ratesheet-save").click();
+    await expect(page.getByTestId("ratesheet-sheet-body")).toHaveCount(0);
+  });
+
+  test("Usage: plan + metrics + trend charts render", async ({ page }) => {
+    await page.goto("/usage");
+    await expect(page.getByTestId("usage-plan")).toContainText("Open Source");
+    await expect(page.getByTestId("usage-metrics")).toContainText("Shipments");
+    // Time-series → trend charts render from the system_usage series.
+    await expect(page.getByTestId("usage-chart-shipment_count")).toBeVisible();
+    await expect(page.getByTestId("usage-chart-shipping_spend")).toBeVisible();
+  });
+});

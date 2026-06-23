@@ -1,0 +1,136 @@
+// modes.ts — Ship / Build / Govern information architecture.
+// Mode is the core IA primitive: switching swaps the nav and jumps to the
+// mode default route; mode is also auto-derived from the active route so
+// deep links land in the right mode.
+import { Icon, type IconName } from "~/components/ui/icons";
+
+export type Mode = "ship" | "build" | "govern";
+
+export type NavItem = {
+  icon: IconName;
+  label: string;
+  route: string;
+  badge?: string;
+  /** Optional deployment feature flag (from /v1/references) that gates this item. */
+  flag?: string;
+};
+
+export type NavGroup = {
+  label?: string;
+  items: NavItem[];
+};
+
+export const MODE_LABELS: Record<Mode, { label: string; icon: IconName }> = {
+  ship: { label: "Ship", icon: "Truck" },
+  build: { label: "Build", icon: "Code" },
+  govern: { label: "Govern", icon: "Shield" },
+};
+
+export const MODE_DEFAULTS: Record<Mode, string> = {
+  ship: "home",
+  build: "apps",
+  govern: "admin",
+};
+
+export const NAV: Record<Mode, NavGroup[]> = {
+  ship: [
+    {
+      items: [
+        { icon: "Home", label: "Home", route: "home" },
+        { icon: "Truck", label: "Shipments", route: "shipments" },
+        { icon: "Pin", label: "Trackers", route: "trackers" },
+        { icon: "Inbox", label: "Orders", route: "orders", flag: "ORDERS_MANAGEMENT" },
+        { icon: "Box", label: "Pickups", route: "pickups" },
+      ],
+    },
+    {
+      label: "Setup",
+      items: [
+        { icon: "Plug", label: "Connections", route: "connections" },
+        { icon: "Activity", label: "Shipping rules", route: "rules", flag: "SHIPPING_RULES" },
+        { icon: "Pin", label: "Addresses", route: "addresses" },
+        { icon: "Pkg", label: "Parcels", route: "parcels" },
+        { icon: "Tag", label: "Products", route: "products" },
+        { icon: "Doc", label: "Documents", route: "documents", flag: "DOCUMENTS_MANAGEMENT" },
+      ],
+    },
+    {
+      label: "Operations",
+      items: [
+        { icon: "Doc", label: "Manifests", route: "manifests" },
+        { icon: "Grid", label: "Batches", route: "batches" },
+      ],
+    },
+  ],
+  build: [
+    {
+      items: [
+        { icon: "Grid", label: "Apps", route: "apps", flag: "APPS_MANAGEMENT" },
+        { icon: "Plug", label: "Plugins", route: "plugins" },
+        { icon: "Terminal", label: "MCP", route: "mcp" },
+        { icon: "Code", label: "Editor", route: "editor" },
+      ],
+    },
+    {
+      label: "Developer",
+      items: [
+        { icon: "Webhook", label: "Webhooks", route: "webhooks" },
+        { icon: "Key", label: "API keys", route: "apikeys" },
+        { icon: "Activity", label: "Workflows", route: "workflows", flag: "WORKFLOW_MANAGEMENT" },
+      ],
+    },
+  ],
+  govern: [
+    {
+      items: [
+        { icon: "Home", label: "Overview", route: "admin" },
+        { icon: "Workspace", label: "Tenants", route: "tenants", flag: "MULTI_ORGANIZATIONS" },
+        { icon: "User", label: "Team & roles", route: "team" },
+        { icon: "Lock", label: "Security", route: "security" },
+        { icon: "Doc", label: "Audit log", route: "audit" },
+        { icon: "Settings", label: "Settings", route: "settings" },
+      ],
+    },
+    {
+      label: "Billing & rates",
+      items: [
+        { icon: "Tag", label: "Rate sheets", route: "ratesheets" },
+        { icon: "Activity", label: "Usage & billing", route: "usage" },
+      ],
+    },
+  ],
+};
+
+const BUILD_ROUTES = new Set([
+  "apps",
+  "plugins",
+  "mcp",
+  "editor",
+  "webhooks",
+  "apikeys",
+  "workflows",
+]);
+const GOVERN_ROUTES = new Set([
+  "admin",
+  "tenants",
+  "team",
+  "security",
+  "audit",
+  "settings",
+  "ratesheets",
+  "usage",
+]);
+
+export function routeMode(route: string): Mode {
+  if (BUILD_ROUTES.has(route)) return "build";
+  if (GOVERN_ROUTES.has(route)) return "govern";
+  return "ship";
+}
+
+// Flat list of every screen route — used by the splat route + tests.
+export const ALL_ROUTES: string[] = Object.values(NAV)
+  .flat()
+  .flatMap((group) => group.items.map((item) => item.route));
+
+// Re-export Icon so consumers importing from modes get a single source.
+export { Icon };

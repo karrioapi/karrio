@@ -157,3 +157,6 @@ htmlcov/
 # Temporary files
 *.tmp
 *.backup
+
+# Claude Code harness-managed temporary agent worktrees
+.claude/worktrees/

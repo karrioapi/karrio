@@ -20,7 +20,10 @@
   },
   "name": "karrio",
   "workspaces": [
-    "apps/*",
+    "apps/api",
+    "apps/dashboard",
+    "apps/web",
+    "apps/www",
     "packages/*",
     "ee/apps/*",
     "ee/packages/*",

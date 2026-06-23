@@ -18,10 +18,23 @@ import karrio.server.manager.serializers as manager_serializers
 
 FONT_CONFIG = fonts.FontConfiguration()
 PAGE_SEPARATOR = '<p style="page-break-before: always"></p>'
+
+
+def _remote_css(url: str):
+    # Offline-resilient: skip the CDN stylesheet when unreachable (e.g. air-gapped
+    # / restricted-egress sandboxes) instead of failing at import time.
+    try:
+        return weasyprint.CSS(url=url)
+    except Exception:  # noqa: BLE001 - never let document styling break startup
+        return None
+
+
 STYLESHEETS = [
-    weasyprint.CSS(url="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"),
-    weasyprint.CSS(
-        string="""
+    css
+    for css in [
+        _remote_css("https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"),
+        weasyprint.CSS(
+            string="""
         @page { margin: 1cm }
         @font-face {
             font-family: 'system';
@@ -29,7 +42,9 @@ STYLESHEETS = [
         }
         body { font-family: 'system', sans-serif; }
     """
-    ),
+        ),
+    ]
+    if css is not None
 ]
 UNITS = {
     "PAGE_SEPARATOR": PAGE_SEPARATOR,

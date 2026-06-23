@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* shadcn/ui theme tokens mapped to the Karrio Studio enterprise palette.
+   Dark is the default (:root); light is applied via [data-theme="light"].
+   Sharp corners by design: --radius is small. */
+@layer base {
+  :root,
+  [data-theme="dark"] {
+    --background: 240 9% 4%;
+    --foreground: 240 16% 92%;
+    --card: 240 11% 9%;
+    --card-foreground: 240 16% 92%;
+    --popover: 240 11% 9%;
+    --popover-foreground: 240 16% 92%;
+    --primary: 258 90% 66%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 10% 11%;
+    --secondary-foreground: 240 16% 92%;
+    --muted: 240 10% 11%;
+    --muted-foreground: 240 5% 56%;
+    --accent: 240 10% 11%;
+    --accent-foreground: 240 16% 92%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 14% 15%;
+    --input: 240 11% 20%;
+    --ring: 258 90% 66%;
+    --radius: 0.25rem;
+  }
+
+  [data-theme="light"] {
+    --background: 60 11% 98%;
+    --foreground: 240 6% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 6% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 6% 10%;
+    --primary: 262 83% 58%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 60 6% 94%;
+    --secondary-foreground: 240 6% 10%;
+    --muted: 60 6% 94%;
+    --muted-foreground: 240 3% 43%;
+    --accent: 60 6% 94%;
+    --accent-foreground: 240 6% 10%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 60 6% 89%;
+    --input: 60 6% 85%;
+    --ring: 262 83% 58%;
+  }
+
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
