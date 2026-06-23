@@ -71,7 +71,7 @@ export default function TrackersPage(pageProps: any) {
     } = context;
 
     const remove = (id: string) => async () => {
-      await mutation.deleteTracker.mutateAsync({ idOrTrackingNumber: id });
+      await mutation.deleteTracker.mutateAsync({ identifier: id });
     };
     const updateFilter = (extra: Partial<any> = {}) => {
       const query = {

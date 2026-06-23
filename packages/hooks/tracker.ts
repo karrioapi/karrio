@@ -127,7 +127,7 @@ export function useTrackerMutation() {
     { onSuccess: invalidateCache, onError },
   );
   const deleteTracker = useMutation(
-    (data: { idOrTrackingNumber: string }) =>
+    (data: { identifier: string }) =>
       handleFailure(karrio.trackers.remove(data)),
     { onSuccess: invalidateCache, onError },
   );
