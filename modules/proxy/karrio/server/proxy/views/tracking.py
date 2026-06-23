@@ -1,20 +1,19 @@
-from django.urls import path
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.request import Request
-
-import karrio.server.openapi as openapi
 import karrio.server.core.dataunits as dataunits
-from karrio.server.core.logging import logger
-from karrio.server.core.views.api import APIView
+import karrio.server.openapi as openapi
+from django.urls import path
+from karrio.server.core.gateway import Shipments
 from karrio.server.core.serializers import (
+    ErrorMessages,
+    ErrorResponse,
     TrackingData,
     TrackingResponse,
-    ErrorResponse,
-    ErrorMessages,
 )
-from karrio.server.core.gateway import Shipments
+from karrio.server.core.views.api import APIView
 from karrio.server.proxy.router import router
+from rest_framework import status
+from rest_framework.request import Request
+from rest_framework.response import Response
+
 ENDPOINT_ID = "@@@@"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 
@@ -53,29 +52,19 @@ class TrackingAPIView(APIView):
         carrier_filter = {
             **{k: v for k, v in query.items() if k != "hub"},
             # If a hub is specified, use the hub as carrier to track the package
-            "carrier_name": (
-                query.get("hub") if "hub" in query else data["carrier_name"]
-            ),
+            "carrier_name": (query.get("hub") if "hub" in query else data["carrier_name"]),
         }
         data = {
             **data,
             "tracking_numbers": [data["tracking_number"]],
-            "options": (
-                {data["tracking_number"]: {"carrier": data["carrier_name"]}}
-                if "hub" in query
-                else {}
-            ),
+            "options": ({data["tracking_number"]: {"carrier": data["carrier_name"]}} if "hub" in query else {}),
         }
 
         response = Shipments.track(data, context=request, **carrier_filter)
 
         return Response(
             TrackingResponse(response).data,
-            status=(
-                status.HTTP_200_OK
-                if response.tracking is not None
-                else status.HTTP_404_NOT_FOUND
-            ),
+            status=(status.HTTP_200_OK if response.tracking is not None else status.HTTP_404_NOT_FOUND),
         )
 
 
@@ -129,20 +118,14 @@ class TrackingAPI(APIView):
         }
         data = {
             "tracking_numbers": [tracking_number],
-            "options": (
-                {tracking_number: {"carrier": carrier_name}} if "hub" in query else {}
-            ),
+            "options": ({tracking_number: {"carrier": carrier_name}} if "hub" in query else {}),
         }
 
         response = Shipments.track(data, context=request, **carrier_filter)
 
         return Response(
             TrackingResponse(response).data,
-            status=(
-                status.HTTP_200_OK
-                if response.tracking is not None
-                else status.HTTP_404_NOT_FOUND
-            ),
+            status=(status.HTTP_200_OK if response.tracking is not None else status.HTTP_404_NOT_FOUND),
         )
 
 

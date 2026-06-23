@@ -1,0 +1,1024 @@
+---
+openapi: "3.0.0"
+info:
+  title: "Customs API v3"
+  version: "3.3.0"
+  description: "This API allows to create customs information for Parcels handled\
+    \ in the GLS network, i.e. create Customs Consignments, define Importers, Exporters\
+    \ and Consignees, and upload customs-relevant documents like commercial invoices.<br>\
+    \ \n> Please be aware that documents to be transferred, must already be uploaded\
+    \ to the GLS Document store via [Document management API](/docs/document-management-v1/1/overview).\
+    \ For details have a look at <a href=\"/customs-document-management-api\">Customs\
+    \ Document Management Overview</a>. <strong>A registration of [Customs Document\
+    \ Management API](/docs/document-management-v1/1/overview) is not required.</strong>\n\
+    \nNote that below services <strong>require authentication</strong> via OAuth Client\
+    \ Credentials flow - use our <a href=\"/docs/authentification-service/1/overview\"\
+    >Authentication API</a> to issue a token. \n> If you are not a Customer of GLS\
+    \ yet **please contact your local GLS representative first.**\n\n<hr> <h1>Getting\
+    \ started</h1><br>\n\n <ol> <li>Create an app to generate your client credentials\
+    \ and register for <i>Customs API v3</i>. Find more information on how to create\
+    \ an app [here](/get-started). Use the generated credentials to issue a token\
+    \ and play around in the sandbox environment. Any data on the sandbox environment\
+    \ gets deleted after 3 days.\n\n</li><li>After successful testing in the sandbox\
+    \ environment you can gain PROD access by contacting your GLS representative.\
+    \ Your GLS Contact needs to create a Ticket which contains the following Information:<br>\n\
+    Provided by you:<br><ul><li>APP ID, APP Name, API Key, Company Name</li></ul>\n\
+    Added by your GLS Contact:<br><ul><li>Customer ID, Country Code, Location Code.</li></ul>\n\
+    If The API Access should be granted for one Contact only, the Contact ID is also\
+    \ needed.</li>\n<li> If you have questions regarding functional or technical issues\
+    \ please contact your local GLS representative.</li> <br>\n\n<sub><sup> **Corporate\
+    \ information:** <br>  \nGeneral Logistics Systems, Germany GmbH & Co. OHG, GLS\
+    \ Germany-Straße 1 - 7, 36286 Neuenstein, Germany / \nAuthorised representatives:\
+    \ Personally liable participators: GLS Beteiligungs GmbH, represented by Saadi\
+    \ Al-Soudani, Eberhard Fritze, Martin Seidenberg and Dr. Karl Pfaff, General Logistics\
+    \ Systems B.V., represented by Martin Seidenberg / \nCommercial Register No: Local\
+    \ Court Bad Hersfeld HRA 863, Sales Tax ID No: DE 812802911 / \nInformation on\
+    \ Online Dispute Resolution for consumers: The EU commission has set up an online\
+    \ platform for the online-resolution of disputes ('ODR-platform'). This platform\
+    \ serves as a contact point for extrajudicial resolutions of disputes concerning\
+    \ contractual obligations, arising from online sales or services agreements. Customers\
+    \ can reach the ODR-platform under the following [link] (http://ec.europa.eu/consumers/odr)\
+    \ / \nGeneral obligation to provide information under Section 36 of the German\
+    \ Act on Alternative Dispute Resolution in Consumer Matters (VSBG), Senders who\
+    \ contractually make use of postal services of GLS Germany under generally accessible\
+    \ conditions with regard to prices and services (e.g. via GLS ParcelShops, GLS-ONE\
+    \ and GLS App) and their recipients, may call upon the regulatory authority as\
+    \ conciliation body for the settlement of disputes with GLS Germany concerning\
+    \ rights and obligations in the event of loss, theft or damage to postal items\
+    \ or the infringement of their own rights to which they are entitled on the basis\
+    \ of a statutory ordinance under Section 18 of the German Postal Act, if dispute\
+    \ settlement with GLS Germany has previously been unsuccessful. If a consumer\
+    \ calls the conciliation body, GLS Germany is obliged to take part in the dispute\
+    \ resolution procedure. Beyond that, GLS Germany does not to take part in dispute\
+    \ resolution procedures before a consumer conciliation body. / \nCompetent consumer\
+    \ conciliation body - Bundesnetzagentur für Elektrizität, Gas, Telekommunikation,\
+    \ Post und Eisenbahnen, Schlichtungsstelle Post, Tulpenfeld 4, 53113 Bonn, Internet\
+    \ - www. bundesnetzagentur. de / \nTo the extent participation is mandatory, GLS\
+    \ Germany will take part in a dispute resolution procedure before this consumer\
+    \ conciliation body.\n<br>\n</sub></sup>\n<br>"
+  contact:
+    name: "GLS Group"
+    url: "https://www.gls-group.eu"
+  termsOfService: "https://dev-portal.gls-group.net/terms"
+tags:
+- name: "Customs Consignments"
+servers:
+- url: "https://api-sandbox.gls-group.net/customs-management/export/public/v3"
+  description: "Sandbox - uses test data"
+- url: "https://api.gls-group.net/customs-management/export/public/v3"
+  description: "Production - to be used only in PROD"
+- url: "https://api-qas.gls-group.net/customs-management/export/public/v3"
+  description: "QAS - to be used for integration tests"
+paths:
+  /customs-consignments:
+    post:
+      tags:
+      - "Customs Consignments"
+      summary: "create customs consignments"
+      operationId: "post-customs-consignments"
+      responses:
+        "201":
+          description: "Created"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  key:
+                    type: "string"
+                    description: "unique key of a succesfully created customs consignment"
+                    example: "6OEco7YAwmaKke2aCAOEdQ"
+                    maxLength: 50
+                required:
+                - "key"
+        "400":
+          description: "Bad Request"
+          headers: {}
+          content:
+            application/problem+json:
+              schema:
+                type: "object"
+                description: "Problem JSON object according to RFC7807"
+                properties:
+                  status:
+                    type: "string"
+                    default: "400"
+                    description: "HTTP status code"
+                  type:
+                    type: "string"
+                    example: "/problems/validation_error"
+                    enum:
+                    - "/problems/validation_error"
+                    default: "/problems/validation_error"
+                    description: "Opposed to RFC-7807, this will have relative URIs\
+                      \ only. Not dereferencable and not pointing to human readably\
+                      \ documentation."
+                  title:
+                    type: "string"
+                    example: "customs consignment data contained validation problems"
+                    description: "Short, static, technical description of the problem"
+                  errors:
+                    type: "array"
+                    description: "An array including all related errors"
+                    items:
+                      type: "object"
+                      description: "A validation result"
+                      properties:
+                        field:
+                          type: "string"
+                          example: "lineItems/2/commodityCode"
+                          description: "JSON pointer to the data field"
+                        code:
+                          type: "string"
+                          example: "MISSING_FIELD"
+                          description: "Type of validation error"
+                        message:
+                          type: "string"
+                          example: "Unknown commodity code"
+                          description: "Description of the validation error"
+              examples:
+                example-1:
+                  value:
+                    status: "400"
+                    type: "/problems/validation_error"
+                    title: "customs consignment data contained validation problems"
+                    errors:
+                    - field: "lineItems/2/countryOfOriginIsoCode"
+                      code: "INVALID_DATA"
+                      message: "Unknown country"
+      description: "Endpoint to create a customs consignment in GLS Customs Portal.\
+        \ A consignment can only be created if all technical and  subject related\
+        \ checks have been passed successfully. If all checks are passed the further\
+        \ processing is performed automatically. \nIn case of a collective customs\
+        \ clearance with same importer but various consignees leave the consignee\
+        \ segment empty.\nUse the save as draft feature to prevent automatic further\
+        \ processing of a consignment. Editing of the consignment can then be continued\
+        \ in the corresponding Customs Portal web application.\nCheck the address\
+        \ data provided for correctness and completeness.\nCorrect data avoid unnecessary\
+        \ costs for you as the sender if the customs invoice cannot be delivered due\
+        \ to incorrect address data."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomsConsignment"
+        description: ""
+      security:
+      - OAuthSandbox: []
+  /transit-shipments:
+    post:
+      tags:
+      - "Customs Consignments"
+      summary: "create transit shipments"
+      operationId: "post-transit-shipments"
+      responses:
+        "201":
+          description: "Created"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  key:
+                    type: "string"
+                    description: "unique key of a succesfully created customs consignment"
+                    example: "6OEco7YAwmaKke2aCAOEdQ"
+                    maxLength: 50
+                required:
+                - "key"
+        "400":
+          description: "Bad Request"
+          headers: {}
+          content:
+            application/problem+json:
+              schema:
+                type: "object"
+                description: "Problem JSON object according to RFC7807"
+                properties:
+                  status:
+                    type: "string"
+                    default: "400"
+                    description: "HTTP status code"
+                  type:
+                    type: "string"
+                    example: "/problems/validation_error"
+                    enum:
+                    - "/problems/validation_error"
+                    default: "/problems/validation_error"
+                    description: "Opposed to RFC-7807, this will have relative URIs\
+                      \ only. Not dereferencable and not pointing to human readably\
+                      \ documentation."
+                  title:
+                    type: "string"
+                    example: "customs consignment data contained validation problems"
+                    description: "Short, static, technical description of the problem"
+                  errors:
+                    type: "array"
+                    description: "An array including all related errors"
+                    items:
+                      type: "object"
+                      description: "A validation result"
+                      properties:
+                        field:
+                          type: "string"
+                          example: "lineItems/2/commodityCode"
+                          description: "JSON pointer to the data field"
+                        code:
+                          type: "string"
+                          example: "MISSING_FIELD"
+                          description: "Type of validation error"
+                        message:
+                          type: "string"
+                          example: "Unknown commodity code"
+                          description: "Description of the validation error"
+              examples:
+                example-1:
+                  value:
+                    status: "400"
+                    type: "/problems/validation_error"
+                    title: "customs consignment data contained validation problems"
+                    errors:
+                    - field: "lineItems/2/countryOfOriginIsoCode"
+                      code: "INVALID_DATA"
+                      message: "Unknown country"
+      description: "Endpoint to create a transit shipment in GLS Customs Portal. A\
+        \ shipment can only be created if all technical and  subject related checks\
+        \ have been passed successfully. If all checks are passed the further processing\
+        \ is performed automatically."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransitShipment"
+        description: ""
+      security:
+      - OAuthSandbox: []
+    parameters: []
+components:
+  schemas:
+    CustomsConsignment:
+      title: "customsConsignment"
+      type: "object"
+      description: "data object for validating and editing customs data before sending\
+        \ data to customs export filing service"
+      x-examples: null
+      x-tags:
+      - "GLS"
+      x-stoplight:
+        id: "9q6cbxfzhzd9j"
+      properties:
+        customerReference:
+          type: "string"
+          example: "1000007723"
+          description: "customer's reference number eg. delivery no. or invoice no.\
+            \ etc."
+          maxLength: 50
+        parcelNumbers:
+          type: "array"
+          description: "GLS parcel numbers or Tracking IDs. Array must contain at\
+            \ least 1 parcel number or Tracking ID"
+          minItems: 1
+          example:
+          - "18309142057"
+          - "18309142058"
+          - "18309142059"
+          items:
+            type: "string"
+            pattern: "^(\\d{11}|[A-Z0-9]{8})$"
+        additionalInformation:
+          type: "string"
+          description: "optional additional information about the consignment"
+        isExportDeclarationRequested:
+          type: "boolean"
+          description: "set to true if you request GLS to do the export customs declaration\
+            \ (always requires GLS eDeclarationService). \nSet to false if declaration\
+            \ is not needed at all. \nSet to false and insert export declaration MRN\
+            \ or rather transit MRN if declaration is done by your own.\n\nOption\
+            \ 1: no export declaration required (default)\nisExportDeclarationRequested\
+            \ = false \nexportDeclarationNumbers OR transitMRNs = empty\n\nOption\
+            \ 2: export declaration already done by customer \nisExportDeclarationRequested\
+            \ = false \nexportDeclarationNumbers OR transitMRNs = is filled\n\nOption\
+            \ 3: export declaration requested by GLS\nisExportDeclarationRequested\
+            \ = true \nexportDeclarationNumbers AND transitMRNs = empty\nAn export\
+            \ license is mandatory under customs law for goods with a value of €1,000\
+            \ or more. This service incurs additional costs which will be charged\
+            \ separately"
+          default: false
+        exportDeclarationNumbers:
+          type: "array"
+          description: "list of export declaration numbers if export customs declaration\
+            \ has already been made by customer. Mandatory depends on field \"isExportDeclarationRequested\"\
+            . Leave field empty if export declaration is not needed."
+          maxItems: 90
+          items:
+            type: "string"
+            example: "20DE485100011122M7"
+            maxLength: 20
+        transitMRNs:
+          type: "array"
+          description: "list of MRNs of according T-papers in case of transit procedure.\n\
+            Mandatory depends on field \"isExportDeclarationRequested\"."
+          maxItems: 1
+          items:
+            type: "string"
+            maxLength: 18
+        transitType:
+          type: "string"
+          enum:
+          - "T1"
+          - "T2"
+          example: "T1"
+          maxLength: 2
+          description: "type of transit procedure. T-type only relevant when providing\
+            \ a Transit MRN, leave empty otherwise.\nChoose T1 for the transport of\
+            \ non-Union goods between the EU and non-EU countries.\nChoose T2 for\
+            \ transport of Union goods between EU and non-EU countries"
+        glsIncotermCode:
+          type: "string"
+          example: "10"
+          description: "GLS specific incoterm (see your local GLS Group website for\
+            \ further details):<br />10: DDP, Exporter pays duties, taxes, customs\
+            \ clearance fee<br />11: DDP, indirect procedure 40 - Central clearance<br\
+            \ />12: DDP, indirect procedure 40 - Clearance final country<br />18:\
+            \ VAT, IOSS Registration Scheme & VOEC<br />20: DAP, Importer pays duties,\
+            \ taxes, customs clearance fee<br />21: DAP, direct procedure 40 - Central\
+            \ clearance<br />25: DAP, secure payment prior deliver - Importer pays\
+            \ duty + tax and clearance fee<br />30: DDP, Exporter pays duties, customs\
+            \ clearance fee - the importer pays taxes<br />33: DDP, indirect procedure\
+            \ 42 - external fiskal representative<br />40: DAP, cleared, Exporter\
+            \ pays customs clearance fee, the importer pays taxes and duties<br />41:\
+            \ DAP, direct procedure 40 - Central clearance<br />50: DDP, Exporter\
+            \ pays only customs clearance fee (only applicable for low value consignments)<br\
+            \ />91: External Broker Clearance <br />Applied currencies for usage of\
+            \ incoterms 18 and 50 are the following: <br /> EUR, CHF, CNY, JPY, CAD,\
+            \ AUD, SEK, INR, GBP, PLN, NOK, USD<br /> for other currencies incoterms\
+            \ 18 and 50 can not be used."
+          maxLength: 2
+          enum:
+          - "10"
+          - "11"
+          - "12"
+          - "18"
+          - "20"
+          - "21"
+          - "25"
+          - "30"
+          - "33"
+          - "40"
+          - "41"
+          - "50"
+          - "91"
+        totalGrossWeight:
+          allOf:
+          - $ref: "#/components/schemas/Weight"
+        saveAsDraft:
+          type: "boolean"
+          description: "set to true if customs consignment is to be saved as draft.\
+            \ This will prevent automatic processing of the consignment."
+          default: false
+        exporter:
+          type: "object"
+          description: "responsible party for exporting goods (usually the shipper\
+            \ or the invoicing party). Exporter country has to match country of API\
+            \ user account."
+          required:
+          - "address"
+          - "contactPerson"
+          - "isCommercial"
+          properties:
+            address:
+              allOf:
+              - $ref: "#/components/schemas/CustomsAddress"
+            contactPerson:
+              allOf:
+              - $ref: "#/components/schemas/ContactPerson"
+            eoriNumber:
+              type: "string"
+              description: "the EORI number (Economic Operators Registration and Identification\
+                \ number)."
+              maxLength: 50
+              example: "DE10224719977443322"
+            swissUid:
+              type: "string"
+              description: "UID (government identifier for a business entity in Switzerland).\
+                \ If export and import country are not part of EU the UID is mandatory\
+                \ for commercial exporters and incoterm 91"
+              maxLength: 50
+              example: "CHE123456789"
+            taxId:
+              type: "string"
+              description: "tax identification number"
+              maxLength: 50
+              example: "DE123456789"
+            vatRegistrationNumber:
+              type: "string"
+              maxLength: 50
+              description: "VAT registration number of exporter in country of destination\
+                \ (= import country) or VAT number of consignee. \nMandatory depends\
+                \ on field \"glsIncotermCode\". Needed when using GLS incoterm 18."
+            isCommercial:
+              type: "boolean"
+              description: "marks the exporter as commercial business partner"
+            authorizationNumber:
+              type: "string"
+              maxLength: 50
+              description: "authorization number from the customs office for a simplified\
+                \ declaration procedure e.g. as an approved exporter. Mandatory depends\
+                \ on field \"isExportDeclarationRequested\". \nIf export declaration\
+                \ required option is \"by GLS\" the authorization number is mandatory\
+                \ for commercial exporters."
+              example: "DESDE8100ZA002079"
+            loadingPlaceCode:
+              type: "string"
+              maxLength: 50
+              example: "TT05"
+              description: "authorized loading place code of the place of loading\
+                \ and packing.\nIf export declaration required option is \"by GLS\"\
+                \ the place of loading is mandatory for commercial exporters having\
+                \ more than one place of loading."
+        importer:
+          type: "object"
+          description: "responsible party for importing goods in destination country.\
+            \ Please note: contact person name and either contact person phone number\
+            \ or e-mail address is mandatory"
+          required:
+          - "address"
+          - "contactPerson"
+          - "isCommercial"
+          properties:
+            address:
+              allOf:
+              - $ref: "#/components/schemas/CustomsAddress"
+            contactPerson:
+              allOf:
+              - $ref: "#/components/schemas/ContactPerson"
+            eoriNumber:
+              type: "string"
+              description: "the EORI number (Economic Operators Registration and Identification\
+                \ number). \nEORI number is mandatory if import country is part of\
+                \ EU. Mandatory depends on field \"importer.address.countryCode\"\n\
+                The requirement to indicate the importer's EORI number depends on\
+                \ the type of business transaction (B2B/B2C)."
+              maxLength: 50
+            taxId:
+              type: "string"
+              description: "tax identification number"
+              maxLength: 50
+            isCommercial:
+              type: "boolean"
+              description: "marks the importer as commercial business partner"
+        consignee:
+          description: "receiver of goods in destination country - needed if receiver\
+            \ is different than the importer. If at least one consignee field is filled,\
+            \ system validations for address and contact person are activated. In\
+            \ case of a collective customs clearance with same importer but various\
+            \ consignees leave the consignee segment empty."
+          type: "object"
+          properties:
+            address:
+              allOf:
+              - $ref: "#/components/schemas/CustomsAddress"
+            contactPerson:
+              allOf:
+              - $ref: "#/components/schemas/ContactPerson"
+          required:
+          - "address"
+        invoice:
+          type: "object"
+          description: "according invoice information. Applied currencies for usage\
+            \ of incoterms 18 and 50 are the following: <br />EUR, CHF, CNY, JPY,\
+            \ CAD,AUD, SEK, INR, GBP, PLN, NOK, USD<br />for other currencies incoterms\
+            \ 18 and 50 can not be used."
+          required:
+          - "invoiceNumber"
+          - "invoiceDate"
+          - "totalGoodsValue"
+          properties:
+            invoiceNumber:
+              type: "string"
+              description: "number of related receipt of invoice"
+              maxLength: 50
+              example: "2333-43399994"
+            invoiceDate:
+              type: "string"
+              example: "2020-09-30"
+              description: "date of receipt of invoice"
+              format: "date"
+            totalGoodsValue:
+              allOf:
+              - $ref: "#/components/schemas/AmountOfMoney"
+        lineItems:
+          type: "array"
+          minItems: 1
+          maxItems: 999
+          items:
+            $ref: "#/components/schemas/CustomsLineItem"
+        linkedDocuments:
+          type: "array"
+          description: "list of documents stored in GLS document management system"
+          items:
+            $ref: "#/components/schemas/LinkedDocument"
+      required:
+      - "parcelNumbers"
+      - "glsIncotermCode"
+      - "totalGrossWeight"
+      - "exporter"
+      - "importer"
+      - "invoice"
+      - "lineItems"
+    TransitShipment:
+      title: "transitShipment"
+      x-stoplight:
+        id: "i3ybjckf2n7ku"
+      type: "object"
+      description: "data object for validating and editing customs data before sending\
+        \ data to customs transit filing service"
+      x-examples: null
+      x-tags:
+      - "GLS"
+      properties:
+        parcelNumbers:
+          type: "array"
+          description: "GLS parcel numbers or Tracking IDs. Array must contain at\
+            \ least 1 parcel number or Tracking ID"
+          minItems: 1
+          example:
+          - "18309142057"
+          - "18309142058"
+          - "18309142059"
+          items:
+            type: "string"
+            pattern: "^(\\d{11}|[A-Z0-9]{8})$"
+        saveAsDraft:
+          type: "boolean"
+          x-stoplight:
+            id: "a8sy6hb3nws6a"
+          description: "set to true if transit consignment is to be saved as draft.\
+            \ This will prevent automatic processing of the consignment."
+        exporter:
+          type: "object"
+          description: "responsible party for exporting/sending goods (usually the\
+            \ shipper or the invoicing party). Exporter/sender country has to match\
+            \ country of API user account."
+          required:
+          - "address"
+          properties:
+            address:
+              $ref: "#/components/schemas/TransitAddress"
+        importer:
+          type: "object"
+          description: "responsible party for importing/receiving goods in destination\
+            \ country."
+          required:
+          - "address"
+          properties:
+            address:
+              $ref: "#/components/schemas/TransitAddress"
+        lineItems:
+          type: "array"
+          minItems: 1
+          maxItems: 999
+          items:
+            $ref: "#/components/schemas/TransitLineItem"
+      required:
+      - "parcelNumbers"
+      - "exporter"
+      - "importer"
+      - "lineItems"
+    Quantity:
+      title: "Quantity"
+      type: "object"
+      description: "quantity with given unit"
+      x-examples: null
+      properties:
+        amount:
+          type: "number"
+          format: "float"
+          description: "amount"
+          example: 14
+        unit:
+          type: "string"
+          default: "PCE"
+          example: "PCE"
+          enum:
+          - "PCE"
+          description: "Unit the quantity is given in <br />PCE = pieces"
+      required:
+      - "amount"
+      - "unit"
+      x-stoplight:
+        id: "kbv3lorvj5lzy"
+    CustomsAddress:
+      title: "CustomsAddress"
+      type: "object"
+      x-examples: null
+      description: "full address"
+      properties:
+        name1:
+          type: "string"
+          description: "name 1st line"
+          maxLength: 50
+          example: "Hofmann Hausgeräte GmbH"
+        name2:
+          type: "string"
+          description: "name 2nd line"
+          maxLength: 50
+          example: "Kundenservice"
+        street1:
+          type: "string"
+          description: "address street 1st line"
+          maxLength: 50
+          example: "Im oberen Kienle"
+        street2:
+          type: "string"
+          description: "address street 2nd line"
+          maxLength: 50
+          example: "Waldesruh"
+        houseNumber:
+          type: "string"
+          description: "address house no."
+          maxLength: 20
+          example: "13"
+        postcode:
+          type: "string"
+          description: "address city postcode"
+          maxLength: 20
+          example: "70839"
+        city1:
+          type: "string"
+          description: "city of address"
+          maxLength: 50
+          example: "Gerlingen"
+        stateOrRegion:
+          type: "string"
+          description: "state or region in country of address"
+          maxLength: 20
+          example: "BW"
+        countryCode:
+          type: "string"
+          description: "country code based on ISO 3166-1 ALPHA 2 standard (eg. DE\
+            \ for Germany)"
+          maxLength: 2
+          minLength: 2
+          example: "DE"
+      required:
+      - "name1"
+      - "street1"
+      - "postcode"
+      - "city1"
+      - "countryCode"
+      x-stoplight:
+        id: "8686zsauuaq6q"
+    TransitAddress:
+      title: "TransitAddress"
+      x-stoplight:
+        id: "2ljen8lihqzjt"
+      type: "object"
+      x-examples: null
+      description: "full address"
+      properties:
+        name1:
+          type: "string"
+          description: "name 1st line"
+          maxLength: 50
+          example: "Hofmann Hausgeräte GmbH"
+        name2:
+          type: "string"
+          description: "name 2nd line"
+          maxLength: 50
+          example: "Kundenservice"
+        street1:
+          type: "string"
+          description: "address street 1st line"
+          maxLength: 50
+          example: "Im oberen Kienle"
+        street2:
+          type: "string"
+          description: "address street 2nd line"
+          maxLength: 50
+          example: "Waldesruh"
+        houseNumber:
+          type: "string"
+          description: "address house no."
+          maxLength: 20
+          example: "13"
+        postcode:
+          type: "string"
+          description: "address city postcode"
+          maxLength: 20
+          example: "70839"
+        city1:
+          type: "string"
+          description: "city of address"
+          maxLength: 50
+          example: "Gerlingen"
+        stateOrRegion:
+          type: "string"
+          description: "state or region in country of address"
+          maxLength: 20
+          example: "BW"
+        countryCode:
+          type: "string"
+          description: "country code based on ISO 3166-1 ALPHA 2 standard (eg. DE\
+            \ for Germany)"
+          maxLength: 2
+          minLength: 2
+          example: "DE"
+      required:
+      - "postcode"
+      - "countryCode"
+    ContactPerson:
+      title: "ContactPerson"
+      type: "object"
+      x-examples: null
+      description: "contact person"
+      properties:
+        name:
+          type: "string"
+          maxLength: 50
+          description: "full name of the contact person"
+          example: "Ralf Richter"
+        emailAddress:
+          type: "string"
+          maxLength: 50
+          example: "ralf.richter@mydomain.de"
+          description: "email address of contact person"
+        phoneCountryPrefix:
+          type: "string"
+          maxLength: 10
+          example: "+49"
+          description: "phone number international country prefix "
+        phoneNumber:
+          type: "string"
+          maxLength: 50
+          example: "7114478890"
+          description: "phone number (without international prefix)"
+        mobileCountryPrefix:
+          type: "string"
+          maxLength: 10
+          example: "+49"
+          description: "mobile number international prefix"
+        mobileNumber:
+          type: "string"
+          maxLength: 50
+          example: "1735689966"
+          description: "mobile phone number (without international prefix)"
+      x-stoplight:
+        id: "qew18xyiykkqp"
+    AmountOfMoney:
+      title: "AmountOfMoney"
+      type: "object"
+      description: "amount of money in given currency"
+      properties:
+        amount:
+          type: "number"
+          format: "float"
+          example: 47.25
+          description: "amount of money. Insert max. 2 digits after decimal point"
+        currency:
+          type: "string"
+          example: "EUR"
+          description: "currency code based on ISO 4217 alphabetical codes (eg. EUR\
+            \ for Euro) "
+          maxLength: 3
+          minLength: 3
+      required:
+      - "amount"
+      - "currency"
+      x-stoplight:
+        id: "srox3usvle07x"
+    CustomsLineItem:
+      title: "CustomsLineItem"
+      type: "object"
+      x-examples: null
+      description: "goods for Customs declaration"
+      properties:
+        quantity:
+          allOf:
+          - $ref: "#/components/schemas/Quantity"
+        commodityCode:
+          type: "string"
+          pattern: "^\\d{8}$"
+          description: "customs tariff number for export filing. The digit code number\
+            \ is based on the Harmonised System (HS). The HS is a description and\
+            \ coding system aimed at providing a worldwide uniform classification\
+            \ of goods.\nEntered commodity codes are verified based on a classification\
+            \ database in the backend."
+          maxLength: 8
+          example: "85362090"
+          minLength: 8
+        goodsDescription:
+          type: "string"
+          description: "goods description for export filing in English or language\
+            \ of import country (e.g. German for Germany, Switzerland and Austria).\n\
+            Note that line breaks (\\n \\r) will be removed in executing GLS system"
+          maxLength: 1000
+          example: "Leistungsschalter für eine Spannung von <= 1.000 V, für eine Stromstä\
+            rke von > 63 A"
+        countryOfOrigin:
+          type: "string"
+          description: "country of origin based on ISO 3166-1 ALPHA 2 code (eg. DE\
+            \ for Germany)"
+          maxLength: 2
+          minLength: 2
+          example: "DE"
+        valueInInvoiceCurrency:
+          type: "number"
+          description: "value in invoicing currency of the given quantity of the line\
+            \ item (total value of line item)"
+          example: 800.3
+          format: "float"
+        preferentialTrade:
+          type: "object"
+          description: "preferential trade data"
+          properties:
+            isEligibleForPreference:
+              type: "boolean"
+              description: "set to true if goods are of preferential origin"
+            proofOfPreference:
+              type: "string"
+              enum:
+              - "EUR1"
+              - "EUR_MED"
+              - "ATR"
+              - "STATEMENT_ON_ORIGIN"
+              - "STATEMENT_ON_ORIGIN_SIGNATURE"
+              description: "receipt of proof of preferential origin. Mandatory depends\
+                \ on field \"lineItem.preferentialTrade.isEligibleForPreference\"\
+                .If \"isEligibleForPreference\" is set to true this field is mandatory."
+              maxLength: 50
+            referenceNumber:
+              type: "string"
+              description: "authorization number, orig. signature or REX number of\
+                \ Approved Exporter.  In case of a formal proof (EUR1, EUR-MED, ATR)\
+                \ reference number of according document.\n\nMandatory depends on\
+                \ field \"lineItem.preferentialTrade.isEligibleForPreference\" and\
+                \  \"lineItem.preferentialTrade.proofOfPreference.type\"."
+              example: "4600AV000001"
+              maxLength: 50
+        statisticalValue:
+          allOf:
+          - $ref: "#/components/schemas/AmountOfMoney"
+        statisticalQuantity:
+          type: "number"
+          description: "quantity of goods according to commodity code. Mandatory depends\
+            \ on field \"lineItem.commodityCode\". Needed in special cases (eg. pair\
+            \ of socks, liters etc.)"
+          example: 4
+          format: "float"
+        nationalCustomsFields:
+          $ref: "#/components/schemas/LineItemNationalCustomsFields"
+        grossWeight:
+          allOf:
+          - $ref: "#/components/schemas/Weight"
+        netWeight:
+          allOf:
+          - $ref: "#/components/schemas/Weight"
+      required:
+      - "quantity"
+      - "commodityCode"
+      - "goodsDescription"
+      - "countryOfOrigin"
+      - "valueInInvoiceCurrency"
+      - "grossWeight"
+      - "netWeight"
+      x-stoplight:
+        id: "nr2lk7uiwdsho"
+    TransitLineItem:
+      title: "TransitLineItem"
+      type: "object"
+      x-examples: null
+      description: "goods for Transit declaration"
+      x-stoplight:
+        id: "c8y5kbglnx499"
+      properties:
+        commodityCode:
+          type: "string"
+          pattern: "^\\d{6}(\\d{2})?$"
+          description: "customs tariff number for transit filing. The digit code number\
+            \ is based on the Harmonised System (HS). The HS is a description and\
+            \ coding system aimed at providing a worldwide uniform classification\
+            \ of goods.\nEntered commodity codes are verified based on a classification\
+            \ database in the backend.\nIf 8-digit commodity codes are transmitted,\
+            \ they are automatically shortened to the first 6 digits"
+          maxLength: 8
+          example: "853620"
+          minLength: 6
+        goodsDescription:
+          type: "string"
+          description: "goods description for export filing in English or language\
+            \ of import country (e.g. German for Germany, Switzerland and Austria).\n\
+            Note that line breaks (\\n \\r) will be removed in executing GLS system"
+          maxLength: 1000
+          example: "Leistungsschalter für eine Spannung von <= 1.000 V, für eine Stromstä\
+            rke von > 63 A"
+        grossWeight:
+          allOf:
+          - $ref: "#/components/schemas/Weight"
+        netWeight:
+          allOf:
+          - $ref: "#/components/schemas/Weight"
+      required:
+      - "commodityCode"
+      - "goodsDescription"
+      - "grossWeight"
+      - "netWeight"
+    LineItemNationalCustomsFields:
+      title: "NationalCustomsFields"
+      type: "object"
+      properties:
+        de:
+          $ref: "#/components/schemas/LineItemCustomsFieldsDE"
+        be:
+          $ref: "#/components/schemas/LineItemCustomsFieldsBE"
+      x-stoplight:
+        id: "mf7sf5c6rz9ys"
+    LineItemCustomsFieldsDE:
+      title: "LineItemCustomsFieldsDE"
+      type: "object"
+      description: "Additional data fields for exports from Germany"
+      properties:
+        regionOfOrigin:
+          type: "string"
+          description: "Additional data field only needed for customs consignments\
+            \ if export declaration is requested \"by GLS\" and exporter country \"\
+            DE\" and country of origin of goods is \"DE\" \n\nMandatory depends on\
+            \ field \"isExportDeclarationRequested\" and \"exporter.address.countryCode\"\
+            \ and \"lineItem.countryOfOrigin\" \n\nregion of origin based on german\
+            \ customs code convention\n\n01=Schleswig-Holstein\n02=Hamburg\n03=Niedersachsen\n\
+            04=Bremen\n05=Nordrhein-Westfalen\n06=Hessen\n07=Rheinland-Pfalz\n08=Baden-Wü\
+            rttemberg\n09=Bayern\n10=Saarland\n11=Berlin\n12=Brandenburg\n13=Mecklenburg-Vorpommern\n\
+            14=Sachsen\n15=Sachsen-Anhalt\n16=Thüringen\n99=Ausländischer Ursprung"
+          example: "09"
+          maxLength: 2
+      required:
+      - "regionOfOrigin"
+      x-stoplight:
+        id: "ywpyn9q02qsh2"
+    LineItemCustomsFieldsBE:
+      title: "LineItemCustomsFieldsBE"
+      type: "object"
+      description: "Additional data fields for exports from Belgium"
+      properties:
+        regionOfOrigin:
+          type: "string"
+          description: "Additional data field only needed for customs consignments\
+            \ if export declaration is requested \"by GLS\" and exporter country \"\
+            BE\" and country of origin of goods is \"BE\" \n\nMandatory depends on\
+            \ field \"isExportDeclarationRequested\" and \"exporter.address.countryCode\"\
+            \ and \"lineItem.countryOfOrigin\" \n\nregion of origin based on belgian\
+            \ customs code convention\n\n1=Flemish Region\n2=Walloon Region\n3=Brussels\
+            \ Region"
+          example: "3"
+          maxLength: 1
+      required:
+      - "regionOfOrigin"
+      x-stoplight:
+        id: "62qfdj08u9efl"
+    Weight:
+      title: "Weight"
+      type: "object"
+      x-examples: null
+      description: "weight with unit"
+      properties:
+        amount:
+          type: "number"
+          format: "float"
+          example: 14.5
+          description: "weight amount. Insert max. 3 digits after decimal point"
+        unit:
+          type: "string"
+          default: "KGM"
+          description: "weight unit"
+          enum:
+          - "KGM"
+          example: "KGM"
+          maxLength: 3
+      required:
+      - "amount"
+      x-stoplight:
+        id: "nq5ph1i8wtmn1"
+    LinkedDocument:
+      title: "LinkedDocument"
+      x-stoplight:
+        id: "uxanc2b530wej"
+      type: "object"
+      description: "document stored in GLS document management system"
+      properties:
+        documentId:
+          type: "string"
+          example: "123465851"
+          description: "document Id of stored document"
+      required:
+      - "documentId"
+  securitySchemes:
+    OAuthSandbox:
+      type: "oauth2"
+      description: "Sandbox requirements have been listed below. For production integration\
+        \ please use [tokenUrl](https://api.gls-group.net/oauth2/v1/token)."
+      flows:
+        clientCredentials:
+          tokenUrl: "https://api-sandbox.gls-group.net/oauth2/v1/token"
+          scopes: {}
+security:
+- OAuthSandbox: []

@@ -13875,7 +13875,7 @@ tags:
     | dhl_universal | DHL Universal |
     | dicom | Dicom |
     | dpd | DPD |
-    | dpd_meta | DPD Global |
+    | dpd_meta | DPD Meta |
     | dtdc | DTDC |
     | easypost | EasyPost |
     | easyship | Easyship |
@@ -14106,7 +14106,7 @@ tags:
     | dpd_express_18h_guarantee | E18 |
     | dpd_express_b2b_predict | B2B MSG option |
 
-    ### DPD Global
+    ### DPD Meta
     | Code         | Service Name |
     | ------------ | ------------ |
     | dpd_meta_classic | CL |

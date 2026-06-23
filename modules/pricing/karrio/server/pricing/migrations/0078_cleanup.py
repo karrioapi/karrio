@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("pricing", "0077_migrate_surcharge_to_markup_data"),
     ]

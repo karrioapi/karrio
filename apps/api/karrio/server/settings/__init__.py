@@ -1,4 +1,5 @@
 # type: ignore
+# ruff: noqa: F403, F405
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 import importlib.util
@@ -32,6 +33,14 @@ if importlib.util.find_spec("karrio.server.data") is not None:
 
 if importlib.util.find_spec("karrio.server.admin") is not None:
     from karrio.server.settings.admin import *
+
+
+if importlib.util.find_spec("karrio.server.settings.huey") is not None:
+    from karrio.server.settings.huey import *
+
+
+if importlib.util.find_spec("karrio.server.settings.servicebus") is not None:
+    from karrio.server.settings.servicebus import *
 
 
 if importlib.util.find_spec("karrio.server.settings.main") is not None:

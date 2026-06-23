@@ -2,7 +2,6 @@ import karrio.core.metadata as metadata
 import karrio.mappers.ups as mappers
 import karrio.providers.ups.units as units
 
-
 METADATA = metadata.PluginMetadata(
     status="production-ready",
     id="ups",
@@ -18,6 +17,7 @@ METADATA = metadata.PluginMetadata(
     services=units.ShippingService,
     service_levels=units.DEFAULT_SERVICES,
     connection_configs=units.ConnectionConfig,
+    system_config=units.SYSTEM_CONFIG,
     has_intl_accounts=True,
     # New fields
     website="https://www.ups.com",

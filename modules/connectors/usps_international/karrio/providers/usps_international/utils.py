@@ -1,8 +1,9 @@
 """USPS International connection settings."""
 
 import re
-import karrio.lib as lib
+
 import karrio.core as core
+import karrio.lib as lib
 
 AccountType = lib.units.create_enum(
     "AccountType",
@@ -71,9 +72,7 @@ def normalize_multipart_response(response: str) -> str:
     # Format each part
     formatted_parts = []
     for part in parts:
-        if (
-            not part.strip() or part.strip() == "--"
-        ):  # Skip empty parts and end boundary
+        if not part.strip() or part.strip() == "--":  # Skip empty parts and end boundary
             continue
 
         # Remove excess whitespace and normalize line endings
@@ -138,9 +137,7 @@ def parse_response(response) -> dict:
             continue  # Skip empty parts and the final boundary marker
 
         part_data = {}
-        headers_content, content = (
-            part.split("\n\n", 1) if "\n\n" in part else (part, "")
-        )
+        headers_content, content = part.split("\n\n", 1) if "\n\n" in part else (part, "")
         headers = headers_content.strip().split("\n")
 
         # Extract Content-Disposition and Content-Type

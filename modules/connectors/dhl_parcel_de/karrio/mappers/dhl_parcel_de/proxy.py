@@ -1,25 +1,30 @@
 """Karrio DHL Germany client proxy."""
 
-import typing
-import datetime
 import base64
+import datetime
 import urllib.parse
-import karrio.lib as lib
+
 import karrio.api.proxy as proxy
 import karrio.core.errors as errors
-import karrio.providers.dhl_parcel_de.error as provider_error
+import karrio.lib as lib
 import karrio.mappers.dhl_parcel_de.settings as provider_settings
+import karrio.providers.dhl_parcel_de.error as provider_error
 import karrio.universal.mappers.rating_proxy as rating_proxy
 
 
 class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
     settings: provider_settings.Settings
 
-    def authenticate(self, _=None) -> lib.Deserializable[str]:
-        """Retrieve the access_token using the client_id|client_secret pair
-        or collect it from the cache if an unexpired access_token exist.
+    @property
+    def _auth_cache_key(self) -> str:
+        return f"{self.settings.carrier_name}|{self.settings.connection_client_id}|{self.settings.connection_client_secret}"
+
+    def _token_manager(self):
+        """Construct the ``ThreadSafeTokenManager`` for this connection.
+
+        The manager is cheap to build — it's a thin wrapper around the cache —
+        so we re-instantiate per call rather than holding it as state.
         """
-        cache_key = f"{self.settings.carrier_name}|{self.settings.connection_client_id}|{self.settings.connection_client_secret}"
 
         def get_token():
             response = lib.request(
@@ -47,28 +52,33 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
             if any(messages):
                 raise errors.ParsedMessagesError(messages=messages)
 
-            expiry = datetime.datetime.now() + datetime.timedelta(
-                seconds=int(response.get("expires_in", 0))
-            )
+            expiry = datetime.datetime.now() + datetime.timedelta(seconds=int(response.get("expires_in", 0)))
             return {**response, "expiry": lib.fdatetime(expiry)}
 
-        token = self.settings.connection_cache.thread_safe(
+        # DHL Parcel DE tokens are issued for 8 h (expires_in=28800). Refresh
+        # while there's still ≥ 1 h of validity so a slow label flow (queued
+        # rate fetch + label create) can never run on a near-expiry token.
+        return self.settings.connection_cache.thread_safe(
             refresh_func=get_token,
-            cache_key=cache_key,
-            buffer_minutes=5,
+            cache_key=self._auth_cache_key,
+            buffer_minutes=60,
         )
 
-        return lib.Deserializable(token.get_state())
+    def authenticate(self, _=None) -> lib.Deserializable[str]:
+        """Retrieve the access_token using the client_id|client_secret pair
+        or collect it from the cache if an unexpired access_token exist.
+        """
+        return lib.Deserializable(self._token_manager().get_state())
 
     def get_rates(self, request: lib.Serializable) -> lib.Deserializable[str]:
         return super().get_rates(request)
 
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        access_token = self.authenticate().deserialize()
         ctx = lib.to_dict(request.ctx) or {}
         meta = ctx.pop("_meta", {})  # Extract meta context for response parsing
         query = urllib.parse.urlencode(ctx)
-        response = lib.request(
+        response = lib.authenticated_request(
+            self._token_manager(),
             url=f"{self.settings.server_url}/v2/orders?{query}",
             data=lib.to_json(request.serialize()),
             trace=self.trace_as("json"),
@@ -76,17 +86,16 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
             headers={
                 "content-type": "application/json",
                 "Accept-Language": self.settings.language,
-                "Authorization": f"Bearer {access_token}",
             },
         )
 
         return lib.Deserializable(response, lib.to_dict, meta)
 
     def create_return_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        access_token = self.authenticate().deserialize()
         ctx = lib.to_dict(request.ctx) or {}
         query = urllib.parse.urlencode(ctx)
-        response = lib.request(
+        response = lib.authenticated_request(
+            self._token_manager(),
             url=f"{self.settings.returns_server_url}/orders?{query}",
             data=lib.to_json(request.serialize()),
             trace=self.trace_as("json"),
@@ -94,23 +103,21 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
             headers={
                 "content-type": "application/json",
                 "Accept-Language": self.settings.language,
-                "Authorization": f"Bearer {access_token}",
             },
         )
 
         return lib.Deserializable(response, lib.to_dict)
 
     def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        access_token = self.authenticate().deserialize()
         query = urllib.parse.urlencode(request.serialize())
-        response = lib.request(
+        response = lib.authenticated_request(
+            self._token_manager(),
             url=f"{self.settings.server_url}/v2/orders?{query}",
             trace=self.trace_as("json"),
             method="DELETE",
             headers={
                 "content-type": "application/json",
                 "Accept-Language": self.settings.language,
-                "Authorization": f"Bearer {access_token}",
             },
         )
 
@@ -127,7 +134,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
         auth_string = f"{self.settings.connection_client_id}:{self.settings.connection_client_secret}"
         basic_auth = base64.b64encode(auth_string.encode()).decode()
 
-        responses: typing.List[str] = lib.run_asynchronously(
+        responses: list[str] = lib.run_asynchronously(
             lambda xml_request: lib.request(
                 url=f"{self.settings.tracking_server_url}?{urllib.parse.urlencode({'xml': xml_request})}",
                 trace=self.trace_as("xml"),
@@ -146,8 +153,8 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
         )
 
     def schedule_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        access_token = self.authenticate().deserialize()
-        response = lib.request(
+        response = lib.authenticated_request(
+            self._token_manager(),
             url=f"{self.settings.pickup_server_url}/orders",
             data=lib.to_json(request.serialize()),
             trace=self.trace_as("json"),
@@ -155,23 +162,21 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
             headers={
                 "content-type": "application/json",
                 "Accept-Language": self.settings.language,
-                "Authorization": f"Bearer {access_token}",
             },
         )
 
         return lib.Deserializable(response, lib.to_dict, request.ctx)
 
     def cancel_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        access_token = self.authenticate().deserialize()
         query = urllib.parse.urlencode(request.serialize())
-        response = lib.request(
+        response = lib.authenticated_request(
+            self._token_manager(),
             url=f"{self.settings.pickup_server_url}/orders?{query}",
             trace=self.trace_as("json"),
             method="DELETE",
             headers={
                 "content-type": "application/json",
                 "Accept-Language": self.settings.language,
-                "Authorization": f"Bearer {access_token}",
             },
         )
 

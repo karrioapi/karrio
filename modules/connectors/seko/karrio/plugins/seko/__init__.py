@@ -3,7 +3,6 @@ import karrio.mappers.seko as mappers
 import karrio.providers.seko.units as units
 import karrio.providers.seko.utils as utils
 
-
 METADATA = metadata.PluginMetadata(
     status="production-ready",
     id="seko",

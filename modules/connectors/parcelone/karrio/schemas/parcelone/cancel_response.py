@@ -7,18 +7,19 @@ import typing
 class ErrorType:
     ErrorNo: typing.Optional[str] = None
     Message: typing.Optional[str] = None
-    StatusCode: typing.Optional[int] = None
+    StatusCode: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
 class WarningType:
     WarningNo: typing.Optional[str] = None
     Message: typing.Optional[str] = None
+    StatusCode: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
 class ResultsType:
-    ShipmentID: typing.Optional[int] = None
+    ShipmentID: typing.Optional[str] = None
     ShipmentRef: typing.Optional[str] = None
     TrackingID: typing.Optional[str] = None
     Success: typing.Optional[int] = None

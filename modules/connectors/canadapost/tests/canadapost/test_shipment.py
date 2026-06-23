@@ -1,22 +1,20 @@
 import re
 import unittest
-from unittest.mock import patch, ANY
-import karrio.sdk as karrio
-import karrio.lib as lib
+from unittest.mock import ANY, patch
+
 import karrio.core.models as models
-from .fixture import gateway, LabelResponse
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import LabelResponse, gateway
 
 
 class TestCanadaPostShipment(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.ShipmentRequest = models.ShipmentRequest(**shipment_data)
-        self.MultiPieceShipmentRequest = models.ShipmentRequest(
-            **multi_piece_shipment_data
-        )
-        self.ShipmentCancelRequest = models.ShipmentCancelRequest(
-            **shipment_cancel_data
-        )
+        self.MultiPieceShipmentRequest = models.ShipmentRequest(**multi_piece_shipment_data)
+        self.ShipmentCancelRequest = models.ShipmentCancelRequest(**shipment_cancel_data)
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
@@ -31,9 +29,7 @@ class TestCanadaPostShipment(unittest.TestCase):
         )
 
     def test_create_shipment_with_package_preset_request(self):
-        request = gateway.mapper.create_shipment_request(
-            models.ShipmentRequest(**shipment_with_package_preset_data)
-        )
+        request = gateway.mapper.create_shipment_request(models.ShipmentRequest(**shipment_with_package_preset_data))
         self.assertEqual(
             re.sub(
                 "    <customer-request-id>[^>]+</customer-request-id>",
@@ -44,9 +40,7 @@ class TestCanadaPostShipment(unittest.TestCase):
         )
 
     def test_create_cancel_shipment_request(self):
-        requests = gateway.mapper.create_cancel_shipment_request(
-            self.ShipmentCancelRequest
-        )
+        requests = gateway.mapper.create_cancel_shipment_request(self.ShipmentCancelRequest)
 
         self.assertListEqual(
             requests.serialize(),
@@ -54,9 +48,7 @@ class TestCanadaPostShipment(unittest.TestCase):
         )
 
     def test_create_cancel_transmitted_shipment_request(self):
-        requests = gateway.mapper.create_cancel_shipment_request(
-            self.ShipmentCancelRequest
-        )
+        requests = gateway.mapper.create_cancel_shipment_request(self.ShipmentCancelRequest)
 
         self.assertListEqual(
             requests.serialize(),
@@ -113,35 +105,23 @@ class TestCanadaPostShipment(unittest.TestCase):
     def test_parse_shipment_response(self):
         with patch("karrio.mappers.canadapost.proxy.lib.request") as mocks:
             mocks.side_effect = [ShipmentResponseXML, LabelResponse]
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_parse_shipment_cancel_response(self):
         with patch("karrio.mappers.canadapost.proxy.lib.request") as mocks:
             mocks.side_effect = [ShipmentResponseXML, ShipmentRefundResponseXML]
-            parsed_response = (
-                karrio.Shipment.cancel(self.ShipmentCancelRequest)
-                .from_(gateway)
-                .parse()
-            )
+            parsed_response = karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()
 
-            self.assertEqual(
-                lib.to_dict(parsed_response), lib.to_dict(ParsedShipmentCancelResponse)
-            )
+            self.assertEqual(lib.to_dict(parsed_response), lib.to_dict(ParsedShipmentCancelResponse))
 
     def test_parse_return_shipment_response(self):
         with patch("karrio.mappers.canadapost.proxy.lib.request") as mocks:
             mocks.side_effect = [ReturnShipmentResponseXML, LabelResponse]
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             print(parsed_response)
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedReturnShipmentResponse
-            )
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedReturnShipmentResponse)
 
     def test_parse_multi_piece_shipment_response(self):
         with patch("karrio.mappers.canadapost.proxy.lib.request") as mocks:
@@ -151,15 +131,9 @@ class TestCanadaPostShipment(unittest.TestCase):
                 LabelResponse,
                 LabelResponse,
             ]
-            parsed_response = (
-                karrio.Shipment.create(self.MultiPieceShipmentRequest)
-                .from_(gateway)
-                .parse()
-            )
+            parsed_response = karrio.Shipment.create(self.MultiPieceShipmentRequest).from_(gateway).parse()
 
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedMultiPieceShipmentResponse
-            )
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedMultiPieceShipmentResponse)
 
 
 if __name__ == "__main__":
@@ -401,7 +375,7 @@ ShipmentPriceLinkXML = """
 <link rel="price" href="https://XX/rs/111111111/2222222222/shipment/347881315405043891/price" media-type="application/vnd.cpc.shipment-v8+xml" />
 """
 
-ShipmentRequestXML = f"""<shipment xmlns="http://www.canadapost.ca/ws/shipment-v8">
+ShipmentRequestXML = """<shipment xmlns="http://www.canadapost.ca/ws/shipment-v8">
     <customer-request-id></customer-request-id>
     <transmit-shipment/>
     <requested-shipping-point>H2B1A0</requested-shipping-point>

@@ -1,7 +1,5 @@
 """Karrio Spring error parser."""
 
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.spring.utils as provider_utils
 
@@ -10,7 +8,7 @@ def parse_error_response(
     response: dict,
     settings: provider_utils.Settings,
     **kwargs,
-) -> typing.List[models.Message]:
+) -> list[models.Message]:
     """Parse Spring API error response.
 
     Spring API uses ErrorLevel codes:
@@ -18,7 +16,7 @@ def parse_error_response(
     - 1: Command completed with errors (e.g., shipment created with errors)
     - 10: Fatal error, command is not completed at all
     """
-    errors: typing.List[models.Message] = []
+    errors: list[models.Message] = []
 
     if not isinstance(response, dict):
         return errors
@@ -37,10 +35,8 @@ def parse_error_response(
                 carrier_id=settings.carrier_id,
                 carrier_name=settings.carrier_name,
                 code=str(error_level),
-                message=error_message or (
-                    "Command completed with errors" if error_level == 1
-                    else "Fatal error, command not completed"
-                ),
+                message=error_message
+                or ("Command completed with errors" if error_level == 1 else "Fatal error, command not completed"),
                 details={**kwargs},
             )
         )

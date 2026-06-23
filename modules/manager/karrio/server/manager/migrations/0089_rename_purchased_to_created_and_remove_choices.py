@@ -7,7 +7,6 @@ def rename_purchased_to_created(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("manager", "0088_shipment_order_id"),
     ]

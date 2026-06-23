@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  DPD Public Web Services schema (combined LoginService_V2_0 + DepotDataService_V1_0).
+  Source: vendor/LoginService_V2_0_C0.pdf and vendor/DepotDataService_V1_0.pdf.
+  Only the complex types and request/response elements needed by karrio are
+  declared here. SOAP envelope + header namespaces are applied at serialization
+  time via karrio.core.utils.soap.create_envelope.
+-->
+<xs:schema elementFormDefault="qualified"
+           targetNamespace="http://dpd.com/common/service/types/PublicWS/1.0"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://dpd.com/common/service/types/PublicWS/1.0">
+
+  <!-- ============================================================== -->
+  <!-- Authentication header (types_authentication namespace)          -->
+  <!-- URL: http://dpd.com/common/service/types/Authentication/2.0     -->
+  <!-- ============================================================== -->
+
+  <xs:complexType name="Authentication">
+    <xs:sequence>
+      <xs:element name="delisId" type="xs:string"/>
+      <xs:element name="authToken" type="xs:string"/>
+      <xs:element name="messageLanguage" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="AuthenticationFault">
+    <xs:sequence>
+      <xs:element name="errorCode" type="xs:string"/>
+      <xs:element name="errorMessage" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- ============================================================== -->
+  <!-- LoginService V2.0                                               -->
+  <!-- URL: http://dpd.com/common/service/types/LoginService/2.0       -->
+  <!-- ============================================================== -->
+
+  <xs:complexType name="Login">
+    <xs:sequence>
+      <xs:element name="delisId" type="xs:string"/>
+      <xs:element name="customerUid" type="xs:string"/>
+      <xs:element name="authToken" type="xs:string"/>
+      <xs:element name="depot" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="LoginException">
+    <xs:sequence>
+      <xs:element name="additionalData" type="xs:string" minOccurs="0"/>
+      <xs:element name="additionalInfo" type="xs:string" minOccurs="0"/>
+      <xs:element name="errorClass" type="xs:string" minOccurs="0"/>
+      <xs:element name="errorCode" type="xs:string" minOccurs="0"/>
+      <xs:element name="fullMessage" type="xs:string" minOccurs="0"/>
+      <xs:element name="language" type="xs:string" minOccurs="0"/>
+      <xs:element name="message" type="xs:string" minOccurs="0"/>
+      <xs:element name="shortMessage" type="xs:string" minOccurs="0"/>
+      <xs:element name="systemFullMessage" type="xs:string" minOccurs="0"/>
+      <xs:element name="systemMessage" type="xs:string" minOccurs="0"/>
+      <xs:element name="systemShortMessage" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="getAuth">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="delisId" type="xs:string"/>
+        <xs:element name="password" type="xs:string"/>
+        <xs:element name="messageLanguage" type="xs:string"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="getAuthResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="return" type="tns:Login"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- ============================================================== -->
+  <!-- DepotDataService V1.0                                           -->
+  <!-- URL: http://dpd.com/common/service/types/DepotDataService/1.0   -->
+  <!-- ============================================================== -->
+
+  <xs:complexType name="DepotData">
+    <xs:sequence>
+      <xs:element name="depot" type="xs:string" minOccurs="0"/>
+      <xs:element name="name" type="xs:string" minOccurs="0"/>
+      <xs:element name="street" type="xs:string" minOccurs="0"/>
+      <xs:element name="country" type="xs:string" minOccurs="0"/>
+      <xs:element name="zipCode" type="xs:string" minOccurs="0"/>
+      <xs:element name="city" type="xs:string" minOccurs="0"/>
+      <xs:element name="phone" type="xs:string" minOccurs="0"/>
+      <xs:element name="fax" type="xs:string" minOccurs="0"/>
+      <xs:element name="email" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="DataFault">
+    <xs:sequence>
+      <xs:element name="errorCode" type="xs:string"/>
+      <xs:element name="errorMessage" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SystemFault">
+    <xs:sequence>
+      <xs:element name="errorCode" type="xs:string"/>
+      <xs:element name="errorMessage" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="getDepotData">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="country" type="xs:string"/>
+        <xs:element name="depot" type="xs:string" minOccurs="0"/>
+        <xs:element name="zipCode" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="getDepotDataResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="DepotData" type="tns:DepotData"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

@@ -1,11 +1,12 @@
 import unittest
 import urllib.parse
-from unittest.mock import patch, ANY
-from .fixture import gateway
+from unittest.mock import patch
 
-import karrio.sdk as karrio
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 
 class TestSendleRating(unittest.TestCase):
@@ -31,18 +32,14 @@ class TestSendleRating(unittest.TestCase):
     def test_parse_rate_response(self):
         with patch("karrio.mappers.sendle.proxy.lib.request") as mock:
             mock.side_effect = [RateResponse, RateResponse]
-            parsed_response = (
-                karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedRateResponse)
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.sendle.proxy.lib.request") as mock:
             mock.side_effect = [ErrorResponse, ErrorResponse]
-            parsed_response = (
-                karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
@@ -166,9 +163,7 @@ ParsedErrorResponse = [
                     "receiver_suburb": ["can't be blank"],
                     "sender_country": [
                         "can't be blank",
-                        "products are not currently "
-                        "available from the specified "
-                        "country of origin",
+                        "products are not currently available from the specified country of origin",
                     ],
                     "sender_postcode": ["can't be blank"],
                     "sender_suburb": ["can't be blank"],
@@ -193,9 +188,7 @@ ParsedErrorResponse = [
                     "receiver_suburb": ["can't be blank"],
                     "sender_country": [
                         "can't be blank",
-                        "products are not currently "
-                        "available from the specified "
-                        "country of origin",
+                        "products are not currently available from the specified country of origin",
                     ],
                     "sender_postcode": ["can't be blank"],
                     "sender_suburb": ["can't be blank"],

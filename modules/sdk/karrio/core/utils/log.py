@@ -9,6 +9,7 @@ but it now configures Loguru instead of standard logging.
 """
 
 import warnings
+
 from karrio.core.utils.logger import configure_logger, intercept_standard_logging
 
 
@@ -33,6 +34,7 @@ def init_log(debug: bool = None, level: int = None):
 
     if level is not None:
         import logging
+
         level_map = {
             logging.DEBUG: "DEBUG",
             logging.INFO: "INFO",

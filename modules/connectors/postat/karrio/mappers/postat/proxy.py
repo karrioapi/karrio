@@ -1,7 +1,7 @@
 """Karrio PostAT client proxy."""
 
-import karrio.lib as lib
 import karrio.api.proxy as proxy
+import karrio.lib as lib
 import karrio.mappers.postat.settings as provider_settings
 import karrio.universal.mappers.rating_proxy as rating_proxy
 

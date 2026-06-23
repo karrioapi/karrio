@@ -1,8 +1,7 @@
 from django.conf import settings
 from django.db import models
-
-from karrio.server.core.models import OwnedEntity, uuid, register_model
-from karrio.server.manager.models import Parcel, Address
+from karrio.server.core.models import OwnedEntity, register_model, uuid
+from karrio.server.manager.models import Address, Parcel
 
 
 @register_model
@@ -17,20 +16,12 @@ class Template(OwnedEntity):
     label = models.CharField(max_length=50)
     is_default = models.BooleanField(blank=True, default=False)
 
-    address = models.OneToOneField(
-        Address, on_delete=models.CASCADE, null=True, blank=True
-    )
-    parcel = models.OneToOneField(
-        Parcel, on_delete=models.CASCADE, null=True, blank=True
-    )
+    address = models.OneToOneField(Address, on_delete=models.CASCADE, null=True, blank=True)
+    parcel = models.OneToOneField(Parcel, on_delete=models.CASCADE, null=True, blank=True)
 
     def delete(self, *args, **kwargs):
         attachment = next(
-            (
-                entity
-                for entity in [self.address, self.parcel]
-                if entity is not None
-            ),
+            (entity for entity in [self.address, self.parcel] if entity is not None),
             super(),
         )
 

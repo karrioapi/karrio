@@ -1,13 +1,11 @@
-import tablib
-from django.db import transaction
-
-from karrio.server.conf import settings
-from karrio.server.core.logging import logger
 import karrio.server.core.exceptions as exceptions
 import karrio.server.data.models as models
 import karrio.server.data.resources as resources
 import karrio.server.data.serializers as serializers
 import karrio.server.data.serializers.batch as batch
+import tablib
+from django.db import transaction
+from karrio.server.conf import settings
 
 
 @serializers.owned_model_serializer
@@ -20,17 +18,13 @@ class DataTemplateModelSerializer(serializers.ModelSerializer):
 @serializers.owned_model_serializer
 class ImportDataSerializer(serializers.ImportData):
     @transaction.atomic
-    def create(
-        self, validated_data: dict, context: serializers.Context, **kwargs
-    ) -> models.BatchOperation:
+    def create(self, validated_data: dict, context: serializers.Context, **kwargs) -> models.BatchOperation:
         import karrio.server.events.tasks as tasks
 
         resource_type = validated_data["resource_type"]
         data_field = validated_data["data_file"]
         template = (
-            models.DataTemplate.access_by(context).first(
-                slug=validated_data.get("data_template")
-            )
+            models.DataTemplate.access_by(context).first(slug=validated_data.get("data_template"))
             if "data_template" in validated_data
             else None
         )
@@ -88,16 +82,10 @@ def check_dataset_validation_errors(validation):
         )
 
     errors = []
-    flattened_row_errors = sum(
-        [
-            [(i, e.error) for e in row.errors]
-            for i, row in enumerate(validation.rows)
-        ],
-        []
-    )
+    flattened_row_errors = sum([[(i, e.error) for e in row.errors] for i, row in enumerate(validation.rows)], [])
 
     for index, error in flattened_row_errors:
-        setattr(error, "index", index)
+        error.index = index
         errors.append(error)
 
     if any(errors):

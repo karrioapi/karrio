@@ -1,24 +1,22 @@
 import logging
 
-from django.urls import path
-from rest_framework.request import Request
-from rest_framework.response import Response
-from rest_framework import status, serializers
-from rest_framework.pagination import LimitOffsetPagination
-
 import karrio.server.openapi as openapi
-from karrio.server.core.views.api import GenericAPIView, APIView
-from karrio.server.serializers import PaginatedResult, PlainDictField
-from karrio.server.core.serializers import Operation, ErrorResponse
+from django.urls import path
+from karrio.server.core.serializers import ErrorResponse, Operation
+from karrio.server.core.views.api import APIView, GenericAPIView
+from karrio.server.events import models
+from karrio.server.events.router import router
 from karrio.server.events.serializers.webhook import (
-    WebhookData,
     Webhook,
+    WebhookData,
     WebhookSerializer,
 )
 from karrio.server.events.task_definitions.base.webhook import notify_subscribers
-from karrio.server.events.router import router
-from karrio.server.events import models
-
+from karrio.server.serializers import PaginatedResult, PlainDictField
+from rest_framework import serializers, status
+from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.request import Request
+from rest_framework.response import Response
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$$$$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
@@ -68,15 +66,12 @@ class WebhookList(GenericAPIView):
     )
     def post(self, request: Request):
         """Create a new webhook."""
-        webhook = (
-            WebhookSerializer.map(data=request.data, context=request).save().instance
-        )
+        webhook = WebhookSerializer.map(data=request.data, context=request).save().instance
 
         return Response(Webhook(webhook).data, status=status.HTTP_201_CREATED)
 
 
 class WebhookDetails(APIView):
-
     @openapi.extend_schema(
         tags=["Webhooks"],
         operation_id=f"{ENDPOINT_ID}retrieve",
@@ -140,7 +135,6 @@ class WebhookDetails(APIView):
 
 
 class WebhookTest(APIView):
-
     @openapi.extend_schema(
         tags=["Webhooks"],
         operation_id=f"{ENDPOINT_ID}test",
@@ -168,10 +162,16 @@ class WebhookTest(APIView):
             data = payload
         else:
             return Response(
-                ErrorResponse(dict(errors=[dict(
-                    message="Either 'payload' or 'event_id' is required.",
-                    code="invalid_request",
-                )])).data,
+                ErrorResponse(
+                    dict(
+                        errors=[
+                            dict(
+                                message="Either 'payload' or 'event_id' is required.",
+                                code="invalid_request",
+                            )
+                        ]
+                    )
+                ).data,
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -182,9 +182,5 @@ class WebhookTest(APIView):
 
 
 router.urls.append(path("webhooks", WebhookList.as_view(), name="webhook-list"))
-router.urls.append(
-    path("webhooks/<str:pk>", WebhookDetails.as_view(), name="webhook-details")
-)
-router.urls.append(
-    path("webhooks/<str:pk>/test", WebhookTest.as_view(), name="webhook-test")
-)
+router.urls.append(path("webhooks/<str:pk>", WebhookDetails.as_view(), name="webhook-details"))
+router.urls.append(path("webhooks/<str:pk>/test", WebhookTest.as_view(), name="webhook-test"))

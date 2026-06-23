@@ -1,0 +1,9 @@
+{
+  "ContactID": "276a45e7ZY",
+  "PreferredPickUpDate": "2025-01-15T10:00:00Z",
+  "NumberOfParcels": 1,
+  "Product": "PARCEL",
+  "ExpectedTotalWeight": 2.5,
+  "ContainsHazGoods": false,
+  "AdditionalInformation": "Please collect from reception"
+}

@@ -1,19 +1,19 @@
-import karrio.schemas.canadapost.shipment as canadapost
-import uuid
-import typing
 import datetime
-import karrio.lib as lib
-import karrio.core.units as units
+import uuid
+
 import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
 import karrio.providers.canadapost.error as provider_error
 import karrio.providers.canadapost.units as provider_units
 import karrio.providers.canadapost.utils as provider_utils
+import karrio.schemas.canadapost.shipment as canadapost
 
 
 def parse_shipment_response(
-    _responses: lib.Deserializable[typing.Tuple[lib.Element, str]],
+    _responses: lib.Deserializable[tuple[lib.Element, str]],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+) -> tuple[models.ShipmentDetails, list[models.Message]]:
     responses = _responses.deserialize()
 
     shipment_details = [
@@ -29,7 +29,7 @@ def parse_shipment_response(
     ]
 
     shipment = lib.to_multi_piece_shipment(shipment_details)
-    messages: typing.List[models.Message] = sum(
+    messages: list[models.Message] = sum(
         [provider_error.parse_error_response(_, settings) for _, __ in responses],
         start=[],
     )
@@ -38,7 +38,7 @@ def parse_shipment_response(
 
 
 def _extract_shipment(
-    _response: typing.Tuple[lib.Element, str],
+    _response: tuple[lib.Element, str],
     settings: provider_utils.Settings,
     ctx: dict,
 ) -> models.ShipmentDetails:
@@ -51,14 +51,19 @@ def _extract_shipment(
     service = provider_units.ServiceType.map(service_code)
     adjustments = lib.failsafe(lambda: info.shipment_price.adjustments.adjustment) or []
     priced_options = lib.failsafe(lambda: info.shipment_price.priced_options.priced_option) or []
-    charges = lib.failsafe(lambda: [
-        ("Base charge", info.shipment_price.base_amount),
-        ("GST", info.shipment_price.gst_amount),
-        ("PST", info.shipment_price.pst_amount),
-        ("HST", info.shipment_price.hst_amount),
-        *((f"Option {o.option_code}", o.option_price) for o in priced_options),
-        *((a.adjustment_code, a.adjustment_amount) for a in adjustments),
-    ]) or []
+    charges = (
+        lib.failsafe(
+            lambda: [
+                ("Base charge", info.shipment_price.base_amount),
+                ("GST", info.shipment_price.gst_amount),
+                ("PST", info.shipment_price.pst_amount),
+                ("HST", info.shipment_price.hst_amount),
+                *((f"Option {o.option_code}", o.option_price) for o in priced_options),
+                *((a.adjustment_code, a.adjustment_amount) for a in adjustments),
+            ]
+        )
+        or []
+    )
 
     return models.ShipmentDetails(
         carrier_name=settings.carrier_name,
@@ -74,16 +79,19 @@ def _extract_shipment(
                 service=service.name_or_key,
                 total_charge=lib.to_money(base_amount),
                 currency="CAD",
-                extra_charges=lib.identity([
-                    models.ChargeDetails(name=name, amount=lib.to_money(amount), currency="CAD")
-                    for name, amount in charges
-                    if amount and lib.to_money(amount) != 0
-                ]),
+                extra_charges=lib.identity(
+                    [
+                        models.ChargeDetails(name=name, amount=lib.to_money(amount), currency="CAD")
+                        for name, amount in charges
+                        if amount and lib.to_money(amount) != 0
+                    ]
+                ),
                 meta=dict(
                     service_name=(service.name or service_code),
                 ),
             )
-            if base_amount is not None else None
+            if base_amount is not None
+            else None
         ),
         return_shipment=lib.identity(
             models.ReturnShipment(
@@ -115,9 +123,7 @@ def shipment_request(
     service = provider_units.ServiceType.map(payload.service).value_or_key
     options = lib.to_shipping_options(
         payload.options,
-        is_international=(
-            recipient.country_code is not None and recipient.country_code != "CA"
-        ),
+        is_international=(recipient.country_code is not None and recipient.country_code != "CA"),
         initializer=provider_units.shipping_options_initializer,
     )
     packages = lib.to_packages(
@@ -130,9 +136,7 @@ def shipment_request(
     )
 
     customs = lib.to_customs_info(payload.customs, weight_unit=units.WeightUnit.KG.name)
-    label_encoding, label_format = provider_units.LabelType.map(
-        payload.label_type or "PDF_4x6"
-    ).value
+    label_encoding, label_format = provider_units.LabelType.map(payload.label_type or "PDF_4x6").value
     group_id = lib.fdate(datetime.datetime.now(), "%Y%m%d") + "-" + settings.carrier_id
     customer_request_ids = [f"{str(uuid.uuid4().hex)}" for _ in range(len(packages))]
     submit_shipment = lib.identity(
@@ -151,9 +155,7 @@ def shipment_request(
             groupIdOrTransmitShipment=canadapost.groupIdOrTransmitShipment(),
             quickship_label_requested=None,
             cpc_pickup_indicator=None,
-            requested_shipping_point=provider_utils.format_ca_postal_code(
-                shipper.postal_code
-            ),
+            requested_shipping_point=provider_utils.format_ca_postal_code(shipper.postal_code),
             shipping_point_id=None,
             expected_mailing_date=options.shipment_date.state,
             provide_pricing_info=True,
@@ -168,9 +170,7 @@ def shipment_request(
                         city=shipper.city,
                         prov_state=shipper.state_code,
                         country_code=shipper.country_code,
-                        postal_zip_code=provider_utils.format_ca_postal_code(
-                            shipper.postal_code
-                        ),
+                        postal_zip_code=provider_utils.format_ca_postal_code(shipper.postal_code),
                         address_line_1=shipper.street,
                         address_line_2=lib.text(shipper.address_line2),
                     ),
@@ -184,9 +184,7 @@ def shipment_request(
                         city=recipient.city,
                         prov_state=recipient.state_code,
                         country_code=recipient.country_code,
-                        postal_zip_code=provider_utils.format_ca_postal_code(
-                            recipient.postal_code
-                        ),
+                        postal_zip_code=provider_utils.format_ca_postal_code(recipient.postal_code),
                         address_line_1=recipient.street,
                         address_line_2=lib.text(recipient.address_line2),
                     ),
@@ -214,29 +212,18 @@ def shipment_request(
                             if option.state is not False
                         ]
                     )
-                    if any(
-                        [
-                            option
-                            for _, option in package.options.items()
-                            if option.state is not False
-                        ]
-                    )
+                    if any([option for _, option in package.options.items() if option.state is not False])
                     else None
                 ),
                 notification=(
                     canadapost.NotificationType(
-                        email=(
-                            package.options.email_notification_to.state
-                            or recipient.email
-                        ),
+                        email=(package.options.email_notification_to.state or recipient.email),
                         on_shipment=True,
                         on_exception=True,
                         on_delivery=True,
                     )
                     if package.options.email_notification.state
-                    and any(
-                        [package.options.email_notification_to.state, recipient.email]
-                    )
+                    and any([package.options.email_notification_to.state, recipient.email])
                     else None
                 ),
                 print_preferences=canadapost.PrintPreferencesType(
@@ -257,9 +244,7 @@ def shipment_request(
                         other_reason=customs.content_type,
                         duties_and_taxes_prepaid=customs.duty.account_number,
                         certificate_number=customs.options.certificate_number.state,
-                        licence_number=lib.text(
-                            customs.options.license_number.state, max=10
-                        ),
+                        licence_number=lib.text(customs.options.license_number.state, max=10),
                         invoice_number=lib.text(customs.invoice, max=10),
                         sku_list=(
                             (
@@ -268,10 +253,7 @@ def shipment_request(
                                         canadapost.SkuType(
                                             customs_number_of_units=item.quantity,
                                             customs_description=lib.text(
-                                                item.title
-                                                or item.description
-                                                or item.sku
-                                                or "N/B",
+                                                item.title or item.description or item.sku or "N/B",
                                                 max=35,
                                             ),
                                             sku=item.sku or "0000",
@@ -279,12 +261,8 @@ def shipment_request(
                                             unit_weight=(item.weight or 1),
                                             customs_value_per_unit=item.value_amount,
                                             customs_unit_of_measure=None,
-                                            country_of_origin=(
-                                                item.origin_country
-                                                or shipper.country_code
-                                            ),
-                                            province_of_origin=shipper.state_code
-                                            or "N/B",
+                                            country_of_origin=(item.origin_country or shipper.country_code),
+                                            province_of_origin=shipper.state_code or "N/B",
                                         )
                                         for item in customs.commodities
                                     ]
@@ -307,9 +285,7 @@ def shipment_request(
                     customer_ref_2=None,
                 ),
                 settlement_info=canadapost.SettlementInfoType(
-                    paid_by_customer=getattr(
-                        payload.payment, "account_number", settings.customer_number
-                    ),
+                    paid_by_customer=getattr(payload.payment, "account_number", settings.customer_number),
                     contract_id=settings.contract_id,
                     cif_shipment=None,
                     intended_method_of_payment=provider_units.PaymentType.map(
@@ -334,11 +310,7 @@ def shipment_request(
                 namespacedef_='xmlns="http://www.canadapost.ca/ws/shipment-v8"',
             ).replace(
                 "<groupIdOrTransmitShipment/>",
-                (
-                    "<transmit-shipment/>"
-                    if submit_shipment
-                    else f"<group-id>{group_id}</group-id>"
-                ),
+                ("<transmit-shipment/>" if submit_shipment else f"<group-id>{group_id}</group-id>"),
             )
             for request in __
         ],

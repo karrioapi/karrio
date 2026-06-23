@@ -1,11 +1,12 @@
-import unittest
-from unittest.mock import patch, ANY
-from .fixture import gateway
 import logging as logger
+import unittest
+from unittest.mock import patch
 
-import karrio.sdk as karrio
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 
 class TestUSPSPickup(unittest.TestCase):
@@ -63,9 +64,7 @@ class TestUSPSPickup(unittest.TestCase):
     def test_parse_pickup_response(self):
         with patch("karrio.mappers.usps.proxy.lib.request") as mock:
             mock.return_value = PickupResponse
-            parsed_response = (
-                karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
 
             logger.debug(lib.to_dict(parsed_response))
             self.assertListEqual(lib.to_dict(parsed_response), ParsedPickupResponse)
@@ -73,14 +72,10 @@ class TestUSPSPickup(unittest.TestCase):
     def test_parse_cancel_pickup_response(self):
         with patch("karrio.mappers.usps.proxy.lib.request") as mock:
             mock.return_value = PickupCancelResponse
-            parsed_response = (
-                karrio.Pickup.cancel(self.PickupCancelRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Pickup.cancel(self.PickupCancelRequest).from_(gateway).parse()
 
             logger.debug(lib.to_dict(parsed_response))
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedCancelPickupResponse
-            )
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedCancelPickupResponse)
 
 
 if __name__ == "__main__":

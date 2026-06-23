@@ -1,13 +1,12 @@
-import json
 import base64
-from unittest.mock import ANY
+import json
+
+import karrio.server.manager.models as manager_models
 from django.urls import reverse
-from rest_framework import status
 from karrio.server.core.tests import APITestCase
 from karrio.server.core.utils import ResourceAccessToken
 from karrio.server.documents.models import DocumentTemplate
-import karrio.server.manager.models as manager_models
-import karrio.server.orders.models as order_models
+from rest_framework import status
 
 
 class TestDocumentGenerator(APITestCase):
@@ -168,10 +167,7 @@ class TestDocumentPrinters(APITestCase):
         self.assertTrue(response["Content-Type"].startswith("application/pdf"))
 
         # Verify we got a valid PDF - handle streaming content
-        if hasattr(response, "streaming_content"):
-            content = b"".join(response.streaming_content)
-        else:
-            content = response.content
+        content = b"".join(response.streaming_content) if hasattr(response, "streaming_content") else response.content
         self.assertGreater(len(content), 0)
         self.assertTrue(content.startswith(b"%PDF"))
 
@@ -186,18 +182,13 @@ class TestDocumentPrinters(APITestCase):
             )
         )
         url = f"/documents/templates/{self.template.id}.{self.template.slug}"
-        response = self.client.get(
-            url, {"download": "true", "title": "Download Test", "token": token}
-        )
+        response = self.client.get(url, {"download": "true", "title": "Download Test", "token": token})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("attachment", response.get("Content-Disposition", ""))
 
         # Verify we got a valid PDF - handle streaming content
-        if hasattr(response, "streaming_content"):
-            content = b"".join(response.streaming_content)
-        else:
-            content = response.content
+        content = b"".join(response.streaming_content) if hasattr(response, "streaming_content") else response.content
         self.assertGreater(len(content), 0)
         self.assertTrue(content.startswith(b"%PDF"))
 
@@ -222,7 +213,7 @@ class TestDocumentGeneratorIntegration(APITestCase):
     def test_shipment_context_generation(self):
         """Test document generation with shipment context"""
         # Create address instances
-        recipient = manager_models.Address.objects.create(
+        manager_models.Address.objects.create(
             person_name="John Doe",
             address_line1="123 Main St",
             city="Test City",

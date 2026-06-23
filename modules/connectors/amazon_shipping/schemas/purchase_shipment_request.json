@@ -1,0 +1,18 @@
+{
+  "requestToken": "6DCCEDD3FF961C15FEB94F342D41C",
+  "rateId": "F4B68849F969E239FF9FCA9C12E35",
+  "requestedDocumentSpecification": {
+    "format": "PNG",
+    "size": {
+      "length": 6,
+      "width": 4,
+      "unit": "INCH"
+    },
+    "dpi": 300,
+    "pageLayout": "DEFAULT",
+    "needFileJoining": false,
+    "requestedDocumentTypes": ["LABEL"]
+  },
+  "requestedValueAddedServices": null,
+  "additionalInputs": null
+}

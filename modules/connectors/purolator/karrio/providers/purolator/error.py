@@ -1,16 +1,14 @@
-from typing import List
-from karrio.schemas.purolator.estimate_service_2_1_2 import Error
 from karrio.core.models import Message
-from karrio.core.utils.xml import Element
 from karrio.core.utils.soap import extract_fault
+from karrio.core.utils.xml import Element
+from karrio.schemas.purolator.estimate_service_2_1_2 import Error
+
 from .utils import Settings
 
 
-def parse_error_response(response: Element, settings: Settings) -> List[Message]:
+def parse_error_response(response: Element, settings: Settings) -> list[Message]:
     errors = response.xpath(".//*[local-name() = $name]", name="Error")
-    return [_extract_error(node, settings) for node in errors] + extract_fault(
-        response, settings
-    )
+    return [_extract_error(node, settings) for node in errors] + extract_fault(response, settings)
 
 
 def _extract_error(error_node: Element, settings: Settings) -> Message:

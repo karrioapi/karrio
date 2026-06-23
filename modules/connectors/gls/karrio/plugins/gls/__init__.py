@@ -3,7 +3,6 @@ import karrio.mappers.gls as mappers
 import karrio.providers.gls.units as units
 import karrio.providers.gls.utils as utils
 
-
 METADATA = metadata.PluginMetadata(
     status="development",
     id="gls",
@@ -18,6 +17,7 @@ METADATA = metadata.PluginMetadata(
     services=units.ShippingService,
     service_levels=units.DEFAULT_SERVICES,
     connection_configs=utils.ConnectionConfig,
+    system_config=units.SYSTEM_CONFIG,
     # Extra info
     website="https://www.gls-group.net",
     description="GLS Group shipping services",

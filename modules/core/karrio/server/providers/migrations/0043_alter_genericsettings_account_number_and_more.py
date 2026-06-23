@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("providers", "0042_auto_20221215_1642"),
     ]
@@ -35,5 +34,7 @@ class Migration(migrations.Migration):
 
     if "postgres" in settings.DB_ENGINE:
         operations += [
-            migrations.RunSQL('ALTER TABLE "providers_carrier" ALTER COLUMN "capabilities" TYPE jsonb USING to_jsonb(capabilities)'),
+            migrations.RunSQL(
+                'ALTER TABLE "providers_carrier" ALTER COLUMN "capabilities" TYPE jsonb USING to_jsonb(capabilities)'
+            ),
         ]

@@ -15,8 +15,8 @@ class FormatType:
     Size: typing.Optional[str] = None
     Unit: typing.Optional[str] = None
     Orientation: typing.Optional[int] = None
-    Height: typing.Optional[str] = None
-    Width: typing.Optional[str] = None
+    Height: typing.Optional[int] = None
+    Width: typing.Optional[int] = None
 
 
 @attr.s(auto_attribs=True)
@@ -34,7 +34,7 @@ class CustomDetailType:
     NetWeight: typing.Optional[float] = None
     ItemValuePerItem: typing.Optional[float] = None
     ItemValue: typing.Optional[float] = None
-    TariffNumber: typing.Optional[int] = None
+    TariffNumber: typing.Optional[str] = None
     Origin: typing.Optional[str] = None
     AdditionalInfo: typing.Optional[typing.List[CepSpecialType]] = jstruct.JList[CepSpecialType]
 
@@ -43,7 +43,7 @@ class CustomDetailType:
 class IntDocDataType:
     PrintInternationalDocuments: typing.Optional[int] = None
     InternationalDocumentFormat: typing.Optional[FormatType] = jstruct.JStruct[FormatType]
-    ConsignerCustomsID: typing.Optional[int] = None
+    ConsignerCustomsID: typing.Optional[str] = None
     ShipToRef: typing.Optional[str] = None
     CustomDetails: typing.Optional[typing.List[CustomDetailType]] = jstruct.JList[CustomDetailType]
     Postage: typing.Optional[float] = None
@@ -115,7 +115,7 @@ class BankAccountType:
 @attr.s(auto_attribs=True)
 class ShipmentAddressType:
     Street: typing.Optional[str] = None
-    Streetno: typing.Optional[int] = None
+    Streetno: typing.Optional[str] = None
     PostalCode: typing.Optional[int] = None
     City: typing.Optional[str] = None
     District: typing.Optional[str] = None
@@ -174,8 +174,8 @@ class ShippingDataType:
     CEPID: typing.Optional[str] = None
     ProductID: typing.Optional[str] = None
     CustomerID: typing.Optional[str] = None
-    MandatorID: typing.Optional[int] = None
-    ConsignerID: typing.Optional[int] = None
+    MandatorID: typing.Optional[str] = None
+    ConsignerID: typing.Optional[str] = None
     ShipToData: typing.Optional[ShipToDataType] = jstruct.JStruct[ShipToDataType]
     ShipFromData: typing.Optional[ShipFromDataType] = jstruct.JStruct[ShipFromDataType]
     ReturnShipmentIndicator: typing.Optional[int] = None

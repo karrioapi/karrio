@@ -1,16 +1,15 @@
-"""Karrio Hermes shipment API implementation."""
+"""Karrio Hermes shipment API implementation. See SPECS.md for the mapping."""
 
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.hermes.error as error
-import karrio.providers.hermes.utils as provider_utils
 import karrio.providers.hermes.units as provider_units
+import karrio.providers.hermes.utils as provider_utils
 import karrio.schemas.hermes.shipment_request as hermes_req
 import karrio.schemas.hermes.shipment_response as hermes_res
 
 
-def _split_name(name: typing.Optional[str]) -> typing.Tuple[str, str]:
+def _split_name(name: str | None) -> tuple[str, str]:
     """Split full name into firstname and lastname for Hermes API."""
     if not name:
         return (None, None)
@@ -21,30 +20,26 @@ def _split_name(name: typing.Optional[str]) -> typing.Tuple[str, str]:
 
 
 def parse_shipment_response(
-    _response: lib.Deserializable[typing.List[dict]],
+    _response: lib.Deserializable[list[dict]],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.Optional[models.ShipmentDetails], typing.List[models.Message]]:
+) -> tuple[models.ShipmentDetails | None, list[models.Message]]:
     """Parse Hermes shipment response for single or multi-piece shipments."""
     responses = _response.deserialize()
 
-    # Collect all messages from all responses
-    messages: typing.List[models.Message] = sum(
+    messages: list[models.Message] = sum(
         [error.parse_error_response(response, settings) for response in responses],
         start=[],
     )
 
-    # Extract shipment details from each valid response
     shipment_details = [
         (
             f"{idx}",
             _extract_details(response, settings),
         )
         for idx, response in enumerate(responses, start=1)
-        if isinstance(response, dict)
-        and (response.get("shipmentID") or response.get("shipmentOrderID"))
+        if isinstance(response, dict) and (response.get("shipmentID") or response.get("shipmentOrderID"))
     ]
 
-    # Use lib.to_multi_piece_shipment() to aggregate multi-piece shipments
     shipment = lib.to_multi_piece_shipment(shipment_details) if shipment_details else None
 
     return shipment, messages
@@ -57,17 +52,11 @@ def _extract_details(
     """Extract shipment details from Hermes response."""
     response = lib.to_object(hermes_res.ShipmentResponseType, data)
 
-    # Hermes uses shipmentID as tracking number (14 or 20 characters)
     tracking_number = response.shipmentID or ""
     shipment_order_id = response.shipmentOrderID or ""
-
-    # Label is returned as base64 encoded image
     label_image = response.labelImage or ""
-
-    # Commercial invoice for international shipments
     invoice_image = response.commInvoiceImage or ""
 
-    # Label media type - convert MIME type to format (e.g., "application/pdf" -> "PDF")
     label_mediatype = response.labelMediatype or "application/pdf"
     label_type = label_mediatype.split("/")[-1].upper() if "/" in label_mediatype else label_mediatype
 
@@ -93,15 +82,7 @@ def shipment_request(
     payload: models.ShipmentRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    """Create Hermes shipment request(s) for single or multi-piece shipments.
-
-    For multi-piece shipments (Pattern B - Per-Package Request):
-    - First package: partNumber=1, numberOfParts=N, no parentShipmentOrderID
-    - Subsequent packages: partNumber=2,3,..., numberOfParts=N, parentShipmentOrderID=<first shipmentOrderID>
-
-    The proxy handles the sequential API calls and injects parentShipmentOrderID
-    from the first response into subsequent requests.
-    """
+    """Build Hermes shipment request(s), one per package. See SPECS.md."""
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(payload.parcels)
@@ -109,23 +90,23 @@ def shipment_request(
         payload.options,
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,
+        service=payload.service,
     )
     customs = payload.customs
 
-    # Split names for Hermes API
     recipient_firstname, recipient_lastname = _split_name(recipient.person_name)
     shipper_firstname, shipper_lastname = _split_name(shipper.person_name)
 
-    # Determine if this is a multi-piece shipment
     is_multi_piece = len(packages) > 1
     number_of_parts = len(packages) if is_multi_piece else None
 
-    # Create a request for each package - single tree instantiation
     requests = [
         hermes_req.ShipmentRequestType(
-            clientReference=lib.text(payload.reference, max=20) or "",
-            clientReference2=lib.text((payload.options or {}).get("clientReference2"), max=20),
-            # Receiver name
+            clientReference=lib.text(options.hermes_customer_reference_1.state or payload.reference, max=20) or "",
+            clientReference2=lib.text(
+                options.hermes_customer_reference_2.state or (payload.options or {}).get("clientReference2"),
+                max=20,
+            ),
             receiverName=hermes_req.ErNameType(
                 title=None,
                 gender=None,
@@ -133,7 +114,6 @@ def shipment_request(
                 middlename=None,
                 lastname=recipient_lastname,
             ),
-            # Receiver address
             receiverAddress=hermes_req.ErAddressType(
                 street=lib.text(recipient.street_name, max=50),
                 houseNumber=lib.text(recipient.street_number, max=5) or "",
@@ -144,7 +124,6 @@ def shipment_request(
                 addressAddition2=None,
                 addressAddition3=lib.text(recipient.company_name, max=20),
             ),
-            # Receiver contact
             receiverContact=lib.identity(
                 hermes_req.ReceiverContactType(
                     phone=lib.text(recipient.phone_number, max=20),
@@ -154,7 +133,6 @@ def shipment_request(
                 if recipient.phone_number or recipient.email
                 else None
             ),
-            # Sender (divergent sender if different from account default)
             senderName=lib.identity(
                 hermes_req.ErNameType(
                     title=None,
@@ -180,28 +158,23 @@ def shipment_request(
                 if shipper.street
                 else None
             ),
-            # Parcel details (weight in grams)
             parcel=hermes_req.ParcelType(
-                parcelClass=None,
+                parcelClass=options.hermes_parcel_class.state,
                 parcelHeight=lib.to_int(package.height.MM),
                 parcelWidth=lib.to_int(package.width.MM),
                 parcelDepth=lib.to_int(package.length.MM),
                 parcelWeight=lib.to_int(package.weight.G),
                 parcelVolume=None,
-                productType=provider_units.PackagingType.map(
-                    package.packaging_type or "your_packaging"
-                ).value,
+                productType=provider_units.PackagingType.map(package.packaging_type or "your_packaging").value,
             ),
-            # Services - single tree instantiation with all options inline
             service=lib.identity(
                 hermes_req.ServiceType(
                     tanService=options.hermes_tan_service.state,
-                    # Multipart service for multi-piece shipments
                     multipartService=(
                         hermes_req.MultipartServiceType(
                             partNumber=index,
                             numberOfParts=number_of_parts,
-                            parentShipmentOrderID=None,  # Injected by proxy for parts 2+
+                            parentShipmentOrderID=None,
                         )
                         if is_multi_piece
                         else (
@@ -215,7 +188,6 @@ def shipment_request(
                         )
                     ),
                     limitedQuantitiesService=options.hermes_limited_quantities.state,
-                    # Cash on delivery service
                     cashOnDeliveryService=(
                         hermes_req.CashOnDeliveryServiceType(
                             amount=options.hermes_cod_amount.state,
@@ -227,7 +199,6 @@ def shipment_request(
                         else None
                     ),
                     bulkGoodService=options.hermes_bulk_goods.state,
-                    # Stated time service
                     statedTimeService=(
                         hermes_req.StatedTimeServiceType(
                             timeSlot=options.hermes_time_slot.state,
@@ -236,7 +207,6 @@ def shipment_request(
                         else None
                     ),
                     householdSignatureService=options.hermes_household_signature.state,
-                    # Customer alert service
                     customerAlertService=(
                         hermes_req.CustomerAlertServiceType(
                             notificationType=options.hermes_notification_type.state or "EMAIL",
@@ -246,19 +216,23 @@ def shipment_request(
                         if options.hermes_notification_email.state
                         else None
                     ),
-                    # Parcel shop delivery service
                     parcelShopDeliveryService=(
                         hermes_req.ParcelShopDeliveryServiceType(
-                            psCustomerFirstName=options.hermes_parcel_shop_customer_firstname.state,
-                            psCustomerLastName=options.hermes_parcel_shop_customer_lastname.state,
+                            psCustomerFirstName=(
+                                options.hermes_parcel_shop_customer_firstname.state or recipient_firstname
+                            ),
+                            psCustomerLastName=(
+                                options.hermes_parcel_shop_customer_lastname.state or recipient_lastname
+                            ),
                             psID=options.hermes_parcel_shop_id.state,
-                            psSelectionRule=options.hermes_parcel_shop_selection_rule.state or "SELECT_BY_ID",
+                            psSelectionRule=(
+                                "SELECT_BY_ID" if options.hermes_parcel_shop_id.state else "SELECT_BY_RECEIVER_ADDRESS"
+                            ),
                         )
                         if options.hermes_parcel_shop_id.state
+                        or options.hermes_parcel_shop_selection_rule.state == "SELECT_BY_RECEIVER_ADDRESS"
                         else None
                     ),
-                    compactParcelService=options.hermes_compact_parcel.state,
-                    # Ident service
                     identService=(
                         hermes_req.IdentServiceType(
                             identID=options.hermes_ident_id.state,
@@ -269,7 +243,6 @@ def shipment_request(
                         if options.hermes_ident_fsk.state or options.hermes_ident_id.state
                         else None
                     ),
-                    # Stated day service
                     statedDayService=(
                         hermes_req.StatedDayServiceType(
                             statedDay=options.hermes_stated_day.state,
@@ -283,30 +256,31 @@ def shipment_request(
                     excludeParcelShopAuthorization=options.hermes_exclude_parcel_shop_auth.state,
                     lateInjectionService=options.hermes_late_injection.state,
                 )
-                if any([
-                    options.hermes_tan_service.state,
-                    is_multi_piece,
-                    options.hermes_number_of_parts.state,
-                    options.hermes_limited_quantities.state,
-                    options.hermes_cod_amount.state,
-                    options.hermes_bulk_goods.state,
-                    options.hermes_time_slot.state,
-                    options.hermes_household_signature.state,
-                    options.hermes_notification_email.state,
-                    options.hermes_parcel_shop_id.state,
-                    options.hermes_compact_parcel.state,
-                    options.hermes_ident_fsk.state,
-                    options.hermes_ident_id.state,
-                    options.hermes_stated_day.state,
-                    options.hermes_next_day.state,
-                    options.hermes_signature.state,
-                    options.hermes_redirection_prohibited.state,
-                    options.hermes_exclude_parcel_shop_auth.state,
-                    options.hermes_late_injection.state,
-                ])
+                if any(
+                    [
+                        options.hermes_tan_service.state,
+                        is_multi_piece,
+                        options.hermes_number_of_parts.state,
+                        options.hermes_limited_quantities.state,
+                        options.hermes_cod_amount.state,
+                        options.hermes_bulk_goods.state,
+                        options.hermes_time_slot.state,
+                        options.hermes_household_signature.state,
+                        options.hermes_notification_email.state,
+                        options.hermes_parcel_shop_id.state,
+                        options.hermes_parcel_shop_selection_rule.state,
+                        options.hermes_ident_fsk.state,
+                        options.hermes_ident_id.state,
+                        options.hermes_stated_day.state,
+                        options.hermes_next_day.state,
+                        options.hermes_signature.state,
+                        options.hermes_redirection_prohibited.state,
+                        options.hermes_exclude_parcel_shop_auth.state,
+                        options.hermes_late_injection.state,
+                    ]
+                )
                 else None
             ),
-            # Customs for international shipments - inline
             customsAndTaxes=(
                 hermes_req.CustomsAndTaxesType(
                     currency=lib.identity(customs.duty.currency if customs.duty else "EUR"),
@@ -326,7 +300,8 @@ def shipment_request(
                             url=None,
                         )
                         for item in (customs.commodities or [])
-                    ] or None,
+                    ]
+                    or None,
                     invoiceReferences=None,
                     value=None,
                     exportCustomsClearance=None,

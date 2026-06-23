@@ -1,10 +1,10 @@
 import pkgutil
-import strawberry
-import strawberry.schema.config as config
-from strawberry.types import Info
 
 import karrio.server.admin.schemas as schemas
+import strawberry
+import strawberry.schema.config as config
 from karrio.server.core.logging import logger
+from strawberry.types import Info
 
 QUERIES: list = []
 MUTATIONS: list = []
@@ -22,6 +22,14 @@ for _, name, _ in pkgutil.iter_modules(schemas.__path__):  # type: ignore
             EXTRA_TYPES += schema.extra_types
     except Exception as e:
         logger.warning("Failed to register schema", schema_name=name, error=str(e), exc_info=True)
+
+
+def _most_derived(classes: list) -> list:
+    return [c for c in classes if not any(o is not c and issubclass(o, c) for o in classes)]
+
+
+QUERIES = _most_derived(QUERIES)
+MUTATIONS = _most_derived(MUTATIONS)
 
 
 # Fallback placeholder to prevent empty schema errors when no modules are installed

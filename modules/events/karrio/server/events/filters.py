@@ -1,9 +1,7 @@
-import typing
-from django.db.models import Q
-
-import karrio.server.events.serializers as serializers
 import karrio.server.events.models as models
+import karrio.server.events.serializers as serializers
 import karrio.server.filters as filters
+from django.db.models import Q
 
 
 class WebhookFilter(filters.FilterSet):
@@ -21,7 +19,7 @@ class WebhookFilter(filters.FilterSet):
 
     class Meta:
         model = models.Webhook
-        fields: typing.List[str] = []
+        fields: list[str] = []
 
     def events_filter(self, queryset, name, values):
         if any(values):
@@ -42,11 +40,7 @@ class EventFilter(filters.FilterSet):
     type = filters.MultipleChoiceFilter(
         field_name="type",
         method="types_filter",
-        choices=[
-            (c.value, c.value)
-            for c in list(serializers.EventTypes)
-            if c != serializers.EventTypes.all
-        ],
+        choices=[(c.value, c.value) for c in list(serializers.EventTypes) if c != serializers.EventTypes.all],
     )
     keyword = filters.CharFilter(
         method="keyword_filter",
@@ -55,12 +49,12 @@ class EventFilter(filters.FilterSet):
 
     class Meta:
         model = models.Event
-        fields: typing.List[str] = []
+        fields: list[str] = []
 
     def entity_filter(self, queryset, name, value):
         try:
             return queryset.filter(data__id=value)
-        except:
+        except Exception:
             return queryset
 
     def types_filter(self, queryset, name, values):
@@ -74,5 +68,5 @@ class EventFilter(filters.FilterSet):
                 | Q(data__reference__icontains=value)
                 | Q(type__icontains=value)
             )
-        except:
+        except Exception:
             return queryset

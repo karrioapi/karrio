@@ -1,9 +1,9 @@
 import csv
 import pathlib
 
-import karrio.lib as lib
-import karrio.core.units as units
 import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
 
 
 class CustomsContentType(lib.StrEnum):
@@ -108,7 +108,7 @@ def load_services_from_csv() -> list:
     if not csv_path.exists():
         return []
     services_dict: dict[str, dict] = {}
-    with open(csv_path, "r", encoding="utf-8") as f:
+    with open(csv_path, encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
             service_code = row["service_code"]
@@ -134,19 +134,23 @@ def load_services_from_csv() -> list:
             else:
                 # Update service-level weight bounds to cover all zones
                 current = services_dict[karrio_service_code]
-                if row_min_weight is not None:
-                    if current["min_weight"] is None or row_min_weight < current["min_weight"]:
-                        current["min_weight"] = row_min_weight
-                if row_max_weight is not None:
-                    if current["max_weight"] is None or row_max_weight > current["max_weight"]:
-                        current["max_weight"] = row_max_weight
+                if row_min_weight is not None and (
+                    current["min_weight"] is None or row_min_weight < current["min_weight"]
+                ):
+                    current["min_weight"] = row_min_weight
+                if row_max_weight is not None and (
+                    current["max_weight"] is None or row_max_weight > current["max_weight"]
+                ):
+                    current["max_weight"] = row_max_weight
             country_codes = [c.strip() for c in row.get("country_codes", "").split(",") if c.strip()]
             zone = models.ServiceZone(
                 label=row.get("zone_label", "Default Zone"),
                 rate=float(row.get("rate", 0.0)),
                 min_weight=row_min_weight,
                 max_weight=row_max_weight,
-                transit_days=int(row["transit_days"].split("-")[0]) if row.get("transit_days") and row["transit_days"].split("-")[0].isdigit() else None,
+                transit_days=int(row["transit_days"].split("-")[0])
+                if row.get("transit_days") and row["transit_days"].split("-")[0].isdigit()
+                else None,
                 country_codes=country_codes if country_codes else None,
             )
             services_dict[karrio_service_code]["zones"].append(zone)

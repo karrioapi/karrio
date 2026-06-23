@@ -1,10 +1,10 @@
 import csv
 import pathlib
-import typing
-import karrio.lib as lib
+
+import karrio.core.models as models
 import karrio.core.units as units
 import karrio.core.utils as utils
-import karrio.core.models as models
+import karrio.lib as lib
 
 PRESET_DEFAULTS = dict(
     dimension_unit="IN",
@@ -13,6 +13,35 @@ PRESET_DEFAULTS = dict(
 COUNTRY_PREFERED_UNITS = dict(
     US=(units.WeightUnit.LB, units.DimensionUnit.IN),
 )
+
+
+# System config schema for runtime settings (e.g., OAuth API credentials).
+# Format: Dict[str, Tuple[default_value, description, type]]
+# Lets ops set a platform-wide UPS app so merchants can connect a contract with
+# only their account number + account country code. Mirrors DHL Parcel DE.
+# Note: the actual env values are read by the server (constance) via decouple.
+SYSTEM_CONFIG = {
+    "UPS_CLIENT_ID": (
+        "",
+        "UPS OAuth client ID for production",
+        str,
+    ),
+    "UPS_CLIENT_SECRET": (
+        "",
+        "UPS OAuth client secret for production",
+        str,
+    ),
+    "UPS_SANDBOX_CLIENT_ID": (
+        "",
+        "UPS OAuth client ID for sandbox/test mode (CIE)",
+        str,
+    ),
+    "UPS_SANDBOX_CLIENT_SECRET": (
+        "",
+        "UPS OAuth client secret for sandbox/test mode (CIE)",
+        str,
+    ),
+}
 
 
 class PackagePresets(utils.Enum):
@@ -25,15 +54,9 @@ class PackagePresets(utils.Enum):
     ups_large_express_box = units.PackagePreset(
         **dict(weight=30.0, width=18.0, height=13.0, length=3.0), **PRESET_DEFAULTS
     )
-    ups_express_tube = units.PackagePreset(
-        **dict(width=38.0, height=6.0, length=6.0), **PRESET_DEFAULTS
-    )
-    ups_express_pak = units.PackagePreset(
-        **dict(width=16.0, height=11.75, length=1.5), **PRESET_DEFAULTS
-    )
-    ups_world_document_box = units.PackagePreset(
-        **dict(width=17.5, height=12.5, length=3.0), **PRESET_DEFAULTS
-    )
+    ups_express_tube = units.PackagePreset(**dict(width=38.0, height=6.0, length=6.0), **PRESET_DEFAULTS)
+    ups_express_pak = units.PackagePreset(**dict(width=16.0, height=11.75, length=1.5), **PRESET_DEFAULTS)
+    ups_world_document_box = units.PackagePreset(**dict(width=17.5, height=12.5, length=3.0), **PRESET_DEFAULTS)
 
 
 class LabelType(utils.Enum):
@@ -120,8 +143,11 @@ class PackagingType(utils.StrEnum):
 class ConnectionConfig(utils.Enum):
     cost_center = utils.OptionEnum("cost_center")
     merchant_id = utils.OptionEnum("merchant_id")
-    enforce_zpl = utils.OptionEnum("enforce_zpl", bool)
-    label_type = utils.OptionEnum("label_type", LabelType)
+    # Admin-only label controls — hidden from the merchant config editor
+    # (`configurable=False`). `label_type` is superseded per shipping method by
+    # the `ups_label_type` ShippingOption below.
+    enforce_zpl = utils.OptionEnum("enforce_zpl", bool, meta=dict(configurable=False))
+    label_type = utils.OptionEnum("label_type", LabelType, meta=dict(configurable=False))
     shipping_options = utils.OptionEnum("shipping_options", list)
     shipping_services = utils.OptionEnum("shipping_services", list)
 
@@ -198,6 +224,7 @@ class ServiceCode(utils.StrEnum):
 
     ups_access_point_economy_pl = ups_access_point_economy
     ups_today_dedicated_courrier_pl = "83"
+    ups_intercity_today_pl = "84"
     ups_today_express_pl = "85"
     ups_today_express_saver_pl = "86"
     ups_today_standard_pl = "82"
@@ -232,6 +259,7 @@ class ServiceZone(utils.Enum):
     ups_next_day_air = ["01", "US"]
     ups_next_day_air_early = ["14", "US"]
     ups_next_day_air_saver = ["13", "US"]
+    ups_access_point_economy = ["70", "US"]
 
     ups_expedited_ca = ["02", "CA"]
     ups_express_saver_ca = ["13", "CA"]
@@ -262,6 +290,7 @@ class ServiceZone(utils.Enum):
 
     ups_access_point_economy_pl = ["70", "PL"]
     ups_today_dedicated_courrier_pl = ["83", "PL"]
+    ups_intercity_today_pl = ["84", "PL"]
     ups_today_express_pl = ["85", "PL"]
     ups_today_express_saver_pl = ["86", "PL"]
     ups_today_standard_pl = ["82", "PL"]
@@ -282,12 +311,64 @@ class ServiceZone(utils.Enum):
 
     ups_express_12_00_de = ["74", "DE"]
 
+    # JTL-composite variants (US default — see ServiceCode for the full
+    # rationale). Listing them here lets `ServiceZone.find()` round-trip
+    # the rate response through `ShippingService.map(name)`.
+    ups_standard_return = ["11", "US"]
+    ups_standard_saturday = ["11", "US"]
+    ups_access_point_economy_return = ["70", "US"]
+    ups_worldwide_express_return = ["07", "US"]
+    ups_worldwide_express_saturday = ["07", "US"]
+    ups_worldwide_express_access_point = ["07", "US"]
+    ups_worldwide_express_access_point_return = ["07", "US"]
+    ups_worldwide_express_plus_return = ["54", "US"]
+    ups_worldwide_express_plus_access_point = ["54", "US"]
+    ups_worldwide_express_plus_access_point_return = ["54", "US"]
+    ups_worldwide_saver_return = ["65", "US"]
+    ups_worldwide_saver_access_point = ["65", "US"]
+    ups_worldwide_saver_access_point_return = ["65", "US"]
+    ups_expedited_door = ["08", "US"]
+    ups_expedited_access_point = ["08", "US"]
+
     @classmethod
     def find(cls, service_type, country_code):
         for service in cls:
             if service_type == service.value[0] and country_code == service.value[1]:
-                return ShippingService.map(service.name)
+                zone_name = service.name
+                # If the zone-specific service is just an alias for a base
+                # service (same UPS code), prefer the base/canonical name so
+                # that rate selection can match "ups_standard" against the
+                # returned rate regardless of origin zone.
+                base = _ZONE_ALIAS_TO_BASE.get(zone_name, zone_name)
+                return ShippingService.map(base)
         return ServiceCode.map(service_type)
+
+
+# Zone-specific service names that are aliases for base services.
+# Built from ServiceCode: any member whose value duplicates a base member
+# is an alias.  The dict maps zone_name → base_name so that rate
+# responses always use the canonical (base) service name, allowing
+# rate selection to match regardless of which alias the caller used.
+_ZONE_ALIAS_TO_BASE: dict = {}
+
+
+def _build_zone_alias_map():
+    """Compute the zone alias → base name mapping from ServiceCode."""
+    # The first member defined for each UPS code value is the base.
+    code_to_base: dict = {}
+    for member in ServiceCode:
+        if member.value not in code_to_base:
+            code_to_base[member.value] = member.name
+    # Any ServiceZone member whose ServiceCode resolves to a different
+    # base name is an alias.
+    for zone in ServiceZone:
+        ups_code = zone.value[0]
+        base_name = code_to_base.get(ups_code)
+        if base_name and base_name != zone.name:
+            _ZONE_ALIAS_TO_BASE[zone.name] = base_name
+
+
+_build_zone_alias_map()
 
 
 class ShippingService(utils.StrEnum):
@@ -333,6 +414,7 @@ class ShippingService(utils.StrEnum):
 
     ups_access_point_economy_pl = "UPS Access Point Economy PL"
     ups_today_dedicated_courrier_pl = "UPS Today Dedicated Courrier PL"
+    ups_intercity_today_pl = "UPS Today Intercity PL"
     ups_today_express_pl = "UPS Today Express PL"
     ups_today_express_saver_pl = "UPS Today Express Saver PL"
     ups_today_standard_pl = "UPS Today Standard PL"
@@ -358,23 +440,40 @@ class ShippingService(utils.StrEnum):
     ups_worldwide_economy_ddu = "UPS Worldwide Economy DDU"
     ups_worldwide_economy_ddp = "UPS Worldwide Economy DDP"
 
+    # JTL-composite display names (return / saturday / access-point variants).
+    ups_standard_return = "UPS Standard - Return"
+    ups_standard_saturday = "UPS Standard - Saturday"
+    ups_access_point_economy_return = "UPS Access Point Economy - Return"
+    ups_worldwide_express_return = "UPS Worldwide Express - Return"
+    ups_worldwide_express_saturday = "UPS Worldwide Express - Saturday"
+    ups_worldwide_express_access_point = "UPS Worldwide Express - Access Point"
+    ups_worldwide_express_access_point_return = "UPS Worldwide Express - Access Point Return"
+    ups_worldwide_express_plus_return = "UPS Worldwide Express Plus - Return"
+    ups_worldwide_express_plus_access_point = "UPS Worldwide Express Plus - Access Point"
+    ups_worldwide_express_plus_access_point_return = "UPS Worldwide Express Plus - Access Point Return"
+    ups_worldwide_saver_return = "UPS Worldwide Saver - Return"
+    ups_worldwide_saver_access_point = "UPS Worldwide Saver - Access Point"
+    ups_worldwide_saver_access_point_return = "UPS Worldwide Saver - Access Point Return"
+    ups_expedited_door = "UPS Expedited - Door"
+    ups_expedited_access_point = "UPS Expedited - Access Point"
+
 
 class ShippingOption(utils.Enum):
     # fmt: off
-    ups_saturday_pickup_indicator = utils.OptionEnum("SaturdayPickupIndicator", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    ups_saturday_pickup_indicator = utils.OptionEnum("SaturdayPickupIndicator", bool, meta=dict(category="DELIVERY_OPTIONS", service_level=True))
     ups_saturday_delivery_indicator = utils.OptionEnum(
-        "SaturdayDeliveryIndicator", bool, meta=dict(category="DELIVERY_OPTIONS")
+        "SaturdayDeliveryIndicator", bool, meta=dict(category="DELIVERY_OPTIONS", service_level=True)
     )
-    ups_sunday_delivery_indicator = utils.OptionEnum("SundayDeliveryIndicator", bool, meta=dict(category="DELIVERY_OPTIONS"))
-    ups_access_point_cod = utils.OptionEnum("AccessPointCOD", float, meta=dict(category="COD"))
+    ups_sunday_delivery_indicator = utils.OptionEnum("SundayDeliveryIndicator", bool, meta=dict(category="DELIVERY_OPTIONS", service_level=True))
+    ups_access_point_cod = utils.OptionEnum("AccessPointCOD", float, meta=dict(category="COD", service_level=False))
     ups_deliver_to_addressee_only_indicator = utils.OptionEnum(
         "DeliverToAddresseeOnlyIndicator", bool
     )
     ups_direct_delivery_only_indicator = utils.OptionEnum(
         "DirectDeliveryOnlyIndicator", bool
     )
-    ups_cod = utils.OptionEnum("COD", float, meta=dict(category="COD"))
-    ups_return_of_document_indicator = utils.OptionEnum("ReturnOfDocumentIndicator", bool, meta=dict(category="RETURN"))
+    ups_cod = utils.OptionEnum("COD", float, meta=dict(category="COD", service_level=False))
+    ups_return_of_document_indicator = utils.OptionEnum("ReturnOfDocumentIndicator", bool, meta=dict(category="RETURN", service_level=True))
     ups_carbonneutral_indicator = utils.OptionEnum("UPScarbonneutralIndicator", bool)
     ups_certificate_of_origin_indicator = utils.OptionEnum(
         "CertificateOfOriginIndicator"
@@ -395,7 +494,7 @@ class ShippingOption(utils.Enum):
     ups_return_service = utils.OptionEnum(
         "ReturnService",
         ReturnServiceCode,
-        meta=dict(category="RETURN"),
+        meta=dict(category="RETURN", service_level=True),
     )
     ups_epra_indicator = utils.OptionEnum("EPRAIndicator", bool)
     ups_lift_gate_at_pickup_indicator = utils.OptionEnum(
@@ -409,7 +508,7 @@ class ShippingOption(utils.Enum):
     )
     ups_master_carton_indicator = utils.OptionEnum("MasterCartonIndicator", bool)
     ups_exchange_forward_indicator = utils.OptionEnum("ExchangeForwardIndicator", bool)
-    ups_hold_for_pickup_indicator = utils.OptionEnum("HoldForPickupIndicator", bool, meta=dict(category="PUDO"))
+    ups_hold_for_pickup_indicator = utils.OptionEnum("HoldForPickupIndicator", bool, meta=dict(category="PUDO", service_level=True))
     ups_dropoff_at_ups_facility_indicator = utils.OptionEnum(
         "DropoffAtUPSFacilityIndicator", bool
     )
@@ -428,7 +527,7 @@ class ShippingOption(utils.Enum):
     ups_delivery_confirmation = utils.OptionEnum(
         "DeliveryConfirmation",
         units.create_enum("ConfirmationType", ["1", "2"]),
-        meta=dict(category="SIGNATURE")
+        meta=dict(category="SIGNATURE", service_level=True)
     )
     ups_delivery_confirmation_level = utils.OptionEnum(
         "DeliveryConfirmationLevel",
@@ -438,16 +537,16 @@ class ShippingOption(utils.Enum):
         "InsideDelivery", units.create_enum("InsideDeliveryType", ["01", "02", "03"])
     )
 
-    ups_restricted_articles = utils.OptionEnum("RestrictedArticles", bool, meta=dict(category="DANGEROUS_GOOD"))
-    ups_alcoholic_beverages_indicator = utils.OptionEnum("AlcoholicBeveragesIndicator", bool, meta=dict(category="DANGEROUS_GOOD"))
-    ups_diagnostic_specimens_indicator = utils.OptionEnum("DiagnosticSpecimensIndicator", bool, meta=dict(category="DANGEROUS_GOOD"))
-    ups_perishables_indicator = utils.OptionEnum("PerishablesIndicator", bool, meta=dict(category="DANGEROUS_GOOD"))
-    ups_plants_indicator = utils.OptionEnum("PlantsIndicator", bool, meta=dict(category="DANGEROUS_GOOD"))
-    ups_seeds_indicator = utils.OptionEnum("SeedsIndicator", bool, meta=dict(category="DANGEROUS_GOOD"))
-    ups_special_exceptions_indicator = utils.OptionEnum("SpecialExceptionsIndicator", bool, meta=dict(category="DANGEROUS_GOOD"))
-    ups_tobacco_indicator = utils.OptionEnum("TobaccoIndicator", bool, meta=dict(category="DANGEROUS_GOOD"))
-    ups_ecigarettes_indicator = utils.OptionEnum("ECigarettesIndicator", bool, meta=dict(category="DANGEROUS_GOOD"))
-    ups_hemp_cbd_indicator = utils.OptionEnum("HempCBDIndicator", bool, meta=dict(category="DANGEROUS_GOOD"))
+    ups_restricted_articles = utils.OptionEnum("RestrictedArticles", bool, meta=dict(category="DANGEROUS_GOOD", service_level=True))
+    ups_alcoholic_beverages_indicator = utils.OptionEnum("AlcoholicBeveragesIndicator", bool, meta=dict(category="DANGEROUS_GOOD", service_level=True))
+    ups_diagnostic_specimens_indicator = utils.OptionEnum("DiagnosticSpecimensIndicator", bool, meta=dict(category="DANGEROUS_GOOD", service_level=True))
+    ups_perishables_indicator = utils.OptionEnum("PerishablesIndicator", bool, meta=dict(category="DANGEROUS_GOOD", service_level=True))
+    ups_plants_indicator = utils.OptionEnum("PlantsIndicator", bool, meta=dict(category="DANGEROUS_GOOD", service_level=True))
+    ups_seeds_indicator = utils.OptionEnum("SeedsIndicator", bool, meta=dict(category="DANGEROUS_GOOD", service_level=True))
+    ups_special_exceptions_indicator = utils.OptionEnum("SpecialExceptionsIndicator", bool, meta=dict(category="DANGEROUS_GOOD", service_level=True))
+    ups_tobacco_indicator = utils.OptionEnum("TobaccoIndicator", bool, meta=dict(category="DANGEROUS_GOOD", service_level=True))
+    ups_ecigarettes_indicator = utils.OptionEnum("ECigarettesIndicator", bool, meta=dict(category="DANGEROUS_GOOD", service_level=True))
+    ups_hemp_cbd_indicator = utils.OptionEnum("HempCBDIndicator", bool, meta=dict(category="DANGEROUS_GOOD", service_level=True))
 
 
     ups_negotiated_rates_indicator = utils.OptionEnum("NegotiatedRatesIndicator", bool)
@@ -458,14 +557,88 @@ class ShippingOption(utils.Enum):
 
 
     """ Custom option type """
-    ups_access_point_pickup = utils.OptionEnum("01", bool, meta=dict(category="PUDO"))
-    ups_access_point_delivery = utils.OptionEnum("02", bool, meta=dict(category="PUDO"))
+    ups_access_point_pickup = utils.OptionEnum("01", bool, meta=dict(category="PUDO", service_level=True))
+    ups_access_point_delivery = utils.OptionEnum("02", bool, meta=dict(category="PUDO", service_level=True))
+
+    # Per-shipping-method label format. Supersedes `connection_config.label_type`
+    # (which is admin-only / hidden). Configurable in the shipping method editor.
+    ups_label_type = utils.OptionEnum("ups_label_type", LabelType)
+
+    # Paperless trade — UPS defaults to flag_only (carrier renders its own
+    # paperwork). When the merchant explicitly supplies a doc or invoice
+    # template, core promotes to doc_references (FormType 07: pre-create
+    # upload + reference). See SPECS — paperless flows.
+    ups_paperless_trade = utils.OptionEnum(
+        "paperless_trade",
+        bool,
+        meta=dict(category="PAPERLESS", flow="flag_only", upload_flow="doc_references"),
+    )
+    # Third-party billing options — see SPECS.md
+    ups_bill_to = utils.OptionEnum(
+        "bill_to",
+        units.create_enum("BillTo", ["sender", "recipient", "third_party"]),
+        meta=dict(
+            category="THIRD_PARTY_BILLING",
+            configurable=True,
+            service_level=False,
+            help="Who pays the transportation charges (default: sender).",
+        ),
+    )
+    ups_billing_account_number = utils.OptionEnum(
+        "billing_account_number",
+        meta=dict(
+            category="THIRD_PARTY_BILLING",
+            configurable=True,
+            service_level=False,
+            help="Payor account number for recipient / third-party billing.",
+        ),
+    )
+    ups_billing_postal_code = utils.OptionEnum(
+        "billing_postal_code",
+        meta=dict(
+            category="THIRD_PARTY_BILLING",
+            configurable=True,
+            service_level=False,
+            help="Payor postal code (required for third-party billing).",
+        ),
+    )
+    ups_billing_country_code = utils.OptionEnum(
+        "billing_country_code",
+        meta=dict(
+            category="THIRD_PARTY_BILLING",
+            configurable=True,
+            service_level=False,
+            help="Payor country code (required for third-party billing).",
+        ),
+    )
+    ups_bill_duties_to = utils.OptionEnum(
+        "bill_duties_to",
+        units.create_enum("BillDutiesTo", ["sender", "recipient", "third_party"]),
+        meta=dict(
+            category="DUTIES_BILLING",
+            configurable=False,
+            service_level=False,
+            help="Who pays duties & taxes on international shipments (default: sender).",
+        ),
+    )
+    ups_duties_account_number = utils.OptionEnum(
+        "duties_account_number",
+        meta=dict(
+            category="DUTIES_BILLING",
+            configurable=False,
+            service_level=False,
+            help="Payor account number for duties & taxes billing.",
+        ),
+    )
 
     """ Unified Option type mapping """
     cash_on_delivery = ups_cod
     dangerous_good = ups_restricted_articles
     hold_at_location = ups_hold_for_pickup_indicator
     saturday_delivery = ups_saturday_delivery_indicator
+    paperless_trade = ups_paperless_trade
+    doc_files = utils.OptionEnum("doc_files", list[models.DocumentFile], meta=dict(category="PAPERLESS"))
+    doc_references = utils.OptionEnum("doc_references", list[models.DocumentDetails], meta=dict(category="PAPERLESS"))
     # fmt: on
 
 
@@ -484,12 +657,13 @@ class DeliveryConfirmationLevel(utils.Enum):
         if origin == "US" and destination in ["US", "PR"]:
             return cls.PACKAGE.value  # type: ignore
         # US50 to CA/VI/Intl -> Shipment level
-        elif origin == "US" and destination in ["CA", "VI"]:
-            return cls.SHIPMENT.value  # type: ignore
-        elif origin == "US":  # Intl other than CA, PR, VI
-            return cls.SHIPMENT.value  # type: ignore
-        # CA to US50/PR/VI -> Shipment level
-        elif origin == "CA" and destination in ["US", "PR", "VI"]:
+        elif (
+            origin == "US"
+            and destination in ["CA", "VI"]
+            or origin == "US"
+            or origin == "CA"
+            and destination in ["US", "PR", "VI"]
+        ):
             return cls.SHIPMENT.value  # type: ignore
         # CA to CA -> Package level
         elif origin == "CA" and destination == "CA":
@@ -501,10 +675,7 @@ class DeliveryConfirmationLevel(utils.Enum):
         elif origin == "PR" and destination in ["US", "PR"]:
             return cls.PACKAGE.value  # type: ignore
         # PR to CA/VI -> Shipment level
-        elif origin == "PR" and destination in ["CA", "VI"]:
-            return cls.SHIPMENT.value  # type: ignore
-        # PR to Intl other than US50, CA, VI -> Shipment level
-        elif origin == "PR":
+        elif origin == "PR" and destination in ["CA", "VI"] or origin == "PR":
             return cls.SHIPMENT.value  # type: ignore
         # International-supported origin countries to any destination -> Shipment level
         return cls.SHIPMENT.value  # type: ignore
@@ -536,24 +707,30 @@ class DeliveryConfirmationAvailability(utils.Enum):
     INTL_ALL = ["INTL", "ALL", ["1", "2"], "1"]  # Both available, prefer SR
 
     @classmethod
-    def get_available_types(cls, origin: str, destination: str) -> typing.List[str]:
+    def get_available_types(cls, origin: str, destination: str) -> list[str]:
         for member in cls.__members__.values():
-            if member.value[0] == origin and member.value[1] == destination:
-                return member.value[2]
-            elif member.value[0] == origin and member.value[1] == "ALL":
-                return member.value[2]
-            elif member.value[0] == "INTL" and origin not in ["US", "CA", "PR"]:
+            if (
+                member.value[0] == origin
+                and member.value[1] == destination
+                or member.value[0] == origin
+                and member.value[1] == "ALL"
+                or member.value[0] == "INTL"
+                and origin not in ["US", "CA", "PR"]
+            ):
                 return member.value[2]
         return []
 
     @classmethod
     def get_preferred_type(cls, origin: str, destination: str) -> str:
         for member in cls.__members__.values():
-            if member.value[0] == origin and member.value[1] == destination:
-                return member.value[3]
-            elif member.value[0] == origin and member.value[1] == "ALL":
-                return member.value[3]
-            elif member.value[0] == "INTL" and origin not in ["US", "CA", "PR"]:
+            if (
+                member.value[0] == origin
+                and member.value[1] == destination
+                or member.value[0] == origin
+                and member.value[1] == "ALL"
+                or member.value[0] == "INTL"
+                and origin not in ["US", "CA", "PR"]
+            ):
                 return member.value[3]
         return "1"  # Default to signature required
 
@@ -606,15 +783,9 @@ def shipping_options_initializer(
 
     if _has_signature_required and origin_country and destination_country:
         dc_type = _options.get("ups_delivery_confirmation")
-        available_types = DeliveryConfirmationAvailability.get_available_types(
-            origin_country, destination_country
-        )
-        preferred_type = DeliveryConfirmationAvailability.get_preferred_type(
-            origin_country, destination_country
-        )
-        dc_level = DeliveryConfirmationLevel.get_level(
-            origin_country, destination_country
-        )
+        available_types = DeliveryConfirmationAvailability.get_available_types(origin_country, destination_country)
+        preferred_type = DeliveryConfirmationAvailability.get_preferred_type(origin_country, destination_country)
+        dc_level = DeliveryConfirmationLevel.get_level(origin_country, destination_country)
 
         # Validate and adjust delivery confirmation type if needed
         if dc_type and dc_type not in available_types:
@@ -622,20 +793,14 @@ def shipping_options_initializer(
         elif not dc_type and _has_signature_required:
             dc_type = preferred_type  # Use preferred type if none specified
 
-        _options.update(
-            ups_delivery_confirmation=dc_type, ups_delivery_confirmation_level=dc_level
-        )
+        _options.update(ups_delivery_confirmation=dc_type, ups_delivery_confirmation_level=dc_level)
 
-    if _has_dangerous_goods and not "ups_restricted_articles" in _options:
-        _options.update(
-            ups_restricted_articles=lib.identity(
-                _options.get("ups_restricted_articles") or "Y"
-            )
-        )
+    if _has_dangerous_goods and "ups_restricted_articles" not in _options:
+        _options.update(ups_restricted_articles=lib.identity(_options.get("ups_restricted_articles") or "Y"))
 
     # Define carrier option filter.
     def items_filter(key: str) -> bool:
-        return key in ShippingOption  # type:ignore
+        return key in ShippingOption  # type: ignore
 
     return units.ShippingOptions(_options, ShippingOption, items_filter=items_filter)
 
@@ -668,7 +833,14 @@ class TrackingStatus(utils.Enum):
     # D = delivery information, I = in-progress, M/MV = manifest, U = update, X = exception
 
     # Pending/manifest statuses - shipment info received, awaiting pickup
-    pending = ["M", "MV", "MP", "XD", "OA", "DD"]  # M=manifest, MV=manifest void, MP=manifest pickup
+    pending = [
+        "M",
+        "MV",
+        "MP",
+        "XD",
+        "OA",
+        "DD",
+    ]  # M=manifest, MV=manifest void, MP=manifest pickup
     # XD=signature required, OA=order assigned, DD=data downloaded
 
     # Picked up - package physically picked up by carrier (NEW)
@@ -676,7 +848,12 @@ class TrackingStatus(utils.Enum):
     # OC=origin country, OG=origin gate
 
     # Delivered statuses
-    delivered = ["D", "FS", "KB", "F4"]  # D=delivered type, FS=final status, KB=delivered, F4=delivered code
+    delivered = [
+        "D",
+        "FS",
+        "KB",
+        "F4",
+    ]  # D=delivered type, FS=final status, KB=delivered, F4=delivered code
 
     # In-transit/processing statuses
     in_transit = ["I", "DP", "AA", "AR", "AF", "AL", "DS", "IH", "AP"]
@@ -685,7 +862,12 @@ class TrackingStatus(utils.Enum):
     # IH=in-transit hub, AP=arrival at post office
 
     # Out for delivery
-    out_for_delivery = ["OT", "OD", "OF", "DL"]  # OT=out for delivery, OD=on delivery vehicle
+    out_for_delivery = [
+        "OT",
+        "OD",
+        "OF",
+        "DL",
+    ]  # OT=out for delivery, OD=on delivery vehicle
     # OF=out for final delivery, DL=delivery in progress
 
     # On hold/exception statuses
@@ -698,10 +880,20 @@ class TrackingStatus(utils.Enum):
     # UF=unable to forward, CC=call center
 
     # Cancelled/void statuses
-    cancelled = ["VD", "CA", "CN", "CV"]  # VD=void, CA=cancelled, CN=cancel, CV=cancel void
+    cancelled = [
+        "VD",
+        "CA",
+        "CN",
+        "CV",
+    ]  # VD=void, CA=cancelled, CN=cancel, CV=cancel void
 
     # Ready for pickup
-    ready_for_pickup = ["RP", "UU", "AC", "WC"]  # RP=ready for pickup, UU=unable to deliver
+    ready_for_pickup = [
+        "RP",
+        "UU",
+        "AC",
+        "WC",
+    ]  # RP=ready for pickup, UU=unable to deliver
     # AC=available for collection, WC=will call
 
     # Delivery delayed
@@ -720,6 +912,7 @@ class TrackingIncidentReason(utils.Enum):
 
     Based on UPS API exception/status codes.
     """
+
     # Carrier-caused issues
     carrier_damaged_parcel = ["DA", "DM", "DMG"]  # Damaged
     carrier_sorting_error = ["MR", "MSR"]  # Misrouted
@@ -734,7 +927,11 @@ class TrackingIncidentReason(utils.Enum):
     consignee_not_available = ["NA1", "NI"]  # Not available
     consignee_not_home = ["NH", "NI", "NAH"]  # Not home
     consignee_incorrect_address = ["IA", "WA", "BA"]  # Incorrect/wrong/bad address
-    consignee_access_restricted = ["AR", "NS", "SC"]  # Access restricted, no safe, security
+    consignee_access_restricted = [
+        "AR",
+        "NS",
+        "SC",
+    ]  # Access restricted, no safe, security
 
     # Customs-related issues
     customs_delay = ["CD", "CH", "CI"]  # Customs delay/hold/inspection
@@ -902,12 +1099,14 @@ def load_services_from_csv() -> list:
             service_code = row["service_code"]
             zone_label = row.get("zone_label", "")
             country_codes_str = row.get("country_codes", "")
-            country_codes = [c.strip() for c in country_codes_str.split(",") if c.strip()] if country_codes_str else None
+            country_codes = (
+                [c.strip() for c in country_codes_str.split(",") if c.strip()] if country_codes_str else None
+            )
 
             zone = models.ServiceZone(
                 label=zone_label if zone_label else None,
                 rate=0.0,
-                transit_days=int(row["transit_days"]) if row.get("transit_days") else None,
+                transit_days=(int(row["transit_days"]) if row.get("transit_days") else None),
                 country_codes=country_codes,
             )
 
@@ -919,11 +1118,11 @@ def load_services_from_csv() -> list:
                     "currency": row.get("currency", "USD"),
                     "weight_unit": row.get("weight_unit", "LB"),
                     "dimension_unit": row.get("dimension_unit", "IN"),
-                    "min_weight": float(row["min_weight"]) if row.get("min_weight") else None,
-                    "max_weight": float(row["max_weight"]) if row.get("max_weight") else None,
-                    "max_length": float(row["max_length"]) if row.get("max_length") else None,
-                    "max_width": float(row["max_width"]) if row.get("max_width") else None,
-                    "max_height": float(row["max_height"]) if row.get("max_height") else None,
+                    "min_weight": (float(row["min_weight"]) if row.get("min_weight") else None),
+                    "max_weight": (float(row["max_weight"]) if row.get("max_weight") else None),
+                    "max_length": (float(row["max_length"]) if row.get("max_length") else None),
+                    "max_width": (float(row["max_width"]) if row.get("max_width") else None),
+                    "max_height": (float(row["max_height"]) if row.get("max_height") else None),
                     "domicile": row.get("domicile", "").lower() == "true",
                     "international": row.get("international", "").lower() == "true" or None,
                     "zones": [zone],
@@ -931,9 +1130,61 @@ def load_services_from_csv() -> list:
             else:
                 services_dict[service_code]["zones"].append(zone)
 
-    return [
-        models.ServiceLevel(**service_data) for service_data in services_dict.values()
-    ]
+    return [models.ServiceLevel(**service_data) for service_data in services_dict.values()]
 
 
 DEFAULT_SERVICES = load_services_from_csv()
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Pickup service code resolution
+# UPS Pickup API service codes differ from shipping service codes.
+# ─────────────────────────────────────────────────────────────────────────────
+
+EU_COUNTRIES = {
+    "AT",
+    "BE",
+    "BG",
+    "HR",
+    "CY",
+    "CZ",
+    "DK",
+    "EE",
+    "FI",
+    "FR",
+    "DE",
+    "GR",
+    "HU",
+    "IE",
+    "IT",
+    "LV",
+    "LT",
+    "LU",
+    "MT",
+    "NL",
+    "PL",
+    "PT",
+    "RO",
+    "SK",
+    "SI",
+    "ES",
+    "SE",
+    "GB",
+    "CH",
+    "NO",
+}
+
+
+def default_pickup_service_code(origin_country: str, dest_country: str | None = None) -> str:
+    """Resolve a sensible default UPS pickup service code based on origin region."""
+    oc = (origin_country or "").upper()
+    dc = (dest_country or oc).upper()
+
+    if oc in EU_COUNTRIES:
+        return "011" if dc in EU_COUNTRIES else "007"
+    if oc == "CA":
+        return "011" if dc == "CA" else "007"
+    if oc == "MX":
+        return "011"
+    # US
+    return "003" if dc == oc else "007"

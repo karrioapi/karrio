@@ -1,10 +1,10 @@
 import json
 from unittest.mock import ANY, patch
+
 from django.urls import reverse
+from karrio.core.models import ChargeDetails, RateDetails
+from karrio.server.graph.tests.base import GraphTestCase
 from rest_framework import status
-from karrio.core.models import RateDetails, ChargeDetails
-from karrio.server.graph.tests.base import GraphTestCase, Result
-import karrio.server.manager.models as manager
 
 
 class TestPartialShipmentMutation(GraphTestCase):
@@ -412,9 +412,7 @@ FULL_UPDATE_DATA = {
             "person_name": "Updated Recipient",
             "email": "recipient@fullupdate.com",
         },
-        "parcels": [
-            {"weight": 3.0, "weight_unit": "KG", "description": "Full update parcel"}
-        ],
+        "parcels": [{"weight": 3.0, "weight_unit": "KG", "description": "Full update parcel"}],
         "payment": {"paid_by": "third_party", "currency": "USD"},
         "options": {"insurance": 250, "priority": "express"},
         "metadata": {"full_update": True, "test_case": "full_update_simulation"},

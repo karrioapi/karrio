@@ -1,0 +1,93 @@
+{
+  "payload": {
+    "requestToken": "6DCCEDD3FF961C15FEB94F342D41C",
+    "rates": [
+      {
+        "rateId": "F4B68849F969E239FF9FCA9C12E35",
+        "carrierId": "AMZN_US",
+        "carrierName": "Amazon Shipping",
+        "billedWeight": {
+          "value": 2.5,
+          "unit": "POUND"
+        },
+        "totalCharge": {
+          "value": 7.99,
+          "unit": "USD"
+        },
+        "serviceId": "AMZN_US_STD",
+        "serviceName": "Amazon Shipping Standard",
+        "promise": {
+          "deliveryWindow": {
+            "start": "2024-01-17T08:00:00Z",
+            "end": "2024-01-17T20:00:00Z"
+          },
+          "pickupWindow": {
+            "start": "2024-01-15T08:00:00Z",
+            "end": "2024-01-15T20:00:00Z"
+          }
+        },
+        "supportedDocumentSpecifications": [
+          {
+            "format": "PNG",
+            "size": {
+              "length": 6,
+              "width": 4,
+              "unit": "INCH"
+            },
+            "printOptions": [
+              {
+                "supportedDPIs": [300, 203],
+                "supportedPageLayouts": ["DEFAULT"],
+                "supportedFileJoiningOptions": [true, false],
+                "supportedDocumentDetails": [
+                  {
+                    "name": "LABEL",
+                    "isMandatory": true
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "availableValueAddedServiceGroups": null,
+        "requiresAdditionalInputs": false,
+        "rateItemList": [
+          {
+            "rateItemCharge": {
+              "unit": "USD",
+              "value": 6.99
+            },
+            "rateItemID": "BASE_RATE",
+            "rateItemNameLocalization": "Base Rate",
+            "rateItemType": "MANDATORY"
+          },
+          {
+            "rateItemCharge": {
+              "unit": "USD",
+              "value": 1.00
+            },
+            "rateItemID": "FUEL_SURCHARGE",
+            "rateItemNameLocalization": "Fuel Surcharge",
+            "rateItemType": "INCLUDED"
+          }
+        ],
+        "paymentType": "PAY_THROUGH_AMAZON",
+        "benefits": null
+      }
+    ],
+    "ineligibleRates": [
+      {
+        "carrierId": "AMZN_US",
+        "carrierName": "Amazon Shipping",
+        "serviceId": "AMZN_US_PREM",
+        "serviceName": "Amazon Shipping Premium",
+        "ineligibilityReasons": [
+          {
+            "code": "NO_COVERAGE",
+            "message": "Required shipping network coverage doesn't exist for the offering"
+          }
+        ]
+      }
+    ]
+  }
+}

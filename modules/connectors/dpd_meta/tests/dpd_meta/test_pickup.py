@@ -1,11 +1,13 @@
-"""DPD Global carrier pickup tests."""
+"""DPD Meta carrier pickup tests."""
 
 import unittest
-import karrio.sdk as karrio
-import karrio.lib as lib
-import karrio.core.models as models
 from unittest.mock import patch
-from .fixture import gateway
+
+import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway, gateway_with_depot
 
 
 class TestPickup(unittest.TestCase):
@@ -29,18 +31,20 @@ class TestPickup(unittest.TestCase):
     def test_parse_pickup_response(self):
         with patch("karrio.mappers.dpd_meta.proxy.lib.request") as mock:
             mock.return_value = PickupResponse
-            parsed_response = (
-                karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
             self.assertListEqual(lib.to_dict(parsed_response), ParsedPickupResponse)
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.dpd_meta.proxy.lib.request") as mock:
             mock.return_value = ErrorResponse
-            parsed_response = (
-                karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
             self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
+
+    def test_create_pickup_request_includes_sending_depot(self):
+        request = gateway_with_depot.mapper.create_pickup_request(self.PickupRequest)
+        serialized = lib.to_dict(request.serialize())
+        # pickup carries the raw 4-digit depot
+        self.assertEqual(serialized["sendingDepot"], "0998")
 
 
 if __name__ == "__main__":
@@ -68,10 +72,6 @@ PickupPayload = {
 
 PickupRequest = {
     "comment": "Ground floor delivery preferred",
-    "customerInfos": {
-        "customerAccountNumber": "ACC123456",
-        "customerID": "123456789",
-    },
     "numberOfParcels": 1,
     "pickup": {"date": "2025-12-01", "fromTime": "0900", "toTime": "1700"},
     "pickupAddress": {
@@ -79,7 +79,8 @@ PickupRequest = {
         "companyName": "ABC Logistics",
         "country": "DE",
         "houseNumber": "42",
-        "name1": "John Smith",
+        "name1": "ABC Logistics",
+        "name2": "John Smith",
         "street": "Main Street",
         "zipCode": "10115",
     },
@@ -89,6 +90,8 @@ PickupRequest = {
         "phone1": "+4930123456",
     },
     "pickupWeight": "5000",
+    # DE pickup: the proxy resolves the depot serving the pickup zip code.
+    "sendingDepot": "[DEPOT]",
 }
 
 PickupResponse = """{

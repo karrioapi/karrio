@@ -1,7 +1,7 @@
-import typing
-import threading
-import datetime
 import concurrent.futures as futures
+import datetime
+import threading
+import typing
 
 
 class AbstractCache:
@@ -11,17 +11,20 @@ class AbstractCache:
     def set(self, key: str, value: typing.Any, **kwargs):
         pass
 
+    def delete(self, key: str):
+        pass
+
 
 class Cache(AbstractCache):
     def __init__(
         self,
-        cache: typing.Optional[AbstractCache] = None,
+        cache: AbstractCache | None = None,
         version: str = "",
         **kwargs,
     ) -> None:
         self._cache = cache  # system cache
         self._version = version  # connection version for cache invalidation
-        self._values: typing.Dict[str, futures.Future] = {}  # shallow cache
+        self._values: dict[str, futures.Future] = {}  # shallow cache
 
         for key, value in kwargs.items():
             self.set(key, value)
@@ -60,9 +63,18 @@ class Cache(AbstractCache):
 
         # set value in cache if it exist
         if self._cache is not None:
-            promise.add_done_callback(
-                lambda _: self._cache.set(key, _.result(), timeout=timeout)
-            )
+            promise.add_done_callback(lambda _: self._cache.set(key, _.result(), timeout=timeout))
+
+    def delete(self, key: str) -> None:
+        """Remove ``key`` from both the shallow and the underlying cache.
+
+        Used by ``ThreadSafeTokenManager.invalidate()`` so a carrier proxy can
+        evict a cached OAuth token after the upstream API rejected it (e.g.
+        401 on label create), forcing the next ``get_token()`` to re-auth.
+        """
+        self._values.pop(key, None)
+        if self._cache is not None:
+            self._cache.delete(key)
 
     def thread_safe(
         self,
@@ -97,9 +109,7 @@ class Cache(AbstractCache):
             )
             token = token_manager.get_token()
         """
-        _versioned_key = (
-            f"{cache_key}|v:{self._version}" if self._version else cache_key
-        )
+        _versioned_key = f"{cache_key}|v:{self._version}" if self._version else cache_key
         return ThreadSafeTokenManager(
             cache=self,
             refresh_func=refresh_func,
@@ -236,6 +246,16 @@ class ThreadSafeTokenManager:
         """
         return self.get_token()
 
+    def invalidate(self) -> None:
+        """Drop the cached token so the next ``get_token()`` re-authenticates.
+
+        Carrier proxies should call this when an authenticated request fails
+        with 401/403 — typically because the cached token was revoked or
+        rotated upstream. The next call refreshes the token from the IDP and
+        the proxy can retry the request once with the new credential.
+        """
+        self.cache.delete(self.cache_key)
+
     def _is_token_valid(self, token: str, expiry: datetime.datetime) -> bool:
         """Check if token is valid and not expired.
 
@@ -249,12 +269,10 @@ class ThreadSafeTokenManager:
         if not token or not expiry:
             return False
 
-        buffer_time = datetime.datetime.now() + datetime.timedelta(
-            minutes=self.buffer_minutes
-        )
+        buffer_time = datetime.datetime.now() + datetime.timedelta(minutes=self.buffer_minutes)
         return expiry > buffer_time
 
-    def _parse_expiry(self, expiry_str: str) -> typing.Optional[datetime.datetime]:
+    def _parse_expiry(self, expiry_str: str) -> datetime.datetime | None:
         """Parse expiry string to datetime object.
 
         Args:

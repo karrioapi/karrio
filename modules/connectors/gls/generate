@@ -11,4 +11,7 @@ generate_schema() {
 generate_schema "${SCHEMAS}/error_response.json" "${LIB_MODULES}/error_response.py"
 generate_schema "${SCHEMAS}/shipment_request.json" "${LIB_MODULES}/shipment_request.py"
 generate_schema "${SCHEMAS}/shipment_response.json" "${LIB_MODULES}/shipment_response.py"
+generate_schema "${SCHEMAS}/pickup_request.json" "${LIB_MODULES}/pickup_request.py"
+generate_schema "${SCHEMAS}/pickup_response.json" "${LIB_MODULES}/pickup_response.py"
 generate_schema "${SCHEMAS}/tracking_response.json" "${LIB_MODULES}/tracking_response.py"
+generate_schema "${SCHEMAS}/customs_consignment_request.json" "${LIB_MODULES}/customs_consignment_request.py"

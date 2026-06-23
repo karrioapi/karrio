@@ -1,24 +1,20 @@
-import karrio.schemas.laposte.tracking_response as laposte
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.laposte.error as error
-import karrio.providers.laposte.utils as provider_utils
 import karrio.providers.laposte.units as provider_units
+import karrio.providers.laposte.utils as provider_utils
+import karrio.schemas.laposte.tracking_response as laposte
 
 
 def parse_tracking_response(
-    _response: lib.Deserializable[typing.Union[dict, typing.List[dict]]],
+    _response: lib.Deserializable[dict | list[dict]],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+) -> tuple[list[models.TrackingDetails], list[models.Message]]:
     response = _response.deserialize()
     responses = response if isinstance(response, list) else [response]
     messages = error.parse_error_response(responses, settings)
     tracking_details = [
-        _extract_details(res["shipment"], settings)
-        for res in responses
-        if str(res.get("returnCode")).startswith("20")
+        _extract_details(res["shipment"], settings) for res in responses if str(res.get("returnCode")).startswith("20")
     ]
 
     return tracking_details, messages
@@ -30,11 +26,7 @@ def _extract_details(
 ) -> models.TrackingDetails:
     shipment = lib.to_object(laposte.Shipment, data)
     status = next(
-        (
-            status.name
-            for status in list(provider_units.TrackingStatus)
-            if shipment.event[0].code in status.value
-        ),
+        (status.name for status in list(provider_units.TrackingStatus) if shipment.event[0].code in status.value),
         provider_units.TrackingStatus.in_transit.name,
     )
 
@@ -52,19 +44,11 @@ def _extract_details(
                 location=None,
                 timestamp=lib.fiso_timestamp(event.date, current_format="%Y-%m-%dT%H:%M:%S%z"),
                 status=next(
-                    (
-                        s.name
-                        for s in list(provider_units.TrackingStatus)
-                        if event.code in s.value
-                    ),
+                    (s.name for s in list(provider_units.TrackingStatus) if event.code in s.value),
                     None,
                 ),
                 reason=next(
-                    (
-                        r.name
-                        for r in list(provider_units.TrackingIncidentReason)
-                        if event.code in r.value
-                    ),
+                    (r.name for r in list(provider_units.TrackingIncidentReason) if event.code in r.value),
                     None,
                 ),
             )
@@ -77,12 +61,8 @@ def _extract_details(
             expected_delivery=lib.fdate(shipment.estimDate, "%Y-%m-%dT%H:%M:%S%z"),
             shipment_service=shipment.product,
             shipping_date=lib.fdate(shipment.entryDate, "%Y-%m-%dT%H:%M:%S%z"),
-            shipment_origin_country=getattr(
-                shipment.contextData, "originCountry", None
-            ),
-            shipment_destination_country=getattr(
-                shipment.contextData, "arrivalCountry", None
-            ),
+            shipment_origin_country=getattr(shipment.contextData, "originCountry", None),
+            shipment_destination_country=getattr(shipment.contextData, "arrivalCountry", None),
         ),
     )
 

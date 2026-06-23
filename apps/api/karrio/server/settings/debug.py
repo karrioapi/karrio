@@ -1,14 +1,13 @@
 # type: ignore
+# ruff: noqa: F403, F405, S104
+import importlib
 import sys
+
 from karrio.server.settings.base import *
 
 TESTING = sys.argv[1:2] == ["test"]
 
-if (
-    DEBUG is True
-    and TESTING is False
-    and importlib.util.find_spec("debug_toolbar") is not None
-):
+if DEBUG is True and TESTING is False and importlib.util.find_spec("debug_toolbar") is not None:
     INTERNAL_IPS = [
         "127.0.0.1",
         "0.0.0.0",

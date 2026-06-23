@@ -10,23 +10,23 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
-import os
-import decouple
 import importlib
-import dj_database_url
-
-from pathlib import Path
+import os
+import sys as _sys
 from datetime import timedelta
-from django.urls import reverse_lazy
+from pathlib import Path
+
+import decouple
+import dj_database_url
 from corsheaders.defaults import default_headers
 from django.core.management.utils import get_random_secret_key
+from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
-
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-with open(BASE_DIR / "server" / "VERSION", "r") as v:
+with open(BASE_DIR / "server" / "VERSION") as v:
     VERSION = v.read().strip()
 
 
@@ -35,11 +35,11 @@ config = decouple.AutoConfig(search_path=Path().resolve())
 if not config("SECRET_KEY", default=None):
     try:
         # Note: Using print here intentionally as logging isn't configured yet
-        print("> fallback .env.sample...")
+        print("> fallback .env.sample...")  # noqa: T201
         config = decouple.Config(decouple.RepositoryEnv(".env.sample"))
     except Exception as e:
         # Note: Using print here intentionally as logging isn't configured yet
-        print(f"> error: {e}")
+        print(f"> error: {e}")  # noqa: T201
 
 
 # Quick-start development settings - unsuitable for production
@@ -48,7 +48,7 @@ if not config("SECRET_KEY", default=None):
 SECRET_KEY = config("SECRET_KEY", default=get_random_secret_key())
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config("DEBUG_MODE", default=True, cast=bool)
+DEBUG = config("DEBUG_MODE", default=False, cast=bool)
 
 # custom env
 WORK_DIR = config("WORK_DIR", default="")
@@ -88,16 +88,14 @@ if USE_HTTPS is True:
 
     SECURE_SSL_REDIRECT = True
     # Exempt health check endpoint from HTTPS redirect for Kubernetes probes
-    SECURE_REDIRECT_EXEMPT = [r'^status/$']
+    SECURE_REDIRECT_EXEMPT = [r"^status/$"]
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SESSION_COOKIE_SECURE = True
     SECURE_HSTS_SECONDS = 1
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     CSRF_COOKIE_SECURE = True
     SECURE_HSTS_PRELOAD = True
-    CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", default="https://*").split(
-        ","
-    )
+    CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", default="https://*").split(",")
 
 
 # karrio packages settings
@@ -171,18 +169,12 @@ KARRIO_CONF = [
 KARRIO_APPS = [cfg["app"] for cfg in KARRIO_CONF]
 KARRIO_URLS = [cfg["urls"] for cfg in KARRIO_CONF if "urls" in cfg]
 
-ALLOW_ADMIN_APPROVED_SIGNUP = config(
-    "ALLOW_ADMIN_APPROVED_SIGNUP", default=False, cast=bool
-)
-ALLOW_SIGNUP = (
-    config("ALLOW_SIGNUP", default=False, cast=bool) or ALLOW_ADMIN_APPROVED_SIGNUP
-)
+ALLOW_ADMIN_APPROVED_SIGNUP = config("ALLOW_ADMIN_APPROVED_SIGNUP", default=False, cast=bool)
+ALLOW_SIGNUP = config("ALLOW_SIGNUP", default=False, cast=bool) or ALLOW_ADMIN_APPROVED_SIGNUP
 MULTI_ORGANIZATIONS = (
     importlib.util.find_spec("karrio.server.orgs") is not None  # type:ignore
 )
-ALLOW_MULTI_ACCOUNT = config(
-    "ALLOW_MULTI_ACCOUNT", default=MULTI_ORGANIZATIONS, cast=bool
-)
+ALLOW_MULTI_ACCOUNT = config("ALLOW_MULTI_ACCOUNT", default=MULTI_ORGANIZATIONS, cast=bool)
 ADMIN_DASHBOARD = importlib.util.find_spec(  # type:ignore
     "karrio.server.admin"
 ) is not None and config("ADMIN_DASHBOARD", default=True, cast=bool)
@@ -191,7 +183,7 @@ ORDERS_MANAGEMENT = (
 )
 APPS_MANAGEMENT = (
     importlib.util.find_spec("karrio.server.apps") is not None  # type:ignore
-) and config("APPS_MANAGEMENT", default=(True if DEBUG else False), cast=bool)
+) and config("APPS_MANAGEMENT", default=bool(DEBUG), cast=bool)
 DOCUMENTS_MANAGEMENT = (
     importlib.util.find_spec("karrio.server.documents") is not None  # type:ignore
 )
@@ -208,9 +200,13 @@ AUDIT_LOGGING = importlib.util.find_spec(  # type:ignore
     "karrio.server.audit"
 ) is not None and config("AUDIT_LOGGING", default=True, cast=bool)
 PERSIST_SDK_TRACING = config("PERSIST_SDK_TRACING", default=True, cast=bool)
+# Emit the built-in shipment.purchased webhook from the core events signal.
+# Default on; set False once the bridge fan-out owns the purchased webhook
+# (see modules/bridge consumer) to avoid double-delivery.
+BUILT_IN_WEBHOOKS = config("BUILT_IN_WEBHOOKS", default=True, cast=bool)
 WORKFLOW_MANAGEMENT = (
     importlib.util.find_spec("karrio.server.automation") is not None  # type:ignore
-) and config("WORKFLOW_MANAGEMENT", default=(True if DEBUG else False), cast=bool)
+) and config("WORKFLOW_MANAGEMENT", default=bool(DEBUG), cast=bool)
 SHIPPING_RULES = (
     importlib.util.find_spec("karrio.server.automation") is not None  # type:ignore
 )
@@ -219,7 +215,7 @@ SHIPPING_METHODS = (
 )
 ADVANCED_ANALYTICS = (
     importlib.util.find_spec("karrio.server.analytics") is not None  # type:ignore
-) and config("ADVANCED_ANALYTICS", default=(True if DEBUG else False), cast=bool)
+) and config("ADVANCED_ANALYTICS", default=bool(DEBUG), cast=bool)
 
 
 # Feature flags
@@ -288,11 +284,12 @@ INSTALLED_APPS = [
     *KARRIO_APPS,
     *BASE_APPS,
     "rest_framework",
+    "rest_framework_simplejwt.token_blacklist",
     "django_email_verification",
     "rest_framework_tracking",
     "drf_spectacular",
     "constance.backends.database",
-    "huey.contrib.djhuey",
+    # "huey.contrib.djhuey" — moved to karrio.server.settings.huey (auto-discovered)
     "corsheaders",
     "oauth2_provider",
     *OTP_APPS,
@@ -313,6 +310,10 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "karrio.server.core.middleware.SessionContext",
 ]
+
+# Allow large GraphQL mutations (rate sheet upsert sends all zones + services
+# + service_rates in one request; UPS sheets can have 5000+ rows).
+DATA_UPLOAD_MAX_MEMORY_SIZE = 20 * 1024 * 1024  # 20 MB (Django default: 2.5 MB)
 
 
 TEMPLATES = [
@@ -348,21 +349,38 @@ PERMISSION_CHECKS = ["karrio.server.core.permissions.check_feature_flags"]
 _DB_NAME = config("DATABASE_NAME", default="db")
 _DB_ENGINE = "sqlite3" if "sqlite3" in _DB_NAME else "postgresql"
 
-CONN_MAX_AGE = config("DATABASE_CONN_MAX_AGE", default=0, cast=int)
-DB_ENGINE = "django.db.backends.{}".format(
-    config("DATABASE_ENGINE", default=_DB_ENGINE)
-)
+CONN_MAX_AGE = config("DATABASE_CONN_MAX_AGE", default=60, cast=int)
+# Validate connection health before reuse; transparently reconnects if the DB
+# dropped an idle connection (e.g. Azure PostgreSQL load-balancer idle timeout).
+# Requires CONN_MAX_AGE > 0 to have effect. Added in Django 4.1.
+CONN_HEALTH_CHECKS = config("DATABASE_CONN_HEALTH_CHECKS", default=True, cast=bool)
+DB_ENGINE = "django.db.backends.{}".format(config("DATABASE_ENGINE", default=_DB_ENGINE))
 DB_NAME = (
     os.path.join(WORK_DIR, f"{_DB_NAME}{'' if '.sqlite3' in _DB_NAME else '.sqlite3'}")
     if "sqlite3" in DB_ENGINE
     else _DB_NAME
 )
 
+# Connection pool (psycopg 3) — required under ASGI. Django's CONN_MAX_AGE and
+# CONN_HEALTH_CHECKS fire on the request_started/request_finished signals on the
+# main async coroutine, but sync views run under sync_to_async in a
+# ThreadPoolExecutor whose thread-local connection cache is never aged out or
+# health-checked. The process-wide pool serves both paths and uses pool-level
+# health checks on checkout to fail fast on sockets the network silently dropped.
+# See GH #508.
+DB_POOL_ENABLED = config("DATABASE_POOL_ENABLED", default="postgresql" in DB_ENGINE, cast=bool)
+DB_POOL_MIN_SIZE = config("DATABASE_POOL_MIN_SIZE", default=4, cast=int)
+DB_POOL_MAX_SIZE = config("DATABASE_POOL_MAX_SIZE", default=20, cast=int)
+DB_POOL_MAX_LIFETIME = config("DATABASE_POOL_MAX_LIFETIME", default=3600, cast=int)
+DB_POOL_MAX_IDLE = config("DATABASE_POOL_MAX_IDLE", default=600, cast=int)
+DB_POOL_TIMEOUT = config("DATABASE_POOL_TIMEOUT", default=10, cast=int)
+
 DATABASES = {
     "default": {
         "NAME": DB_NAME,
         "ENGINE": DB_ENGINE,
         "CONN_MAX_AGE": CONN_MAX_AGE,
+        "CONN_HEALTH_CHECKS": CONN_HEALTH_CHECKS,
         "PORT": config("DATABASE_PORT", default="5432"),
         "HOST": config("DATABASE_HOST", default="localhost"),
         "USER": config("DATABASE_USERNAME", default="postgres"),
@@ -376,11 +394,67 @@ DATABASES = {
 
 TEST_RUNNER = "karrio.server.test_runner.KarrioTestRunner"
 
+# Password hashing. PBKDF2 preferred; Django auto-upgrades legacy hashes to it
+# on successful login. MD5 kept only as a trailing fallback so accounts hashed
+# while prod ran MD5-only (#926) still verify and migrate forward — drop it once
+# they have.
+PASSWORD_HASHERS = [
+    "django.contrib.auth.hashers.PBKDF2PasswordHasher",
+    "django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher",
+    "django.contrib.auth.hashers.Argon2PasswordHasher",
+    "django.contrib.auth.hashers.BCryptSHA256PasswordHasher",
+    "django.contrib.auth.hashers.ScryptPasswordHasher",
+    "django.contrib.auth.hashers.MD5PasswordHasher",  # legacy fallback — remove after #926 migration window
+]
+
+# Test suite only: MD5 first for speed. Gated on an exact argv token so it can
+# never match a prod process — the old `"karrio" in argv[0]` matched everything
+# under /karrio/venv, which was the #926 root cause.
+if "test" in _sys.argv:
+    PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher", *PASSWORD_HASHERS]
+
 if config("DATABASE_URL", default=None):
     db_from_env = dj_database_url.config(
-        conn_max_age=config("DATABASE_CONN_MAX_AGE", default=0, cast=int)
+        conn_max_age=config("DATABASE_CONN_MAX_AGE", default=60, cast=int),
+        conn_health_checks=config("DATABASE_CONN_HEALTH_CHECKS", default=True, cast=bool),
     )
     DATABASES["default"].update(db_from_env)
+
+# Postgres-only connection hardening (libpq TCP keepalives + psycopg3 pool).
+# Keepalives make the OS fail stale sockets fast when the network path silently
+# drops TCP (e.g. Azure Private Endpoint ~4 min TCP idle timeout) so psycopg
+# reconnects instead of reusing a dead socket. The pool bounds backend fan-out
+# per process and health-checks connections on checkout. See GH #508.
+if "postgresql" in DATABASES["default"]["ENGINE"]:
+    _db_options = DATABASES["default"].setdefault("OPTIONS", {})
+    _db_options.setdefault("keepalives", 1)
+    _db_options.setdefault("keepalives_idle", 60)
+    _db_options.setdefault("keepalives_interval", 10)
+    _db_options.setdefault("keepalives_count", 3)
+
+    if DB_POOL_ENABLED:
+        try:
+            import psycopg_pool  # noqa: F401
+
+            # Django's postgresql backend already passes
+            # check=ConnectionPool.check_connection when constructing the pool;
+            # supplying it again here raises TypeError (multiple values for 'check').
+            _db_options["pool"] = {
+                "min_size": DB_POOL_MIN_SIZE,
+                "max_size": DB_POOL_MAX_SIZE,
+                "max_lifetime": DB_POOL_MAX_LIFETIME,
+                "max_idle": DB_POOL_MAX_IDLE,
+                "timeout": DB_POOL_TIMEOUT,
+            }
+            # Django requires persistent-connection cache disabled when a pool
+            # is configured; the pool owns connection lifetime now.
+            DATABASES["default"]["CONN_MAX_AGE"] = 0
+            DATABASES["default"]["CONN_HEALTH_CHECKS"] = False
+        except ImportError:
+            # psycopg3 / psycopg-pool not installed (e.g. psycopg2 fallback).
+            # Keepalives alone still cover the ASGI stale-socket case, just
+            # without per-process pool bounds.
+            pass
 
 # Configure workers database for SQLite storage when Redis is not available
 if not config("REDIS_URL", default=None) and not config("REDIS_HOST", default=None):
@@ -448,9 +522,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_HOST = config("CDN_STATIC_HOST", default="") if not DEBUG else ""
-STATIC_URL = STATIC_HOST + config(
-    "STATIC_URL", default=f"{BASE_PATH}/static/".replace("//", "/")
-)
+STATIC_URL = STATIC_HOST + config("STATIC_URL", default=f"{BASE_PATH}/static/".replace("//", "/"))
 STATIC_ROOT = config("STATIC_ROOT_DIR", default=(BASE_DIR / "server" / "staticfiles"))
 
 STATICFILES_DIRS = [
@@ -512,14 +584,10 @@ REST_FRAMEWORK = {
 
 # JWT config
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(
-        config("JWT_ACCESS_EXPIRY", default="30", cast=int)
-    ),
-    "REFRESH_TOKEN_LIFETIME": timedelta(
-        config("JWT_REFRESH_EXPIRY", default="3", cast=int)
-    ),
+    "ACCESS_TOKEN_LIFETIME": timedelta(config("JWT_ACCESS_EXPIRY", default="30", cast=int)),
+    "REFRESH_TOKEN_LIFETIME": timedelta(config("JWT_REFRESH_EXPIRY", default="3", cast=int)),
     "ROTATE_REFRESH_TOKENS": False,
-    "BLACKLIST_AFTER_ROTATION": False,
+    "BLACKLIST_AFTER_ROTATION": True,
     "UPDATE_LAST_LOGIN": True,
     "ALGORITHM": "HS256",
     "SIGNING_KEY": SECRET_KEY,
@@ -541,10 +609,9 @@ SIMPLE_JWT = {
 # JWT Cookie settings for HTTP-only cookie authentication
 JWT_AUTH_COOKIE = config("JWT_AUTH_COOKIE", default="karrio_access_token")
 JWT_REFRESH_COOKIE = config("JWT_REFRESH_COOKIE", default="karrio_refresh_token")
-JWT_AUTH_COOKIE_SECURE = config(
-    "JWT_AUTH_COOKIE_SECURE", default=USE_HTTPS, cast=bool
-)
+JWT_AUTH_COOKIE_SECURE = config("JWT_AUTH_COOKIE_SECURE", default=USE_HTTPS, cast=bool)
 JWT_AUTH_COOKIE_SAMESITE = config("JWT_AUTH_COOKIE_SAMESITE", default="Lax")
+JWT_AUTH_COOKIE_DOMAIN = config("JWT_AUTH_COOKIE_DOMAIN", default=None)
 JWT_AUTH_COOKIE_PATH = config("JWT_AUTH_COOKIE_PATH", default="/")
 
 # OAuth2 config
@@ -582,9 +649,7 @@ SPECTACULAR_SETTINGS = {
     "OAUTH2_TOKEN_URL": "/oauth/token/",
     "OAUTH2_REFRESH_URL": None,
     "OAUTH2_SCOPES": OAUTH2_PROVIDER["SCOPES"],
-    "AUTHENTICATION_WHITELIST": [
-        _ for _ in AUTHENTICATION_CLASSES if "Session" not in _
-    ],
+    "AUTHENTICATION_WHITELIST": [_ for _ in AUTHENTICATION_CLASSES if "Session" not in _],
     "POSTPROCESSING_HOOKS": [
         "karrio.server.openapi.custom_postprocessing_hook",
     ],
@@ -656,6 +721,9 @@ if USE_LOGURU:
             "handlers": ["console"],
             "level": "INFO",
         },
+        "loggers": {
+            "azure.servicebus._pyamqp": {"level": "WARNING"},
+        },
     }
 else:
     # Traditional Django logging configuration
@@ -711,11 +779,10 @@ else:
         },
     }
 
-
 # Initialize Loguru if enabled
 if USE_LOGURU:
     try:
-        from karrio.server.core.logging import setup_django_loguru, logger
+        from karrio.server.core.logging import setup_django_loguru
 
         setup_django_loguru(
             level=LOG_LEVEL,
@@ -725,6 +792,6 @@ if USE_LOGURU:
         )
     except ImportError as e:
         # Note: Using print here as Loguru failed to load
-        print(f"Warning: Failed to initialize Loguru: {e}")
-        print("Falling back to standard Django logging")
+        print(f"Warning: Failed to initialize Loguru: {e}")  # noqa: T201
+        print("Falling back to standard Django logging")  # noqa: T201
         USE_LOGURU = False

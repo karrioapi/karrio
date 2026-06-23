@@ -1,16 +1,13 @@
-import typing
 import functools
-import django.db.models as models
+
 import django.core.validators as validators
-from django.contrib.contenttypes.fields import GenericRelation
-
-import karrio.lib as lib
+import django.db.models as models
 import karrio.core.models as karrio
-import karrio.server.core.models as core
+import karrio.lib as lib
 import karrio.server.core.datatypes as datatypes
-import karrio.server.providers.models as providers
+import karrio.server.core.models as core
+from django.contrib.contenttypes.fields import GenericRelation
 from karrio.server.core.logging import logger
-
 
 # ─────────────────────────────────────────────────────────────────────────────
 # MARKUP TYPE ENUM
@@ -189,11 +186,7 @@ class Markup(core.Entity):
         # Check carrier code filter
         if self.carrier_codes:
             # For custom carriers (ext="generic"), check if "generic" is in the carrier list
-            if (
-                rate.meta
-                and rate.meta.get("ext") == "generic"
-                and "generic" in self.carrier_codes
-            ):
+            if rate.meta and rate.meta.get("ext") == "generic" and "generic" in self.carrier_codes:
                 applicable.append(True)
             else:
                 applicable.append(rate.carrier_name in self.carrier_codes)
@@ -225,28 +218,83 @@ class Markup(core.Entity):
                 markup_name=self.name,
             )
 
+            # Per-rate custom margin override lookup via typed PlanOverride
+            # helper. `rate.meta` is the storage dict; PlanOverride.from_dict
+            # handles partial/missing shapes.
+            from karrio.server.providers.rate_sheet_datatypes import PlanOverride
+
+            rate_meta = getattr(rate, "meta", None) if hasattr(rate, "meta") else None
+            if not isinstance(rate_meta, dict):
+                rate_meta = None
+
+            # Honor per-rate excluded markups: if this markup is in the
+            # rate's meta.excluded_markup_ids list, skip it entirely so the
+            # merchant pays only base + surcharges for this specific rate.
+            excluded = (rate_meta or {}).get("excluded_markup_ids") or []
+            if self.id in excluded:
+                return rate
+
+            override = PlanOverride.from_dict(rate_meta)
+            override_amount, override_type = override.override_for(self.id)
+
+            # Fallback: CSV imports only know the plan slug (not the markup
+            # id at write time) so the flat plan_cost_<slug> / plan_rate_<slug>
+            # keys on meta are the authoritative source. Resolve them via
+            # this markup's plan slug when the markup-id lookup misses.
+            if override_amount is None:
+                markup_plan = (self.meta or {}).get("plan") if isinstance(self.meta, dict) else None
+                if markup_plan and isinstance(rate_meta, dict):
+                    amount_by_slug = rate_meta.get(f"plan_cost_{markup_plan}")
+                    percent_by_slug = rate_meta.get(f"plan_rate_{markup_plan}")
+                    if amount_by_slug is not None:
+                        override_amount, override_type = amount_by_slug, "AMOUNT"
+                    elif percent_by_slug is not None:
+                        override_amount, override_type = percent_by_slug, "PERCENTAGE"
+
+            effective_type = override_type or self.markup_type
+            effective_value = override_amount if override_amount is not None else self.amount
+
+            # PERCENTAGE applies to the CARRIER base rate (pre-markup, pre-
+            # surcharge) so the margin is deterministic and doesn't compound
+            # with surcharges or prior markups. AMOUNT adds as-is.
+            base_rate = float(getattr(rate, "base_charge", None) or rate.total_charge)
             amount = lib.to_decimal(
-                self.amount
-                if self.markup_type == "AMOUNT"
-                else (rate.total_charge * (typing.cast(float, self.amount) / 100))
+                effective_value if effective_type == "AMOUNT" else (base_rate * (float(effective_value) / 100))
             )
             total_charge = lib.to_decimal(rate.total_charge + amount)
 
-            # Only add to extra_charges if the markup is visible.
-            # Non-visible markups (e.g., plan-based platform fees) are
-            # included in total_charge but hidden from the breakdown.
-            extra_charges = (
-                rate.extra_charges + [
-                    karrio.ChargeDetails(
-                        name=typing.cast(str, self.name),
-                        amount=amount,
-                        currency=rate.currency,
-                        id=self.id,
-                    )
-                ]
-                if self.is_visible
-                else rate.extra_charges
-            )
+            # Typed charge breakdown — every markup becomes its own
+            # ChargeDetails entry. Visibility is enforced at the response
+            # boundary (merchant-facing serializers strip charge_type
+            # "platform_fee"), not by folding amounts into Base Charge.
+            # Invariant: sum(extra_charges) == total_charge for all callers.
+            #
+            # Classification: plan-scoped markups are always hidden margin
+            # (charge_type="platform_fee"), same for invisible markups.
+            # Only `is_visible=True` markups WITHOUT a plan become the
+            # merchant-facing "markup" line (e.g. an explicit Service Fee).
+            markup_plan = (self.meta or {}).get("plan") if isinstance(self.meta, dict) else None
+            is_hidden = bool(markup_plan) or not self.is_visible
+            charge_type = "platform_fee" if is_hidden else "markup"
+            charge_metadata = {"plan": markup_plan} if markup_plan else None
+
+            # Display name is decoupled from `Markup.name` so renaming the
+            # markup row (admin label) never mutates the line item shown on
+            # historical or new shipments. Plan-scoped markups render as a
+            # canonical "Platform Margin (<plan>)" line; explicit visible
+            # markups (real merchant-facing fees) keep their admin label.
+            display_name = f"Platform Margin ({markup_plan})" if markup_plan else str(self.name)
+
+            extra_charges = list(rate.extra_charges) + [
+                karrio.ChargeDetails(
+                    name=display_name,
+                    amount=amount,
+                    currency=rate.currency,
+                    id=self.id,
+                    charge_type=charge_type,
+                    metadata=charge_metadata,
+                )
+            ]
 
             return datatypes.Rate(
                 **{
@@ -294,7 +342,7 @@ class Fee(models.Model):
             models.Index(fields=["markup_id", "created_at"]),
         ]
 
-    id = models.CharField(
+    id = models.CharField(  # noqa: DJ012
         max_length=50,
         primary_key=True,
         default=functools.partial(core.uuid, prefix="fee_"),
@@ -325,7 +373,7 @@ class Fee(models.Model):
     )
 
     # Markup reference (snapshot, no FK)
-    markup_id = models.CharField(
+    markup_id = models.CharField(  # noqa: DJ001
         max_length=50,
         null=True,
         blank=True,
@@ -341,7 +389,7 @@ class Fee(models.Model):
     )
 
     # Organization/Account reference (snapshot, no FK)
-    account_id = models.CharField(
+    account_id = models.CharField(  # noqa: DJ001
         max_length=50,
         null=True,
         blank=True,
@@ -359,7 +407,7 @@ class Fee(models.Model):
         max_length=50,
         help_text="Carrier code at time of shipment creation",
     )
-    service_code = models.CharField(
+    service_code = models.CharField(  # noqa: DJ001
         max_length=100,
         null=True,
         blank=True,
@@ -376,5 +424,3 @@ class Fee(models.Model):
     @property
     def object_type(self):
         return "fee"
-
-

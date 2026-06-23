@@ -1,0 +1,101 @@
+{
+  "info": {
+    "name": "DHL Freight Shipment Booking - SANDBOX - 2026/R03",
+    "description": "Name: JSON Collection of DHL Freight Shipment Booking API\n\nTarget: DHL API Developer Portal SANDBOX\n\nClassification: For Public Use if the customer has valid business contract with DHL Freight\n\nPublished: March 2026\n\nSupport: [api4freight@dhl.com](https://mailto:api4freight@dhl.com) (Your DHL Freight API Farm Team)\n\nNote: After strict tests on SANDBOX, cURL should be changed to PRODUCTION by the Customer",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "DHL Freight Shipment Booking",
+      "event": [],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "auth": {
+          "type": "oauth2",
+					"oauth2": [
+						{
+							"key": "clientSecret",
+							"value": "your_API_KEY_should_be_copied_here",
+							"type": "string"
+						},
+						{
+							"key": "clientId",
+							"value": "your_API_SECRET_should_be_copied_here",
+							"type": "string"
+						},
+						{
+							"key": "accessTokenUrl",
+							"value": "https://api-sandbox.dhl.com/auth/v1/token?response_type=access_token&grant_type=client_credentials",
+							"type": "string"
+						},
+						{
+							"key": "grant_type",
+							"value": "client_credentials",
+							"type": "string"
+						},
+						{
+							"key": "client_authentication",
+							"value": "header",
+							"type": "string"
+						},
+						{
+							"key": "authUrl",
+							"value": "https://api-sandbox.dhl.com/auth/v1/token?response_type=access_token&grant_type=client_credentials",
+							"type": "string"
+						},
+						{
+							"key": "tokenName",
+							"value": "BearerKey",
+							"type": "string"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						},
+						{
+							"key": "tokenRequestParams",
+							"value": [],
+							"type": "any"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "",
+							"type": "string"
+						}
+					]
+        },
+        "description": "",
+        "url": {
+          "raw": "https://api-sandbox.dhl.com/freight/shipping/orders/v1/sendtransportinstruction",
+          "protocol": "https",
+          "host": [
+            "api-sandbox",
+            "dhl",
+            "com"
+          ],
+          "path": [
+            "freight",
+            "shipping",
+            "orders",
+            "v1",
+            "sendtransportinstruction"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "/* DHL Freight Shipment Booking API - JSON Collection */\n/* Sprint 2026/R03 - v1.10 - May'26 */\n{\n    \"id\": \"\",\n    \"productCode\": \"ECI\",\n    \"pickupDate\": \"2026-12-31T00:11:11.631Z\",\n    \"requestedDeliveryDate\": \"2027-01-03T00:11:11.631Z\",\n    \"pickupInstruction\": \"to B... - MAX 512 chars\",\n    \"deliveryInstruction\": \"from A... - MAX 512 chars\",\n    \"totalNumberOfPieces\": 2,\n    \"totalWeight\": 1100,\n    \"totalVolume\": 2.52,\n    \"totalLoadingMeters\": 0,\n    \"totalPalletPlaces\": 2,\n    \"goodsDescription\": \"Machinery parts\",\n    \"goodsValue\": 7500,\n    \"goodsValueCurrency\": \"EUR\",\n    \"references\": [\n        {\n            \"qualifier\": \"CNR\",\n            \"value\": \"Consignor-Ref123>\"\n        },\n        {\n            \"qualifier\": \"CNZ\",\n            \"value\": \"Consignee-Ref456>\"\n        }\n    ],\n    \"payerCode\": {\n        \"code\": \"DAP\",\n        \"location\": \"\"\n    },\n    \"parties\": [\n        {\n            \"id\": \"20071718.TR0001\",\n            \"type\": \"Consignor\",\n            \"name\": \"Rower Gear Türkiye\",\n            \"vat\": \"\",\n            \"vatEoriSocialSecurityNumber\": \"TR0123456789\",\n            \"contactName\": \"John Doe\",\n            \"address\": {\n                \"street\": \"Atatürk Street\",\n                \"additionalAddressInfo\": \"Industrial Zone\",\n                \"cityName\": \"ANKARA\",\n                \"postalCode\": \"06100\",\n                /* For Ireland (IE) EirCode is not supporting, use COUNTY as Postcode */\n                \"countryCode\": \"TR\"\n            },\n            \"phone\": \"+90 63559867\",\n            \"email\": \"TR.RowerGear@rg.com\"\n        },\n        {\n            \"type\": \"Consignee\",\n            \"name\": \"Ford Romania\",\n            \"vat\": \"\",\n            \"vatEoriSocialSecurityNumber\": \"RO0123456789\",\n            \"contactName\": \"Gerardiu Pocamantiu\",\n            \"address\": {\n                \"street\": \"Esma Sultan Street\",\n                \"additionalAddressInfo\": \"Harbor Edge\",\n                \"cityName\": \"MANKALYA\",\n                \"postalCode\": \"905500\",\n                \"countryCode\": \"RO\"\n            },\n            \"phone\": \"+40 921345871\",\n            \"email\": \"RO.ford@fordromania.com\"\n        },\n        {\n            \"type\": \"Pickup\",\n            \"name\": \"Progidy Netherlands\",\n            \"vat\": \"\",\n            \"vatEoriSocialSecurityNumber\": \"NL0123456789\",\n            \"contactName\": \"Christophe Colomb\",\n            \"address\": {\n                \"street\": \"Damrak Straat\",\n                \"additionalAddressInfo\": \"Servitor Bridge Corner\",\n                \"cityName\": \"Niemegen\",\n                \"postalCode\": \"4651 SR\",\n                \"countryCode\": \"NL\"\n            },\n            \"phone\": \"+31 63559867\",\n            \"email\": \"NL.progidy@pgd-nl.com\"\n        },\n        {\n            \"type\": \"Delivery\",\n            \"name\": \"Weyland Yutani Romania\",\n            \"vat\": \"\",\n            \"vatEoriSocialSecurityNumber\": \"RO0123456789\",\n            \"contactName\": \"Kingston Hale\",\n            \"address\": {\n                \"street\": \"Konstantce Street\",\n                \"additionalAddressInfo\": \"Shipyard Corner\",\n                \"cityName\": \"MANKALYA\",\n                \"postalCode\": \"905500\",\n                \"countryCode\": \"RO\"\n            },\n            \"phone\": \"+40 921345871\",\n            \"email\": \"RO.weyland-yutani@ship-yard.com\"\n        }\n    ],\n    \"additionalServices\": {\n        \"after12Delivery\": false,\n        /* \"availablePickupTime\": \"09:30\",\n        \"availableDeliveryTime\": \"14:30\", */\n        \"cashOnDelivery\": {\n            \"amount\": 987,\n            \"currency\": \"EUR\"\n        },\n        \"dangerousGoods\": false,\n         \"dropOffByConsignor\": false,\n        \"insurance\": {\n            \"value\": 1000,\n            \"currency\": \"EUR\" },\n        \"preAdvice\": true,\n        \"sideLoadingPickup\": false,\n        \"sideUnloadingDelivery\": false,\n        /* \"temperatureControlled\": {\n          \"type\": \"Custom\",\n          \"min\": 17,\n          \"max\": 19\n        } */\n        \"tailLiftLoading\": false,\n        \"tailLiftUnloading\": false,\n        \"timeSlotBookingPickup\": false,\n        \"timeSlotBookingDelivery\": false\n    },\n    \"pieces\": [\n        {\n            \"id\": [\n                \"\"\n            ],\n            \"goodsType\": \"Machinery Parts\",\n            \"packageType\": \"PAL\",\n            \"marksAndNumbers\": \"123456789012345678901234567890123456789012345\",\n            \"numberOfPieces\": 2,\n            \"weight\": 550,\n            \"volume\": 1.26,\n            \"loadingMeters\": 0,\n            \"palletPlaces\": 1,\n            \"width\": 90,\n            \"height\": 140,\n            \"length\": 100,\n            \"stackable\": true,\n            \"dangerousGoods\": {\n                \"dgmId\": 979,\n                \"properShippingName\": \"PENTABORANE\",\n                \"adrClass\": \"4.2\",\n                \"unNumber\": 1380,\n                \"flashpointValue\": \"85\",\n                \"packageGroup\": \"I\",\n                \"tunnelCode\": \"B/E\",\n                \"grossWeight\": 700,\n                \"quantityMeasurementUnitQualifier\": \"KG\",\n                \"quantityMeasurementValue\": 750,\n                \"numberOfPieces\": 2,\n                \"packageType\": \"IBC\",\n                \"officialNameTechDescription\": \"Official technical name\",\n                \"marinePollutant\": true,\n                \"marinePollutantName\": \"Benzen\",\n                \"exceptedQuantity\": false,\n                \"limitedQuantity\": false,\n                \"emptyContainer\": false,\n                \"environmentHazardous\": false,\n                \"waste\": false,\n                \"netExplosiveMass\": 0\n            }\n        }\n    ],\n    \"additionalInformation\": [\n        {\n/* Below references are sample for Romania. Please check Hungary and Poland references in Product Manual */\n          \"code\": \"UIT_NUMBER\",\n            \"stringValue\": \"RO1M-A23N-4I5A-ROM6\"\n        }\n    ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "variable": []
+}

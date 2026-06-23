@@ -1,10 +1,12 @@
 import re
 import unittest
 from unittest.mock import patch
+
 import karrio.sdk as karrio
-from karrio.core.utils import DP
 from karrio.core.models import RateRequest
+from karrio.core.utils import DP
 from karrio.sdk import Rating
+
 from .fixture import gateway
 
 
@@ -55,9 +57,7 @@ class TestDHLRating(unittest.TestCase):
         self.assertEqual(serialized_request, EURateRequestXML)
 
     def test_create_rate_request_with_package_preset(self):
-        request = gateway.mapper.create_rate_request(
-            RateRequest(**RateWithPresetPayload)
-        )
+        request = gateway.mapper.create_rate_request(RateRequest(**RateWithPresetPayload))
 
         # remove MessageTime, Date and ReadyTime for testing purpose
         serialized_request = re.sub(
@@ -111,9 +111,7 @@ class TestDHLRating(unittest.TestCase):
                 account_country_code="US",
             )
         )
-        parsed_response = (
-            Rating.fetch(self.RateRequest).from_(us_account_gateway).parse()
-        )
+        parsed_response = Rating.fetch(self.RateRequest).from_(us_account_gateway).parse()
 
         self.assertEqual(
             DP.to_dict(parsed_response),
@@ -124,25 +122,19 @@ class TestDHLRating(unittest.TestCase):
         with patch("karrio.mappers.dhl_express.proxy.lib.request") as mock:
             mock.return_value = RateParsingError
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedRateParsingError)
-            )
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedRateParsingError))
 
     def test_parse_rate_missing_args_error(self):
         with patch("karrio.mappers.dhl_express.proxy.lib.request") as mock:
             mock.return_value = RateMissingArgsError
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedRateMissingArgsError)
-            )
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedRateMissingArgsError))
 
     def test_parse_rate_vol_weight_higher_response(self):
         with patch("karrio.mappers.dhl_express.proxy.lib.request") as mock:
             mock.return_value = RateVolWeightHigher
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedRateVolWeightHigher)
-            )
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedRateVolWeightHigher))
 
 
 if __name__ == "__main__":
@@ -268,9 +260,7 @@ ParsedRateResponse = [
             "carrier_id": "carrier_id",
             "carrier_name": "dhl_express",
             "currency": "CAD",
-            "extra_charges": [
-                {"amount": 213.47, "currency": "CAD", "name": "Base charge"}
-            ],
+            "extra_charges": [{"amount": 213.47, "currency": "CAD", "name": "Base charge"}],
             "meta": {"service_name": "DHL EXPRESS EASY DOC"},
             "service": "dhl_express_easy",
             "total_charge": 213.47,

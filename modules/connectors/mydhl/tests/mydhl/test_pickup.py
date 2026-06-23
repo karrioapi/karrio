@@ -1,12 +1,13 @@
 """MyDHL carrier pickup tests."""
 
 import unittest
-from unittest.mock import patch, ANY
-from .fixture import gateway
+from unittest.mock import ANY, patch
 
-import karrio.sdk as karrio
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 
 class TestMyDHLPickup(unittest.TestCase):
@@ -24,43 +25,30 @@ class TestMyDHLPickup(unittest.TestCase):
         with patch("karrio.mappers.mydhl.proxy.lib.request") as mock:
             mock.return_value = "{}"
             karrio.Pickup.schedule(self.PickupRequest).from_(gateway)
-            self.assertEqual(
-                mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/pickups"
-            )
+            self.assertEqual(mock.call_args[1]["url"], f"{gateway.settings.server_url}/pickups")
 
     def test_update_pickup(self):
         with patch("karrio.mappers.mydhl.proxy.lib.request") as mock:
             mock.return_value = "{}"
             karrio.Pickup.update(self.PickupUpdateRequest).from_(gateway)
-            self.assertEqual(
-                mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/pickups"
-            )
+            self.assertEqual(mock.call_args[1]["url"], f"{gateway.settings.server_url}/pickups")
 
     def test_cancel_pickup(self):
         with patch("karrio.mappers.mydhl.proxy.lib.request") as mock:
             mock.return_value = "{}"
             karrio.Pickup.cancel(self.PickupCancelRequest).from_(gateway)
-            self.assertEqual(
-                mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/pickups/PRG999123456"
-            )
+            self.assertEqual(mock.call_args[1]["url"], f"{gateway.settings.server_url}/pickups/PRG999123456")
 
     def test_parse_pickup_response(self):
         with patch("karrio.mappers.mydhl.proxy.lib.request") as mock:
             mock.return_value = PickupResponse
-            parsed_response = (
-                karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
             self.assertListEqual(lib.to_dict(parsed_response), ParsedPickupResponse)
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.mydhl.proxy.lib.request") as mock:
             mock.return_value = ErrorResponse
-            parsed_response = (
-                karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
             self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
 
@@ -78,11 +66,11 @@ PickupPayload = {
         "person_name": "John Doe",
         "company_name": "Test Company",
         "phone_number": "1234567890",
-        "email": "pickup@example.com"
+        "email": "pickup@example.com",
     },
     "pickup_date": "2024-01-15",
     "ready_time": "09:00",
-    "closing_time": "17:00"
+    "closing_time": "17:00",
 }
 
 PickupUpdatePayload = {
@@ -96,16 +84,14 @@ PickupUpdatePayload = {
         "person_name": "John Doe",
         "company_name": "Test Company",
         "phone_number": "1234567890",
-        "email": "pickup@example.com"
+        "email": "pickup@example.com",
     },
     "pickup_date": "2024-01-16",
     "ready_time": "10:00",
-    "closing_time": "18:00"
+    "closing_time": "18:00",
 }
 
-PickupCancelPayload = {
-    "confirmation_number": "PRG999123456"
-}
+PickupCancelPayload = {"confirmation_number": "PRG999123456"}
 
 PickupRequest = {
     "accounts": [{"number": "123456789", "typeCode": "shipper"}],
@@ -117,28 +103,23 @@ PickupRequest = {
                 "email": "pickup@example.com",
                 "fullName": "John Doe",
                 "mobilePhone": "1234567890",
-                "phone": "1234567890"
+                "phone": "1234567890",
             },
             "postalAddress": {
                 "addressLine1": "123 Main Street",
                 "cityName": "Los Angeles",
                 "countryCode": "US",
                 "postalCode": "90001",
-                "provinceCode": "CA"
-            }
+                "provinceCode": "CA",
+            },
         }
     },
     "location": "reception",
     "locationType": "business",
     "plannedPickupDateAndTime": ANY,
     "shipmentDetails": [
-        {
-            "isCustomsDeclarable": False,
-            "packages": [{"weight": 1.0}],
-            "productCode": "P",
-            "unitOfMeasurement": "metric"
-        }
-    ]
+        {"isCustomsDeclarable": False, "packages": [{"weight": 1.0}], "productCode": "P", "unitOfMeasurement": "metric"}
+    ],
 }
 
 PickupResponse = """{
@@ -172,13 +153,11 @@ ParsedPickupResponse = [
         "carrier_id": "mydhl",
         "carrier_name": "mydhl",
         "confirmation_number": "PRG999123456",
-        "meta": {
-            "confirmation_numbers": ["PRG999123456", "PRG999123457"]
-        },
+        "meta": {"confirmation_numbers": ["PRG999123456", "PRG999123457"]},
         "pickup_date": "2024-01-15",
-        "ready_time": "09:00"
+        "ready_time": "09:00",
     },
-    []
+    [],
 ]
 
 ParsedErrorResponse = [
@@ -189,10 +168,7 @@ ParsedErrorResponse = [
             "carrier_name": "mydhl",
             "code": "400",
             "message": "Invalid pickup request - missing required field",
-            "details": {
-                "instance": "/pickups",
-                "title": "Bad Request"
-            }
+            "details": {"instance": "/pickups", "title": "Bad Request"},
         }
-    ]
+    ],
 ]

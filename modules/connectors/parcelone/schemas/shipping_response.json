@@ -6,9 +6,9 @@
   "instance": "/shipment",
   "UniqId": "649969a6f6e1",
   "results": {
-    "YourShipmentID": "12345678",
+    "YourShipmentID": "YS-12345678",
     "ActionResult": {
-      "ShipmentID": "101415",
+      "ShipmentID": "S-101415",
       "ShipmentRef": "custref_123",
       "TrackingID": "1234501014159",
       "Success": 1,
@@ -16,18 +16,18 @@
         {
           "ErrorNo": "E001",
           "Message": "Error message",
-          "StatusCode": "400"
+          "StatusCode": "Invalid parameters have been provided."
         }
       ],
       "Warnings": [
         {
           "WarningNo": "W001",
           "Message": "Warning message",
-          "StatusCode": "200"
+          "StatusCode": "Notice"
         }
       ]
     },
-    "LabelURL": "https://api.parcelone.io/label/12345",
+    "LabelURL": "https://api.parcelone.io/label/S-101415",
     "Charges": [
       {
         "Currency": "EUR",
@@ -42,21 +42,21 @@
     },
     "PackageResults": [
       {
-        "ShipmentID": "101415",
-        "PackageID": 1,
+        "ShipmentID": "S-101415",
+        "PackageID": "PKG-001",
         "PackageRef": "PKG001",
         "TrackingID": "1234501014159",
         "DocType": "LABEL",
         "Format": {
           "Type": "PDF",
-          "Size": "A4",
+          "Size": "A6",
           "Unit": "mm",
           "Orientation": 0,
-          "Height": "297",
-          "Width": "210"
+          "Height": "148",
+          "Width": "105"
         },
-        "Label": "JVBERi0xLjQKJeLjz9MK...",
-        "TrackingURL": "https://tracking.parcel.one/?trackingNumber=1234501014159",
+        "Label": "JVBERi0xLjQKJeLjz9MK",
+        "TrackingURL": "https://parcel.one/tracking?trackno=1234501014159",
         "CarrierTrackURL": "https://www.dhl.de/tracking/1234501014159",
         "Charges": [
           {
@@ -69,19 +69,19 @@
     ],
     "DocumentsResults": [
       {
-        "ShipmentID": "101415",
-        "PackageID": "1",
+        "ShipmentID": "S-101415",
+        "PackageID": "PKG-001",
         "TrackingID": "1234501014159",
-        "DocType": "CUSTOMS",
+        "DocType": "Retourelabel",
         "Format": {
           "Type": "PDF",
-          "Size": "A4",
+          "Size": "A6",
           "Unit": "mm",
           "Orientation": 0,
-          "Height": "297",
-          "Width": "210"
+          "Height": "148",
+          "Width": "105"
         },
-        "Document": "JVBERi0xLjQK...",
+        "Document": "JVBERi0xLjQK",
         "Charges": [
           {
             "Currency": "EUR",
@@ -92,47 +92,38 @@
         "PackageRef": "PKG001",
         "PackageTrackingID": "1234501014159",
         "ActionResult": {
-          "ShipmentID": "101415",
+          "ShipmentID": "S-101415",
           "ShipmentRef": "custref_123",
           "TrackingID": "1234501014159",
-          "Success": 1,
-          "Errors": [],
-          "Warnings": []
+          "Success": 1
         },
-        "DocumentID": "DOC001",
-        "Type": "CN23",
-        "Size": "A4"
+        "DocumentID": "DOC-001"
       }
     ],
     "InternationalDocumentsResults": [
       {
-        "ShipmentID": "101415",
-        "PackageID": "1",
+        "ShipmentID": "S-101415",
+        "PackageID": "PKG-001",
         "TrackingID": "1234501014159",
         "DocType": "CN23",
         "Format": {
           "Type": "PDF",
-          "Size": "A4",
+          "Size": "CN23",
           "Unit": "mm",
           "Orientation": 0,
           "Height": "297",
           "Width": "210"
         },
-        "Document": "JVBERi0xLjQK...",
-        "Charges": [],
+        "Document": "JVBERi0xLjQK",
         "PackageRef": "PKG001",
         "PackageTrackingID": "1234501014159",
         "ActionResult": {
-          "ShipmentID": "101415",
+          "ShipmentID": "S-101415",
           "ShipmentRef": "custref_123",
           "TrackingID": "1234501014159",
-          "Success": 1,
-          "Errors": [],
-          "Warnings": []
+          "Success": 1
         },
-        "DocumentID": "INTDOC001",
-        "Type": "CN23",
-        "Size": "A4"
+        "DocumentID": "INTDOC-001"
       }
     ],
     "LabelsAvailable": 1,

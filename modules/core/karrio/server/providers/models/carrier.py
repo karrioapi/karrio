@@ -5,22 +5,22 @@ This model represents carrier connections owned by users or organizations.
 System-wide connections are handled by SystemConnection model.
 Users can enable system connections via BrokeredConnection.
 """
-import typing
-import functools
-import django.conf as conf
-import django.forms as forms
-import django.db.models as models
-import django.core.cache as caching
-from django.contrib.contenttypes.fields import GenericRelation
 
+import functools
+import typing
+
+import django.conf as conf
+import django.core.cache as caching
+import django.db.models as models
+import django.forms as forms
+import karrio.api.gateway as gateway
+import karrio.core.units as units
 import karrio.lib as lib
 import karrio.sdk as karrio
-import karrio.core.units as units
-import karrio.api.gateway as gateway
-import karrio.server.core.models as core
-import karrio.server.core.fields as fields
 import karrio.server.core.datatypes as datatypes
-
+import karrio.server.core.fields as fields
+import karrio.server.core.models as core
+from django.contrib.contenttypes.fields import GenericRelation
 
 COUNTRIES = [(c.name, c.name) for c in units.Country]
 CURRENCIES = [(c.name, c.name) for c in units.Currency]
@@ -50,6 +50,7 @@ class CarrierConnectionManager(models.Manager):
                 "rate_sheet",
                 *(("link",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
             )
+            .order_by("test_mode", "-active", "carrier_code", "-created_at")
         )
 
     def active(self):
@@ -197,16 +198,13 @@ class CarrierConnection(core.OwnedEntity):
     def ext(self) -> str:
         """Get carrier extension name for SDK lookup.
 
-        NOTE: Reads the raw JSON field directly — custom_carrier_name
-        and display_name are always resolved from the JSON field, never
-        through get_credentials().
+        NOTE: Reads the raw JSON field intentionally — ``custom_carrier_name``
+        and ``display_name`` must NEVER be classified as sensitive in any
+        carrier plugin, otherwise this property breaks when encryption strips
+        them from the JSON field.
         """
         _creds = self.credentials or {}
-        return (
-            "generic"
-            if "custom_carrier_name" in _creds
-            else lib.failsafe(lambda: self.carrier_code) or "generic"
-        )
+        return "generic" if "custom_carrier_name" in _creds else lib.failsafe(lambda: self.carrier_code) or "generic"
 
     @property
     def carrier_name(self) -> str:
@@ -217,18 +215,15 @@ class CarrierConnection(core.OwnedEntity):
     def display_name(self) -> str:
         """Get human-readable display name.
 
+        NOTE: Reads the raw JSON field — see ``ext`` docstring for invariant.
         """
         import karrio.references as references
 
         _creds = self.credentials or {}
-        return (
-            _creds.get("display_name")
-            or references.REFERENCES.get("carriers", {}).get(self.ext)
-            or self.carrier_id
-        )
+        return _creds.get("display_name") or references.REFERENCES.get("carriers", {}).get(self.ext) or self.carrier_id
 
     @property
-    def services(self) -> typing.Optional[typing.List]:
+    def services(self) -> list | None:
         """Get services from linked rate sheet."""
         if self.rate_sheet is None:
             return None
@@ -238,7 +233,7 @@ class CarrierConnection(core.OwnedEntity):
     # CREDENTIAL MANAGEMENT (Encrypted Storage)
     # ─────────────────────────────────────────────────────────────────
 
-    def get_sensitive_fields(self) -> typing.Set[str]:
+    def get_sensitive_fields(self) -> set[str]:
         """
         Dynamically get sensitive fields for THIS carrier.
 
@@ -256,14 +251,12 @@ class CarrierConnection(core.OwnedEntity):
 
         # Filter to only sensitive fields
         sensitive = {
-            field_name
-            for field_name, field_meta in carrier_fields.items()
-            if field_meta.get("sensitive", False)
+            field_name for field_name, field_meta in carrier_fields.items() if field_meta.get("sensitive", False)
         }
 
         return sensitive
 
-    def get_allowed_fields(self) -> typing.Set[str]:
+    def get_allowed_fields(self) -> set[str]:
         """
         Dynamically get all allowed fields for THIS carrier.
 
@@ -278,7 +271,7 @@ class CarrierConnection(core.OwnedEntity):
         carrier_fields = connection_fields.get(self.ext, {})
         return set(carrier_fields.keys())
 
-    def get_credentials(self, user_id: typing.Optional[typing.Any] = None) -> typing.Dict:
+    def get_credentials(self, user_id: typing.Any | None = None) -> dict:
         """
         Get all credentials for this carrier connection.
 
@@ -287,11 +280,7 @@ class CarrierConnection(core.OwnedEntity):
         """
         return dict(self.credentials or {})
 
-    def set_credentials(
-        self,
-        credentials_dict: typing.Dict,
-        user_id: typing.Optional[typing.Any] = None
-    ) -> None:
+    def set_credentials(self, credentials_dict: dict, user_id: typing.Any | None = None) -> None:
         """
         Store credentials for this carrier connection.
 
@@ -299,7 +288,7 @@ class CarrierConnection(core.OwnedEntity):
         Extension modules can override via hooks.override("set_credentials", fn).
         """
         self.credentials = credentials_dict
-        self.save(update_fields=['credentials'])
+        self.save(update_fields=["credentials"])
 
     # ─────────────────────────────────────────────────────────────────
     # SDK INTEGRATION
@@ -308,7 +297,7 @@ class CarrierConnection(core.OwnedEntity):
     @property
     def data(self) -> datatypes.CarrierSettings:
         """Build CarrierSettings for SDK gateway creation."""
-        _computed_data: typing.Dict = dict(
+        _computed_data: dict = dict(
             id=self.id,
             config=self.config or {},
             test_mode=self.test_mode,
@@ -341,15 +330,16 @@ class CarrierConnection(core.OwnedEntity):
     @property
     def gateway(self) -> gateway.Gateway:
         """Create SDK gateway instance for this connection."""
-        import karrio.server.core.middleware as middleware
         import karrio.server.core.config as system_config
+        import karrio.server.core.middleware as middleware
 
         _context = middleware.SessionContext.get_current_request()
         _tracer = getattr(_context, "tracer", lib.Tracer())
-        _cache = lib.Cache(
-            caching.cache,
-            version=str(self.updated_at.timestamp()),
-        )
+        # Connector cache_keys already incorporate credentials, and OAuth
+        # tokens are invalidated by their own expires_in. Versioning by
+        # updated_at (auto_now) silently broke every cache lookup because the
+        # microsecond timestamp drifted on every request.
+        _cache = lib.Cache(caching.cache)
         _config = lib.SystemConfig(system_config.config)
 
         return karrio.gateway[self.ext].create(

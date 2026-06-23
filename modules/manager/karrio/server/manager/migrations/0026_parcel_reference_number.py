@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('manager', '0025_auto_20220113_1158'),
+        ("manager", "0025_auto_20220113_1158"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='parcel',
-            name='reference_number',
+            model_name="parcel",
+            name="reference_number",
             field=models.CharField(blank=True, max_length=100, null=True),
         ),
     ]

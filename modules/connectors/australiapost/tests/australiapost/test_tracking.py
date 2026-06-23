@@ -1,10 +1,11 @@
 import unittest
-from unittest.mock import patch, ANY
-from .fixture import gateway
+from unittest.mock import patch
 
-import karrio.sdk as karrio
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 
 class TestAustraliaPostTracking(unittest.TestCase):
@@ -30,29 +31,21 @@ class TestAustraliaPostTracking(unittest.TestCase):
     def test_parse_tracking_response(self):
         with patch("karrio.mappers.australiapost.proxy.lib.request") as mock:
             mock.return_value = TrackingResponse
-            parsed_response = (
-                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedTrackingResponse)
 
     def test_parse_tracking_error_response(self):
         with patch("karrio.mappers.australiapost.proxy.lib.request") as mock:
             mock.return_value = TrackingErrorResponse
-            parsed_response = (
-                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
 
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedTrackingErrorResponse
-            )
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedTrackingErrorResponse)
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.australiapost.proxy.lib.request") as mock:
             mock.return_value = ErrorResponse
-            parsed_response = (
-                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
@@ -71,9 +64,7 @@ ParsedTrackingResponse = [
             "carrier_id": "australiapost",
             "carrier_name": "australiapost",
             "delivered": False,
-            "info": {
-                "carrier_tracking_link": "https://auspost.com.au/mypost/beta/track/details/ET123456789AU"
-            },
+            "info": {"carrier_tracking_link": "https://auspost.com.au/mypost/beta/track/details/ET123456789AU"},
             "status": "in_transit",
             "tracking_number": "ET123456789AU",
         },
@@ -276,8 +267,7 @@ ParsedErrorResponse = [
             "carrier_name": "australiapost",
             "code": "51101",
             "details": {},
-            "message": "The request must contain 10 or less AP article ids, consignment "
-            "ids, or barcode ids.",
+            "message": "The request must contain 10 or less AP article ids, consignment ids, or barcode ids.",
         }
     ],
 ]

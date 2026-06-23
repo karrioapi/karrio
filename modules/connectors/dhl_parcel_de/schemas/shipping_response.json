@@ -18,6 +18,7 @@
       },
       "shipmentRefNo": "340434310428091700",
       "routingCode": "403826SW1A1AA+67000000",
+      "returnRoutingCode": "40327610117+99000933000000",
       "label": {
         "b64": "string",
         "zpl2": "string",

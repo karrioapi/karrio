@@ -1,8 +1,21 @@
 import csv
+import datetime
 import pathlib
-import karrio.lib as lib
-import karrio.core.units as units
+
 import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
+
+
+def _next_business_days(business_days: int, start: datetime.date | None = None) -> datetime.date:
+    """Date `business_days` Mon-Fri days from `start` (today). See SPECS.md (statedDay)."""
+    cur = start or datetime.date.today()
+    added = 0
+    while added < business_days:
+        cur = cur + datetime.timedelta(days=1)
+        if cur.weekday() < 5:
+            added += 1
+    return cur
 
 
 class ConnectionConfig(lib.Enum):
@@ -11,7 +24,9 @@ class ConnectionConfig(lib.Enum):
     shipping_options = lib.OptionEnum("shipping_options", list)
     shipping_services = lib.OptionEnum("shipping_services", list)
     label_type = lib.OptionEnum("label_type", str, "PDF")
-    language = lib.OptionEnum("language", str, "DE")  # DE or EN
+    language = lib.OptionEnum("language", str, "DE")
+    psf_api_key = lib.OptionEnum("psf_api_key", str)
+    psf_base_url = lib.OptionEnum("psf_base_url", str)
 
 
 class ParcelClass(lib.StrEnum):
@@ -66,196 +81,191 @@ class ShippingOption(lib.Enum):
 
     # Delivery Options (Zustelloptionen tab)
     hermes_next_day = lib.OptionEnum(
-        "nextDayService", bool,
+        "nextDayService",
+        bool,
         help="Enable next-day delivery service",
-        meta=dict(category="DELIVERY_OPTIONS", configurable=True)
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True, service_level=True),
     )
     hermes_bulk_goods = lib.OptionEnum(
-        "bulkGoodService", bool,
+        "bulkGoodService",
+        bool,
         help="Mark shipment as bulky goods (Sperrgut)",
-        meta=dict(category="DELIVERY_OPTIONS", configurable=True)
-    )
-    hermes_compact_parcel = lib.OptionEnum(
-        "compactParcelService", bool,
-        help="Enable compact parcel service",
-        meta=dict(category="DELIVERY_OPTIONS", configurable=True)
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True, service_level=True),
     )
     hermes_redirection_prohibited = lib.OptionEnum(
-        "redirectionProhibitedService", bool,
+        "redirectionProhibitedService",
+        bool,
         help="Do not allow redirection to neighbor",
-        meta=dict(category="DELIVERY_OPTIONS", configurable=True)
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True, service_level=True),
     )
     hermes_stated_day = lib.OptionEnum(
-        "statedDay", str,
+        "statedDay",
+        str,
         help="Specific delivery date (YYYY-MM-DD format)",
-        meta=dict(category="DELIVERY_OPTIONS", configurable=True)
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True, service_level=False),
     )
     hermes_time_slot = lib.OptionEnum(
-        "timeSlot", str,
+        "timeSlot",
+        str,
         help="Delivery time slot (FORENOON, NOON, AFTERNOON, EVENING)",
-        meta=dict(category="DELIVERY_OPTIONS", configurable=True)
-    )
-    hermes_express = lib.OptionEnum(
-        "expressService", bool,
-        help="Enable express delivery service",
-        meta=dict(category="DELIVERY_OPTIONS", configurable=True)
-    )
-    hermes_after_hours_delivery = lib.OptionEnum(
-        "afterHoursDeliveryService", bool,
-        help="Enable after-hours delivery (Feierabendservice)",
-        meta=dict(category="DELIVERY_OPTIONS", configurable=True)
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True, service_level=False),
     )
     hermes_parcel_class = lib.OptionEnum(
-        "parcelClass", str,
+        "parcelClass",
+        str,
         help="Parcel size class (XS, S, M, L, XL)",
-        meta=dict(category="DELIVERY_OPTIONS", configurable=True)
+        meta=dict(category="DELIVERY_OPTIONS", configurable=True, service_level=False),
     )
 
     # Signature Options
     hermes_signature = lib.OptionEnum(
-        "signatureService", bool,
+        "signatureService",
+        bool,
         help="Require signature upon delivery",
-        meta=dict(category="SIGNATURE", configurable=True)
+        meta=dict(category="SIGNATURE", configurable=True, service_level=True),
     )
     hermes_household_signature = lib.OptionEnum(
-        "householdSignatureService", bool,
+        "householdSignatureService",
+        bool,
         help="Require household member signature",
-        meta=dict(category="SIGNATURE", configurable=True)
+        meta=dict(category="SIGNATURE", configurable=True, service_level=True),
     )
     hermes_ident_id = lib.OptionEnum(
-        "identID", str,
+        "identID",
+        str,
         help="ID number for identity verification",
-        meta=dict(category="SIGNATURE", configurable=True)
+        meta=dict(category="SIGNATURE", configurable=True, service_level=False),
     )
     hermes_ident_type = lib.OptionEnum(
-        "identType", str,
+        "identType",
+        str,
         help="Type of ID for verification (e.g., GERMAN_IDENTITY_CARD)",
-        meta=dict(category="SIGNATURE", configurable=True)
+        meta=dict(category="SIGNATURE", configurable=True, service_level=False),
     )
     hermes_ident_fsk = lib.OptionEnum(
-        "identVerifyFsk", str,
+        "identVerifyFsk",
+        str,
         help="Minimum age verification (e.g., 18)",
-        meta=dict(category="SIGNATURE", configurable=True)
+        meta=dict(category="SIGNATURE", configurable=True, service_level=True),
     )
     hermes_ident_birthday = lib.OptionEnum(
-        "identVerifyBirthday", str,
+        "identVerifyBirthday",
+        str,
         help="Verify recipient birthday (YYYY-MM-DD)",
-        meta=dict(category="SIGNATURE", configurable=True)
+        meta=dict(category="SIGNATURE", configurable=True, service_level=False),
     )
 
     # PUDO Options (Parcel Shop)
     hermes_parcel_shop_id = lib.OptionEnum(
-        "psID", str,
-        help="Hermes ParcelShop ID for delivery",
-        meta=dict(category="PUDO", configurable=True)
+        "psID", str, help="Hermes ParcelShop ID for delivery", meta=dict(category="PUDO", configurable=True)
     )
     hermes_parcel_shop_selection_rule = lib.OptionEnum(
-        "psSelectionRule", str,
+        "psSelectionRule",
+        str,
         help="ParcelShop selection rule (SELECT_BY_ID, SELECT_BY_RECEIVER_ADDRESS)",
-        meta=dict(category="PUDO", configurable=True)
+        meta=dict(category="PUDO", configurable=True, service_level=False),
     )
     hermes_parcel_shop_customer_firstname = lib.OptionEnum(
-        "psCustomerFirstName", str,
+        "psCustomerFirstName",
+        str,
         help="Customer first name for ParcelShop pickup",
-        meta=dict(category="PUDO", configurable=True)
+        meta=dict(category="PUDO", configurable=True, service_level=False),
     )
     hermes_parcel_shop_customer_lastname = lib.OptionEnum(
-        "psCustomerLastName", str,
+        "psCustomerLastName",
+        str,
         help="Customer last name for ParcelShop pickup",
-        meta=dict(category="PUDO", configurable=True)
+        meta=dict(category="PUDO", configurable=True, service_level=False),
     )
     hermes_exclude_parcel_shop_auth = lib.OptionEnum(
-        "excludeParcelShopAuthorization", bool,
+        "excludeParcelShopAuthorization",
+        bool,
         help="Exclude ParcelShop delivery authorization",
-        meta=dict(category="PUDO", configurable=True)
+        meta=dict(category="PUDO", configurable=True, service_level=False),
     )
 
     # Notification Options
     hermes_notification_email = lib.OptionEnum(
-        "notificationEmail", str,
+        "notificationEmail",
+        str,
         help="Email for delivery notifications",
-        meta=dict(category="NOTIFICATION", configurable=True)
+        meta=dict(category="NOTIFICATION", configurable=True, service_level=False),
     )
     hermes_notification_type = lib.OptionEnum(
-        "notificationType", str,
+        "notificationType",
+        str,
         help="Notification type (EMAIL, SMS, EMAIL_SMS)",
-        meta=dict(category="NOTIFICATION", configurable=True)
+        meta=dict(category="NOTIFICATION", configurable=True, service_level=False),
     )
 
     # COD Options (Cash on Delivery)
     hermes_cod_amount = lib.OptionEnum(
-        "codAmount", float,
+        "codAmount",
+        float,
         help="Cash on delivery amount",
-        meta=dict(category="COD", configurable=True)
+        meta=dict(category="COD", configurable=True, service_level=False),
     )
     hermes_cod_currency = lib.OptionEnum(
-        "codCurrency", str,
+        "codCurrency",
+        str,
         help="Currency for COD amount",
-        meta=dict(category="COD", configurable=True)
+        meta=dict(category="COD", configurable=True, service_level=False),
     )
     hermes_cod_distribution = lib.OptionEnum(
-        "codDistribution", str,
+        "codDistribution",
+        str,
         help="COD distribution method (e.g., transfer, check)",
-        meta=dict(category="COD", configurable=True)
+        meta=dict(category="COD", configurable=True, service_level=False),
     )
 
     # Dangerous Goods
     hermes_limited_quantities = lib.OptionEnum(
-        "limitedQuantitiesService", bool,
+        "limitedQuantitiesService",
+        bool,
         help="Mark shipment as containing limited quantity hazardous materials",
-        meta=dict(category="DANGEROUS_GOOD", configurable=True)
+        meta=dict(category="DANGEROUS_GOOD", configurable=True, service_level=True),
     )
 
     # Return Options
     hermes_return_enabled = lib.OptionEnum(
-        "returnService", bool,
+        "returnService",
+        bool,
         help="Enable return label for this shipment",
-        meta=dict(category="RETURN", configurable=True)
+        meta=dict(category="RETURN", configurable=True, service_level=True),
     )
     hermes_include_return_label = lib.OptionEnum(
-        "includeReturnLabel", bool,
+        "includeReturnLabel",
+        bool,
         help="Include a pre-printed return label inside the package",
-        meta=dict(category="RETURN", configurable=True)
+        meta=dict(category="RETURN", configurable=True, service_level=False),
     )
     hermes_digital_sales_return = lib.OptionEnum(
-        "digitalSalesReturn", bool,
+        "digitalSalesReturn",
+        bool,
         help="Enable digital sales return (digitale Verkaufsretoure)",
-        meta=dict(category="RETURN", configurable=True)
+        meta=dict(category="RETURN", configurable=True, service_level=True),
     )
 
     # Reference/Instructions Options
     hermes_customer_reference_1 = lib.OptionEnum(
-        "customerReference1", str,
+        "customerReference1",
+        str,
         help="Customer reference field 1 (Kundenreferenz 1)",
-        meta=dict(category="INSTRUCTIONS", configurable=True)
+        meta=dict(category="INSTRUCTIONS", configurable=True, service_level=False),
     )
     hermes_customer_reference_2 = lib.OptionEnum(
-        "customerReference2", str,
+        "customerReference2",
+        str,
         help="Customer reference field 2 (Kundenreferenz 2)",
-        meta=dict(category="INSTRUCTIONS", configurable=True)
+        meta=dict(category="INSTRUCTIONS", configurable=True, service_level=False),
     )
 
     # Internal/Multipart Options (not configurable in shipping method editor)
-    hermes_tan_service = lib.OptionEnum(
-        "tanService", bool,
-        meta=dict(configurable=False)
-    )
-    hermes_late_injection = lib.OptionEnum(
-        "lateInjectionService", bool,
-        meta=dict(configurable=False)
-    )
-    hermes_part_number = lib.OptionEnum(
-        "partNumber", int,
-        meta=dict(configurable=False)
-    )
-    hermes_number_of_parts = lib.OptionEnum(
-        "numberOfParts", int,
-        meta=dict(configurable=False)
-    )
-    hermes_parent_shipment_order_id = lib.OptionEnum(
-        "parentShipmentOrderID", str,
-        meta=dict(configurable=False)
-    )
+    hermes_tan_service = lib.OptionEnum("tanService", bool, meta=dict(configurable=False))
+    hermes_late_injection = lib.OptionEnum("lateInjectionService", bool, meta=dict(configurable=False))
+    hermes_part_number = lib.OptionEnum("partNumber", int, meta=dict(configurable=False))
+    hermes_number_of_parts = lib.OptionEnum("numberOfParts", int, meta=dict(configurable=False))
+    hermes_parent_shipment_order_id = lib.OptionEnum("parentShipmentOrderID", str, meta=dict(configurable=False))
 
     """Unified Option type mapping."""
     signature_required = hermes_signature
@@ -265,11 +275,20 @@ class ShippingOption(lib.Enum):
 def shipping_options_initializer(
     options: dict,
     package_options: units.ShippingOptions = None,
+    service: str | None = None,
 ) -> units.ShippingOptions:
-    """Apply default values to the given options."""
+    """Apply default option values. See SPECS.md (statedDay default).
+
+    `options` is copied before mutation: `ShipmentRequest.options` can be the
+    shared class-level `{}` default, so writing through would leak across requests.
+    """
+    options = dict(options or {})
 
     if package_options is not None:
         options.update(package_options.content)
+
+    if service == ShippingService.hermes_stated_day.value and not options.get("hermes_stated_day"):
+        options["hermes_stated_day"] = _next_business_days(2).isoformat()
 
     def items_filter(key: str) -> bool:
         return key in ShippingOption  # type: ignore
@@ -328,7 +347,7 @@ def load_services_from_csv() -> list:
     # Group zones by service
     services_dict: dict[str, dict] = {}
 
-    with open(csv_path, "r", encoding="utf-8") as f:
+    with open(csv_path, encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
             service_code = row["service_code"]
@@ -348,37 +367,29 @@ def load_services_from_csv() -> list:
                     "currency": row.get("currency", "EUR"),
                     "min_weight": row_min_weight,
                     "max_weight": row_max_weight,
-                    "max_length": (
-                        float(row["max_length"]) if row.get("max_length") else None
-                    ),
-                    "max_width": (
-                        float(row["max_width"]) if row.get("max_width") else None
-                    ),
-                    "max_height": (
-                        float(row["max_height"]) if row.get("max_height") else None
-                    ),
+                    "max_length": (float(row["max_length"]) if row.get("max_length") else None),
+                    "max_width": (float(row["max_width"]) if row.get("max_width") else None),
+                    "max_height": (float(row["max_height"]) if row.get("max_height") else None),
                     "weight_unit": "KG",
                     "dimension_unit": "CM",
                     "domicile": row.get("domicile", "").lower() == "true",
-                    "international": (
-                        True if row.get("international", "").lower() == "true" else None
-                    ),
+                    "international": (True if row.get("international", "").lower() == "true" else None),
                     "zones": [],
                 }
             else:
                 # Update service-level weight bounds to cover all zones
                 current = services_dict[karrio_service_code]
-                if row_min_weight is not None:
-                    if current["min_weight"] is None or row_min_weight < current["min_weight"]:
-                        current["min_weight"] = row_min_weight
-                if row_max_weight is not None:
-                    if current["max_weight"] is None or row_max_weight > current["max_weight"]:
-                        current["max_weight"] = row_max_weight
+                if row_min_weight is not None and (
+                    current["min_weight"] is None or row_min_weight < current["min_weight"]
+                ):
+                    current["min_weight"] = row_min_weight
+                if row_max_weight is not None and (
+                    current["max_weight"] is None or row_max_weight > current["max_weight"]
+                ):
+                    current["max_weight"] = row_max_weight
 
             # Parse country codes
-            country_codes = [
-                c.strip() for c in row.get("country_codes", "").split(",") if c.strip()
-            ]
+            country_codes = [c.strip() for c in row.get("country_codes", "").split(",") if c.strip()]
 
             # Create zone
             zone = models.ServiceZone(
@@ -387,7 +398,9 @@ def load_services_from_csv() -> list:
                 min_weight=row_min_weight,
                 max_weight=row_max_weight,
                 transit_days=(
-                    int(row["transit_days"].split("-")[0]) if row.get("transit_days") and row["transit_days"].split("-")[0].isdigit() else None
+                    int(row["transit_days"].split("-")[0])
+                    if row.get("transit_days") and row["transit_days"].split("-")[0].isdigit()
+                    else None
                 ),
                 country_codes=country_codes if country_codes else None,
             )
@@ -395,9 +408,7 @@ def load_services_from_csv() -> list:
             services_dict[karrio_service_code]["zones"].append(zone)
 
     # Convert to ServiceLevel objects
-    return [
-        models.ServiceLevel(**service_data) for service_data in services_dict.values()
-    ]
+    return [models.ServiceLevel(**service_data) for service_data in services_dict.values()]
 
 
 DEFAULT_SERVICES = load_services_from_csv()

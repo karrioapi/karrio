@@ -1,6 +1,7 @@
 # Add carrier JSONField to models before data migration
 
 import functools
+
 import karrio.server.core.utils as utils
 from django.db import migrations, models
 

@@ -1,8 +1,7 @@
 from karrio.api.proxy import Proxy as BaseProxy
+from karrio.mappers.generic.settings import Settings
 from karrio.universal.mappers.rating_proxy import RatingMixinProxy
 from karrio.universal.mappers.shipping_proxy import ShippingMixinProxy
-from karrio.mappers.generic.settings import Settings
-
 
 Proxy = type(
     "Proxy",

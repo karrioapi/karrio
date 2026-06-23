@@ -1,10 +1,10 @@
-"""Karrio DPD Global pickup scheduling implementation."""
+"""Karrio DPD Meta pickup scheduling implementation."""
 
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.dpd_meta.error as error
+import karrio.providers.dpd_meta.location as provider_location
+import karrio.providers.dpd_meta.units as provider_units
 import karrio.providers.dpd_meta.utils as provider_utils
 import karrio.schemas.dpd_meta.pickup_create_request as dpd_req
 import karrio.schemas.dpd_meta.pickup_create_response as dpd_res
@@ -13,20 +13,14 @@ import karrio.schemas.dpd_meta.pickup_create_response as dpd_res
 def parse_pickup_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.PickupDetails, typing.List[models.Message]]:
+) -> tuple[models.PickupDetails, list[models.Message]]:
     """Parse DPD META-API pickup scheduling response."""
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
 
     pickup_data = response[0] if isinstance(response, list) else response
-    scheduled = (
-        (pickup_data or {}).get("scheduledPickupResponse")
-        if isinstance(pickup_data, dict)
-        else None
-    )
-    pickup_item = next(
-        (p for p in (scheduled or []) if p.get("pickupreference")), None
-    )
+    scheduled = (pickup_data or {}).get("scheduledPickupResponse") if isinstance(pickup_data, dict) else None
+    pickup_item = next((p for p in (scheduled or []) if p.get("pickupreference")), None)
 
     # Parse inline errors from items without pickupreference
     messages += [
@@ -40,11 +34,7 @@ def parse_pickup_response(
         if not item.get("pickupreference") and item.get("statusDescription")
     ]
 
-    pickup = lib.identity(
-        _extract_details(pickup_item, settings)
-        if pickup_item and not any(messages)
-        else None
-    )
+    pickup = lib.identity(_extract_details(pickup_item, settings) if pickup_item and not any(messages) else None)
 
     return pickup, messages
 
@@ -71,21 +61,28 @@ def pickup_request(
     payload: models.PickupRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    """Create a DPD META-API pickup scheduling request."""
+    """Create a DPD META-API pickup scheduling request.
+
+    DPD needs the depot serving the pickup address as `sendingDepot`. A
+    connection-level override wins; otherwise (for reseller accounts) a
+    `[DEPOT]` placeholder is stamped and the proxy resolves it via the
+    DepotDataService from the pickup postal code.
+    """
     address = lib.to_address(payload.address)
     packages = lib.to_packages(payload.parcels)
+    options = lib.to_shipping_options(payload.options, initializer=provider_units.shipping_options_initializer)
+
+    # A connection may pin the depot via `sending_depot` config; otherwise it is
+    # resolved from the pickup postal code via the DepotDataService.
+    depot_override = provider_utils.configured_depot(settings, geo_routing=False)
+    resolve_depot = depot_override is None and provider_units.should_resolve_shipper_depot(
+        options, address.country_code
+    )
 
     request = dpd_req.PickupCreateRequestType(
-        customerInfos=dpd_req.CustomerInfosType(
-            customerAccountNumber=(
-                settings.customer_account_number or settings.customer_id
-            ),
-            customerID=settings.customer_id,
-        ),
+        sendingDepot=depot_override or (provider_units.DEPOT_PLACEHOLDER if resolve_depot else None),
         shipmentNumbers=payload.shipment_identifiers or None,
-        parcelNumbers=(
-            [payload.package_location] if payload.package_location else None
-        ),
+        parcelNumbers=([payload.package_location] if payload.package_location else None),
         pickup=dpd_req.PickupType(
             date=lib.fdate(payload.pickup_date, "%Y-%m-%d"),
             fromTime=lib.ftime(payload.ready_time, current_format="%H:%M", output_format="%H%M") or "0900",
@@ -94,7 +91,8 @@ def pickup_request(
         numberOfParcels=len(packages) if any(packages) else 1,
         pickupAddress=dpd_req.PickupAddressType(
             companyName=address.company_name or "",
-            name1=address.person_name or "",
+            name1=address.company_name or address.person_name or "",
+            name2=address.person_name if address.company_name else "",
             street=address.street_name or address.address_line1 or "",
             houseNumber=address.street_number or "",
             city=address.city,
@@ -111,4 +109,10 @@ def pickup_request(
         comment=payload.instruction,
     )
 
-    return lib.Serializable(request, lib.to_dict)
+    depot_query = (
+        provider_location.location_request(models.LocationRequest(address=payload.address), settings)
+        if resolve_depot
+        else None
+    )
+
+    return lib.Serializable(request, lib.to_dict, dict(resolve_depot=resolve_depot, depot_query=depot_query))

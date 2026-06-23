@@ -1,8 +1,11 @@
 [
   {
     "numberOfParcels": "1a",
+    "customerReferenceNumbers": ["REF_SAMPLE"],
+    "sendingDepot": "0010998",
     "shipmentInfos": {
       "productCode": "101a",
+      "additionalServiceCode": "A15a",
       "shipmentId": "SHIP123456",
       "weight": "3000a",
       "cifcost": {
@@ -56,6 +59,7 @@
       }
     },
     "receiver": {
+      "pudoId": "PS0001",
       "address": {
         "name1": "Jane Receiver",
         "name2": null,
@@ -101,20 +105,22 @@
         },
         "parcelContent": "Electronic equipment",
         "senderParcelRefs": ["REF001"],
-        "hazardous": {
-          "classCode": null,
-          "identificationClass": null,
-          "substanceWeight": null,
-          "factor": null,
-          "notOtherwiseSpecified": null,
-          "packingGroup": null,
-          "subsidiaryRisk": null,
-          "description": null,
-          "hazardousWeight": null,
-          "tunnelRestrictionCode": null,
-          "identificationUnNo": null,
-          "packingCode": null
-        },
+        "hazardous": [
+          {
+            "classCode": null,
+            "identificationClass": null,
+            "substanceWeight": null,
+            "factor": null,
+            "notOtherwiseSpecified": null,
+            "packingGroup": null,
+            "subsidiaryRisk": null,
+            "description": null,
+            "hazardousWeight": null,
+            "tunnelRestrictionCode": null,
+            "identificationUnNo": null,
+            "packingCode": null
+          }
+        ],
         "cod": {
           "amount": {
             "amount": 50.00,
@@ -136,24 +142,29 @@
           },
           "insuranceParcelContent": "Electronic equipment"
         },
-        "messages": {
-          "email1": {
-            "notificationType": "DELIVERY",
-            "notificationEmail": "receiver@example.com",
-            "notificationLanguage": "EN"
-          },
-          "sms1": {
-            "notificationType": "DELIVERY",
-            "notificationPhone": "+33123456789",
-            "notificationLanguage": "EN"
+        "messages": [
+          {
+            "messageType": "EMAIL",
+            "messageDestination": "receiver@example.com",
+            "messageLanguage": "EN",
+            "senderCompany": "DPD"
           }
-        },
-        "person": {
-          "personToNotify": "Jane Receiver",
-          "personToDeliver": "Jane Receiver"
-        }
+        ],
+        "partnerParcelRefs": ["PARTNER_REF001"],
+        "hazardousLimitedQuantities": null,
+        "hazardousPackingCode": null
       }
     ],
+    "mpsCompleteDelivery": null,
+    "person": {
+      "personalDeliveryType": null,
+      "personalAuthorizedName": null,
+      "personalIdNumber": null,
+      "personalDateOfBirth": null,
+      "phone1": null,
+      "phone2": null,
+      "address": null
+    },
     "international": {
       "parcelType": "P",
       "customsAmount": {
@@ -186,6 +197,7 @@
           "country": "FR"
         },
         "contact": {
+          "contactPerson": "Import Manager",
           "phone1": "+33198765432",
           "email": "importer@example.com"
         },
@@ -205,6 +217,7 @@
           "country": "DE"
         },
         "contact": {
+          "contactPerson": "Export Manager",
           "phone1": "+49301234567",
           "email": "exporter@example.com"
         },

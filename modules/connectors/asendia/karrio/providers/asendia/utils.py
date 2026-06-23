@@ -1,9 +1,10 @@
 """Karrio Asendia provider utilities."""
 
 import datetime
-import karrio.lib as lib
+
 import karrio.core as core
 import karrio.core.errors as errors
+import karrio.lib as lib
 
 
 class Settings(core.Settings):
@@ -63,6 +64,7 @@ def login(settings: Settings) -> dict:
 
     result = lib.request(
         url=f"{settings.server_url}/api/authenticate",
+        trace=settings.trace_as("json"),
         method="POST",
         headers={"Content-Type": "application/json"},
         data=lib.to_json(

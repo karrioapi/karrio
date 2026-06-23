@@ -5,7 +5,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("providers", "0064_alliedexpresslocalsettings"),
     ]

@@ -1,20 +1,20 @@
+import base64
 import io
 import sys
-import base64
-from django.urls import re_path
-from django.utils import timezone
-from django.http import JsonResponse
-from django.core.files.base import ContentFile
-from django_downloadview import VirtualDownloadView
-from rest_framework import status
 
 import karrio.lib as lib
-import karrio.server.openapi as openapi
-import karrio.server.documents.models as models
 import karrio.server.documents.generator as generator
+import karrio.server.documents.models as models
+import karrio.server.openapi as openapi
+from django.core.files.base import ContentFile
+from django.http import JsonResponse
+from django.urls import re_path
+from django.utils import timezone
+from django_downloadview import VirtualDownloadView
+from karrio.server.core.authentication import AccessMixin
 from karrio.server.core.logging import logger
 from karrio.server.core.utils import validate_resource_token
-from karrio.server.core.authentication import AccessMixin
+from rest_framework import status
 
 
 class TemplateDocsPrinter(AccessMixin, VirtualDownloadView):
@@ -28,9 +28,7 @@ class TemplateDocsPrinter(AccessMixin, VirtualDownloadView):
             template = models.DocumentTemplate.objects.get(pk=pk, slug=slug)
             query_params = request.GET.dict()
 
-            self.document = generator.Documents.generate_template(
-                template, query_params, context=request
-            )
+            self.document = generator.Documents.generate_template(template, query_params, context=request)
             self.name = f"{slug}.pdf"
             self.attachment = "download" in query_params
 
@@ -100,9 +98,7 @@ class ShipmentDocsPrinter(AccessMixin, VirtualDownloadView):
         return response
 
     def get_file(self):
-        content = base64.b64decode(
-            lib.bundle_base64([doc for doc, _ in self.documents], self.format.upper())
-        )
+        content = base64.b64decode(lib.bundle_base64([doc for doc, _ in self.documents], self.format.upper()))
         buffer = io.BytesIO()
         buffer.write(content)
         return ContentFile(buffer.getvalue(), name=self.name)
@@ -132,9 +128,7 @@ class OrderDocsPrinter(AccessMixin, VirtualDownloadView):
         self.format = (format or "").lower()
         self.name = f"{doc}s - {timezone.now()}.{self.format}"
 
-        _queryset = Order.objects.filter(
-            id__in=resource_ids, shipments__id__isnull=False
-        ).distinct()
+        _queryset = Order.objects.filter(id__in=resource_ids, shipments__id__isnull=False).distinct()
 
         if doc == "label":
             _queryset = _queryset.filter(
@@ -144,18 +138,14 @@ class OrderDocsPrinter(AccessMixin, VirtualDownloadView):
         elif doc == "invoice":
             _queryset = _queryset.filter(shipments__invoice__isnull=False)
 
-        self.documents = list(
-            set(_queryset.values_list(f"shipments__{doc}", "shipments__label_type"))
-        )
+        self.documents = list(set(_queryset.values_list(f"shipments__{doc}", "shipments__label_type")))
 
         response = super().get(request, doc, self.format, **kwargs)
         response["X-Frame-Options"] = "ALLOWALL"
         return response
 
     def get_file(self):
-        content = base64.b64decode(
-            lib.bundle_base64([doc for doc, _ in self.documents], self.format.upper())
-        )
+        content = base64.b64decode(lib.bundle_base64([doc for doc, _ in self.documents], self.format.upper()))
         buffer = io.BytesIO()
         buffer.write(content)
         return ContentFile(buffer.getvalue(), name=self.name)
@@ -192,9 +182,7 @@ class ManifestDocsPrinter(AccessMixin, VirtualDownloadView):
         return response
 
     def get_file(self):
-        content = base64.b64decode(
-            lib.bundle_base64([doc for doc, _ in self.documents], self.format.upper())
-        )
+        content = base64.b64decode(lib.bundle_base64([doc for doc, _ in self.documents], self.format.upper()))
         buffer = io.BytesIO()
         buffer.write(content)
         return ContentFile(buffer.getvalue(), name=self.name)

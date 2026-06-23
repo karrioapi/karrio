@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('providers', '0001_initial'),
+        ("providers", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='carrier',
-            name='active',
+            model_name="carrier",
+            name="active",
             field=models.BooleanField(default=True),
         ),
     ]

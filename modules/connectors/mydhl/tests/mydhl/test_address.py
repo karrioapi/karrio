@@ -1,12 +1,13 @@
 """MyDHL carrier address validation tests."""
 
 import unittest
-from unittest.mock import patch, ANY
-from .fixture import gateway
+from unittest.mock import patch
 
-import karrio.sdk as karrio
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 
 class TestMyDHLAddress(unittest.TestCase):
@@ -23,25 +24,18 @@ class TestMyDHLAddress(unittest.TestCase):
             mock.return_value = "{}"
             karrio.Address.validate(self.AddressValidationRequest).from_(gateway)
             # Verify GET request with query params
-            self.assertIn(
-                f"{gateway.settings.server_url}/address-validate?",
-                mock.call_args[1]["url"]
-            )
+            self.assertIn(f"{gateway.settings.server_url}/address-validate?", mock.call_args[1]["url"])
 
     def test_parse_address_validation_response(self):
         with patch("karrio.mappers.mydhl.proxy.lib.request") as mock:
             mock.return_value = AddressValidationResponse
-            parsed_response = (
-                karrio.Address.validate(self.AddressValidationRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Address.validate(self.AddressValidationRequest).from_(gateway).parse()
             self.assertListEqual(lib.to_dict(parsed_response), ParsedAddressValidationResponse)
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.mydhl.proxy.lib.request") as mock:
             mock.return_value = ErrorResponse
-            parsed_response = (
-                karrio.Address.validate(self.AddressValidationRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Address.validate(self.AddressValidationRequest).from_(gateway).parse()
             self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
 
@@ -64,7 +58,7 @@ AddressValidationRequest = {
     "countryCode": "US",
     "postalCode": "90001",
     "cityName": "Los Angeles",
-    "strictValidation": True
+    "strictValidation": True,
 }
 
 AddressValidationResponse = """{
@@ -102,10 +96,10 @@ ParsedAddressValidationResponse = [
             "country_code": "US",
             "postal_code": "90001",
             "residential": False,
-            "state_code": "CA"
-        }
+            "state_code": "CA",
+        },
     },
-    []
+    [],
 ]
 
 ParsedErrorResponse = [
@@ -116,10 +110,7 @@ ParsedErrorResponse = [
             "carrier_name": "mydhl",
             "code": "400",
             "message": "Invalid address validation request - missing required field",
-            "details": {
-                "instance": "/address/validate",
-                "title": "Bad Request"
-            }
+            "details": {"instance": "/address/validate", "title": "Bad Request"},
         }
-    ]
+    ],
 ]

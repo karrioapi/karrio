@@ -1,21 +1,20 @@
 import json
-import unittest
-from typing import Tuple
 from unittest.mock import ANY, patch
-from django.http.response import HttpResponse
-from django.urls import reverse
-from rest_framework import status
-from karrio.core.models import (
-    RateDetails,
-    ChargeDetails,
-)
-from karrio.server.core.tests import APITestCase
+
 import karrio.server.manager.models as manager
 import karrio.server.orders.models as models
+from django.http.response import HttpResponse
+from django.urls import reverse
+from karrio.core.models import (
+    ChargeDetails,
+    RateDetails,
+)
+from karrio.server.core.tests import APITestCase
+from rest_framework import status
 
 
 class TestOrderFixture(APITestCase):
-    def create_order(self) -> Tuple[HttpResponse, dict]:
+    def create_order(self) -> tuple[HttpResponse, dict]:
         url = reverse("karrio.server.orders:order-list")
         data = ORDER_DATA
 
@@ -668,6 +667,7 @@ ORDER_SHIPMENTS_RESPONSE = {
                         "service_name": "CANADAPOST PRIORITY",
                         "rate_provider": "canadapost",
                         "carrier_connection_id": ANY,
+                        "connection_kind": "account",
                     },
                     "test_mode": True,
                 }
@@ -951,6 +951,7 @@ FULFILLED_ORDER_RESPONSE = {
                         "service_name": "CANADAPOST PRIORITY",
                         "rate_provider": "canadapost",
                         "carrier_connection_id": ANY,
+                        "connection_kind": "account",
                     },
                     "test_mode": True,
                 }
@@ -1213,6 +1214,7 @@ PARTIAL_ORDER_RESPONSE = {
                         "service_name": "CANADAPOST PRIORITY",
                         "rate_provider": "canadapost",
                         "carrier_connection_id": ANY,
+                        "connection_kind": "account",
                     },
                     "test_mode": True,
                 }

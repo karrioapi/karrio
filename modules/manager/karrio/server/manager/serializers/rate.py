@@ -1,16 +1,15 @@
-from karrio.server.core.gateway import Rates
+from karrio.server.core.rate_dispatcher import dispatch_rates
 from karrio.server.core.serializers import RateRequest, RateResponse
-from karrio.server.serializers import owned_model_serializer, Context
+from karrio.server.serializers import Context, owned_model_serializer
 
 
 @owned_model_serializer
 class RateSerializer(RateRequest):
-
     def create(self, validated_data: dict, context: Context, **kwargs) -> RateResponse:
         carrier_filters = validated_data.get("carrier_filters") or {}
         carriers = validated_data.get("carriers")
 
-        return Rates.fetch(
+        return dispatch_rates(
             RateRequest(validated_data).data,
             context=context,
             carriers=carriers,

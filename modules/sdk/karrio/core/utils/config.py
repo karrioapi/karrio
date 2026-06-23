@@ -32,11 +32,11 @@ class SystemConfig(AbstractSystemConfig):
 
     def __init__(
         self,
-        config: typing.Optional[AbstractSystemConfig] = None,
+        config: AbstractSystemConfig | None = None,
         **kwargs,
     ) -> None:
         self._config = config  # external config backend
-        self._values: typing.Dict[str, typing.Any] = kwargs  # local values
+        self._values: dict[str, typing.Any] = kwargs  # local values
 
     def get(self, key: str, default: typing.Any = None) -> typing.Any:
         """Get a configuration value by key.

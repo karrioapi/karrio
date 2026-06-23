@@ -1,10 +1,13 @@
+import base64
 import unittest
-import logging
-from unittest.mock import patch, ANY
-from karrio.core.utils import DP
-from karrio.core.models import ShipmentRequest, ShipmentCancelRequest
-from .fixture import gateway
+from unittest.mock import ANY, patch
+
+import karrio.lib as lib
 import karrio.sdk as karrio
+from karrio.core.models import ShipmentCancelRequest, ShipmentRequest
+from karrio.core.utils import DP
+
+from .fixture import cached_auth, gateway
 
 
 class TestUPSShipment(unittest.TestCase):
@@ -18,33 +21,80 @@ class TestUPSShipment(unittest.TestCase):
         self.assertEqual(request.serialize(), ShipmentRequestJSON)
 
     def test_create_cancel_shipment_request(self):
-        request = gateway.mapper.create_cancel_shipment_request(
-            self.ShipmentCancelRequest
-        )
+        request = gateway.mapper.create_cancel_shipment_request(self.ShipmentCancelRequest)
 
         self.assertEqual(
             request.serialize(),
             {"shipmentidentificationnumber": "1ZWA82900191640782"},
         )
 
-    def test_create_package_shipment_with_package_preset_request(self):
-        request = gateway.mapper.create_shipment_request(
-            ShipmentRequest(**PackageShipmentWithPackagePresetData)
+    def test_create_shipment_request_third_party_billing_options(self):
+        """Third-party transportation billing configured purely via shipping options."""
+        payload = {**PackageShipmentData}
+        payload.pop("payment", None)
+        payload.pop("billing_address", None)
+        payload["options"] = {
+            "ups_bill_to": "third_party",
+            "ups_billing_account_number": "TP123",
+            "ups_billing_postal_code": "94089",
+            "ups_billing_country_code": "US",
+        }
+        request = gateway.mapper.create_shipment_request(ShipmentRequest(**payload))
+        charge = request.serialize()["ShipmentRequest"]["Shipment"]["PaymentInformation"]["ShipmentCharge"][0]
+
+        self.assertEqual(charge["Type"], "01")
+        self.assertDictEqual(
+            charge["BillThirdParty"],
+            {"AccountNumber": "TP123", "Address": {"CountryCode": "US", "PostalCode": "94089"}},
         )
+
+    def test_create_shipment_request_recipient_billing_options(self):
+        """Recipient billing via shipping options produces a BillReceiver charge."""
+        payload = {**PackageShipmentData}
+        payload.pop("payment", None)
+        payload["options"] = {
+            "ups_bill_to": "recipient",
+            "ups_billing_account_number": "RCPT9",
+        }
+        request = gateway.mapper.create_shipment_request(ShipmentRequest(**payload))
+        charge = request.serialize()["ShipmentRequest"]["Shipment"]["PaymentInformation"]["ShipmentCharge"][0]
+
+        self.assertEqual(charge["Type"], "01")
+        self.assertEqual(charge["BillReceiver"]["AccountNumber"], "RCPT9")
+        self.assertEqual(charge["ConsigneeBilledIndicator"], "Y")
+
+    def test_create_package_shipment_with_package_preset_request(self):
+        request = gateway.mapper.create_shipment_request(ShipmentRequest(**PackageShipmentWithPackagePresetData))
         self.assertEqual(request.serialize(), ShipmentRequestWithPresetJSON)
 
     def test_create_return_shipment_request(self):
-        request = gateway.mapper.create_shipment_request(
-            ShipmentRequest(**ReturnShipmentData)
-        )
+        request = gateway.mapper.create_shipment_request(ShipmentRequest(**ReturnShipmentData))
         print(request.serialize())
         self.assertEqual(request.serialize(), ReturnShipmentRequestJSON)
 
     def test_create_international_shipment_request(self):
-        request = gateway.mapper.create_shipment_request(
-            ShipmentRequest(**InternationalShipmentData)
-        )
+        request = gateway.mapper.create_shipment_request(ShipmentRequest(**InternationalShipmentData))
         self.assertEqual(request.serialize(), InternationalShipmentRequestJSON)
+
+    def test_create_private_recipient_international_shipment_request(self):
+        request = gateway.mapper.create_shipment_request(ShipmentRequest(**PrivateRecipientInternationalShipmentData))
+        self.assertEqual(request.serialize(), PrivateRecipientInternationalShipmentRequestJSON)
+
+    def test_create_shipment_request_with_generic_shipment_reference(self):
+        """Generic shipment_reference (#788) supersedes payload.reference on UPS labels."""
+        data = {
+            **InternationalShipmentData,
+            "reference": "INT-2024-001",
+            "options": {**InternationalShipmentData.get("options", {}), "shipment_reference": "Auftrag 4711"},
+        }
+        serialized = gateway.mapper.create_shipment_request(ShipmentRequest(**data)).serialize()
+        shipment = serialized["ShipmentRequest"]["Shipment"]
+
+        self.assertEqual(
+            serialized["ShipmentRequest"]["Request"]["TransactionReference"]["CustomerContext"],
+            "Auftrag 4711",
+        )
+        self.assertEqual(shipment["ReferenceNumber"]["Value"], "Auftrag 4711")
 
     @patch("karrio.mappers.ups.proxy.lib.request", return_value="{}")
     def test_create_shipment(self, http_mock):
@@ -56,33 +106,138 @@ class TestUPSShipment(unittest.TestCase):
     def test_parse_shipment_response(self):
         with patch("karrio.mappers.ups.proxy.lib.request") as mock:
             mock.return_value = ShipmentResponseJSON
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             self.assertListEqual(DP.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_parse_shipment_response_with_invoice(self):
         with patch("karrio.mappers.ups.proxy.lib.request") as mock:
             mock.return_value = ShipmentResponseWithInvoice
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
 
-            self.assertListEqual(
-                DP.to_dict(parsed_response), ParsedShipmentResponseWithInvoice
-            )
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedShipmentResponseWithInvoice)
 
     def test_parse_cancel_shipment_response(self):
         with patch("karrio.mappers.ups.proxy.lib.request") as mock:
             mock.return_value = ShipmentCancelResponseJSON
-            parsed_response = (
-                karrio.Shipment.cancel(self.ShipmentCancelRequest)
-                .from_(gateway)
-                .parse()
-            )
-            self.assertListEqual(
-                DP.to_dict(parsed_response), ParsedShipmentCancelResponse
-            )
+            parsed_response = karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedShipmentCancelResponse)
+
+
+class TestUPSSystemConfigAndLabelOptions(unittest.TestCase):
+    def setUp(self):
+        self.maxDiff = None
+
+    def _label_format(self, request) -> dict:
+        return request.serialize()["ShipmentRequest"]["LabelSpecification"]
+
+    def test_label_type_option_supersedes_connection_config(self):
+        """ups_label_type shipping option overrides connection_config.label_type."""
+        configured_gateway = karrio.gateway["ups"].create(
+            dict(
+                client_id="client_id",
+                client_secret="client_secret",
+                account_number="account_number",
+                config={"label_type": "PDF"},
+            ),
+            cache=lib.Cache(**cached_auth),
+        )
+        request = configured_gateway.mapper.create_shipment_request(
+            ShipmentRequest(**{**PackageShipmentData, "options": {"ups_label_type": "ZPL_6x4"}})
+        )
+        self.assertEqual(
+            self._label_format(request),
+            {
+                "LabelImageFormat": {"Code": "ZPL", "Description": "lable format"},
+                "LabelStockSize": {"Height": "6", "Width": "4"},
+            },
+        )
+
+    def test_connection_config_label_type_used_without_option(self):
+        """connection_config.label_type still drives the format when no option is set."""
+        configured_gateway = karrio.gateway["ups"].create(
+            dict(
+                client_id="client_id",
+                client_secret="client_secret",
+                account_number="account_number",
+                config={"label_type": "ZPL"},
+            ),
+            cache=lib.Cache(**cached_auth),
+        )
+        request = configured_gateway.mapper.create_shipment_request(
+            ShipmentRequest(**{**PackageShipmentData, "options": {}})
+        )
+        self.assertEqual(self._label_format(request)["LabelImageFormat"]["Code"], "ZPL")
+
+    def test_system_config_fallback_supplies_credentials(self):
+        """client_id/secret resolve from SYSTEM_CONFIG when the connection omits them."""
+        system_gateway = karrio.gateway["ups"].create(
+            dict(account_number="account_number"),
+            system_config=lib.SystemConfig(
+                UPS_CLIENT_ID="SYS-ID",
+                UPS_CLIENT_SECRET="SYS-SECRET",
+            ),
+        )
+        self.assertEqual(system_gateway.settings.connection_client_id, "SYS-ID")
+        self.assertEqual(system_gateway.settings.connection_client_secret, "SYS-SECRET")
+        self.assertEqual(
+            system_gateway.settings.authorization,
+            base64.b64encode(b"SYS-ID:SYS-SECRET").decode("ascii"),
+        )
+
+    def test_system_config_sandbox_credentials_in_test_mode(self):
+        """test_mode resolves the sandbox (CIE) credential variants."""
+        system_gateway = karrio.gateway["ups"].create(
+            dict(account_number="account_number", test_mode=True),
+            system_config=lib.SystemConfig(
+                UPS_CLIENT_ID="SYS-ID",
+                UPS_CLIENT_SECRET="SYS-SECRET",
+                UPS_SANDBOX_CLIENT_ID="SANDBOX-ID",
+                UPS_SANDBOX_CLIENT_SECRET="SANDBOX-SECRET",
+            ),
+        )
+        self.assertEqual(system_gateway.settings.connection_client_id, "SANDBOX-ID")
+        self.assertEqual(system_gateway.settings.connection_client_secret, "SANDBOX-SECRET")
+
+    def test_connection_credentials_take_precedence_over_system_config(self):
+        """A per-connection client_id/secret always wins over SYSTEM_CONFIG."""
+        system_gateway = karrio.gateway["ups"].create(
+            dict(client_id="own-id", client_secret="own-secret", account_number="account_number"),
+            system_config=lib.SystemConfig(UPS_CLIENT_ID="SYS-ID", UPS_CLIENT_SECRET="SYS-SECRET"),
+        )
+        self.assertEqual(system_gateway.settings.connection_client_id, "own-id")
+        self.assertEqual(system_gateway.settings.connection_client_secret, "own-secret")
+
+    def test_oauth_token_cache_is_scoped_by_merchant_id(self):
+        """Connections sharing system creds but with different merchant ids must
+        not reuse each other's merchant-scoped OAuth token."""
+        shared_cache = lib.Cache()
+        common = dict(
+            account_number="account_number",
+            system_config=lib.SystemConfig(UPS_CLIENT_ID="SYS-ID", UPS_CLIENT_SECRET="SYS-SECRET"),
+        )
+        gateway_a = karrio.gateway["ups"].create(
+            {**common, "config": {"merchant_id": "MERCHANT-A"}}, cache=shared_cache
+        )
+        gateway_b = karrio.gateway["ups"].create(
+            {**common, "config": {"merchant_id": "MERCHANT-B"}}, cache=shared_cache
+        )
+
+        token_response = dict(
+            token_type="Bearer",
+            issued_at="1685542319575",
+            access_token="TOKEN",
+            expires_in="14399",
+        )
+        with patch("karrio.mappers.ups.proxy.lib.request") as mock_request:
+            mock_request.return_value = token_response
+            gateway_a.proxy.get_token()
+            gateway_b.proxy.get_token()
+
+        # A shared client_id/secret with two distinct merchant ids must trigger
+        # two independent token fetches (one per merchant), not a cache hit.
+        self.assertEqual(mock_request.call_count, 2)
+        sent_merchant_ids = sorted(call.kwargs["headers"].get("x-merchant-id") for call in mock_request.call_args_list)
+        self.assertEqual(sent_merchant_ids, ["MERCHANT-A", "MERCHANT-B"])
 
 
 if __name__ == "__main__":
@@ -315,6 +470,230 @@ InternationalShipmentRequestJSON = {
         },
     }
 }
+
+# Private recipient (no company_name) international shipment — regression for
+# Sentry KARRIO-SHIPPING-API-DW: UPS error 128095 "Invalid or missing sold to
+# name" when the SoldTo block fell back to an empty recipient.company_name.
+PrivateRecipientInternationalShipmentData = {
+    "shipper": {
+        "company_name": "EU Exporter GmbH",
+        "person_name": "EU Exporter Contact",
+        "federal_tax_id": "DE000000000",
+        "phone_number": "+49 000 0000000",
+        "email": "exporter@example.com",
+        "address_line1": "Example Street 1",
+        "city": "Example City",
+        "postal_code": "10000",
+        "country_code": "DE",
+        "residential": False,
+    },
+    "recipient": {
+        "person_name": "Jane Private Buyer",
+        "phone_number": "+43 000 0000000",
+        "email": "buyer@example.com",
+        "address_line1": "Example Lane 2",
+        "city": "Example Town",
+        "postal_code": "1000",
+        "country_code": "AT",
+        "residential": True,
+    },
+    "parcels": [
+        {
+            "dimension_unit": "CM",
+            "weight_unit": "KG",
+            "packaging_type": "your_packaging",
+            "length": 10,
+            "width": 10,
+            "height": 10,
+            "weight": 0.3,
+        }
+    ],
+    "service": "ups_standard",
+    "options": {},
+    "payment": {"paid_by": "sender"},
+    "reference": "PRIVATE-INT-001",
+    "customs": {
+        "commodities": [
+            {
+                "title": "Sample Item A",
+                "description": "Sample Item A",
+                "quantity": 1,
+                "hs_code": "30045000",
+                "value_amount": 0,
+                "value_currency": "EUR",
+                "weight": 0.08,
+                "weight_unit": "KG",
+            },
+            {
+                "title": "Sample Item B",
+                "description": "Sample Item B",
+                "quantity": 1,
+                "value_amount": 0,
+                "value_currency": "EUR",
+                "weight": 0.1,
+                "weight_unit": "KG",
+            },
+        ],
+        "content_type": "merchandise",
+        "incoterm": "DDU",
+        "invoice": "PRIVATE-INV-001",
+        "invoice_date": "2026-05-18",
+        "duty": {"paid_by": "sender", "currency": "EUR"},
+    },
+}
+
+PrivateRecipientInternationalShipmentRequestJSON = {
+    "ShipmentRequest": {
+        "LabelSpecification": {
+            "LabelImageFormat": {"Code": "PNG", "Description": "lable format"},
+            "LabelStockSize": {"Height": "6", "Width": "4"},
+        },
+        "Request": {
+            "RequestOption": "validate",
+            "SubVersion": "v2409",
+            "TransactionReference": {"CustomerContext": "PRIVATE-INT-001"},
+        },
+        "Shipment": {
+            "InvoiceLineTotal": {"CurrencyCode": "USD", "MonetaryValue": "1.0"},
+            "NumOfPiecesInShipment": "0",
+            "Package": [
+                {
+                    "Dimensions": {
+                        "Height": "10.0",
+                        "Length": "10.0",
+                        "UnitOfMeasurement": {"Code": "CM", "Description": "Dimension"},
+                        "Width": "10.0",
+                    },
+                    "PackageWeight": {
+                        "UnitOfMeasurement": {"Code": "KGS", "Description": "Weight"},
+                        "Weight": "0.3",
+                    },
+                    "Packaging": {"Code": "02", "Description": "Packaging Type"},
+                }
+            ],
+            "PaymentInformation": {
+                "ShipmentCharge": [
+                    {"BillShipper": {"AccountNumber": "Your Account Number"}, "Type": "01"},
+                    {"BillShipper": {"AccountNumber": "Your Account Number"}, "Type": "02"},
+                ]
+            },
+            "RatingMethodRequestedIndicator": "Y",
+            "ReferenceNumber": {"Value": "PRIVATE-INT-001"},
+            "Service": {"Code": "11", "Description": "ups_standard"},
+            "ShipFrom": {
+                "Address": {
+                    "AddressLine": ["1 Example Street"],
+                    "City": "Example City",
+                    "CountryCode": "DE",
+                    "PostalCode": "10000",
+                },
+                "AttentionName": "EU Exporter Contact",
+                "CompanyDisplayableName": "EU Exporter GmbH",
+                "EMailAddress": "exporter@example.com",
+                "Name": "EU Exporter GmbH",
+                "Phone": {"Number": "+49 000 0000000"},
+                "TaxIdentificationNumber": "DE000000000",
+            },
+            "ShipTo": {
+                "Address": {
+                    "AddressLine": ["2 Example Lane"],
+                    "City": "Example Town",
+                    "CountryCode": "AT",
+                    "PostalCode": "1000",
+                    "ResidentialAddressIndicator": "Y",
+                },
+                "AttentionName": "Jane Private Buyer",
+                "EMailAddress": "buyer@example.com",
+                "Name": "Jane Private Buyer",
+                "Phone": {"Number": "+43 000 0000000"},
+                "Residential": "Y",
+            },
+            "ShipmentDate": ANY,
+            "ShipmentRatingOptions": {"NegotiatedRatesIndicator": "Y"},
+            "ShipmentServiceOptions": {
+                "InternationalForms": {
+                    "Contacts": {
+                        "SoldTo": {
+                            "Address": {
+                                "AddressLine": ["2 Example Lane"],
+                                "City": "Example Town",
+                                "CountryCode": "AT",
+                                "PostalCode": "1000",
+                            },
+                            "AttentionName": "Jane Private Buyer",
+                            "EMailAddress": "buyer@example.com",
+                            "Name": "Jane Private Buyer",
+                            "Phone": {"Number": "+43 000 0000000"},
+                        }
+                    },
+                    "CurrencyCode": "EUR",
+                    "DeclarationStatement": "I hereby certify that the information on this invoice is true and correct and the contents and value of this shipment is as stated above.",
+                    "FormType": "01",
+                    "InvoiceDate": "20260518",
+                    "InvoiceNumber": "PRIVATE-INV-001",
+                    "Product": [
+                        {
+                            "CommodityCode": "30045000",
+                            "Description": "Sample Item A",
+                            "ExportType": "F",
+                            "NumberOfPackagesPerCommodity": "1",
+                            "OriginCountryCode": "DE",
+                            "ProductWeight": {
+                                "UnitOfMeasurement": {"Code": "KGS", "Description": "weight unit"},
+                                "Weight": "0.08",
+                            },
+                            "Unit": {
+                                "Number": "1",
+                                "UnitOfMeasurement": {"Code": "PCS", "Description": "PCS"},
+                                "Value": "0",
+                            },
+                        },
+                        {
+                            "Description": "Sample Item B",
+                            "ExportType": "F",
+                            "NumberOfPackagesPerCommodity": "1",
+                            "OriginCountryCode": "DE",
+                            "ProductWeight": {
+                                "UnitOfMeasurement": {"Code": "KGS", "Description": "weight unit"},
+                                "Weight": "0.1",
+                            },
+                            "Unit": {
+                                "Number": "1",
+                                "UnitOfMeasurement": {"Code": "PCS", "Description": "PCS"},
+                                "Value": "0",
+                            },
+                        },
+                    ],
+                    "ReasonForExport": "SALE",
+                    "TermsOfShipment": "DDU",
+                },
+                "Notification": [
+                    {
+                        "EMail": {"EMailAddress": "buyer@example.com"},
+                        "NotificationCode": "8",
+                    }
+                ],
+            },
+            "Shipper": {
+                "Address": {
+                    "AddressLine": ["1 Example Street"],
+                    "City": "Example City",
+                    "CountryCode": "DE",
+                    "PostalCode": "10000",
+                },
+                "AttentionName": "EU Exporter Contact",
+                "CompanyDisplayableName": "EU Exporter GmbH",
+                "EMailAddress": "exporter@example.com",
+                "Name": "EU Exporter GmbH",
+                "Phone": {"Number": "+49 000 0000000"},
+                "ShipperNumber": "Your Account Number",
+                "TaxIdentificationNumber": "DE000000000",
+            },
+            "TaxInformationIndicator": "Y",
+        },
+    }
+}
+
 
 ReturnShipmentData = {
     "shipper": {

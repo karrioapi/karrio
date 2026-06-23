@@ -8,7 +8,6 @@ import karrio.server.core.models as core
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("providers", "0101_add_pickup_capability_to_dhl_parcel_de"),
     ]

@@ -1,9 +1,10 @@
-from django.conf import settings
-from django.dispatch import receiver
+from contextlib import suppress
+
 from constance import config
 from constance.signals import config_updated
+from django.conf import settings
 from django.core.signals import request_started
-
+from django.dispatch import receiver
 from karrio.server.core.logging import logger
 
 
@@ -71,7 +72,7 @@ def update_settings(current):
     Uses a single batch query instead of per-key lookups to avoid N+1.
     Falls back to individual getattr() if batch fetch fails.
     """
-    keys = [k for k in settings.CONSTANCE_CONFIG.keys() if hasattr(settings, k)]
+    keys = [k for k in settings.CONSTANCE_CONFIG if hasattr(settings, k)]
     email_keys = ["EMAIL_HOST", "EMAIL_HOST_USER"]
     all_keys = list(set(keys + email_keys))
 
@@ -83,23 +84,29 @@ def update_settings(current):
             if key in values:
                 setattr(settings, key, values[key])
 
-        settings.EMAIL_ENABLED = all(
-            values.get(k) not in (None, "")
-            for k in email_keys
-        )
+        settings.EMAIL_ENABLED = all(values.get(k) not in (None, "") for k in email_keys)
+
+        # Mirror EMAIL_FROM_ADDRESS to OTP_EMAIL_SENDER so the django-otp email
+        # plugin uses the same From address as the rest of the application.
+        # Without this, OTP challenges fall back to DEFAULT_FROM_EMAIL which is
+        # typically not verified on strict SMTP relays (e.g. SendGrid 550).
+        with suppress(Exception):
+            settings.OTP_EMAIL_SENDER = current.EMAIL_FROM_ADDRESS
         return
 
     # Fallback: individual lookups (e.g., during tests or when table doesn't exist)
     for key in keys:
-        try:
+        with suppress(Exception):
             setattr(settings, key, getattr(current, key))
-        except Exception:
-            pass
 
     try:
-        settings.EMAIL_ENABLED = all(
-            cfg not in (None, "")
-            for cfg in [current.EMAIL_HOST, current.EMAIL_HOST_USER]
-        )
+        settings.EMAIL_ENABLED = all(cfg not in (None, "") for cfg in [current.EMAIL_HOST, current.EMAIL_HOST_USER])
     except Exception:
         settings.EMAIL_ENABLED = False
+
+    # Mirror EMAIL_FROM_ADDRESS to OTP_EMAIL_SENDER so the django-otp email
+    # plugin uses the same From address as the rest of the application.
+    # Without this, OTP challenges fall back to DEFAULT_FROM_EMAIL which is
+    # typically not verified on strict SMTP relays (e.g. SendGrid 550).
+    with suppress(Exception):
+        settings.OTP_EMAIL_SENDER = current.EMAIL_FROM_ADDRESS

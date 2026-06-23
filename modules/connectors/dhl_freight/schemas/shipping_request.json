@@ -1,0 +1,164 @@
+{
+  "id": "",
+  "productCode": "ECI",
+  "pickupDate": "2026-12-31T00:11:11.631Z",
+  "requestedDeliveryDate": "2027-01-03T00:11:11.631Z",
+  "pickupInstruction": "to B... - MAX 512 chars",
+  "deliveryInstruction": "from A... - MAX 512 chars",
+  "totalNumberOfPieces": 2,
+  "totalWeight": 1100,
+  "totalVolume": 2.52,
+  "totalLoadingMeters": 0,
+  "totalPalletPlaces": 2,
+  "goodsDescription": "Machinery parts",
+  "goodsValue": 7500,
+  "goodsValueCurrency": "EUR",
+  "references": [
+    { "qualifier": "CNR", "value": "Consignor-Ref123" },
+    { "qualifier": "CNZ", "value": "Consignee-Ref456" }
+  ],
+  "payerCode": {
+    "code": "DAP",
+    "location": ""
+  },
+  "parties": [
+    {
+      "id": "20071718.TR0001",
+      "type": "Consignor",
+      "name": "Rower Gear Türkiye",
+      "vat": "",
+      "vatEoriSocialSecurityNumber": "TR0123456789",
+      "contactName": "John Doe",
+      "address": {
+        "street": "Atatürk Street",
+        "additionalAddressInfo": "Industrial Zone",
+        "cityName": "ANKARA",
+        "postalCode": "06100",
+        "countryCode": "TR"
+      },
+      "phone": "+90 63559867",
+      "email": "TR.RowerGear@rg.com"
+    },
+    {
+      "type": "Consignee",
+      "name": "Ford Romania",
+      "vat": "",
+      "vatEoriSocialSecurityNumber": "RO0123456789",
+      "contactName": "Gerardiu Pocamantiu",
+      "address": {
+        "street": "Esma Sultan Street",
+        "additionalAddressInfo": "Harbor Edge",
+        "cityName": "MANKALYA",
+        "postalCode": "905500",
+        "countryCode": "RO"
+      },
+      "phone": "+40 921345871",
+      "email": "RO.ford@fordromania.com"
+    },
+    {
+      "type": "Pickup",
+      "name": "Progidy Netherlands",
+      "vat": "",
+      "vatEoriSocialSecurityNumber": "NL0123456789",
+      "contactName": "Christophe Colomb",
+      "address": {
+        "street": "Damrak Straat",
+        "additionalAddressInfo": "Servitor Bridge Corner",
+        "cityName": "Niemegen",
+        "postalCode": "4651 SR",
+        "countryCode": "NL"
+      },
+      "phone": "+31 63559867",
+      "email": "NL.progidy@pgd-nl.com"
+    },
+    {
+      "type": "Delivery",
+      "name": "Weyland Yutani Romania",
+      "vat": "",
+      "vatEoriSocialSecurityNumber": "RO0123456789",
+      "contactName": "Kingston Hale",
+      "address": {
+        "street": "Konstantce Street",
+        "additionalAddressInfo": "Shipyard Corner",
+        "cityName": "MANKALYA",
+        "postalCode": "905500",
+        "countryCode": "RO"
+      },
+      "phone": "+40 921345871",
+      "email": "RO.weyland-yutani@ship-yard.com"
+    }
+  ],
+  "additionalServices": {
+    "after12Delivery": false,
+    "availablePickupTime": "09:30",
+    "availableDeliveryTime": "14:30",
+    "cashOnDelivery": {
+      "amount": 987,
+      "currency": "EUR"
+    },
+    "dangerousGoods": false,
+    "dropOffByConsignor": false,
+    "insurance": {
+      "value": 1000,
+      "currency": "EUR"
+    },
+    "preAdvice": true,
+    "sideLoadingPickup": false,
+    "sideUnloadingDelivery": false,
+    "temperatureControlled": {
+      "type": "Custom",
+      "min": 17,
+      "max": 19
+    },
+    "tailLiftLoading": false,
+    "tailLiftUnloading": false,
+    "timeSlotBookingPickup": false,
+    "timeSlotBookingDelivery": false
+  },
+  "pieces": [
+    {
+      "id": [""],
+      "goodsType": "Machinery Parts",
+      "packageType": "PAL",
+      "marksAndNumbers": "123456789012345678901234567890123456789012345",
+      "numberOfPieces": 2,
+      "weight": 550,
+      "volume": 1.26,
+      "loadingMeters": 0,
+      "palletPlaces": 1,
+      "width": 90,
+      "height": 140,
+      "length": 100,
+      "stackable": true,
+      "dangerousGoods": {
+        "dgmId": 979,
+        "properShippingName": "PENTABORANE",
+        "adrClass": "4.2",
+        "unNumber": 1380,
+        "flashpointValue": "85",
+        "packageGroup": "I",
+        "tunnelCode": "B/E",
+        "grossWeight": 700,
+        "quantityMeasurementUnitQualifier": "KG",
+        "quantityMeasurementValue": 750,
+        "numberOfPieces": 2,
+        "packageType": "IBC",
+        "officialNameTechDescription": "Official technical name",
+        "marinePollutant": true,
+        "marinePollutantName": "Benzen",
+        "exceptedQuantity": false,
+        "limitedQuantity": false,
+        "emptyContainer": false,
+        "environmentHazardous": false,
+        "waste": false,
+        "netExplosiveMass": 0
+      }
+    }
+  ],
+  "additionalInformation": [
+    {
+      "code": "UIT_NUMBER",
+      "stringValue": "RO1M-A23N-4I5A-ROM6"
+    }
+  ]
+}

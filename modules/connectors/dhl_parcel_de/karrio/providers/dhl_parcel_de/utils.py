@@ -1,6 +1,5 @@
-import typing
-import karrio.lib as lib
 import karrio.core as core
+import karrio.lib as lib
 
 
 class Settings(core.Settings):
@@ -19,17 +18,17 @@ class Settings(core.Settings):
 
     # Computed credential properties with system config fallback
     @property
-    def connection_username(self) -> typing.Optional[str]:
+    def connection_username(self) -> str | None:
         """Return user-provided username (no system config fallback)."""
         return self.username or None
 
     @property
-    def connection_password(self) -> typing.Optional[str]:
+    def connection_password(self) -> str | None:
         """Return user-provided password (no system config fallback)."""
         return self.password or None
 
     @property
-    def connection_client_id(self) -> typing.Optional[str]:
+    def connection_client_id(self) -> str | None:
         """Return user-provided client_id or fallback to system config."""
         if self.client_id:
             return self.client_id
@@ -40,7 +39,7 @@ class Settings(core.Settings):
         )
 
     @property
-    def connection_client_secret(self) -> typing.Optional[str]:
+    def connection_client_secret(self) -> str | None:
         """Return user-provided client_secret or fallback to system config."""
         if self.client_secret:
             return self.client_secret
@@ -122,11 +121,7 @@ class Settings(core.Settings):
         country = self.account_country_code or "DE"
         language = self.connection_config.language.state or "en"
         locale = f"{country}-{language}".lower()
-        return (
-            "https://www.dhl.com/"
-            + locale
-            + "/home/tracking/tracking-parcel.html?submit=1&tracking-id={}"
-        )
+        return "https://www.dhl.com/" + locale + "/home/tracking/tracking-parcel.html?submit=1&tracking-id={}"
 
     @property
     def connection_config(self) -> lib.units.Options:
@@ -137,60 +132,68 @@ class Settings(core.Settings):
             option_type=ConnectionConfig,
         )
 
-    def get_billing_number(self, service_code: str = None) -> typing.Optional[str]:
-        """Resolve billing number for a service with fallback to default.
+    def get_billing_number(
+        self,
+        service_code: str = None,
+        billing_id: str | None = None,
+    ) -> str | None:
+        """Resolve billing number with optional unique-id selection.
 
-        Args:
-            service_code: The karrio service code (e.g., "dhl_parcel_de_paket")
-
-        Returns:
-            The billing number for the service, or default if not found
+        Lookup order:
+            1. billing_id - exact match on the configured `id` field
+               (used when the merchant picked one of multiple entries that
+               share the same service_code).
+            2. service_code - first exact match on `service`.
+            3. config.default_billing_number.
+            4. test default (test mode only).
         """
         from karrio.providers.dhl_parcel_de.units import (
-            DEFAULT_TEST_BILLING_NUMBERS,
             DEFAULT_TEST_BILLING_NUMBER,
+            DEFAULT_TEST_BILLING_NUMBERS,
         )
 
-        service_billing_numbers = (
-            self.connection_config.service_billing_numbers.state or []
-        )
+        service_billing_numbers = self.connection_config.service_billing_numbers.state or []
 
         # Use test defaults if in test mode and no custom config provided
         if self.test_mode and not service_billing_numbers:
             service_billing_numbers = DEFAULT_TEST_BILLING_NUMBERS
 
-        if service_code:
-            service_billing = next(
-                (
-                    item
-                    for item in service_billing_numbers
-                    if (
-                        item.service == service_code
-                        if hasattr(item, "service")
-                        else item.get("service") == service_code
-                    )
-                ),
+        def _field(item, key):
+            return (
+                getattr(item, key, None) if hasattr(item, key) else (item.get(key) if isinstance(item, dict) else None)
+            )
+
+        # 1. Prefer exact id match when provided.
+        if billing_id:
+            match = next(
+                (i for i in service_billing_numbers if _field(i, "id") == billing_id),
                 None,
             )
-            if service_billing:
-                return (
-                    service_billing.billing_number
-                    if hasattr(service_billing, "billing_number")
-                    else service_billing.get("billing_number")
-                )
+            if match:
+                bn = _field(match, "billing_number")
+                if bn:
+                    return bn
 
-        # Fallback to configured default or test default
+        # 2. Match by service_code. When duplicates exist, first row wins.
+        if service_code:
+            match = next((i for i in service_billing_numbers if _field(i, "service") == service_code), None)
+            if match:
+                bn = _field(match, "billing_number")
+                if bn:
+                    return bn
+
+        # 3. Fallback to configured default or test default
         default_billing = self.connection_config.default_billing_number.state
         if default_billing:
             return default_billing
 
-        # Use test default if in test mode
+        # 4. Use test default if in test mode
         if self.test_mode:
             return DEFAULT_TEST_BILLING_NUMBER
 
         return None
 
-    def get_return_billing_number(self, service_code_override: typing.Optional[str] = None) -> typing.Optional[str]:
+    def get_return_billing_number(self, service_code_override: str | None = None) -> str | None:
         """Resolve return billing number with fallback chain:
         1. service_code_override (from shipping method option) -> lookup in service_billing_numbers map
         2. return_billing_number config (single default)

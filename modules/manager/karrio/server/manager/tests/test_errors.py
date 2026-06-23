@@ -1,7 +1,8 @@
 import json
+
 from django.urls import reverse
-from rest_framework import status
 from karrio.server.core.tests import APITestCase
+from rest_framework import status
 
 
 class TestNotFoundErrors(APITestCase):

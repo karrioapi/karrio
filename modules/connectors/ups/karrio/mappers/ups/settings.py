@@ -1,8 +1,6 @@
 """Karrio UPS connection settings."""
 
 import attr
-import jstruct
-import karrio.lib as lib
 import karrio.providers.ups.utils as provider_utils
 
 
@@ -10,10 +8,10 @@ import karrio.providers.ups.utils as provider_utils
 class Settings(provider_utils.Settings):
     """UPS connection settings."""
 
-    client_id: str  # type:ignore
-    # client_id: str = attr.ib(metadata={"sensitive": True})  # type:ignore
-    client_secret: str  # type:ignore
-    # client_secret: str = attr.ib(metadata={"sensitive": True})  # type:ignore
+    # Optional so merchants can connect with only account number + country code
+    # when ops has configured a platform-wide UPS app via SYSTEM_CONFIG.
+    client_id: str = None  # type:ignore
+    client_secret: str = None  # type:ignore
     account_number: str = None
 
     carrier_id: str = "ups"

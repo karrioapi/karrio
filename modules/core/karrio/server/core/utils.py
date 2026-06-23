@@ -3,9 +3,10 @@ import typing
 import inspect
 import functools
 import atexit
+from collections.abc import Callable
 from concurrent import futures
-from datetime import timedelta, datetime, timezone
-from typing import TypeVar, Union, Callable, Any, List, Optional
+from datetime import UTC, datetime, time as datetime_time, timedelta
+from typing import Any, TypeVar
 
 from django.conf import settings
 from django.db import close_old_connections, connections
@@ -16,7 +17,7 @@ import rest_framework.status as status
 from karrio.server.core.logging import logger
 
 import karrio.lib as lib
-from karrio.core.utils import DP, DF
+from karrio.core.utils import DP
 from karrio.server.core import datatypes, serializers, exceptions
 
 T = TypeVar("T")
@@ -33,7 +34,7 @@ def _shutdown_async_executor():
     _ASYNC_EXECUTOR.shutdown(wait=False, cancel_futures=True)
 
 
-def identity(value: Union[Any, Callable]) -> Any:
+def identity(value: Any | Callable) -> Any:
     """
     :param value: function or value desired to be wrapped
     :return: value or callable return
@@ -124,8 +125,8 @@ def _get_tracer_from_context(context: Any) -> lib.Tracer:
             request = SessionContext.get_current_request()
             if request and hasattr(request, "tracer"):
                 return request.tracer
-        except Exception:
-            pass
+        except Exception as err:
+            logger.debug("Failed to get tracer from request context: %s", err)
 
     # Try to get from context object
     if hasattr(context, "tracer"):
@@ -181,7 +182,6 @@ def error_wrapper(func):
             raise e
 
     return wrapper
-
 
 
 def async_wrapper(func):
@@ -248,8 +248,7 @@ def with_telemetry(operation_name: str = None):
                         f"karrio_{op_name}_success",
                         1,
                         tags={
-                            "carrier": attributes.get("carrier_name", "unknown")
-                            or "unknown",
+                            "carrier": attributes.get("carrier_name", "unknown") or "unknown",
                         },
                     )
 
@@ -264,8 +263,7 @@ def with_telemetry(operation_name: str = None):
                         f"karrio_{op_name}_error",
                         1,
                         tags={
-                            "carrier": attributes.get("carrier_name", "unknown")
-                            or "unknown",
+                            "carrier": attributes.get("carrier_name", "unknown") or "unknown",
                             "error_type": type(e).__name__,
                         },
                     )
@@ -299,9 +297,7 @@ def run_on_all_tenants(func):
         if settings.MULTI_TENANTS:
             import django_tenants.utils as tenant_utils
 
-            tenants = tenant_utils.get_tenant_model().objects.exclude(
-                schema_name="public"
-            )
+            tenants = tenant_utils.get_tenant_model().objects.exclude(schema_name="public")
 
             for tenant in tenants:
                 with tenant_utils.tenant_context(tenant):
@@ -334,9 +330,9 @@ def skip_on_loadata(func):
     return wrapper
 
 
-def skip_on_commands(
-    commands: typing.List[str] = ["loaddata", "migrate", "makemigrations"]
-):
+def skip_on_commands(commands: list[str] | None = None):
+    commands = commands or ["loaddata", "migrate", "makemigrations"]
+
     def _decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
@@ -365,14 +361,14 @@ def email_setup_required(func):
 from karrio.server.core.hooks import HookError, HookRegistry, hookable  # noqa: F401
 
 
-def upper(value_str: Optional[str]) -> Optional[str]:
+def upper(value_str: str | None) -> str | None:
     if value_str is None:
         return None
 
     return value_str.upper().replace("_", " ")
 
 
-def batch_get_constance_values(keys: List[str]) -> dict:
+def batch_get_constance_values(keys: list[str]) -> dict:
     """
     Batch fetch multiple configuration values from Django Constance.
 
@@ -397,35 +393,28 @@ def batch_get_constance_values(keys: List[str]) -> dict:
         # mget returns a generator of (key, value) tuples
         return dict(config._backend.mget(keys))
     except Exception as e:
-        logger.warning(
-            "Failed to batch fetch constance values, returning empty dict", error=str(e)
-        )
+        logger.warning("Failed to batch fetch constance values, returning empty dict", error=str(e))
         return {}
 
 
 def compute_tracking_status(
-    details: Optional[datatypes.Tracking] = None,
-) -> serializers.TrackerStatus:
+    details: datatypes.Tracking | None = None,
+) -> "serializers.TrackerStatus":
     if details is None:
         return serializers.TrackerStatus.pending
     elif details.delivered:
         return serializers.TrackerStatus.delivered
-    elif (len(details.events) == 0) or (
-        len(details.events) == 1 and details.events[0].code == "CREATED"
-    ):
+    elif (len(details.events) == 0) or (len(details.events) == 1 and details.events[0].code == "CREATED"):
         return serializers.TrackerStatus.pending
 
-    if (
-        any(details.status or "")
-        and serializers.TrackerStatus.map(details.status).value is not None
-    ):
+    if any(details.status or "") and serializers.TrackerStatus.map(details.status).value is not None:
         return serializers.TrackerStatus.map(details.status)
 
     return serializers.TrackerStatus.in_transit
 
 
 def is_sdk_message(
-    message: Optional[Union[datatypes.Message, List[datatypes.Message]]],
+    message: datatypes.Message | list[datatypes.Message] | None,
 ) -> bool:
     msg = next(iter(message), None) if isinstance(message, list) else message
 
@@ -433,8 +422,8 @@ def is_sdk_message(
 
 
 def filter_rate_carrier_compatible_gateways(
-    carriers: List, carrier_ids: List[str], shipper_country_code: Optional[str] = None
-) -> List:
+    carriers: list, carrier_ids: list[str], shipper_country_code: str | None = None
+) -> list:
     """
     This function filters the carriers based on the capability to "rating"
     and if no explicit carrier list is provided, it will filter out any
@@ -458,8 +447,7 @@ def filter_rate_carrier_compatible_gateways(
                 and (
                     # Carriers with no account_country_code work across countries
                     not carrier.gateway.settings.account_country_code
-                    or carrier.gateway.settings.account_country_code
-                    == shipper_country_code
+                    or carrier.gateway.settings.account_country_code == shipper_country_code
                 )
             )
         )
@@ -473,21 +461,22 @@ def is_system_loading_data() -> bool:
         for fr in inspect.stack():
             if inspect.getmodulename(fr[1]) == "loaddata":
                 return True
-    except:
-        pass
+    except Exception as err:
+        logger.debug("Failed to inspect stack for loaddata detection: %s", err)
 
     return False
 
 
 @email_setup_required
 def send_email(
-    emails: List[str],
+    emails: list[str],
     subject: str,
     email_template: str,
-    context: dict = {},
-    text_template: str = None,
+    context: dict | None = None,
+    text_template: str | None = None,
     **kwargs,
 ):
+    context = context or {}
     sender = confirm._get_validated_field("EMAIL_FROM_ADDRESS")
     html = confirm.render_to_string(email_template, context)
     text = confirm.render_to_string(text_template or email_template, context)
@@ -522,12 +511,12 @@ class ResourceAccessToken(jwt.Token):
         cls,
         user,
         resource_type: str,
-        resource_ids: List[str],
-        access: List[str],
-        format: Optional[str] = None,
-        org_id: Optional[str] = None,
-        test_mode: Optional[bool] = None,
-        expires_in: Optional[int] = None,
+        resource_ids: list[str],
+        access: list[str],
+        format: str | None = None,
+        org_id: str | None = None,
+        test_mode: bool | None = None,
+        expires_in: int | None = None,
     ) -> "ResourceAccessToken":
         """Generate a resource access token.
 
@@ -626,7 +615,7 @@ class ResourceAccessToken(jwt.Token):
         cls,
         token_string: str,
         resource_type: str,
-        resource_ids: List[str],
+        resource_ids: list[str],
         access: str,
     ) -> dict:
         """Validate token grants access to multiple resources.
@@ -656,9 +645,7 @@ class ResourceAccessToken(jwt.Token):
         request_ids = set(resource_ids)
         if not request_ids.issubset(token_ids):
             missing = request_ids - token_ids
-            raise PermissionError(
-                f"Token does not grant access to resources: {', '.join(missing)}"
-            )
+            raise PermissionError(f"Token does not grant access to resources: {', '.join(missing)}")
 
         return claims
 
@@ -666,7 +653,7 @@ class ResourceAccessToken(jwt.Token):
 def validate_resource_token(
     request,
     resource_type: str,
-    resource_ids: List[str],
+    resource_ids: list[str],
     access: str,
 ):
     """Validate resource access token, skipping if user is already authenticated.
@@ -696,9 +683,13 @@ def validate_resource_token(
     from django.contrib.auth.models import AnonymousUser
 
     # Skip resource token check if user is already authenticated
-    if hasattr(request, "user") and request.user and not isinstance(request.user, AnonymousUser):
-        if request.user.is_authenticated:
-            return None
+    if (
+        hasattr(request, "user")
+        and request.user
+        and not isinstance(request.user, AnonymousUser)
+        and request.user.is_authenticated
+    ):
+        return None
 
     # Fall back to resource access token validation
     token = request.GET.get("token")
@@ -716,10 +707,8 @@ def validate_resource_token(
             access=access,
         )
         return None
-    except PermissionError as e:
-        return HttpResponseForbidden(
-            "You do not have permission to access these resources."
-        )
+    except PermissionError:
+        return HttpResponseForbidden("You do not have permission to access these resources.")
     except Exception as e:
         logger.warning("Invalid resource access token: %s", str(e))
         return HttpResponseForbidden("Invalid or expired token.")
@@ -728,7 +717,7 @@ def validate_resource_token(
 def require_resource_token(
     resource_type: str,
     access: str,
-    get_resource_ids: Callable[..., List[str]],
+    get_resource_ids: Callable[..., list[str]],
 ):
     """Decorator for views requiring resource access token validation.
 
@@ -752,9 +741,7 @@ def require_resource_token(
         @functools.wraps(method)
         def wrapper(self, request, *args, **kwargs):
             resource_ids = get_resource_ids(request, **kwargs)
-            error = validate_resource_token(
-                request, resource_type, resource_ids, access
-            )
+            error = validate_resource_token(request, resource_type, resource_ids, access)
             if error:
                 return error
             return method(self, request, *args, **kwargs)
@@ -771,11 +758,11 @@ def app_tracking_query_params(url: str, carrier) -> str:
 
 
 def default_tracking_event(
-    event_at: datetime = None,
-    code: str = None,
-    description: str = None,
+    event_at: datetime | None = None,
+    code: str | None = None,
+    description: str | None = None,
 ):
-    _event_dt = (event_at or datetime.now(timezone.utc)).astimezone(timezone.utc)
+    _event_dt = (event_at or datetime.now(UTC)).astimezone(UTC)
     _timestamp = _event_dt.strftime("%Y-%m-%dT%H:%M:%S.") + f"{_event_dt.microsecond // 1000:03d}Z"
     return [
         DP.to_dict(
@@ -798,7 +785,7 @@ def get_carrier_tracking_link(carrier, tracking_number: str):
     return tracking_url.format(tracking_number) if tracking_url is not None else None
 
 
-def _ensure_picked_up_status(events: typing.List[dict]) -> typing.List[dict]:
+def _ensure_picked_up_status(events: list[dict]) -> list[dict]:
     """Transform the chronologically first in_transit event to picked_up if none exists."""
     if not events or any(e.get("status") == "picked_up" for e in events):
         return events
@@ -817,9 +804,9 @@ def _ensure_picked_up_status(events: typing.List[dict]) -> typing.List[dict]:
 
 
 def process_events(
-    response_events: typing.List[datatypes.TrackingEvent],
-    current_events: typing.List[dict],
-) -> typing.List[dict]:
+    response_events: list[datatypes.TrackingEvent],
+    current_events: list[dict],
+) -> list[dict]:
     """Merge new tracking events with existing ones, avoiding duplicates by comparing event hashes.
     Latest events are kept at the top of the list."""
     if not any(response_events):
@@ -833,9 +820,7 @@ def process_events(
 
     # Merge events: add only new non-duplicate events to existing ones
     current_hashes = {lib.to_json(event) for event in current_events}
-    unique_new_events = [
-        event for event in new_events if lib.to_json(event) not in current_hashes
-    ]
+    unique_new_events = [event for event in new_events if lib.to_json(event) not in current_hashes]
 
     # If no new unique events, return current events unchanged
     if not any(unique_new_events):
@@ -844,11 +829,11 @@ def process_events(
     # When merging, we need to re-sort because new events may have timestamps
     # that fall between existing events. We must parse datetimes properly
     # (not use string comparison) to handle 12-hour AM/PM format correctly.
-    def try_parse_datetime(value: str, fmt: str) -> typing.Optional[datetime]:
+    def try_parse_datetime(value: str, fmt: str) -> datetime | None:
         """Safely attempt to parse a datetime string with a given format."""
         return failsafe(lambda: datetime.strptime(value, fmt))
 
-    def parse_date(event: dict) -> typing.Optional[datetime]:
+    def parse_date(event: dict) -> datetime | None:
         """Parse date from event using multiple format attempts."""
         date_str = event.get("date", "")
         date_formats = ["%Y-%m-%d", "%m/%d/%Y", "%-m/%d/%Y"]
@@ -862,7 +847,7 @@ def process_events(
             else None
         )
 
-    def parse_time(event: dict) -> typing.Optional[datetime.time]:
+    def parse_time(event: dict) -> datetime_time | None:
         """Parse time from event using multiple format attempts."""
         time_str = event.get("time", "")
         time_formats = ["%I:%M %p", "%H:%M:%S", "%H:%M", "%I:%M"]
@@ -877,15 +862,11 @@ def process_events(
         )
         return parsed.time() if parsed else None
 
-    def parse_event_datetime(event: dict) -> typing.Optional[datetime]:
+    def parse_event_datetime(event: dict) -> datetime | None:
         """Parse complete datetime from event date and time."""
         parsed_date = parse_date(event)
         parsed_time = parse_time(event) if parsed_date else None
-        return (
-            datetime.combine(parsed_date.date(), parsed_time)
-            if parsed_date and parsed_time
-            else parsed_date
-        )
+        return datetime.combine(parsed_date.date(), parsed_time) if parsed_date and parsed_time else parsed_date
 
     def create_sort_key(event: dict) -> tuple:
         """Create sort key: dated events first (by datetime desc), undated last (by original order)."""
@@ -901,18 +882,14 @@ def process_events(
     return _ensure_picked_up_status(sorted_events)
 
 
-def _get_carrier_for_service(service: str, context=None) -> typing.Optional[str]:
+def _get_carrier_for_service(service: str, context=None) -> str | None:
     """Resolve carrier name from service code using karrio references."""
     import karrio.server.core.dataunits as dataunits
 
     services_map = dataunits.contextual_reference(context).get("services", {})
 
     return next(
-        (
-            carrier_name
-            for carrier_name, services in services_map.items()
-            if service in services
-        ),
+        (carrier_name for carrier_name, services in services_map.items() if service in services),
         None,
     )
 
@@ -943,33 +920,15 @@ def load_and_apply_shipping_method(
     try:
         from karrio.server.shipping.models import ShippingMethod
         from karrio.server.shipping.serializers import apply_shipping_method_to_data
-    except ImportError:
+    except ImportError as err:
         raise exceptions.APIException(
             "Shipping methods module is not installed.",
             code="module_not_installed",
             status_code=status.HTTP_400_BAD_REQUEST,
-        )
+        ) from err
 
     # Load the shipping method with access control
-    # Try AccountShippingMethod (mtd_*) first, then BrokeredShippingMethod (bsm_*)
-    try:
-        from karrio.server.shipping.models import BrokeredShippingMethod
-
-        lookup_strategies = [
-            lambda: ShippingMethod.access_by(context).get(
-                id=shipping_method_id, is_active=True
-            ),
-            lambda: (
-                BrokeredShippingMethod.access_by(context)
-                .with_effective_config()
-                .get(id=shipping_method_id, is_enabled=True)
-            ),
-        ]
-        method = next(
-            filter(None, (failsafe(fn) for fn in lookup_strategies)), None
-        )
-    except Exception:
-        method = None
+    method = failsafe(lambda: ShippingMethod.access_by(context).get(id=shipping_method_id, is_active=True))
 
     if method is None:
         from rest_framework.exceptions import NotFound
@@ -992,7 +951,7 @@ def load_and_apply_shipping_method(
     return result_data
 
 
-def apply_rate_selection(payload: typing.Union[dict, typing.Any], **kwargs):
+def apply_rate_selection(payload: dict | typing.Any, **kwargs):
     """
     Select the appropriate rate based on the following priority hierarchy:
 
@@ -1006,11 +965,13 @@ def apply_rate_selection(payload: typing.Union[dict, typing.Any], **kwargs):
     - service/rate_id provided but no matching rate found
     """
     data = kwargs.get("data") or kwargs
-    get = lambda key, default=None: lib.identity(
-        payload.get(key, data.get(key, default))
-        if isinstance(payload, dict)
-        else getattr(payload, key, data.get(key, default))
-    )
+
+    def get(key, default=None):
+        return lib.identity(
+            payload.get(key, data.get(key, default))
+            if isinstance(payload, dict)
+            else getattr(payload, key, data.get(key, default))
+        )
 
     ctx = kwargs.get("context")
     rates = get("rates") or data.get("rates", [])
@@ -1019,8 +980,7 @@ def apply_rate_selection(payload: typing.Union[dict, typing.Any], **kwargs):
     rate_id = get("selected_rate_id") or data.get("selected_rate_id", None)
     selected_rate = get("selected_rate") or data.get("selected_rate", None)
     apply_shipping_rules = lib.identity(
-        getattr(settings, "SHIPPING_RULES", False)
-        and options.get("apply_shipping_rules", False)
+        getattr(settings, "SHIPPING_RULES", False) and options.get("apply_shipping_rules", False)
     )
 
     if selected_rate:
@@ -1029,17 +989,40 @@ def apply_rate_selection(payload: typing.Union[dict, typing.Any], **kwargs):
 
     # Select by id or service if provided
     if rate_id or service:
-        kwargs.update(
-            selected_rate=next(
-                (
-                    rate
-                    for rate in rates
-                    if (rate_id and rate.get("id") == rate_id)
-                    or (service and rate.get("service") == service)
-                ),
-                None,
-            )
+        # Explicit rate_id always wins — the caller already chose a row.
+        selected = next(
+            (rate for rate in rates if rate_id and rate.get("id") == rate_id),
+            None,
         )
+
+        if selected is None and service:
+            # Sibling ServiceLevels share carrier service codes (e.g. UPS
+            # Standard / Saturday / Return all carry `ups_standard` since UPS
+            # defines one code 11 — the variant is signalled by request
+            # options, not by code). The static rating proxy emits one rate
+            # per active ServiceLevel, so a bare match-by-service-code picks
+            # an arbitrary sibling. When the method writer has propagated
+            # the chosen method's features/options/service_name into
+            # `meta.shipping_method` (see
+            # `karrio.server.shipping.serializers.apply_shipping_method_to_data`),
+            # use the variant scorer to pick the right sibling. Witness:
+            # shp_cc0d0501e93c4dc1850f53d5212b7b53 (UPS DE → AT, picked
+            # the Saturday variant despite method.saturday_delivery=False).
+            from karrio.server.providers.service_level_matching import (
+                pick_best_rate_for_method,
+            )
+
+            payload_meta = get("meta") or data.get("meta") or {}
+            method_meta = (payload_meta.get("shipping_method") if isinstance(payload_meta, dict) else None) or {}
+            selected = pick_best_rate_for_method(
+                rates,
+                service,
+                service_name=method_meta.get("service_name") or None,
+                target_features=method_meta.get("features"),
+                target_options=method_meta.get("carrier_options"),
+            )
+
+        kwargs.update(selected_rate=selected)
 
         # has_alternative_services fallback when no exact match found
         has_alternative_services = options.get("has_alternative_services", False)
@@ -1079,9 +1062,7 @@ def apply_rate_selection(payload: typing.Union[dict, typing.Any], **kwargs):
         import karrio.server.automation.services.rules_engine as engine
 
         # Get active shipping rules
-        active_rules = list(
-            automation_models.ShippingRule.access_by(ctx).filter(is_active=True)
-        )
+        active_rules = list(automation_models.ShippingRule.access_by(ctx).filter(is_active=True))
 
         # Always run rule evaluation for activity tracking
         if active_rules:
@@ -1228,9 +1209,9 @@ def create_carrier_snapshot(connection: typing.Any) -> dict:
 
 
 def resolve_carrier(
-    snapshot: typing.Optional[dict],
+    snapshot: dict | None,
     context: typing.Any = None,
-) -> typing.Optional[typing.Any]:
+) -> typing.Any | None:
     """
     Resolve a live carrier connection from a snapshot.
 
@@ -1289,12 +1270,16 @@ def resolve_carrier(
         test_mode = snapshot.get("test_mode", False)
 
         if carrier_code and carrier_id:
-            system_conn = SystemConnection.objects.filter(
-                carrier_code=carrier_code,
-                carrier_id=carrier_id,
-                test_mode=test_mode,
-                active=True,
-            ).first()
+            system_conn = (
+                SystemConnection.objects.for_rates()
+                .filter(
+                    carrier_code=carrier_code,
+                    carrier_id=carrier_id,
+                    test_mode=test_mode,
+                    active=True,
+                )
+                .first()
+            )
 
             if system_conn:
                 brokered_qs = BrokeredConnection.objects.filter(
@@ -1312,18 +1297,23 @@ def resolve_carrier(
                         brokered_qs = brokered_qs.filter(created_by=user)
 
                 brokered = brokered_qs.first()
-                return brokered if brokered else system_conn
+                if brokered is not None:
+                    # Reuse the for_rates()-hydrated system connection so
+                    # brokered.data/.gateway don't re-query rate_sheet + services.
+                    brokered.system_connection = system_conn
+                    return brokered
+                return system_conn
 
         return None
 
     if conn_type == ConnectionType.SYSTEM:
         # System connection
-        return SystemConnection.objects.filter(id=conn_id, active=True).first()
+        return SystemConnection.objects.for_rates().filter(id=conn_id, active=True).first()
 
     if conn_type == ConnectionType.BROKERED:
         # Brokered connection - conn_id is actually system_connection_id (per decision #30)
-        # Try to find user's BrokeredConnection for that SystemConnection (per decision #33)
-        system_conn = SystemConnection.objects.filter(id=conn_id, active=True).first()
+        # Find the user's BrokeredConnection for that SystemConnection.
+        system_conn = SystemConnection.objects.for_rates().filter(id=conn_id, active=True).first()
 
         if not system_conn:
             return None
@@ -1347,9 +1337,12 @@ def resolve_carrier(
                 brokered_qs = brokered_qs.filter(created_by=user)
 
         brokered = brokered_qs.first()
-
-        # Return brokered if found, else return system connection as fallback
-        return brokered if brokered else system_conn
+        if brokered is not None:
+            # Reuse the for_rates()-hydrated system connection so brokered.data/
+            # .gateway don't re-query rate_sheet + services.
+            brokered.system_connection = system_conn
+            return brokered
+        return system_conn
 
     # Unknown connection type
     return None

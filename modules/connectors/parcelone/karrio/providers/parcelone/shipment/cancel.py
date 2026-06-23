@@ -1,22 +1,21 @@
 """Karrio ParcelOne shipment cancellation implementation."""
 
-import typing
-import karrio.schemas.parcelone as parcelone
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.parcelone.error as error
 import karrio.providers.parcelone.utils as provider_utils
+import karrio.schemas.parcelone.cancel_response as cancel
 
 
 def parse_shipment_cancel_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.Optional[models.ConfirmationDetails], typing.List[models.Message]]:
+) -> tuple[models.ConfirmationDetails | None, list[models.Message]]:
     """Parse shipment cancellation response from ParcelOne REST API."""
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
 
-    cancel_response = lib.to_object(parcelone.CancelResponseType, response)
+    cancel_response = lib.to_object(cancel.CancelResponseType, response)
     result = cancel_response.results
     success = cancel_response.success == 1 and (result.Success == 1 if result else False)
 
@@ -40,25 +39,21 @@ def shipment_cancel_request(
 ) -> lib.Serializable:
     """Create ParcelOne shipment cancel request.
 
-    The API uses DELETE /shipment/{ShipmentRefField}/{ShipmentRefValue}
-    where ShipmentRefField can be: ShipmentID, ShipmentRef, or TrackingID
+    DELETE /shipment/{ShipmentRefField}/{ShipmentRefValue}
+    where ShipmentRefField is one of (lowercase per API spec):
+    shipmentid, shipmentref, trackingid.
     """
-    # Determine which reference field to use based on identifier format
     identifier = payload.shipment_identifier
-
-    # If it's a numeric string, it's likely a ShipmentID
-    # If it starts with digits and has a specific length (13), it's likely a TrackingID
-    # Otherwise, treat it as a ShipmentRef
-    if identifier.isdigit() and len(identifier) < 10:
-        ref_field = "ShipmentID"
-    elif identifier.isdigit() and len(identifier) >= 10:
-        ref_field = "TrackingID"
-    else:
-        ref_field = "ShipmentRef"
-
-    request = dict(
-        ref_field=ref_field,
-        ref_value=identifier,
+    # 13-digit numeric → tracking number; shorter numeric → shipmentid; else ref.
+    ref_field = lib.identity(
+        "trackingid"
+        if identifier.isdigit() and len(identifier) >= 10
+        else "shipmentid"
+        if identifier.isdigit()
+        else "shipmentref"
     )
 
-    return lib.Serializable(request, lib.to_dict)
+    return lib.Serializable(
+        dict(ref_field=ref_field, ref_value=identifier),
+        lib.to_dict,
+    )

@@ -1,7 +1,5 @@
 import karrio.lib as lib
 import karrio.server.serializers as serializers
-import karrio.server.documents.models as models
-import karrio.server.core.validators as validators
 
 
 class TemplateRelatedObject(lib.StrEnum):
@@ -15,15 +13,9 @@ class DocumentTemplateData(serializers.Serializer):
     slug = serializers.CharField(max_length=255, help_text="The template slug")
     template = serializers.CharField(help_text="The template content")
     active = serializers.BooleanField(default=True, help_text="disable template flag.")
-    description = serializers.CharField(
-        max_length=255, help_text="The template description", required=False
-    )
-    metadata = serializers.PlainDictField(
-        help_text="The template metadata", required=False
-    )
-    options = serializers.PlainDictField(
-        help_text="The template rendering options", required=False
-    )
+    description = serializers.CharField(max_length=255, help_text="The template description", required=False)
+    metadata = serializers.PlainDictField(help_text="The template metadata", required=False)
+    options = serializers.PlainDictField(help_text="The template rendering options", required=False)
     related_object = serializers.ChoiceField(
         choices=TemplateRelatedObject,
         help_text="The template related object",
@@ -33,9 +25,7 @@ class DocumentTemplateData(serializers.Serializer):
 
 
 class DocumentTemplate(serializers.EntitySerializer, DocumentTemplateData):
-    object_type = serializers.CharField(
-        default="document-template", help_text="Specifies the object type"
-    )
+    object_type = serializers.CharField(default="document-template", help_text="Specifies the object type")
     preview_url = serializers.URLField(
         help_text="The template preview URL",
         required=False,
@@ -63,6 +53,17 @@ class DocumentData(serializers.Serializer):
         help_text="The template data",
         required=False,
         default={},
+    )
+    related_object = serializers.ChoiceField(
+        choices=TemplateRelatedObject,
+        help_text=(
+            "The render context type for an inline ``template`` (ignored when "
+            "``template_id`` is provided, where the saved template's value is used). "
+            "Set to ``shipment`` / ``order`` so the generator builds the matching "
+            "render context (e.g. exposing ``shipment``/``line_items``/``carrier``/"
+            "``orders`` for shipment documents) instead of the generic fallback."
+        ),
+        required=False,
     )
     options = serializers.PlainDictField(
         help_text="The template rendering options",

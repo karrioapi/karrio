@@ -1,10 +1,9 @@
-from typing import List
-from karrio.schemas.dhl_universal.tracking import Error
-from karrio.providers.dhl_universal import Settings
 from karrio.core.models import Message
+from karrio.providers.dhl_universal.utils import Settings
+from karrio.schemas.dhl_universal.tracking import Error
 
 
-def parse_error_response(response: List[dict], settings: Settings) -> List[Message]:
+def parse_error_response(response: list[dict], settings: Settings) -> list[Message]:
     errors = [Error(**e) for e in response]
     return [
         Message(

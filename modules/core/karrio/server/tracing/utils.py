@@ -1,13 +1,37 @@
 import karrio.lib as lib
 import karrio.server.conf as conf
 import karrio.server.core.utils as utils
-import karrio.server.tracing.models as models
 import karrio.server.serializers as serializers
+import karrio.server.tracing.models as models
 from karrio.server.core.logging import logger
 
 
+def _json_safe(value):
+    """Coerce a trace payload into something the ``record`` JSONField can store.
+
+    Carriers that send binary bodies (e.g. GLS uploads a document to a
+    pre-signed URL with raw PDF bytes) put ``bytes`` into the trace data, which
+    is not JSON-serializable and silently breaks persistence. Elide bytes to a
+    size marker — also keeps raw document/PII bytes out of the trace records
+    (see observability.md).
+    """
+    if isinstance(value, (bytes, bytearray)):
+        return f"<{len(value)} bytes elided>"
+    if isinstance(value, dict):
+        return {k: _json_safe(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_json_safe(v) for v in value]
+    return value
+
+
 @utils.error_wrapper
-def save_tracing_records(context, tracer: lib.Tracer = None, schema: str = None):
+def save_tracing_records(context, tracer: lib.Tracer = None, schema: str = None, run_synchronous: bool = False):
+    """Persist a tracer's records as ``TracingRecord`` rows.
+
+    ``run_synchronous=True`` writes inline rather than on a background thread —
+    use it from a Huey task so the records are committed before the task returns
+    (the request path leaves it async; see observability.md).
+    """
     if conf.settings.PERSIST_SDK_TRACING is False:
         return
 
@@ -41,7 +65,7 @@ def save_tracing_records(context, tracer: lib.Tracer = None, schema: str = None)
                 records.append(
                     models.TracingRecord(
                         key=record.key,
-                        record=record.data,
+                        record=_json_safe(record.data),
                         timestamp=record.timestamp,
                         created_by_id=getattr(actor, "id", None),
                         test_mode=connection.get("test_mode", False),
@@ -68,7 +92,7 @@ def save_tracing_records(context, tracer: lib.Tracer = None, schema: str = None)
         except Exception as e:
             logger.error("Failed to save tracing records", error=str(e))
 
-    persist_records(schema=schema)
+    persist_records(schema=schema, run_synchronous=run_synchronous)
 
 
 @utils.error_wrapper
@@ -86,7 +110,7 @@ def bulk_save_tracing_records(tracer: lib.Tracer, context=None):
         records.append(
             models.TracingRecord(
                 key=record.key,
-                record=record.data,
+                record=_json_safe(record.data),
                 timestamp=record.timestamp,
                 test_mode=getattr(context, "test_mode", False),
                 created_by_id=getattr(context.user, "id", None),
@@ -107,7 +131,9 @@ def set_tracing_context(**kwargs):
     from karrio.server.core import middleware
 
     request = middleware.SessionContext.get_current_request()
-    request.tracer.add_context(kwargs)
+    tracer = getattr(request, "tracer", None)
+    if tracer is not None:
+        tracer.add_context(kwargs)
 
     _propagate_to_sentry(kwargs)
 
@@ -140,5 +166,5 @@ def _propagate_to_sentry(context: dict):
                     }
                 ),
             )
-    except Exception:
-        pass
+    except Exception as e:
+        logger.debug("Failed to propagate tracing context to sentry", error=str(e))

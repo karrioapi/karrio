@@ -1,27 +1,23 @@
 """Karrio Teleship tracking API implementation."""
 
-import karrio.schemas.teleship.tracking_response as teleship_res
-
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.teleship.error as error
-import karrio.providers.teleship.utils as provider_utils
 import karrio.providers.teleship.units as provider_units
+import karrio.providers.teleship.utils as provider_utils
+import karrio.schemas.teleship.tracking_response as teleship_res
 
 
 def parse_tracking_response(
-    _response: lib.Deserializable[typing.List[typing.Tuple[str, dict]]],
+    _response: lib.Deserializable[list[tuple[str, dict]]],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+) -> tuple[list[models.TrackingDetails], list[models.Message]]:
     responses = _response.deserialize()
 
     # Aggregate error messages using functional sum pattern
-    messages: typing.List[models.Message] = sum(
+    messages: list[models.Message] = sum(
         [
-            error.parse_error_response(
-                response, settings, **dict(tracking_number=tracking_number)
-            )
+            error.parse_error_response(response, settings, **dict(tracking_number=tracking_number))
             for tracking_number, response in responses
         ],
         start=[],
@@ -70,11 +66,7 @@ def _extract_details(
                     current_format="%Y-%m-%dT%H:%M:%SZ",
                 ),
                 status=next(
-                    (
-                        s.name
-                        for s in list(provider_units.TrackingStatus)
-                        if event.code in s.value
-                    ),
+                    (s.name for s in list(provider_units.TrackingStatus) if event.code in s.value),
                     None,
                 ),
             )

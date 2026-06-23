@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("providers", "0098_servicelevel_features"),
     ]
@@ -31,9 +30,7 @@ class Migration(migrations.Migration):
             model_name="brokeredconnection",
             name="id",
             field=models.CharField(
-                default=functools.partial(
-                    karrio.server.core.models.base.uuid, *(), **{"prefix": "car_"}
-                ),
+                default=functools.partial(karrio.server.core.models.base.uuid, *(), **{"prefix": "car_"}),
                 editable=False,
                 max_length=50,
                 primary_key=True,
@@ -44,9 +41,7 @@ class Migration(migrations.Migration):
             model_name="systemconnection",
             name="id",
             field=models.CharField(
-                default=functools.partial(
-                    karrio.server.core.models.base.uuid, *(), **{"prefix": "car_"}
-                ),
+                default=functools.partial(karrio.server.core.models.base.uuid, *(), **{"prefix": "car_"}),
                 editable=False,
                 max_length=50,
                 primary_key=True,

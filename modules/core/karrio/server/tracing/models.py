@@ -1,8 +1,8 @@
 from functools import partial
+
 from django.conf import settings
 from django.db import models
 from django.db.models.fields import json
-
 from karrio.core.utils import identity
 from karrio.server.core.models import OwnedEntity, uuid
 

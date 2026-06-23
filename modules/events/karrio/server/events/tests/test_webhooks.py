@@ -1,16 +1,18 @@
 import json
 from unittest.mock import ANY, patch
-from requests import Response
 
+from django.test import override_settings
 from django.urls import reverse
 from django.utils import timezone
-from rest_framework import status
-
 from karrio.server.core.tests import APITestCase
 from karrio.server.events.models import Webhook
+from karrio.server.events.serializers import EventTypes
 from karrio.server.events.task_definitions.base.webhook import (
     notify_webhook_subscribers,
 )
+from karrio.server.manager import models as manager_models
+from requests import Response
+from rest_framework import status
 
 NOTIFICATION_DATETIME = timezone.now()
 
@@ -44,9 +46,7 @@ class TestWebhookDetails(APITestCase):
         )
 
     def test_update_webhook(self):
-        url = reverse(
-            "karrio.server.events:webhook-details", kwargs=dict(pk=self.webhook.pk)
-        )
+        url = reverse("karrio.server.events:webhook-details", kwargs=dict(pk=self.webhook.pk))
         data = WEBHOOK_UPDATE_DATA
 
         response = self.client.patch(url, data)
@@ -56,13 +56,9 @@ class TestWebhookDetails(APITestCase):
         self.assertDictEqual(response_data, WEBHOOK_UPDATED_RESPONSE)
 
     def test_webhook_notify(self):
-        url = reverse(
-            "karrio.server.events:webhook-details", kwargs=dict(pk=self.webhook.pk)
-        )
+        url = reverse("karrio.server.events:webhook-details", kwargs=dict(pk=self.webhook.pk))
 
-        with patch(
-            "karrio.server.events.task_definitions.base.webhook.identity"
-        ) as mocks:
+        with patch("karrio.server.events.task_definitions.base.webhook.identity") as mocks:
             response = Response()
             response.status_code = 200
             mocks.return_value = response
@@ -160,6 +156,52 @@ class TestWebhookDetails(APITestCase):
         self.assertEqual(self.webhook.failure_streak_count, 6)
         self.assertTrue(self.webhook.disabled)
         self.assertIsNone(self.webhook.last_event_at)
+
+
+class TestBuiltInWebhooksGating(APITestCase):
+    """shipment.purchased is gated by BUILT_IN_WEBHOOKS so the bridge fan-out can
+    own it later without double-delivery; default on keeps the core behaviour."""
+
+    def _draft_shipment(self):
+        return manager_models.Shipment.objects.create(
+            shipper={"person_name": "Shipper", "country_code": "DE"},
+            recipient={"person_name": "Recipient", "country_code": "FR"},
+            parcels=[{"weight": 1.0, "weight_unit": "KG"}],
+            created_by=self.user,
+            test_mode=False,
+            status="draft",
+            tracking_number="TRACK_1",
+        )
+
+    def _purchase(self, shipment):
+        with self.captureOnCommitCallbacks(execute=True):
+            shipment.status = "created"
+            shipment.save(update_fields=["status"])
+
+    @override_settings(MULTI_ORGANIZATIONS=False, BUILT_IN_WEBHOOKS=True)
+    @patch("karrio.server.events.signals.tasks.notify_webhooks")
+    def test_purchased_webhook_fires_when_built_in_enabled(self, mock_notify):
+        self._purchase(self._draft_shipment())
+        mock_notify.assert_called_once()
+        self.assertEqual(mock_notify.call_args.args[0], EventTypes.shipment_purchased.value)
+
+    @override_settings(MULTI_ORGANIZATIONS=False, BUILT_IN_WEBHOOKS=False)
+    @patch("karrio.server.events.signals.tasks.notify_webhooks")
+    def test_purchased_webhook_suppressed_when_built_in_disabled(self, mock_notify):
+        self._purchase(self._draft_shipment())
+        mock_notify.assert_not_called()
+
+    @override_settings(MULTI_ORGANIZATIONS=False, BUILT_IN_WEBHOOKS=False)
+    @patch("karrio.server.events.signals.tasks.notify_webhooks")
+    def test_built_in_off_gates_non_purchased_events_too(self, mock_notify):
+        # The gate is on the dispatch, so it covers every shipment_updated event
+        # (cancelled, fulfilled, ...), not only purchased.
+        shipment = self._draft_shipment()
+        self._purchase(shipment)
+        with self.captureOnCommitCallbacks(execute=True):
+            shipment.status = "cancelled"
+            shipment.save(update_fields=["status"])
+        mock_notify.assert_not_called()
 
 
 WEBHOOK_DATA = {

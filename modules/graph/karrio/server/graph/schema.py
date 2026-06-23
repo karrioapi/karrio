@@ -1,10 +1,10 @@
 import pkgutil
+
+import karrio.server.graph.schemas as schemas
 import strawberry
 import strawberry.schema.config as config
-from strawberry.types import Info
-
 from karrio.server.core.logging import logger
-import karrio.server.graph.schemas as schemas
+from strawberry.types import Info
 
 QUERIES: list = []
 MUTATIONS: list = []
@@ -23,6 +23,14 @@ for _, name, _ in pkgutil.iter_modules(schemas.__path__):  # type: ignore
     except Exception as e:
         logger.warning("Failed to register GraphQL schema", schema_name=name, error=str(e))
         logger.exception("GraphQL schema registration error", schema_name=name)
+
+
+def _most_derived(classes: list) -> list:
+    return [c for c in classes if not any(o is not c and issubclass(o, c) for o in classes)]
+
+
+QUERIES = _most_derived(QUERIES)
+MUTATIONS = _most_derived(MUTATIONS)
 
 
 # Fallback placeholder to prevent empty schema errors when no modules are installed

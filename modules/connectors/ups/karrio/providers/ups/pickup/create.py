@@ -1,9 +1,8 @@
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.ups.error as error
-import karrio.providers.ups.utils as provider_utils
 import karrio.providers.ups.units as provider_units
+import karrio.providers.ups.utils as provider_utils
 import karrio.schemas.ups.pickup_request as ups
 import karrio.schemas.ups.pickup_response as ups_response
 
@@ -11,7 +10,7 @@ import karrio.schemas.ups.pickup_response as ups_response
 def parse_pickup_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.Optional[models.PickupDetails], typing.List[models.Message]]:
+) -> tuple[models.PickupDetails | None, list[models.Message]]:
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
     pickup = _extract_details(response, settings) if response.get("PickupCreationResponse") else None
@@ -54,10 +53,12 @@ def pickup_request(
     # Daily/recurring pickups require account setup through UPS directly
     pickup_type = getattr(payload, "pickup_type", "one_time") or "one_time"
     if pickup_type not in ("one_time", None):
-        raise lib.exceptions.FieldError({
-            "pickup_type": f"UPS only supports 'one_time' pickups via API. Received: '{pickup_type}'. "
-            "For daily/recurring pickups, please contact UPS to set up a regular pickup schedule."
-        })
+        raise lib.exceptions.FieldError(
+            {
+                "pickup_type": f"UPS only supports 'one_time' pickups via API. Received: '{pickup_type}'. "
+                "For daily/recurring pickups, please contact UPS to set up a regular pickup schedule."
+            }
+        )
 
     address = lib.to_address(payload.address)
     packages = lib.to_packages(payload.parcels)
@@ -94,7 +95,11 @@ def pickup_request(
             PickupDateInfo=ups.PickupDateInfoType(
                 CloseTime=lib.ftime(payload.closing_time, current_format="%H:%M", output_format="%H%M") or "1800",
                 ReadyTime=lib.ftime(payload.ready_time, current_format="%H:%M", output_format="%H%M") or "0800",
-                PickupDate=lib.fdatetime(payload.pickup_date, current_format="%Y-%m-%d", output_format="%Y%m%d"),
+                PickupDate=lib.fdatetime(
+                    payload.pickup_date,
+                    current_format="%Y-%m-%d",
+                    output_format="%Y%m%d",
+                ),
             ),
             PickupAddress=ups.PickupAddressType(
                 CompanyName=address.company_name or address.person_name or "N/A",
@@ -116,7 +121,10 @@ def pickup_request(
             AlternateAddressIndicator="Y",
             PickupPiece=[
                 ups.PickupPieceType(
-                    ServiceCode=options.ups_pickup_service_code.state or "001",
+                    ServiceCode=(
+                        options.ups_pickup_service_code.state
+                        or provider_units.default_pickup_service_code(address.country_code)
+                    ),
                     Quantity=str(len(packages) or 1),
                     DestinationCountryCode=address.country_code,
                     ContainerCode="01",
@@ -128,10 +136,14 @@ def pickup_request(
             ),
             OverweightIndicator="Y" if (weight.LB or 0) > 70 else "N",
             PaymentMethod="01" if settings.account_number else "00",
-            SpecialInstruction=payload.instruction[:57] if payload.instruction else None,
-            Notification=ups.NotificationType(
-                ConfirmationEmailAddress=address.email,
-            ) if address.email else None,
+            SpecialInstruction=lib.text(payload.instruction, max=56),
+            Notification=(
+                ups.NotificationType(
+                    ConfirmationEmailAddress=address.email,
+                )
+                if address.email
+                else None
+            ),
         ),
     )
 

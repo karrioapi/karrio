@@ -1,0 +1,31 @@
+{% extends "two_factor/_base.html" %}
+{% load i18n %}
+{% load two_factor_tags %}
+
+{# This is an override of third-party template. #}
+{# Overriding to disable providing backup codes. As the effort to make backup codes hashed #}
+{# is high. In case of lost device, we can just remove device data for user using DB (or manage.py shell) #}
+{# Other than that everything in the page stays the same. #}
+{# Device backup codes can still be obtained by manually visiting the link, but that's not an issue #}
+{# if everyone agrees not to do that. #}
+
+{% block content %}
+  <h1>{% block title %}{% trans "Account Security" %}{% endblock %}</h1>
+
+  {% if default_device %}
+    <p>{% blocktrans with primary=default_device|as_action %}Primary method: {{ primary }}{% endblocktrans %}</p>
+
+    <h3>{% trans "Disable Two-Factor Authentication" %}</h3>
+    <p>{% blocktrans trimmed %}However we strongly discourage you to do so, you can
+      also disable two-factor authentication for your account.{% endblocktrans %}</p>
+    <p><a class="btn btn-secondary" href="{% url 'two_factor:disable' %}">
+      {% trans "Disable Two-Factor Authentication" %}</a></p>
+  {% else %}
+    <p>{% blocktrans trimmed %}Two-factor authentication is not enabled for your
+      account. Enable two-factor authentication for enhanced account
+      security.{% endblocktrans %}</p>
+    <p><a href="{% url 'two_factor:setup' %}" class="btn btn-primary">
+      {% trans "Enable Two-Factor Authentication" %}</a>
+    </p>
+  {% endif %}
+{% endblock %}

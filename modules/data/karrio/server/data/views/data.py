@@ -1,22 +1,22 @@
-import io
-from django.http import JsonResponse, HttpResponse
-from django.urls import re_path, path
-from django.core.files.base import ContentFile
-from django_downloadview import VirtualDownloadView
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.parsers import MultiPartParser, FormParser
-from rest_framework.response import Response
-from rest_framework.request import Request
-from rest_framework import status
+import importlib.resources
 import logging
 
-from karrio.server.data.serializers.data import ImportDataSerializer
-import karrio.server.data.serializers as serializers
+import karrio.server.core.views.api as api
 import karrio.server.data.resources as resources
 import karrio.server.data.resources.rate_sheets as rate_sheet_resource
+import karrio.server.data.serializers as serializers
 import karrio.server.data.serializers.batch_rate_sheets as batch_rate_sheets
-import karrio.server.core.views.api as api
 import karrio.server.openapi as openapi
+from django.http import Http404, HttpResponse, JsonResponse
+from django.urls import path, re_path
+from django.views.decorators.csrf import csrf_exempt
+from karrio.server.data.serializers.data import ImportDataSerializer
+from rest_framework import status
+from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.request import Request
+from rest_framework.response import Response
+
+logger = logging.getLogger(__name__)
 
 ENDPOINT_ID = "&&&&$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 DataImportParameters: list = [
@@ -55,14 +55,14 @@ class DataImport(api.BaseAPIView):
             500: serializers.ErrorResponse(),
         },
         request={
-            'multipart/form-data': {
-                'type': 'object',
-                'properties': {
-                    'resource_type': {'type': 'string'},
-                    'data_template': {'type': 'string'},
-                    'dry_run': {'type': 'boolean'},
-                    'data_file': {'type': 'string', 'format': 'binary'},
-                }
+            "multipart/form-data": {
+                "type": "object",
+                "properties": {
+                    "resource_type": {"type": "string"},
+                    "data_template": {"type": "string"},
+                    "dry_run": {"type": "boolean"},
+                    "data_file": {"type": "string", "format": "binary"},
+                },
             }
         },
         parameters=DataImportParameters,
@@ -83,43 +83,57 @@ class DataImport(api.BaseAPIView):
             data_file = request.data.get("data_file")
             if not data_file:
                 return Response(
-                    {"errors": [{"message": "data_file is required"}]},
+                    {
+                        "errors": [
+                            {
+                                "sheet": "",
+                                "row": 0,
+                                "field": "data_file",
+                                "message": "data_file is required",
+                                "code": "MISSING_FIELD",
+                            }
+                        ]
+                    },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             dry_run = str(request.data.get("dry_run", "false")).lower() in ("true", "1", "yes")
             rate_sheet_id = request.data.get("rate_sheet_id")
+            create_mode = str(request.data.get("create_mode", "false")).lower() in ("true", "1", "yes")
+            # process_rate_sheet_import accumulates structured errors from every
+            # stage into result["errors"] — we only catch truly unexpected
+            # exceptions here (logic bug, DB outage). Expected validation
+            # failures never raise.
             try:
                 result = batch_rate_sheets.process_rate_sheet_import(
                     data_file=data_file,
                     context=request,
                     dry_run=dry_run,
                     rate_sheet_id=rate_sheet_id,
+                    create_mode=create_mode,
                 )
             except Exception as exc:
-                logging.exception("Error while processing rate sheet import")
+                logger.exception("unexpected error in rate sheet import")
                 return Response(
                     {
                         "errors": [
                             {
-                                "message": "An error occurred while processing the rate sheet import."
+                                "sheet": "",
+                                "row": 0,
+                                "field": "",
+                                "message": f"Unexpected server error: {exc}",
+                                "code": "INTERNAL_ERROR",
                             }
                         ]
                     },
-                    status=status.HTTP_400_BAD_REQUEST,
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 )
             if result.get("errors"):
                 return Response(result, status=status.HTTP_400_BAD_REQUEST)
             return Response(result, status=status.HTTP_200_OK)
 
-        operation = (
-            ImportDataSerializer.map(data=request.data, context=request)
-            .save()
-            .instance
-        )
+        operation = ImportDataSerializer.map(data=request.data, context=request).save().instance
 
-        return Response(
-            serializers.BatchOperation(operation).data, status=status.HTTP_202_ACCEPTED
-        )
+        return Response(serializers.BatchOperation(operation).data, status=status.HTTP_202_ACCEPTED)
 
 
 DataExportParameters: list = [
@@ -173,6 +187,7 @@ class DataExport(api.BaseAPIView):
             # Rate sheet export — dedicated xlsx handler
             if resource_type == "rate_sheet":
                 from karrio.server.providers.models import RateSheet, SystemRateSheet
+
                 sheet_id = query_params.get("id")
                 if not sheet_id:
                     return JsonResponse(
@@ -205,31 +220,29 @@ class DataExport(api.BaseAPIView):
                 return response
 
             # Standard tablib export
-            dataset = resources.export(
-                resource_type, query_params, context=request
-            )
+            dataset = resources.export(resource_type, query_params, context=request)
 
             # Get the content
             content = getattr(dataset, export_format, "")
 
             # Determine content type
             content_types = {
-                'csv': 'text/csv',
-                'xls': 'application/vnd.ms-excel',
-                'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                "csv": "text/csv",
+                "xls": "application/vnd.ms-excel",
+                "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             }
-            content_type = content_types.get(export_format, 'application/octet-stream')
+            content_type = content_types.get(export_format, "application/octet-stream")
 
             # Create response
             if isinstance(content, str):
-                response = HttpResponse(content.encode('utf-8'), content_type=content_type)
+                response = HttpResponse(content.encode("utf-8"), content_type=content_type)
             else:
                 response = HttpResponse(content, content_type=content_type)
 
             # Set headers
             filename = f"{resource_type}.{export_format}"
-            response['Content-Disposition'] = f'attachment; filename="{filename}"'
-            response['X-Frame-Options'] = 'ALLOWALL'
+            response["Content-Disposition"] = f'attachment; filename="{filename}"'
+            response["X-Frame-Options"] = "ALLOWALL"
 
             return response
 
@@ -240,11 +253,36 @@ class DataExport(api.BaseAPIView):
             )
 
 
+ALLOWED_TEMPLATES = {"rate-sheet-template.xlsx"}
+
+
+def serve_template(request, filename):
+    """Serve rate sheet template files bundled inside the data module package."""
+    if filename not in ALLOWED_TEMPLATES:
+        raise Http404
+    try:
+        ref = importlib.resources.files("karrio.server.data.templates").joinpath(filename)
+        content = ref.read_bytes()
+    except (FileNotFoundError, ModuleNotFoundError) as exc:
+        raise Http404 from exc
+    response = HttpResponse(
+        content,
+        content_type=("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
+    )
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
+    return response
+
+
 urlpatterns = [
     path("batches/data/import", DataImport.as_view(), name="data-import"),
     re_path(
         r"^batches/data/export/(?P<resource_type>\w+).(?P<export_format>\w+)",
         csrf_exempt(DataExport.as_view()),
         name="data-export",
+    ),
+    path(
+        "templates/<str:filename>",
+        serve_template,
+        name="serve-template",
     ),
 ]

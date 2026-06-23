@@ -1,9 +1,9 @@
 """GraphQL pickup query tests following AGENTS.md patterns."""
 
 import karrio.lib as lib
-from karrio.server.graph.tests.base import GraphTestCase
-from karrio.server.core.utils import create_carrier_snapshot
 import karrio.server.manager.models as models
+from karrio.server.core.utils import create_carrier_snapshot
+from karrio.server.graph.tests.base import GraphTestCase
 
 
 class TestPickupQueries(GraphTestCase):

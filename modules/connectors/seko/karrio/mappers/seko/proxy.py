@@ -1,9 +1,9 @@
 """Karrio SEKO Logistics client proxy."""
 
-import karrio.lib as lib
 import karrio.api.proxy as proxy
-import karrio.providers.seko.utils as provider_utils
+import karrio.lib as lib
 import karrio.mappers.seko.settings as provider_settings
+import karrio.providers.seko.utils as provider_utils
 
 
 class Proxy(proxy.Proxy):

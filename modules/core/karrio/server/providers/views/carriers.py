@@ -1,24 +1,23 @@
-import io
 import base64
-import re
-from django.http import JsonResponse
-from django.urls import path, re_path
-from django.conf import settings
-from django.utils import translation
-from rest_framework import status, views
-from rest_framework.exceptions import NotFound, ValidationError
-from rest_framework.request import Request
-from rest_framework.response import Response
-from django.core.files.base import ContentFile
-from django_downloadview import VirtualDownloadView
+import io
 
 import karrio.lib as lib
-import karrio.server.openapi as openapi
-import karrio.server.samples as samples
 import karrio.server.core.views.api as api
+import karrio.server.openapi as openapi
 import karrio.server.providers.models as models
-from karrio.server.core.logging import logger
+import karrio.server.samples as samples
+from django.conf import settings
+from django.core.files.base import ContentFile
+from django.http import JsonResponse
+from django.urls import path, re_path
+from django.utils import translation
+from django_downloadview import VirtualDownloadView
 from karrio.server.core import datatypes, dataunits, serializers
+from rest_framework import status, views
+from rest_framework.exceptions import NotAuthenticated, NotFound, ValidationError
+from rest_framework.request import Request
+from rest_framework.response import Response
+
 ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 
@@ -35,9 +34,43 @@ def _validate_lang(request: Request):
     return lang, None
 
 
+def _merge_dynamic_metadata_if_connection(
+    references: dict,
+    *,
+    request: Request,
+    carrier_name: str,
+) -> dict:
+    """Merge the connection's dynamic metadata into the reference when ?connection_id= is set.
+
+    Static-only when the query param is absent — keeps the public list /
+    references endpoints predictable per PRDs/CARRIER_DYNAMIC_METADATA.md.
+
+    The base endpoint is public (no auth required) so the static catalog stays
+    cache-friendly. The dynamic path resolves a real connection and may hit
+    vendor APIs with stored credentials — that requires an authenticated
+    caller, otherwise any client that guesses a connection id could read
+    per-account catalogs.
+    """
+    import karrio.server.core.dynamic as core_dynamic
+
+    connection_id = request.query_params.get("connection_id")
+    if not connection_id:
+        return references
+
+    if not getattr(getattr(request, "user", None), "is_authenticated", False):
+        raise NotAuthenticated("Authentication is required to resolve connection-specific carrier metadata.")
+
+    return core_dynamic.merge_dynamic_metadata(
+        references,
+        connection_id=connection_id,
+        request=request,
+        carrier_name=carrier_name,
+    )
+
+
 def _resolve_lang(request: Request, lang: str = None) -> str:
     """Resolve language: explicit param > Accept-Language header > default."""
-    return lang or getattr(request, 'LANGUAGE_CODE', settings.LANGUAGE_CODE)
+    return lang or getattr(request, "LANGUAGE_CODE", settings.LANGUAGE_CODE)
 
 
 def _translated_references(request: Request, lang: str = None, reduced: bool = False):
@@ -46,7 +79,11 @@ def _translated_references(request: Request, lang: str = None, reduced: bool = F
 
     resolved = _resolve_lang(request, lang)
     with translation.override(resolved):
-        references = dataunits.contextual_reference(reduced=reduced)
+        references = dataunits.contextual_reference(
+            request,
+            reduced=reduced,
+            include_disabled=dataunits.includes_disabled_carriers(request),
+        )
         return translate_references(references)
 
 
@@ -92,7 +129,7 @@ class CarrierList(views.APIView):
                 carrier_name,
                 contextual_reference=references,
             )
-            for carrier_name in references["carriers"].keys()
+            for carrier_name in references["carriers"]
         ]
 
         return Response(carriers, status=status.HTTP_200_OK)
@@ -113,10 +150,20 @@ class CarrierDetails(api.APIView):
                 location=openapi.OpenApiParameter.PATH,
                 type=openapi.OpenApiTypes.STR,
                 description=(
-                    "The unique carrier slug. <br/>"
-                    f"Values: {', '.join([f'`{c}`' for c in dataunits.CARRIER_NAMES])}"
+                    f"The unique carrier slug. <br/>Values: {', '.join([f'`{c}`' for c in dataunits.CARRIER_NAMES])}"
                 ),
-            )
+            ),
+            openapi.OpenApiParameter(
+                "connection_id",
+                location=openapi.OpenApiParameter.QUERY,
+                type=openapi.OpenApiTypes.UUID,
+                required=False,
+                description=(
+                    "If supplied, merge the connection's live dynamic metadata "
+                    "(per-account services / options / defaults) into the "
+                    "response. Omit for the static catalog."
+                ),
+            ),
         ],
         responses={
             200: serializers.CarrierDetails(),
@@ -136,6 +183,8 @@ class CarrierDetails(api.APIView):
 
         if carrier_name not in references["carriers"]:
             raise NotFound(f"Unknown carrier: {carrier_name}")
+
+        references = _merge_dynamic_metadata_if_connection(references, request=request, carrier_name=carrier_name)
 
         carrier_details = dataunits.get_carrier_details(
             carrier_name,
@@ -160,10 +209,20 @@ class CarrierServices(api.APIView):
                 location=openapi.OpenApiParameter.PATH,
                 type=openapi.OpenApiTypes.STR,
                 description=(
-                    "The unique carrier slug. <br/>"
-                    f"Values: {', '.join([f'`{c}`' for c in dataunits.CARRIER_NAMES])}"
+                    f"The unique carrier slug. <br/>Values: {', '.join([f'`{c}`' for c in dataunits.CARRIER_NAMES])}"
                 ),
-            )
+            ),
+            openapi.OpenApiParameter(
+                "connection_id",
+                location=openapi.OpenApiParameter.QUERY,
+                type=openapi.OpenApiTypes.UUID,
+                required=False,
+                description=(
+                    "If supplied, merge the connection's live dynamic metadata "
+                    "(per-account services / options / defaults) into the "
+                    "response. Omit for the static catalog."
+                ),
+            ),
         ],
         responses={
             200: openapi.OpenApiTypes.OBJECT,
@@ -190,6 +249,8 @@ class CarrierServices(api.APIView):
         if carrier_name not in references["carriers"]:
             raise NotFound(f"Unknown carrier: {carrier_name}")
 
+        references = _merge_dynamic_metadata_if_connection(references, request=request, carrier_name=carrier_name)
+
         services = references["services"].get(carrier_name, {})
 
         return Response(services, status=status.HTTP_200_OK)
@@ -210,10 +271,20 @@ class CarrierOptions(api.APIView):
                 location=openapi.OpenApiParameter.PATH,
                 type=openapi.OpenApiTypes.STR,
                 description=(
-                    "The unique carrier slug. <br/>"
-                    f"Values: {', '.join([f'`{c}`' for c in dataunits.CARRIER_NAMES])}"
+                    f"The unique carrier slug. <br/>Values: {', '.join([f'`{c}`' for c in dataunits.CARRIER_NAMES])}"
                 ),
-            )
+            ),
+            openapi.OpenApiParameter(
+                "connection_id",
+                location=openapi.OpenApiParameter.QUERY,
+                type=openapi.OpenApiTypes.UUID,
+                required=False,
+                description=(
+                    "If supplied, merge the connection's live dynamic metadata "
+                    "(per-account services / options / defaults) into the "
+                    "response. Omit for the static catalog."
+                ),
+            ),
         ],
         responses={
             200: openapi.OpenApiTypes.OBJECT,
@@ -240,6 +311,8 @@ class CarrierOptions(api.APIView):
         if carrier_name not in references["carriers"]:
             raise NotFound(f"Unknown carrier: {carrier_name}")
 
+        references = _merge_dynamic_metadata_if_connection(references, request=request, carrier_name=carrier_name)
+
         options = references["options"].get(carrier_name, {})
 
         return Response(options, status=status.HTTP_200_OK)
@@ -264,9 +337,7 @@ class CarrierLabelPreview(VirtualDownloadView):
             self.name = f"{carrier.custom_carrier_name}_label.{format}"
             self.attachment = query_params.get("download", False)
 
-            response = super(CarrierLabelPreview, self).get(
-                request, pk, format, **kwargs
-            )
+            response = super().get(request, pk, format, **kwargs)
             response["X-Frame-Options"] = "ALLOWALL"
             return response
         except Exception as e:
@@ -280,8 +351,8 @@ class CarrierLabelPreview(VirtualDownloadView):
         return ContentFile(buffer.getvalue(), name=self.name)
 
     def _generate_label(self, carrier, format):
-        import karrio.sdk as karrio
         import karrio.providers.generic.units as units
+        import karrio.sdk as karrio
 
         template = carrier.label_template
         data = lib.identity(
@@ -289,9 +360,7 @@ class CarrierLabelPreview(VirtualDownloadView):
             if template is not None and len(template.shipment_sample.items()) > 0
             else units.SAMPLE_SHIPMENT_REQUEST
         )
-        service = lib.identity(
-            data.get("service") or next((s.service_code for s in carrier.services))
-        )
+        service = lib.identity(data.get("service") or next(s.service_code for s in carrier.services))
         request = lib.to_object(
             datatypes.ShipmentRequest,
             {

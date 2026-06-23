@@ -67,9 +67,7 @@ class Migration(migrations.Migration):
                     ("webhook", "webhook"),
                     ("oauth", "oauth"),
                 ],
-                default=functools.partial(
-                    karrio.server.core.models._identity, *(), **{"value": []}
-                ),
+                default=functools.partial(karrio.server.core.models._identity, *(), **{"value": []}),
                 help_text="Enabled carrier capabilities",
             ),
         ),
@@ -96,9 +94,7 @@ class Migration(migrations.Migration):
             model_name="carrier",
             name="credentials",
             field=models.JSONField(
-                default=functools.partial(
-                    karrio.server.core.models._identity, *(), **{"value": {}}
-                ),
+                default=functools.partial(karrio.server.core.models._identity, *(), **{"value": {}}),
                 help_text="Carrier API credentials",
             ),
         ),
@@ -116,9 +112,7 @@ class Migration(migrations.Migration):
         # Add index for common queries
         migrations.AddIndex(
             model_name="carrier",
-            index=models.Index(
-                fields=["carrier_code", "active"], name="carrier_carrier_275509_idx"
-            ),
+            index=models.Index(fields=["carrier_code", "active"], name="carrier_carrier_275509_idx"),
         ),
         # Rename table to 'carrier' (may already be this name)
         migrations.AlterModelTable(

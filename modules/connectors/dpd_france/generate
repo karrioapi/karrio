@@ -1,0 +1,9 @@
+SCHEMAS=./schemas
+LIB_MODULES=./karrio/schemas/dpd_france
+mkdir -p $LIB_MODULES
+find "${LIB_MODULES}" -name "*.py" -exec rm -r {} \;
+touch "${LIB_MODULES}/__init__.py"
+
+generateDS --no-namespace-defs -o "${LIB_MODULES}/eprintwebservice.py" "${SCHEMAS}/EPrintWebservice.xsd"
+generateDS --no-namespace-defs -o "${LIB_MODULES}/webtraceservice.py" "${SCHEMAS}/Webtrace_Service.xsd"
+generateDS --no-namespace-defs -o "${LIB_MODULES}/error.py" "${SCHEMAS}/error_response.xsd"

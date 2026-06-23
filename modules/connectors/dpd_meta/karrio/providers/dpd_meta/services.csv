@@ -1,22 +1,142 @@
 service_code,service_name,zone_label,country_codes,min_weight,max_weight,max_length,max_width,max_height,rate,currency,transit_days,domicile,international
-CL,DPD Classic,Domestic,DE,0.01,3.0,175,70,70,5.99,EUR,2,true,false
-CL,DPD Classic,Domestic,DE,3.0,5.0,175,70,70,6.99,EUR,2,true,false
-CL,DPD Classic,Domestic,DE,5.0,10.0,175,70,70,7.99,EUR,2,true,false
-CL,DPD Classic,Domestic,DE,10.0,20.0,175,70,70,9.99,EUR,2,true,false
-CL,DPD Classic,Domestic,DE,20.0,31.5,175,70,70,12.99,EUR,2,true,false
-CL,DPD Classic,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE,GB",0.01,3.0,175,70,70,9.99,EUR,3-5,false,true
-CL,DPD Classic,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE,GB",3.0,5.0,175,70,70,11.99,EUR,3-5,false,true
-CL,DPD Classic,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE,GB",5.0,10.0,175,70,70,13.99,EUR,3-5,false,true
-CL,DPD Classic,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE,GB",10.0,20.0,175,70,70,17.99,EUR,3-5,false,true
-CL,DPD Classic,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE,GB",20.0,31.5,175,70,70,22.99,EUR,3-5,false,true
-E830,DPD Express 8:30,Domestic,DE,0.01,31.5,175,70,70,14.99,EUR,1,true,false
-E830,DPD Express 8:30,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE,GB",0.01,31.5,175,70,70,24.99,EUR,1,false,true
-E12,DPD Express 12:00,Domestic,DE,0.01,31.5,175,70,70,12.99,EUR,1,true,false
-E12,DPD Express 12:00,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE,GB",0.01,31.5,175,70,70,22.99,EUR,1,false,true
-E18,DPD Express 18:00,Domestic,DE,0.01,31.5,175,70,70,9.99,EUR,1,true,false
-E18,DPD Express 18:00,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE,GB",0.01,31.5,175,70,70,18.99,EUR,1,false,true
-PL,DPD Parcel Letter,Domestic,DE,0.01,31.5,175,70,70,4.99,EUR,2,true,false
-PL,DPD Parcel Letter,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE,GB",0.01,31.5,175,70,70,9.99,EUR,3,false,true
-IE2,DPD International Express,International,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE,GB,CH,NO,US,CA",0.01,31.5,175,70,70,19.99,EUR,2,false,true
-MAIL,DPD Mail,Domestic,DE,0.01,31.5,175,70,70,3.99,EUR,3,true,false
-MAX,DPD Max,Domestic,DE,0.01,50.0,200,80,60,19.99,EUR,2,true,false
+101,DPD Classic,Domestic,DE,0.01,3.0,175,70,70,0.0,EUR,2,true,false
+101,DPD Classic,Domestic,DE,3.0,5.0,175,70,70,0.0,EUR,2,true,false
+101,DPD Classic,Domestic,DE,5.0,10.0,175,70,70,0.0,EUR,2,true,false
+101,DPD Classic,Domestic,DE,10.0,20.0,175,70,70,0.0,EUR,2,true,false
+101,DPD Classic,Domestic,DE,20.0,31.5,175,70,70,0.0,EUR,2,true,false
+101,DPD Classic,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",0.01,3.0,175,70,70,0.0,EUR,3-5,false,true
+101,DPD Classic,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",3.0,5.0,175,70,70,0.0,EUR,3-5,false,true
+101,DPD Classic,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",5.0,10.0,175,70,70,0.0,EUR,3-5,false,true
+101,DPD Classic,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",10.0,20.0,175,70,70,0.0,EUR,3-5,false,true
+101,DPD Classic,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",20.0,31.5,175,70,70,0.0,EUR,3-5,false,true
+136,DPD Classic Small,Domestic,DE,0.01,3.0,175,70,70,0.0,EUR,2,true,false
+136,DPD Classic Small,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",0.01,3.0,175,70,70,0.0,EUR,3-5,false,true
+327,DPD B2C Classic,Domestic,DE,0.01,3.0,175,70,70,0.0,EUR,2,true,false
+327,DPD B2C Classic,Domestic,DE,3.0,5.0,175,70,70,0.0,EUR,2,true,false
+327,DPD B2C Classic,Domestic,DE,5.0,10.0,175,70,70,0.0,EUR,2,true,false
+327,DPD B2C Classic,Domestic,DE,10.0,20.0,175,70,70,0.0,EUR,2,true,false
+327,DPD B2C Classic,Domestic,DE,20.0,31.5,175,70,70,0.0,EUR,2,true,false
+327,DPD B2C Classic,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",0.01,3.0,175,70,70,0.0,EUR,3-5,false,true
+327,DPD B2C Classic,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",3.0,5.0,175,70,70,0.0,EUR,3-5,false,true
+327,DPD B2C Classic,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",5.0,10.0,175,70,70,0.0,EUR,3-5,false,true
+327,DPD B2C Classic,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",10.0,20.0,175,70,70,0.0,EUR,3-5,false,true
+327,DPD B2C Classic,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",20.0,31.5,175,70,70,0.0,EUR,3-5,false,true
+328,DPD B2C Small,Domestic,DE,0.01,3.0,175,70,70,0.0,EUR,2,true,false
+328,DPD B2C Small,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",0.01,3.0,175,70,70,0.0,EUR,3-5,false,true
+350,DPD Express 8:30,Domestic,DE,0.01,31.5,175,70,70,0.0,EUR,1,true,false
+350,DPD Express 8:30,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE,GB",0.01,31.5,175,70,70,0.0,EUR,1,false,true
+225,DPD Express 12:00,Domestic,DE,0.01,31.5,175,70,70,0.0,EUR,1,true,false
+225,DPD Express 12:00,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE,GB",0.01,31.5,175,70,70,0.0,EUR,1,false,true
+155,DPD Express 18:00,Domestic,DE,0.01,31.5,175,70,70,0.0,EUR,1,true,false
+155,DPD Express 18:00,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE,GB",0.01,31.5,175,70,70,0.0,EUR,1,false,true
+154,DPD Parcel Letter,Domestic,DE,0.01,31.5,175,70,70,0.0,EUR,2,true,false
+154,DPD Parcel Letter,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE,GB",0.01,31.5,175,70,70,0.0,EUR,3,false,true
+302,DPD International Express,International,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE,GB,CH,NO,US,CA",0.01,31.5,175,70,70,0.0,EUR,2,false,true
+294,DPD Mail,Domestic,DE,0.01,31.5,175,70,70,0.0,EUR,3,true,false
+113,DPD Classic Exchange,Domestic,DE,0.01,3.0,175,70,70,0.0,EUR,2,true,false
+113,DPD Classic Exchange,Domestic,DE,3.0,5.0,175,70,70,0.0,EUR,2,true,false
+113,DPD Classic Exchange,Domestic,DE,5.0,10.0,175,70,70,0.0,EUR,2,true,false
+113,DPD Classic Exchange,Domestic,DE,10.0,20.0,175,70,70,0.0,EUR,2,true,false
+113,DPD Classic Exchange,Domestic,DE,20.0,31.5,175,70,70,0.0,EUR,2,true,false
+113,DPD Classic Exchange,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",0.01,3.0,175,70,70,0.0,EUR,3-5,false,true
+113,DPD Classic Exchange,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",3.0,5.0,175,70,70,0.0,EUR,3-5,false,true
+113,DPD Classic Exchange,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",5.0,10.0,175,70,70,0.0,EUR,3-5,false,true
+113,DPD Classic Exchange,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",10.0,20.0,175,70,70,0.0,EUR,3-5,false,true
+113,DPD Classic Exchange,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",20.0,31.5,175,70,70,0.0,EUR,3-5,false,true
+118,DPD Classic Exchange Inbound,Domestic,DE,0.01,3.0,175,70,70,0.0,EUR,2,true,false
+118,DPD Classic Exchange Inbound,Domestic,DE,3.0,5.0,175,70,70,0.0,EUR,2,true,false
+118,DPD Classic Exchange Inbound,Domestic,DE,5.0,10.0,175,70,70,0.0,EUR,2,true,false
+118,DPD Classic Exchange Inbound,Domestic,DE,10.0,20.0,175,70,70,0.0,EUR,2,true,false
+118,DPD Classic Exchange Inbound,Domestic,DE,20.0,31.5,175,70,70,0.0,EUR,2,true,false
+118,DPD Classic Exchange Inbound,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",0.01,3.0,175,70,70,0.0,EUR,3-5,false,true
+118,DPD Classic Exchange Inbound,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",3.0,5.0,175,70,70,0.0,EUR,3-5,false,true
+118,DPD Classic Exchange Inbound,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",5.0,10.0,175,70,70,0.0,EUR,3-5,false,true
+118,DPD Classic Exchange Inbound,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",10.0,20.0,175,70,70,0.0,EUR,3-5,false,true
+118,DPD Classic Exchange Inbound,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",20.0,31.5,175,70,70,0.0,EUR,3-5,false,true
+332,DPD 2C Return,Domestic,DE,0.01,3.0,175,70,70,0.0,EUR,2,true,false
+332,DPD 2C Return,Domestic,DE,3.0,5.0,175,70,70,0.0,EUR,2,true,false
+332,DPD 2C Return,Domestic,DE,5.0,10.0,175,70,70,0.0,EUR,2,true,false
+332,DPD 2C Return,Domestic,DE,10.0,20.0,175,70,70,0.0,EUR,2,true,false
+332,DPD 2C Return,Domestic,DE,20.0,31.5,175,70,70,0.0,EUR,2,true,false
+332,DPD 2C Return,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",0.01,3.0,175,70,70,0.0,EUR,3-5,false,true
+332,DPD 2C Return,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",3.0,5.0,175,70,70,0.0,EUR,3-5,false,true
+332,DPD 2C Return,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",5.0,10.0,175,70,70,0.0,EUR,3-5,false,true
+332,DPD 2C Return,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",10.0,20.0,175,70,70,0.0,EUR,3-5,false,true
+332,DPD 2C Return,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",20.0,31.5,175,70,70,0.0,EUR,3-5,false,true
+337,DPD ParcelShop,Domestic,DE,0.01,3.0,175,70,70,0.0,EUR,2,true,false
+337,DPD ParcelShop,Domestic,DE,3.0,5.0,175,70,70,0.0,EUR,2,true,false
+337,DPD ParcelShop,Domestic,DE,5.0,10.0,175,70,70,0.0,EUR,2,true,false
+337,DPD ParcelShop,Domestic,DE,10.0,20.0,175,70,70,0.0,EUR,2,true,false
+337,DPD ParcelShop,Domestic,DE,20.0,31.5,175,70,70,0.0,EUR,2,true,false
+345,DPD Shop2Shop,Domestic,DE,0.01,3.0,175,70,70,0.0,EUR,2,true,false
+345,DPD Shop2Shop,Domestic,DE,3.0,5.0,175,70,70,0.0,EUR,2,true,false
+345,DPD Shop2Shop,Domestic,DE,5.0,10.0,175,70,70,0.0,EUR,2,true,false
+345,DPD Shop2Shop,Domestic,DE,10.0,20.0,175,70,70,0.0,EUR,2,true,false
+345,DPD Shop2Shop,Domestic,DE,20.0,31.5,175,70,70,0.0,EUR,2,true,false
+404,DPD Shop2Home,Domestic,DE,0.01,3.0,175,70,70,0.0,EUR,2,true,false
+404,DPD Shop2Home,Domestic,DE,3.0,5.0,175,70,70,0.0,EUR,2,true,false
+404,DPD Shop2Home,Domestic,DE,5.0,10.0,175,70,70,0.0,EUR,2,true,false
+404,DPD Shop2Home,Domestic,DE,10.0,20.0,175,70,70,0.0,EUR,2,true,false
+404,DPD Shop2Home,Domestic,DE,20.0,31.5,175,70,70,0.0,EUR,2,true,false
+365,DPD Classic Tyre,Domestic,DE,0.01,3.0,175,70,70,0.0,EUR,2,true,false
+365,DPD Classic Tyre,Domestic,DE,3.0,5.0,175,70,70,0.0,EUR,2,true,false
+365,DPD Classic Tyre,Domestic,DE,5.0,10.0,175,70,70,0.0,EUR,2,true,false
+365,DPD Classic Tyre,Domestic,DE,10.0,20.0,175,70,70,0.0,EUR,2,true,false
+365,DPD Classic Tyre,Domestic,DE,20.0,31.5,175,70,70,0.0,EUR,2,true,false
+365,DPD Classic Tyre,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",0.01,3.0,175,70,70,0.0,EUR,3-5,false,true
+365,DPD Classic Tyre,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",3.0,5.0,175,70,70,0.0,EUR,3-5,false,true
+365,DPD Classic Tyre,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",5.0,10.0,175,70,70,0.0,EUR,3-5,false,true
+365,DPD Classic Tyre,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",10.0,20.0,175,70,70,0.0,EUR,3-5,false,true
+365,DPD Classic Tyre,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",20.0,31.5,175,70,70,0.0,EUR,3-5,false,true
+366,DPD B2C Classic Tyre,Domestic,DE,0.01,3.0,175,70,70,0.0,EUR,2,true,false
+366,DPD B2C Classic Tyre,Domestic,DE,3.0,5.0,175,70,70,0.0,EUR,2,true,false
+366,DPD B2C Classic Tyre,Domestic,DE,5.0,10.0,175,70,70,0.0,EUR,2,true,false
+366,DPD B2C Classic Tyre,Domestic,DE,10.0,20.0,175,70,70,0.0,EUR,2,true,false
+366,DPD B2C Classic Tyre,Domestic,DE,20.0,31.5,175,70,70,0.0,EUR,2,true,false
+366,DPD B2C Classic Tyre,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",0.01,3.0,175,70,70,0.0,EUR,3-5,false,true
+366,DPD B2C Classic Tyre,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",3.0,5.0,175,70,70,0.0,EUR,3-5,false,true
+366,DPD B2C Classic Tyre,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",5.0,10.0,175,70,70,0.0,EUR,3-5,false,true
+366,DPD B2C Classic Tyre,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",10.0,20.0,175,70,70,0.0,EUR,3-5,false,true
+366,DPD B2C Classic Tyre,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",20.0,31.5,175,70,70,0.0,EUR,3-5,false,true
+383,DPD Classic Food,Domestic,DE,0.01,3.0,175,70,70,0.0,EUR,2,true,false
+383,DPD Classic Food,Domestic,DE,3.0,5.0,175,70,70,0.0,EUR,2,true,false
+383,DPD Classic Food,Domestic,DE,5.0,10.0,175,70,70,0.0,EUR,2,true,false
+383,DPD Classic Food,Domestic,DE,10.0,20.0,175,70,70,0.0,EUR,2,true,false
+383,DPD Classic Food,Domestic,DE,20.0,31.5,175,70,70,0.0,EUR,2,true,false
+383,DPD Classic Food,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",0.01,3.0,175,70,70,0.0,EUR,3-5,false,true
+383,DPD Classic Food,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",3.0,5.0,175,70,70,0.0,EUR,3-5,false,true
+383,DPD Classic Food,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",5.0,10.0,175,70,70,0.0,EUR,3-5,false,true
+383,DPD Classic Food,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",10.0,20.0,175,70,70,0.0,EUR,3-5,false,true
+383,DPD Classic Food,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",20.0,31.5,175,70,70,0.0,EUR,3-5,false,true
+138,DPD Classic Small Unfrei,Domestic,DE,0.01,3.0,175,70,70,0.0,EUR,2,true,false
+142,DPD Classic Exchange Small,Domestic,DE,0.01,3.0,175,70,70,0.0,EUR,2,true,false
+158,DPD Express 18 Unfrei,Domestic,DE,0.01,31.5,175,70,70,0.0,EUR,1,true,false
+228,DPD Express 12 Saturday,Domestic,DE,0.01,31.5,175,70,70,0.0,EUR,1,true,false
+231,DPD Express 12 Unfrei,Domestic,DE,0.01,31.5,175,70,70,0.0,EUR,1,true,false
+234,DPD Express 12 Unfrei Saturday,Domestic,DE,0.01,31.5,175,70,70,0.0,EUR,1,true,false
+351,DPD Express 8:30 Unfrei,Domestic,DE,0.01,31.5,175,70,70,0.0,EUR,1,true,false
+378,DPD Express 18 Food,Domestic,DE,0.01,31.5,175,70,70,0.0,EUR,1,true,false
+379,DPD Express 12 Food,Domestic,DE,0.01,31.5,175,70,70,0.0,EUR,1,true,false
+102,DPD Classic Hazardous,Domestic,DE,0.01,3.0,175,70,70,0.0,EUR,2,true,false
+102,DPD Classic Hazardous,Domestic,DE,3.0,5.0,175,70,70,0.0,EUR,2,true,false
+102,DPD Classic Hazardous,Domestic,DE,5.0,10.0,175,70,70,0.0,EUR,2,true,false
+102,DPD Classic Hazardous,Domestic,DE,10.0,20.0,175,70,70,0.0,EUR,2,true,false
+102,DPD Classic Hazardous,Domestic,DE,20.0,31.5,175,70,70,0.0,EUR,2,true,false
+102,DPD Classic Hazardous,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",0.01,3.0,175,70,70,0.0,EUR,3-5,false,true
+102,DPD Classic Hazardous,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",3.0,5.0,175,70,70,0.0,EUR,3-5,false,true
+102,DPD Classic Hazardous,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",5.0,10.0,175,70,70,0.0,EUR,3-5,false,true
+102,DPD Classic Hazardous,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",10.0,20.0,175,70,70,0.0,EUR,3-5,false,true
+102,DPD Classic Hazardous,Europe,"AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,GR,HU,IE,IT,LV,LT,LU,MT,NL,NO,PL,PT,RO,SK,SI,ES,SE,GB",20.0,31.5,175,70,70,0.0,EUR,3-5,false,true
+168,DPD Express 18:00 ID Check,Domestic,DE,0.01,31.5,175,70,70,0.0,EUR,1,true,false
+249,DPD Express 12:00 ID Check,Domestic,DE,0.01,31.5,175,70,70,0.0,EUR,1,true,false
+105,DPD Classic Unfrei,Domestic,DE,0.01,31.5,175,70,70,0.0,EUR,2,true,false
+106,DPD Classic Unfrei Hazardous,Domestic,DE,0.01,31.5,175,70,70,0.0,EUR,2,true,false
+171,DPD Express 18 Unfrei ID Check,Domestic,DE,0.01,31.5,175,70,70,0.0,EUR,1,true,false
+255,DPD Express 12 Unfrei ID Check,Domestic,DE,0.01,31.5,175,70,70,0.0,EUR,1,true,false
+338,DPD ParcelShop Small,Domestic,DE,0.01,3.0,175,70,70,0.0,EUR,2,true,false
+447,DPD Return Limited Quantity,Domestic,DE,0.01,31.5,175,70,70,0.0,EUR,2,true,false
+704,DPD Classic Unfrei Limited Quantity,Domestic,DE,0.01,31.5,175,70,70,0.0,EUR,2,true,false
+793,DPD Classic Limited Quantity,Domestic,DE,0.01,31.5,175,70,70,0.0,EUR,2,true,false
+794,DPD B2C Classic Limited Quantity,Domestic,DE,0.01,31.5,175,70,70,0.0,EUR,2,true,false
+797,DPD Express 12 Limited Quantity,Domestic,DE,0.01,31.5,175,70,70,0.0,EUR,1,true,false
+799,DPD Express 18 Limited Quantity,Domestic,DE,0.01,31.5,175,70,70,0.0,EUR,1,true,false

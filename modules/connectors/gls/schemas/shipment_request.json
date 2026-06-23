@@ -2,9 +2,9 @@
   "Shipment": {
     "ShipmentReference": ["ORDER123"],
     "ShippingDate": "2025-01-16",
-    "IncotermCode": "DAP",
-    "Identifier": "KARRIO",
-    "Middleware": "",
+    "IncotermCode": "DDP-10",
+    "Identifier": "userTestId",
+    "Middleware": "JTLviaGLS",
     "Product": "PARCEL",
     "ExpressAltDeliveryAllowed": false,
     "Consignee": {
@@ -23,7 +23,7 @@
         "ContactPerson": "Jane Smith",
         "FixedLinePhonenumber": "+49891234567",
         "MobilePhoneNumber": "",
-        "Email": "receiver@example.com",
+        "eMail": "receiver@example.com",
         "ZIPCode": "54321"
       }
     },
@@ -41,7 +41,7 @@
         "ContactPerson": "",
         "FixedLinePhonenumber": "",
         "MobilePhoneNumber": "",
-        "Email": "",
+        "eMail": "",
         "ZIPCode": ""
       },
       "Address": {
@@ -56,7 +56,7 @@
         "ContactPerson": "John Doe",
         "FixedLinePhonenumber": "+49301234567",
         "MobilePhoneNumber": "",
-        "Email": "sender@example.com",
+        "eMail": "",
         "ZIPCode": "12345"
       },
       "FralphaCustomerReference": ""
@@ -72,31 +72,31 @@
         "Service": [
           {
             "Cash": {
-              "ServiceName": "",
+              "ServiceName": "service_cash",
               "Reason": "",
               "Amount": 0.0,
               "Currency": ""
             },
             "AddonLiability": {
-              "ServiceName": "",
+              "ServiceName": "service_addonliability",
               "Amount": 0.0,
               "Currency": "",
               "ParcelContent": ""
             },
             "HazardousGoods": {
-              "ServiceName": "",
+              "ServiceName": "service_hazardousgoods",
               "HazardousGood": [
                 {
                   "Weight": 0.0,
-                  "GlshazNo": ""
+                  "GLSHazNo": ""
                 }
               ]
             },
             "ExWorks": {
-              "ServiceName": ""
+              "ServiceName": "service_exworks"
             },
             "LimitedQuantities": {
-              "ServiceName": "",
+              "ServiceName": "service_limitedquantities",
               "Weight": 0.0
             }
           }
@@ -104,31 +104,25 @@
         "TrackID": "",
         "Injected": false,
         "ParcelNumber": "",
-        "Volume": {
-          "Width": "",
-          "Height": "",
-          "Length": "",
-          "ScannerStation": "",
-          "VolumetricType": "CALIBRATED"
-        },
         "FralphaParcelReference": ""
       }
     ],
     "Service": [
       {
         "Service": {
-          "ServiceName": "GUARANTEED24"
+          "ServiceName": "service_flexdelivery"
         },
         "ShopDelivery": {
-          "ServiceName": "",
+          "ServiceName": "service_shopdelivery",
           "ParcelShopID": ""
         },
         "ShopReturn": {
-          "ServiceName": "",
-          "NumberOfLabels": 0
+          "ServiceName": "service_shopreturn",
+          "NumberOfLabels": 0,
+          "ReturnQR": ""
         },
         "Intercompany": {
-          "ServiceName": "",
+          "ServiceName": "service_intercompany",
           "Address": {
             "Name1": "",
             "Name2": "",
@@ -141,14 +135,14 @@
             "ContactPerson": "",
             "FixedLinePhonenumber": "",
             "MobilePhoneNumber": "",
-            "Email": "",
+            "eMail": "",
             "ZIPCode": ""
           },
           "NumberOfLabels": 0,
           "ExpectedWeight": 0.0
         },
         "Exchange": {
-          "ServiceName": "",
+          "ServiceName": "service_exchange",
           "Address": {
             "Name1": "",
             "Name2": "",
@@ -161,13 +155,13 @@
             "ContactPerson": "",
             "FixedLinePhonenumber": "",
             "MobilePhoneNumber": "",
-            "Email": "",
+            "eMail": "",
             "ZIPCode": ""
           },
           "ExpectedWeight": 0.0
         },
         "DeliveryAtWork": {
-          "ServiceName": "",
+          "ServiceName": "service_deliveryatwork",
           "RecipientName": "",
           "AlternateRecipientName": "",
           "Building": "",
@@ -176,17 +170,17 @@
           "Phonenumber": ""
         },
         "Deposit": {
-          "ServiceName": "",
+          "ServiceName": "service_deposit",
           "PlaceOfDeposit": ""
         },
         "IdentPin": {
-          "ServiceName": "",
-          "Pin": "",
-          "Birthdate": "2025-01-16T00:00:00Z"
+          "ServiceName": "service_identpin",
+          "PIN": "1234A",
+          "Birthdate": "1970-02-03"
         },
         "Ident": {
-          "ServiceName": "",
-          "Birthdate": "2025-01-16T00:00:00Z",
+          "ServiceName": "service_ident",
+          "Birthdate": "1980-01-02",
           "Firstname": "",
           "Lastname": "",
           "Nationality": {
@@ -194,18 +188,12 @@
           }
         },
         "PickAndShip": {
-          "ServiceName": "",
-          "PickupDate": "2025-01-16T00:00:00Z",
-          "SendEMailToShipper": false,
-          "SendEMailToConsignee": false,
-          "SendSMSToShipper": false
+          "ServiceName": "service_pickandship",
+          "PickupDate": "2025-01-16"
         },
         "PickAndReturn": {
-          "ServiceName": "",
-          "PickupDate": "2025-01-16T00:00:00Z",
-          "SendEMailToShipper": false,
-          "SendEMailToConsignee": false,
-          "SendSMSToShipper": false
+          "ServiceName": "service_pickandreturn",
+          "PickupDate": "2025-01-16"
         }
       }
     ],
@@ -222,7 +210,7 @@
         "ContactPerson": "",
         "FixedLinePhonenumber": "",
         "MobilePhoneNumber": "",
-        "Email": "",
+        "eMail": "",
         "ZIPCode": ""
       }
     }
@@ -248,6 +236,5 @@
   "ReturnOptions": {
     "ReturnPrintData": true,
     "ReturnRoutingInfo": true
-  },
-  "PartnerReference": ""
+  }
 }

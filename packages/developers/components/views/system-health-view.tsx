@@ -5,7 +5,6 @@ import {
   Server,
   Database,
   HardDrive,
-  MemoryStick,
   RefreshCw,
   CheckCircle2,
   AlertCircle,
@@ -24,11 +23,9 @@ import { cn } from "@karrio/ui/lib/utils";
 import { url$ } from "@karrio/lib";
 import { useWorkerHealth, useTaskExecutions, useWorkerActions } from "@karrio/hooks/admin-worker";
 
-type HealthCheckStatus = Record<string, string>;
-
 function useSystemHealth() {
   const { references } = useAPIMetadata();
-  const [data, setData] = React.useState<HealthCheckStatus | null>(null);
+  const [healthy, setHealthy] = React.useState<boolean | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -37,10 +34,8 @@ function useSystemHealth() {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await fetch(url$`${references.HOST}/status/?format=json`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const json = await res.json();
-      setData(json);
+      const res = await fetch(url$`${references.HOST}/status/`);
+      setHealthy(res.ok);
     } catch (err: any) {
       setError(err.message || "Failed to fetch health status");
     } finally {
@@ -52,26 +47,7 @@ function useSystemHealth() {
     fetchHealth();
   }, [fetchHealth]);
 
-  return { data, isLoading, error, refetch: fetchHealth };
-}
-
-// Map service names to icons
-function getServiceIcon(name: string) {
-  const lower = name.toLowerCase();
-  if (lower.includes("database")) return <Database className="h-4 w-4 text-blue-400" />;
-  if (lower.includes("cache")) return <Database className="h-4 w-4 text-purple-400" />;
-  if (lower.includes("disk")) return <HardDrive className="h-4 w-4 text-yellow-400" />;
-  if (lower.includes("memory")) return <MemoryStick className="h-4 w-4 text-green-400" />;
-  return <Server className="h-4 w-4 text-muted-foreground" />;
-}
-
-// Simplify service display name
-function formatServiceName(name: string) {
-  if (name.toLowerCase().includes("database")) return "Database";
-  if (name.toLowerCase().includes("cache")) return "Cache";
-  if (name.toLowerCase().includes("disk")) return "Disk";
-  if (name.toLowerCase().includes("memory")) return "Memory";
-  return name;
+  return { healthy, isLoading, error, refetch: fetchHealth };
 }
 
 export function SystemHealthView() {
@@ -117,11 +93,6 @@ export function SystemHealthView() {
 
   const isLoading = healthQuery.isLoading || executionsQuery.isLoading;
 
-  // Determine overall system health status
-  const allServicesOk = systemHealth.data
-    ? Object.values(systemHealth.data).every((v) => v === "OK" || v === "working")
-    : false;
-
   return (
     <div className="flex flex-col h-full p-4 pb-8 space-y-6 overflow-y-auto">
       {/* Header */}
@@ -158,12 +129,12 @@ export function SystemHealthView() {
             <Badge
               className={cn(
                 "text-xs border-none",
-                allServicesOk
+                systemHealth.healthy
                   ? "bg-green-500/20 text-green-400"
                   : "bg-red-500/20 text-red-400",
               )}
             >
-              {allServicesOk ? "All systems operational" : "Issues detected"}
+              {systemHealth.healthy ? "All systems operational" : "Issues detected"}
             </Badge>
           )}
         </div>
@@ -183,40 +154,6 @@ export function SystemHealthView() {
           </div>
         )}
 
-        {systemHealth.data && (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            {Object.entries(systemHealth.data).map(([service, status]) => (
-              <div
-                key={service}
-                className="bg-card border border-border rounded-lg p-3"
-              >
-                <div className="flex items-center gap-2 mb-2">
-                  {getServiceIcon(service)}
-                  <span className="text-xs text-muted-foreground">
-                    {formatServiceName(service)}
-                  </span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  {status === "OK" || status === "working" ? (
-                    <CheckCircle2 className="h-4 w-4 text-green-400" />
-                  ) : (
-                    <AlertCircle className="h-4 w-4 text-red-400" />
-                  )}
-                  <span
-                    className={cn(
-                      "text-sm font-semibold",
-                      status === "OK" || status === "working"
-                        ? "text-green-400"
-                        : "text-red-400",
-                    )}
-                  >
-                    {status}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
 
       {isLoading ? (

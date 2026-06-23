@@ -1,6 +1,7 @@
 """Karrio server system configuration adapter."""
 
 import typing
+
 import karrio.lib as lib
 
 

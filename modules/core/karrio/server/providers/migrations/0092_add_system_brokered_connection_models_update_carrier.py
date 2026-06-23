@@ -32,11 +32,7 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.CharField(
-                        default=functools.partial(
-                            karrio.server.core.models.base.uuid,
-                            *(),
-                            **{"prefix": "sys_"}
-                        ),
+                        default=functools.partial(karrio.server.core.models.base.uuid, *(), **{"prefix": "sys_"}),
                         editable=False,
                         max_length=50,
                         primary_key=True,
@@ -62,9 +58,7 @@ class Migration(migrations.Migration):
                 (
                     "credentials",
                     models.JSONField(
-                        default=functools.partial(
-                            karrio.server.core.models._identity, *(), **{"value": {}}
-                        ),
+                        default=functools.partial(karrio.server.core.models._identity, *(), **{"value": {}}),
                         help_text="Carrier API credentials (admin only)",
                     ),
                 ),
@@ -72,9 +66,7 @@ class Migration(migrations.Migration):
                     "config",
                     models.JSONField(
                         blank=True,
-                        default=functools.partial(
-                            karrio.server.core.models._identity, *(), **{"value": {}}
-                        ),
+                        default=functools.partial(karrio.server.core.models._identity, *(), **{"value": {}}),
                         help_text="Base operational configuration",
                     ),
                 ),
@@ -93,9 +85,7 @@ class Migration(migrations.Migration):
                             ("webhook", "webhook"),
                             ("oauth", "oauth"),
                         ],
-                        default=functools.partial(
-                            karrio.server.core.models._identity, *(), **{"value": []}
-                        ),
+                        default=functools.partial(karrio.server.core.models._identity, *(), **{"value": []}),
                         help_text="Enabled carrier capabilities",
                     ),
                 ),
@@ -109,17 +99,13 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "test_mode",
-                    models.BooleanField(
-                        default=True, help_text="Toggle carrier connection mode"
-                    ),
+                    models.BooleanField(default=True, help_text="Toggle carrier connection mode"),
                 ),
                 (
                     "metadata",
                     models.JSONField(
                         blank=True,
-                        default=functools.partial(
-                            karrio.server.core.models._identity, *(), **{"value": {}}
-                        ),
+                        default=functools.partial(karrio.server.core.models._identity, *(), **{"value": {}}),
                         help_text="Admin-defined metadata",
                         null=True,
                     ),
@@ -162,11 +148,7 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.CharField(
-                        default=functools.partial(
-                            karrio.server.core.models.base.uuid,
-                            *(),
-                            **{"prefix": "brk_"}
-                        ),
+                        default=functools.partial(karrio.server.core.models.base.uuid, *(), **{"prefix": "brk_"}),
                         editable=False,
                         max_length=50,
                         primary_key=True,
@@ -186,9 +168,7 @@ class Migration(migrations.Migration):
                     "config_overrides",
                     models.JSONField(
                         blank=True,
-                        default=functools.partial(
-                            karrio.server.core.models._identity, *(), **{"value": {}}
-                        ),
+                        default=functools.partial(karrio.server.core.models._identity, *(), **{"value": {}}),
                         help_text="User-specific config overrides (merged with system config)",
                     ),
                 ),
@@ -208,9 +188,7 @@ class Migration(migrations.Migration):
                             ("webhook", "webhook"),
                             ("oauth", "oauth"),
                         ],
-                        default=functools.partial(
-                            karrio.server.core.models._identity, *(), **{"value": []}
-                        ),
+                        default=functools.partial(karrio.server.core.models._identity, *(), **{"value": []}),
                         help_text="Override capabilities (if empty, uses system capabilities)",
                     ),
                 ),
@@ -226,9 +204,7 @@ class Migration(migrations.Migration):
                     "metadata",
                     models.JSONField(
                         blank=True,
-                        default=functools.partial(
-                            karrio.server.core.models._identity, *(), **{"value": {}}
-                        ),
+                        default=functools.partial(karrio.server.core.models._identity, *(), **{"value": {}}),
                         help_text="User-defined metadata",
                         null=True,
                     ),
@@ -269,9 +245,7 @@ class Migration(migrations.Migration):
             name="config",
             field=models.JSONField(
                 blank=True,
-                default=functools.partial(
-                    karrio.server.core.models._identity, *(), **{"value": {}}
-                ),
+                default=functools.partial(karrio.server.core.models._identity, *(), **{"value": {}}),
                 help_text="Operational configuration",
             ),
         ),
@@ -285,8 +259,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name="brokeredconnection",
-            index=models.Index(
-                fields=["is_enabled"], name="brokered_co_is_enab_01b94b_idx"
-            ),
+            index=models.Index(fields=["is_enabled"], name="brokered_co_is_enab_01b94b_idx"),
         ),
     ]

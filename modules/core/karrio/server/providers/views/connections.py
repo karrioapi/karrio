@@ -1,22 +1,20 @@
 import django.urls as urls
-import rest_framework.status as status
-import rest_framework.request as request
-import rest_framework.response as response
 import django_filters.rest_framework as drf
-import rest_framework.pagination as pagination
-
 import karrio.lib as lib
-import karrio.server.openapi as openapi
-import karrio.server.core.views.api as api
 import karrio.server.core.filters as filters
 import karrio.server.core.gateway as gateway
+import karrio.server.core.views.api as api
+import karrio.server.openapi as openapi
 import karrio.server.providers.models as models
 import karrio.server.providers.serializers as serializers
+import karrio.server.providers.webhooks as webhooks
+import rest_framework.pagination as pagination
+import rest_framework.request as request
+import rest_framework.response as response
+import rest_framework.status as status
 
 ENDPOINT_ID = "&&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
-CarrierConnectionList = serializers.PaginatedResult(
-    "CarrierConnectionList", serializers.CarrierConnection
-)
+CarrierConnectionList = serializers.PaginatedResult("CarrierConnectionList", serializers.CarrierConnection)
 
 
 class CarrierConnectionListView(api.GenericAPIView):
@@ -312,7 +310,9 @@ class ConnectionWebhookDisconnect(api.APIView):
 
 
 class ConnectionWebhookEvent(api.APIView):
-    """Handle inbound webhook events from carriers."""
+    """Inbound carrier webhook. The path `identifier` is a connection pk
+    (per-connection registration) or a carrier name (one static URL per
+    integration); the handler resolves which."""
 
     throttle_classes: list = []
     permission_classes: list = []
@@ -328,12 +328,14 @@ class ConnectionWebhookEvent(api.APIView):
             200: serializers.OperationConfirmation(),
         },
     )
-    def post(self, request: request.Request, pk: str):
+    def post(self, request: request.Request, identifier: str):
         """Handle inbound webhook events from a carrier via POST."""
-        data, http_status = serializers.WebhookEventSerializer.process_event(
-            request, pk
-        )
-        return response.Response(data, status=http_status)
+        return webhooks.render_response(webhooks.process(request, identifier))
+
+    @openapi.extend_schema(exclude=True, operation_id=f"{ENDPOINT_ID}webhook-event-get")
+    def get(self, request: request.Request, identifier: str):
+        """Handle inbound webhook events from a carrier via GET (query params)."""
+        return webhooks.render_response(webhooks.process(request, identifier))
 
 
 class ConnectionOauthAuthorize(api.APIView):
@@ -351,9 +353,7 @@ class ConnectionOauthAuthorize(api.APIView):
         [output, messages] = gateway.Hooks.on_oauth_authorize(
             serializers.OAuthAuthorizeData.map(
                 data={
-                    "redirect_uri": request.build_absolute_uri(
-                        f"/v1/connections/oauth/{carrier_name}/callback"
-                    ),
+                    "redirect_uri": request.build_absolute_uri(f"/v1/connections/oauth/{carrier_name}/callback"),
                     **request.data,
                 }
             ).data,
@@ -412,28 +412,23 @@ class ConnectionOauthCallback(api.APIView):
         Returns JSON with OAuth result for the frontend to process.
         When called from a browser popup, renders template or redirects to frontend.
         """
-        import json
         import base64
-        from django.shortcuts import render
-        from django.http import HttpResponseRedirect
+        import json
 
-        result, frontend_url = serializers.OAuthCallbackSerializer.process_callback(
-            request, carrier_name
-        )
+        from django.http import HttpResponseRedirect
+        from django.shortcuts import render
+
+        result, frontend_url = serializers.OAuthCallbackSerializer.process_callback(request, carrier_name)
 
         accept_header = request.headers.get("Accept", "")
 
         if "text/html" in accept_header and frontend_url:
-            result_encoded = base64.b64encode(
-                json.dumps(result).encode("utf-8")
-            ).decode("utf-8")
+            result_encoded = base64.b64encode(json.dumps(result).encode("utf-8")).decode("utf-8")
             return HttpResponseRedirect(f"{frontend_url}?oauth_result={result_encoded}")
 
         if "text/html" in accept_header:
             error_message = (
-                result["messages"][0]["message"]
-                if result["messages"]
-                else "An error occurred during authorization."
+                result["messages"][0]["message"] if result["messages"] else "An error occurred during authorization."
             )
             return render(
                 request._request,
@@ -470,7 +465,7 @@ urlpatterns = [
         name="connection-oauth-callback",
     ),
     urls.path(
-        "connections/webhook/<str:pk>/events",
+        "connections/webhook/<str:identifier>/events",
         ConnectionWebhookEvent.as_view(),
         name="connection-webhook-event",
     ),

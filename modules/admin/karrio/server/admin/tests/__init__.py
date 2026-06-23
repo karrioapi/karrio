@@ -1,3 +1,4 @@
+# ruff: noqa: I001
 # Re-export all test classes for backward-compatible discovery.
 # `karrio test karrio.server.admin.tests` still works without changes.
 
@@ -30,4 +31,9 @@ from karrio.server.admin.tests.test_auth import (  # noqa: F401
     TestAdminConnectionValidation,
     TestAdminMarkupValidation,
     TestAdminDataIsolation,
+)
+from karrio.server.admin.tests.test_admin_route_gate import (  # noqa: F401
+    TestAdminGraphQLRouteGate,
+    TestAdminGraphQLRouteGateUnauthenticated,
+    TestAdminGraphQLRouteGateStaffPasses,
 )

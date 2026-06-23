@@ -1,9 +1,9 @@
-"""DPD Global carrier tests fixtures."""
+"""DPD Meta carrier tests fixtures."""
 
 import datetime
-import karrio.sdk as karrio
-import karrio.lib as lib
 
+import karrio.lib as lib
+import karrio.sdk as karrio
 
 # Pre-populate token cache to avoid real API calls during tests
 dpd_login = "TEST_USERNAME"
@@ -28,6 +28,25 @@ gateway = karrio.gateway["dpd_meta"].create(
         customer_id="123456789",
         customer_account_number="ACC123456",
         account_country_code="DE",
+    ),
+    cache=lib.Cache(**cached_auth),
+)
+
+# Companion gateway with a sending_depot override — exercises the
+# sendingDepot injection (7-digit GeoRouting code on shipments, built from
+# the BU code + depot, and the 4-digit depot on pickups).
+gateway_with_depot = karrio.gateway["dpd_meta"].create(
+    dict(
+        id="dpd_meta_test_depot",
+        test_mode=True,
+        carrier_id="dpd_meta",
+        dpd_login=dpd_login,
+        dpd_password="TEST_PASSWORD",
+        dpd_bucode=dpd_bucode,
+        customer_id="123456789",
+        customer_account_number="ACC123456",
+        account_country_code="DE",
+        config=dict(sending_depot="0998"),
     ),
     cache=lib.Cache(**cached_auth),
 )

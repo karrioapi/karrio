@@ -2,7 +2,6 @@ import karrio.core.metadata as metadata
 import karrio.mappers.dpd as mappers
 import karrio.providers.dpd.units as units
 
-
 METADATA = metadata.PluginMetadata(
     status="beta",
     id="dpd",

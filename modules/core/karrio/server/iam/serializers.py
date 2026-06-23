@@ -1,4 +1,3 @@
-import typing
 import karrio.lib as lib
 
 
@@ -19,7 +18,7 @@ class PermissionGroup(lib.StrEnum):
 
 
 PERMISSION_GROUPS = [(p.name, p.name) for p in list(PermissionGroup)]
-ROLES_GROUPS: typing.Dict[str, typing.List[str]] = {
+ROLES_GROUPS: dict[str, list[str]] = {
     "owner": [
         PermissionGroup.manage_org_owner.value,
         PermissionGroup.manage_team.value,

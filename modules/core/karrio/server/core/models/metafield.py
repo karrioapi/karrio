@@ -1,16 +1,15 @@
-import json
-import re
 import functools
-from datetime import datetime, date
+import json
+from datetime import datetime
+
 import django.conf as conf
 import django.db.models as models
 import django.utils.translation as translation
-from django.core.exceptions import ValidationError
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.contenttypes.models import ContentType
-
 import karrio.server.core.models.base as core
 import karrio.server.core.models.entity as entity
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ValidationError
 
 _ = translation.gettext_lazy
 
@@ -88,9 +87,7 @@ class Metafield(entity.OwnedEntity):
 
         # Use truthiness (not identity) to handle SimpleLazyObject wrapping None
         if org:
-            return queryset.filter(
-                models.Q(created_by__in=org.users.all())
-            )
+            return queryset.filter(models.Q(created_by__in=org.users.all()))
 
         return queryset.filter(models.Q(created_by__id=user_id))
 
@@ -108,45 +105,44 @@ class Metafield(entity.OwnedEntity):
         """Validate value based on metafield type."""
         if self.type == core.MetafieldType.text:
             if not isinstance(self.value, str):
-                raise ValidationError(f"Value must be a string for type 'text'")
+                raise ValidationError("Value must be a string for type 'text'")
 
         elif self.type == core.MetafieldType.number:
             if not isinstance(self.value, (int, float)):
-                raise ValidationError(f"Value must be a number for type 'number'")
+                raise ValidationError("Value must be a number for type 'number'")
 
         elif self.type == core.MetafieldType.boolean:
             if not isinstance(self.value, bool):
-                raise ValidationError(f"Value must be a boolean for type 'boolean'")
+                raise ValidationError("Value must be a boolean for type 'boolean'")
 
         elif self.type == core.MetafieldType.json:
             # JSON can be any valid JSON value (dict, list, string, number, boolean, null)
             try:
                 if isinstance(self.value, str):
                     json.loads(self.value)
-            except (json.JSONDecodeError, TypeError):
-                raise ValidationError(f"Value must be valid JSON for type 'json'")
+            except (json.JSONDecodeError, TypeError) as err:
+                raise ValidationError("Value must be valid JSON for type 'json'") from err
 
         elif self.type == core.MetafieldType.date:
             if isinstance(self.value, str):
                 try:
-                    datetime.strptime(self.value, '%Y-%m-%d')
-                except ValueError:
-                    raise ValidationError(f"Value must be a valid date (YYYY-MM-DD) for type 'date'")
+                    datetime.strptime(self.value, "%Y-%m-%d")
+                except ValueError as err:
+                    raise ValidationError("Value must be a valid date (YYYY-MM-DD) for type 'date'") from err
             else:
-                raise ValidationError(f"Value must be a date string (YYYY-MM-DD) for type 'date'")
+                raise ValidationError("Value must be a date string (YYYY-MM-DD) for type 'date'")
 
         elif self.type == core.MetafieldType.date_time:
             if isinstance(self.value, str):
                 try:
-                    datetime.fromisoformat(self.value.replace('Z', '+00:00'))
-                except ValueError:
-                    raise ValidationError(f"Value must be a valid ISO datetime for type 'date_time'")
+                    datetime.fromisoformat(self.value.replace("Z", "+00:00"))
+                except ValueError as err:
+                    raise ValidationError("Value must be a valid ISO datetime for type 'date_time'") from err
             else:
-                raise ValidationError(f"Value must be a datetime string for type 'date_time'")
+                raise ValidationError("Value must be a datetime string for type 'date_time'")
 
-        elif self.type == core.MetafieldType.password:
-            if not isinstance(self.value, str):
-                raise ValidationError(f"Value must be a string for type 'password'")
+        elif self.type == core.MetafieldType.password and not isinstance(self.value, str):
+            raise ValidationError("Value must be a string for type 'password'")
 
     def get_parsed_value(self):
         """Return the value parsed according to its type."""
@@ -173,7 +169,7 @@ class Metafield(entity.OwnedEntity):
         elif self.type == core.MetafieldType.date:
             if isinstance(self.value, str):
                 try:
-                    return datetime.strptime(self.value, '%Y-%m-%d').date()
+                    return datetime.strptime(self.value, "%Y-%m-%d").date()
                 except ValueError:
                     return self.value
             return self.value
@@ -181,7 +177,7 @@ class Metafield(entity.OwnedEntity):
         elif self.type == core.MetafieldType.date_time:
             if isinstance(self.value, str):
                 try:
-                    return datetime.fromisoformat(self.value.replace('Z', '+00:00'))
+                    return datetime.fromisoformat(self.value.replace("Z", "+00:00"))
                 except ValueError:
                     return self.value
             return self.value

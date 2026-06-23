@@ -1,51 +1,51 @@
-from typing import Tuple, List, Union
 from functools import partial
-from karrio.schemas.canadapost.pickup import pickup_availability
-from karrio.schemas.canadapost.pickuprequest import (
-    PickupRequestDetailsType,
-    PickupRequestUpdateDetailsType,
-    PickupLocationType,
-    AlternateAddressType,
-    ContactInfoType,
-    LocationDetailsType,
-    ItemsCharacteristicsType,
-    PickupTimesType,
-    OnDemandPickupTimeType,
-    PickupRequestPriceType,
-    PickupRequestHeaderType,
-    PickupTypeType as PickupType,
-)
+
 import karrio.lib as lib
-from karrio.core.utils import (
-    Serializable,
-    Element,
-    Job,
-    Pipeline,
-    DF,
-    NF,
-    XP,
-)
 from karrio.core.models import (
-    PickupRequest,
-    PickupDetails,
-    Message,
     ChargeDetails,
+    Message,
+    PickupDetails,
+    PickupRequest,
     PickupUpdateRequest,
 )
 from karrio.core.units import Packages
+from karrio.core.utils import (
+    DF,
+    NF,
+    XP,
+    Element,
+    Job,
+    Pipeline,
+    Serializable,
+)
+from karrio.providers.canadapost.error import parse_error_response
 from karrio.providers.canadapost.units import PackagePresets
 from karrio.providers.canadapost.utils import Settings
-from karrio.providers.canadapost.error import parse_error_response
+from karrio.schemas.canadapost.pickup import pickup_availability
+from karrio.schemas.canadapost.pickuprequest import (
+    AlternateAddressType,
+    ContactInfoType,
+    ItemsCharacteristicsType,
+    LocationDetailsType,
+    OnDemandPickupTimeType,
+    PickupLocationType,
+    PickupRequestDetailsType,
+    PickupRequestHeaderType,
+    PickupRequestPriceType,
+    PickupRequestUpdateDetailsType,
+    PickupTimesType,
+)
+from karrio.schemas.canadapost.pickuprequest import (
+    PickupTypeType as PickupType,
+)
 
-PickupRequestDetails = Union[PickupRequestDetailsType, PickupRequestUpdateDetailsType]
+PickupRequestDetails = PickupRequestDetailsType | PickupRequestUpdateDetailsType
 
 
 def parse_pickup_response(
     _response: lib.Deserializable[Element], settings: Settings
-) -> Tuple[PickupDetails, List[Message]]:
-    response = (
-        _response.deserialize() if hasattr(_response, "deserialize") else _response
-    )
+) -> tuple[PickupDetails, list[Message]]:
+    response = _response.deserialize() if hasattr(_response, "deserialize") else _response
     pickup = (
         _extract_pickup_details(response, settings)
         if len(lib.find_element("pickup-request-header", response)) > 0
@@ -55,12 +55,8 @@ def parse_pickup_response(
 
 
 def _extract_pickup_details(response: Element, settings: Settings) -> PickupDetails:
-    header = lib.find_element(
-        "pickup-request-header", response, PickupRequestHeaderType, first=True
-    )
-    price = lib.find_element(
-        "pickup-request-price", response, PickupRequestPriceType, first=True
-    )
+    header = lib.find_element("pickup-request-header", response, PickupRequestHeaderType, first=True)
+    price = lib.find_element("pickup-request-price", response, PickupRequestPriceType, first=True)
     price_amount = (
         sum(
             [
@@ -79,9 +75,7 @@ def _extract_pickup_details(response: Element, settings: Settings) -> PickupDeta
         carrier_name=settings.carrier_name,
         confirmation_number=header.request_id,
         pickup_date=DF.fdate(header.next_pickup_date),
-        pickup_charge=ChargeDetails(
-            name="Pickup fees", amount=NF.decimal(price_amount), currency="CAD"
-        )
+        pickup_charge=ChargeDetails(name="Pickup fees", amount=NF.decimal(price_amount), currency="CAD")
         if price is not None
         else None,
     )
@@ -95,9 +89,7 @@ def pickup_request(payload: PickupRequest, settings: Settings) -> Serializable:
     return Serializable(request)
 
 
-def _create_pickup_request(
-    payload: PickupRequest, settings: Settings, update: bool = False
-) -> Serializable:
+def _create_pickup_request(payload: PickupRequest, settings: Settings, update: bool = False) -> Serializable:
     """
     pickup_request create a serializable typed PickupRequestDetailsType
 
@@ -124,9 +116,7 @@ def _create_pickup_request(
     # one_time -> OnDemand, daily/recurring -> Scheduled
     unified_pickup_type = getattr(payload, "pickup_type", "one_time") or "one_time"
     cp_pickup_type = (
-        PickupType.SCHEDULED.value
-        if unified_pickup_type in ("daily", "recurring")
-        else PickupType.ON_DEMAND.value
+        PickupType.SCHEDULED.value if unified_pickup_type in ("daily", "recurring") else PickupType.ON_DEMAND.value
     )
 
     request = RequestType(
@@ -185,37 +175,23 @@ def _create_pickup_request(
 
 
 def _get_pickup_availability(payload: PickupRequest):
-    return Job(
-        id="availability", data=(payload.address.postal_code or "").replace(" ", "")
-    )
+    return Job(id="availability", data=(payload.address.postal_code or "").replace(" ", ""))
 
 
-def _create_pickup(
-    availability_response: str, payload: PickupRequest, settings: Settings
-):
+def _create_pickup(availability_response: str, payload: PickupRequest, settings: Settings):
     availability = XP.to_object(pickup_availability, XP.to_xml(availability_response))
-    data = (
-        _create_pickup_request(payload, settings)
-        if availability.on_demand_tour
-        else None
-    )
+    data = _create_pickup_request(payload, settings) if availability.on_demand_tour else None
 
     return Job(id="create_pickup", data=data, fallback="" if data is None else "")
 
 
-def _get_pickup(
-    update_response: str, payload: PickupUpdateRequest, settings: Settings
-) -> Job:
+def _get_pickup(update_response: str, payload: PickupUpdateRequest, settings: Settings) -> Job:
     errors = parse_error_response(XP.to_xml(XP.bundle_xml([update_response])), settings)
     data = (
-        None
-        if any(errors)
-        else f"/enab/{settings.customer_number}/pickuprequest/{payload.confirmation_number}/details"
+        None if any(errors) else f"/enab/{settings.customer_number}/pickuprequest/{payload.confirmation_number}/details"
     )
 
-    return Job(
-        id="get_pickup", data=Serializable(data), fallback="" if data is None else ""
-    )
+    return Job(id="get_pickup", data=Serializable(data), fallback="" if data is None else "")
 
 
 def _request_serializer(request: PickupRequestDetails, update: bool = False) -> str:

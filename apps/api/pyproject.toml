@@ -47,7 +47,7 @@ dependencies = [
     "opentelemetry-exporter-otlp",
     "opentelemetry-instrumentation-requests",
     "opentelemetry-instrumentation-logging",
-    "opentelemetry-instrumentation-psycopg2",
+    "opentelemetry-instrumentation-psycopg",
     "opentelemetry-instrumentation-redis",
     "opentelemetry-semantic-conventions",
     "loguru",

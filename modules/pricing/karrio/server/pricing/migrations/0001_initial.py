@@ -9,7 +9,6 @@ import karrio.server.core.models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -25,9 +24,7 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.CharField(
-                        default=functools.partial(
-                            karrio.server.core.models.uuid, *(), **{"prefix": "chrg_"}
-                        ),
+                        default=functools.partial(karrio.server.core.models.uuid, *(), **{"prefix": "chrg_"}),
                         editable=False,
                         max_length=50,
                         primary_key=True,

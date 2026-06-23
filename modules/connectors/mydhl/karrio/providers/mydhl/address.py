@@ -9,22 +9,18 @@
 # NOTE: JSON schema types are generated with "Type" suffix (e.g., AddressValidationRequestType),
 # while XML schema types don't have this suffix (e.g., AddressValidationRequest).
 
-import karrio.schemas.mydhl.address_validation_request as mydhl_req
-import karrio.schemas.mydhl.address_validation_response as mydhl_res
-
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.mydhl.error as error
 import karrio.providers.mydhl.utils as provider_utils
-import karrio.providers.mydhl.units as provider_units
+import karrio.schemas.mydhl.address_validation_request as mydhl_req
+import karrio.schemas.mydhl.address_validation_response as mydhl_res
 
 
 def parse_address_validation_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.AddressValidationDetails, typing.List[models.Message]]:
+) -> tuple[models.AddressValidationDetails, list[models.Message]]:
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
 
@@ -53,10 +49,7 @@ def _extract_details(
     Returns an AddressValidationDetails object
     """
     # Get first validated address using functional pattern
-    validated_address = next(
-        (addr for addr in (validation.address or []) if addr),
-        None
-    )
+    validated_address = next((addr for addr in (validation.address or []) if addr), None)
 
     # Determine success based on presence of validated address
     success = validated_address is not None

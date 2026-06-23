@@ -1,12 +1,11 @@
-import rest_framework.status as status
-
 import karrio.lib as lib
-import karrio.server.serializers as serialiazers
 import karrio.server.core.exceptions as exceptions
-import karrio.server.core.serializers as core
 import karrio.server.core.gateway as gateway
-from karrio.server.core.utils import create_carrier_snapshot, resolve_carrier
+import karrio.server.core.serializers as core
 import karrio.server.manager.models as models
+import karrio.server.serializers as serialiazers
+import rest_framework.status as status
+from karrio.server.core.utils import create_carrier_snapshot, resolve_carrier
 
 
 @serialiazers.owned_model_serializer
@@ -23,18 +22,30 @@ class DocumentUploadSerializer(core.DocumentUploadData):
         if carrier is None and shipment:
             carrier = resolve_carrier(getattr(shipment, "carrier", None) or {}, context)
 
-        tracking_number = getattr(shipment, "tracking_number", None)
+        # Carriers that link customs submissions to the shipment use the
+        # carrier-internal identifier (GLS: TrackID; others may differ); fall
+        # back to the unified tracking_number so the provider always has
+        # something to stamp on the customs payload.
+        tracking_number = getattr(shipment, "shipment_identifier", None) or getattr(shipment, "tracking_number", None)
         reference = validated_data.get("reference") or tracking_number
 
         payload = core.DocumentUploadData(validated_data).data
         shipper = getattr(shipment, "shipper", None) or {}
         recipient = getattr(shipment, "recipient", None) or {}
+        shipment_customs = getattr(shipment, "customs", None)
         options = (
             {
                 "origin_country_code": shipper.get("country_code"),
                 "origin_postal_code": shipper.get("postal_code"),
                 "destination_country_code": recipient.get("country_code"),
                 "destination_postal_code": recipient.get("postal_code"),
+                # Plumb the shipment's customs + addresses through so
+                # carriers that bundle a customs submission with the doc
+                # upload (e.g. GLS Customs Consignment v3) can shape the
+                # payload from this context without DB access.
+                "shipper": dict(shipper) if shipper else None,
+                "recipient": dict(recipient) if recipient else None,
+                "customs": lib.to_dict(shipment_customs) if shipment_customs else None,
                 **(payload.get("options") or {}),
             }
             if shipment
@@ -106,7 +117,7 @@ def can_upload_shipment_document(shipment: models.Shipment, context=None):
 
     if shipment is None:
         raise exceptions.APIException(
-            detail=f"No purchased shipment found for trade document upload.",
+            detail="No purchased shipment found for trade document upload.",
             status_code=status.HTTP_400_BAD_REQUEST,
         )
 

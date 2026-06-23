@@ -1,8 +1,9 @@
 import csv
 import pathlib
-import karrio.lib as lib
-import karrio.core.units as units
+
 import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
 
 
 class ConnectionConfig(lib.Enum):
@@ -145,30 +146,36 @@ class ShippingOption(lib.Enum):
     """Carrier specific options"""
 
     # Spring-specific options
-    spring_customs_duty = lib.OptionEnum("CustomsDuty")
-    spring_declaration_type = lib.OptionEnum("DeclarationType")
-    spring_dangerous_goods = lib.OptionEnum("DangerousGoods", bool)
-    spring_shipping_value = lib.OptionEnum("ShippingValue", float)
-    spring_display_id = lib.OptionEnum("DisplayId")
-    spring_invoice_number = lib.OptionEnum("InvoiceNumber")
-    spring_order_reference = lib.OptionEnum("OrderReference")
-    spring_order_date = lib.OptionEnum("OrderDate")
+    spring_customs_duty = lib.OptionEnum("CustomsDuty", meta=dict(configurable=True, service_level=True))
+    spring_declaration_type = lib.OptionEnum("DeclarationType", meta=dict(configurable=True, service_level=True))
+    spring_dangerous_goods = lib.OptionEnum(
+        "DangerousGoods", bool, meta=dict(category="DANGEROUS_GOOD", configurable=True, service_level=True)
+    )
+    spring_shipping_value = lib.OptionEnum("ShippingValue", float, meta=dict(configurable=True, service_level=False))
+    spring_display_id = lib.OptionEnum("DisplayId", meta=dict(configurable=True, service_level=False))
+    spring_invoice_number = lib.OptionEnum("InvoiceNumber", meta=dict(configurable=True, service_level=False))
+    spring_order_reference = lib.OptionEnum("OrderReference", meta=dict(configurable=True, service_level=False))
+    spring_order_date = lib.OptionEnum("OrderDate", meta=dict(configurable=True, service_level=False))
 
     # Consignor tax/customs identifiers
-    spring_consignor_vat = lib.OptionEnum("ConsignorVat")
-    spring_consignor_eori = lib.OptionEnum("ConsignorEori")
-    spring_consignor_nl_vat = lib.OptionEnum("ConsignorNlVat")
-    spring_consignor_eu_eori = lib.OptionEnum("ConsignorEuEori")
-    spring_consignor_gb_eori = lib.OptionEnum("ConsignorGbEori")
-    spring_consignor_ioss = lib.OptionEnum("ConsignorIoss")
-    spring_consignor_local_tax_number = lib.OptionEnum("ConsignorLocalTaxNumber")
+    spring_consignor_vat = lib.OptionEnum("ConsignorVat", meta=dict(configurable=True, service_level=False))
+    spring_consignor_eori = lib.OptionEnum("ConsignorEori", meta=dict(configurable=True, service_level=False))
+    spring_consignor_nl_vat = lib.OptionEnum("ConsignorNlVat", meta=dict(configurable=True, service_level=False))
+    spring_consignor_eu_eori = lib.OptionEnum("ConsignorEuEori", meta=dict(configurable=True, service_level=False))
+    spring_consignor_gb_eori = lib.OptionEnum("ConsignorGbEori", meta=dict(configurable=True, service_level=False))
+    spring_consignor_ioss = lib.OptionEnum("ConsignorIoss", meta=dict(configurable=True, service_level=False))
+    spring_consignor_local_tax_number = lib.OptionEnum(
+        "ConsignorLocalTaxNumber", meta=dict(configurable=True, service_level=False)
+    )
 
     # Return label options (BACK service)
-    spring_export_carrier_name = lib.OptionEnum("ExportCarrierName")
-    spring_export_awb = lib.OptionEnum("ExportAwb")
+    spring_export_carrier_name = lib.OptionEnum("ExportCarrierName", meta=dict(configurable=True, service_level=False))
+    spring_export_awb = lib.OptionEnum("ExportAwb", meta=dict(configurable=True, service_level=False))
 
     # Collect service option
-    spring_pudo_location_id = lib.OptionEnum("PudoLocationId")
+    spring_pudo_location_id = lib.OptionEnum(
+        "PudoLocationId", meta=dict(category="PUDO", configurable=True, service_level=False)
+    )
 
     """ Unified Option type mapping """
     dangerous_goods = spring_dangerous_goods
@@ -317,7 +324,7 @@ def load_services_from_csv() -> list:
     # Group zones by service
     services_dict: dict[str, dict] = {}
 
-    with open(csv_path, "r", encoding="utf-8") as f:
+    with open(csv_path, encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
             service_code = row["service_code"]
@@ -332,34 +339,20 @@ def load_services_from_csv() -> list:
                     "service_name": service_name,
                     "service_code": karrio_service_code,
                     "currency": row.get("currency", "EUR"),
-                    "min_weight": (
-                        float(row["min_weight"]) if row.get("min_weight") else None
-                    ),
-                    "max_weight": (
-                        float(row["max_weight"]) if row.get("max_weight") else None
-                    ),
-                    "max_length": (
-                        float(row["max_length"]) if row.get("max_length") else None
-                    ),
-                    "max_width": (
-                        float(row["max_width"]) if row.get("max_width") else None
-                    ),
-                    "max_height": (
-                        float(row["max_height"]) if row.get("max_height") else None
-                    ),
+                    "min_weight": (float(row["min_weight"]) if row.get("min_weight") else None),
+                    "max_weight": (float(row["max_weight"]) if row.get("max_weight") else None),
+                    "max_length": (float(row["max_length"]) if row.get("max_length") else None),
+                    "max_width": (float(row["max_width"]) if row.get("max_width") else None),
+                    "max_height": (float(row["max_height"]) if row.get("max_height") else None),
                     "weight_unit": "KG",
                     "dimension_unit": "CM",
                     "domicile": (row.get("domicile") or "").lower() == "true",
-                    "international": (
-                        True if (row.get("international") or "").lower() == "true" else None
-                    ),
+                    "international": (True if (row.get("international") or "").lower() == "true" else None),
                     "zones": [],
                 }
 
             # Parse country codes
-            country_codes = [
-                c.strip() for c in row.get("country_codes", "").split(",") if c.strip()
-            ]
+            country_codes = [c.strip() for c in row.get("country_codes", "").split(",") if c.strip()]
 
             # Create zone
             zone = models.ServiceZone(
@@ -367,18 +360,14 @@ def load_services_from_csv() -> list:
                 rate=float(row.get("rate", 0.0)),
                 min_weight=float(row["min_weight"]) if row.get("min_weight") else None,
                 max_weight=float(row["max_weight"]) if row.get("max_weight") else None,
-                transit_days=(
-                    int(row["transit_days"].split("-")[0]) if row.get("transit_days") else None
-                ),
+                transit_days=(int(row["transit_days"].split("-")[0]) if row.get("transit_days") else None),
                 country_codes=country_codes if country_codes else None,
             )
 
             services_dict[karrio_service_code]["zones"].append(zone)
 
     # Convert to ServiceLevel objects
-    return [
-        models.ServiceLevel(**service_data) for service_data in services_dict.values()
-    ]
+    return [models.ServiceLevel(**service_data) for service_data in services_dict.values()]
 
 
 DEFAULT_SERVICES = load_services_from_csv()

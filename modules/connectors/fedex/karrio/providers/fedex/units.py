@@ -1,9 +1,10 @@
 import csv
 import pathlib
-import karrio.lib as lib
+
+import karrio.core.models as models
 import karrio.core.units as units
 import karrio.core.utils as utils
-import karrio.core.models as models
+import karrio.lib as lib
 
 PRESET_DEFAULTS = dict(
     dimension_unit="IN",
@@ -20,28 +21,22 @@ COUNTRY_PREFERED_UNITS = dict(
 
 class PackagePresets(lib.Enum):
     fedex_envelope_legal_size = units.PackagePreset(
-        **dict(weight=1.0, width=9.5, height=15.5, length=1, packaging_type="envelope"),
-        **PRESET_DEFAULTS
+        **dict(weight=1.0, width=9.5, height=15.5, length=1, packaging_type="envelope"), **PRESET_DEFAULTS
     )
     fedex_envelope_without_pouch = units.PackagePreset(
-        **dict(weight=1.0, width=9.5, height=15.5, length=1, packaging_type="envelope"),
-        **PRESET_DEFAULTS
+        **dict(weight=1.0, width=9.5, height=15.5, length=1, packaging_type="envelope"), **PRESET_DEFAULTS
     )
     fedex_padded_pak = units.PackagePreset(
-        **dict(weight=2.2, width=11.75, height=14.75, length=1, packaging_type="pak"),
-        **PRESET_DEFAULTS
+        **dict(weight=2.2, width=11.75, height=14.75, length=1, packaging_type="pak"), **PRESET_DEFAULTS
     )
     fedex_polyethylene_pak = units.PackagePreset(
-        **dict(weight=2.2, width=12.0, height=15.5, length=1, packaging_type="pak"),
-        **PRESET_DEFAULTS
+        **dict(weight=2.2, width=12.0, height=15.5, length=1, packaging_type="pak"), **PRESET_DEFAULTS
     )
     fedex_clinical_pak = units.PackagePreset(
-        **dict(weight=2.2, width=13.5, height=18.0, length=1, packaging_type="pak"),
-        **PRESET_DEFAULTS
+        **dict(weight=2.2, width=13.5, height=18.0, length=1, packaging_type="pak"), **PRESET_DEFAULTS
     )
     fedex_un_3373_pak = units.PackagePreset(
-        **dict(weight=2.2, width=13.5, height=18.0, length=1, packaging_type="pak"),
-        **PRESET_DEFAULTS
+        **dict(weight=2.2, width=13.5, height=18.0, length=1, packaging_type="pak"), **PRESET_DEFAULTS
     )
     fedex_small_box = units.PackagePreset(
         **dict(
@@ -51,7 +46,7 @@ class PackagePresets(lib.Enum):
             length=1.5,
             packaging_type="small_box",
         ),
-        **PRESET_DEFAULTS
+        **PRESET_DEFAULTS,
     )
     fedex_medium_box = units.PackagePreset(
         **dict(
@@ -61,7 +56,7 @@ class PackagePresets(lib.Enum):
             length=2.38,
             packaging_type="medium_box",
         ),
-        **PRESET_DEFAULTS
+        **PRESET_DEFAULTS,
     )
     fedex_large_box = units.PackagePreset(
         **dict(
@@ -71,7 +66,7 @@ class PackagePresets(lib.Enum):
             length=3.0,
             packaging_type="large_box",
         ),
-        **PRESET_DEFAULTS
+        **PRESET_DEFAULTS,
     )
     fedex_extra_large_box = units.PackagePreset(
         **dict(
@@ -81,7 +76,7 @@ class PackagePresets(lib.Enum):
             length=10.75,
             packaging_type="extra_large_box",
         ),
-        **PRESET_DEFAULTS
+        **PRESET_DEFAULTS,
     )
     fedex_10_kg_box = units.PackagePreset(
         **dict(
@@ -91,7 +86,7 @@ class PackagePresets(lib.Enum):
             length=10.19,
             packaging_type="medium_box",
         ),
-        **PRESET_DEFAULTS
+        **PRESET_DEFAULTS,
     )
     fedex_25_kg_box = units.PackagePreset(
         **dict(
@@ -101,11 +96,10 @@ class PackagePresets(lib.Enum):
             length=13.19,
             packaging_type="medium_box",
         ),
-        **PRESET_DEFAULTS
+        **PRESET_DEFAULTS,
     )
     fedex_tube = units.PackagePreset(
-        **dict(weight=20.0, width=38.0, height=6.0, length=6.0, packaging_type="tube"),
-        **PRESET_DEFAULTS
+        **dict(weight=20.0, width=38.0, height=6.0, length=6.0, packaging_type="tube"), **PRESET_DEFAULTS
     )
     fedex_envelope = fedex_envelope_legal_size
     fedex_pak = fedex_padded_pak
@@ -265,9 +259,7 @@ class ConnectionConfig(lib.Enum):
     smart_post_hub_id = lib.OptionEnum("smart_post_hub_id")
     shipping_options = lib.OptionEnum("shipping_options", list)
     shipping_services = lib.OptionEnum("shipping_services", list)
-    locale = lib.OptionEnum(
-        "locale", lib.units.create_enum("Locale", ["en_US", "fr_CA"])
-    )
+    locale = lib.OptionEnum("locale", lib.units.create_enum("Locale", ["en_US", "fr_CA"]))
 
 
 class ShippingService(lib.Enum):
@@ -329,7 +321,7 @@ class ShippingOption(lib.Enum):
     fedex_inside_pickup = lib.OptionEnum("INSIDE_PICKUP", bool)
     fedex_international_controlled_export_service = lib.OptionEnum("INTERNATIONAL_CONTROLLED_EXPORT_SERVICE", bool)
     fedex_third_party_consignee = lib.OptionEnum("THIRD_PARTY_CONSIGNEE", bool)
-    fedex_electronic_trade_documents = lib.OptionEnum("ELECTRONIC_TRADE_DOCUMENTS", bool, meta=dict(category="PAPERLESS"))
+    fedex_electronic_trade_documents = lib.OptionEnum("ELECTRONIC_TRADE_DOCUMENTS", bool, meta=dict(category="PAPERLESS", flow="doc_files"))
     fedex_food = lib.OptionEnum("FOOD", bool)
     fedex_future_day_shipment = lib.OptionEnum("FUTURE_DAY_SHIPMENT", bool, meta=dict(category="DELIVERY_OPTIONS"))
     fedex_hold_at_location = lib.OptionEnum("HOLD_AT_LOCATION", bool, meta=dict(category="PUDO"))
@@ -383,6 +375,63 @@ class ShippingOption(lib.Enum):
     fedex_signature_option = lib.OptionEnum("SIGNATURE_OPTION", meta=dict(category="SIGNATURE"))
     fedex_evening = lib.OptionEnum("EVENING", bool, meta=dict(category="DELIVERY_OPTIONS"))
     fedex_date_certain = lib.OptionEnum("DATE_CERTAIN", bool, meta=dict(category="DELIVERY_OPTIONS"))
+    # Third-party billing options — see SPECS.md
+    fedex_bill_to = lib.OptionEnum(
+        "bill_to",
+        lib.units.create_enum("BillTo", ["sender", "recipient", "third_party"]),
+        meta=dict(
+            category="THIRD_PARTY_BILLING",
+            configurable=True,
+            service_level=False,
+            help="Who pays the transportation charges (default: sender).",
+        ),
+    )
+    fedex_billing_account_number = lib.OptionEnum(
+        "billing_account_number",
+        meta=dict(
+            category="THIRD_PARTY_BILLING",
+            configurable=True,
+            service_level=False,
+            help="Payor account number for recipient / third-party billing.",
+        ),
+    )
+    fedex_billing_postal_code = lib.OptionEnum(
+        "billing_postal_code",
+        meta=dict(
+            category="THIRD_PARTY_BILLING",
+            configurable=True,
+            service_level=False,
+            help="Payor postal code (required for third-party billing).",
+        ),
+    )
+    fedex_billing_country_code = lib.OptionEnum(
+        "billing_country_code",
+        meta=dict(
+            category="THIRD_PARTY_BILLING",
+            configurable=True,
+            service_level=False,
+            help="Payor country code (required for third-party billing).",
+        ),
+    )
+    fedex_bill_duties_to = lib.OptionEnum(
+        "bill_duties_to",
+        lib.units.create_enum("BillDutiesTo", ["sender", "recipient", "third_party"]),
+        meta=dict(
+            category="DUTIES_BILLING",
+            configurable=False,
+            service_level=False,
+            help="Who pays duties & taxes on international shipments (default: sender).",
+        ),
+    )
+    fedex_duties_account_number = lib.OptionEnum(
+        "duties_account_number",
+        meta=dict(
+            category="DUTIES_BILLING",
+            configurable=False,
+            service_level=False,
+            help="Payor account number for duties & taxes billing.",
+        ),
+    )
 
     """ Unified Option type mapping """
     cash_on_delivery = fedex_cod
@@ -390,8 +439,8 @@ class ShippingOption(lib.Enum):
     notification = fedex_event_notification
     saturday_delivery = fedex_saturday_delivery
     paperless_trade = fedex_electronic_trade_documents
-    doc_files = lib.OptionEnum("doc_files", lib.to_dict, meta=dict(category="PAPERLESS"))
-    doc_references = lib.OptionEnum("doc_references", lib.to_dict, meta=dict(category="PAPERLESS"))
+    doc_files = lib.OptionEnum("doc_files", list[models.DocumentFile], meta=dict(category="PAPERLESS"))
+    doc_references = lib.OptionEnum("doc_references", list[models.DocumentDetails], meta=dict(category="PAPERLESS"))
     shipper_instructions = lib.OptionEnum("shipper_instructions", meta=dict(category="INSTRUCTIONS"))
     recipient_instructions = lib.OptionEnum("recipient_instructions", meta=dict(category="INSTRUCTIONS"))
     signature_confirmation = fedex_signature_option
@@ -415,6 +464,7 @@ PACKAGE_OPTIONS = [
     "PRIORITY_ALERT_PLUS",
     "NON_STANDARD_CONTAINER",
     "PIECE_COUNT_VERIFICATION",
+    "SIGNATURE_OPTION",
     "EVENING",
     "DATE_CERTAIN",
     "SATURDAY_PICKUP",
@@ -500,9 +550,7 @@ class SignatureOptionType(lib.Enum):
 
 
 class UploadDocumentType(lib.Enum):
-    fedex_usmca_commercial_invoice_certification_of_origin = (
-        "USMCA_COMMERCIAL_INVOICE_CERTIFICATION_OF_ORIGIN"
-    )
+    fedex_usmca_commercial_invoice_certification_of_origin = "USMCA_COMMERCIAL_INVOICE_CERTIFICATION_OF_ORIGIN"
     fedex_usmca_certification_of_origin = "USMCA_CERTIFICATION_OF_ORIGIN"
     fedex_certificate_of_origin = "CERTIFICATE_OF_ORIGIN"
     fedex_commercial_invoice = "COMMERCIAL_INVOICE"
@@ -541,7 +589,26 @@ class TrackingStatus(utils.Enum):
     # DL = Delivered
 
     # In-transit/processing statuses
-    in_transit = ["IT", "IX", "AA", "AC", "AF", "AR", "AX", "DP", "EA", "EO", "FD", "LO", "Ow", "PF", "PL", "PM", "SF", "TR"]
+    in_transit = [
+        "IT",
+        "IX",
+        "AA",
+        "AC",
+        "AF",
+        "AR",
+        "AX",
+        "DP",
+        "EA",
+        "EO",
+        "FD",
+        "LO",
+        "Ow",
+        "PF",
+        "PL",
+        "PM",
+        "SF",
+        "TR",
+    ]
     # IT = In Transit, IX = In Transit (see details), AA = At Airport, AC = At Canada Post facility
     # AF = At local FedEx facility, AR = Arrived at FedEx location, AX = At USPS facility, DP = Departed
     # EA = Enroute to Airport, EO = Enroute to Origin Airport, FD = At FedEx destination, LO = Left Origin
@@ -555,7 +622,7 @@ class TrackingStatus(utils.Enum):
     # On hold/exception statuses
     on_hold = ["CD", "SE", "HA"]
     # SE = Shipment Exception, CD = Customs Delay, HA = Hold at Location Requested
-    
+
     # Delivery failed/returned statuses
     delivery_failed = ["DE"]
     # I assume these get a DE status
@@ -586,6 +653,7 @@ class TrackingIncidentReason(utils.Enum):
 
     Based on FedEx API exception/status codes.
     """
+
     # Carrier-caused issues
     carrier_damaged_parcel = []  # Damaged
     carrier_sorting_error = ["MR", "MSR"]  # Misrouted
@@ -653,7 +721,9 @@ def load_services_from_csv() -> list:
             service_code = row["service_code"]
             zone_label = row.get("zone_label", "")
             country_codes_str = row.get("country_codes", "")
-            country_codes = [c.strip() for c in country_codes_str.split(",") if c.strip()] if country_codes_str else None
+            country_codes = (
+                [c.strip() for c in country_codes_str.split(",") if c.strip()] if country_codes_str else None
+            )
 
             zone = models.ServiceZone(
                 label=zone_label if zone_label else None,
@@ -682,9 +752,7 @@ def load_services_from_csv() -> list:
             else:
                 services_dict[service_code]["zones"].append(zone)
 
-    return [
-        models.ServiceLevel(**service_data) for service_data in services_dict.values()
-    ]
+    return [models.ServiceLevel(**service_data) for service_data in services_dict.values()]
 
 
 DEFAULT_SERVICES = load_services_from_csv()

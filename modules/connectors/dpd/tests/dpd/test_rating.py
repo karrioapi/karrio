@@ -1,7 +1,9 @@
 import unittest
+
 import karrio.sdk as karrio
-from karrio.core.utils import DP
 from karrio.core.models import RateRequest
+from karrio.core.utils import DP
+
 from .fixture import gateway
 
 
@@ -72,9 +74,7 @@ ParsedRateResponse = [
             "service": "dpd_cl",
             "total_charge": 0.0,
             "transit_days": 1,
-            "extra_charges": [
-                {"amount": 0.0, "currency": "EUR", "name": "Base Charge"}
-            ],
+            "extra_charges": [{"amount": 0.0, "currency": "EUR", "name": "Base Charge"}],
         },
         {
             "carrier_id": "dpd",
@@ -88,9 +88,7 @@ ParsedRateResponse = [
             "service": "dpd_express_10h",
             "total_charge": 0.0,
             "transit_days": 1,
-            "extra_charges": [
-                {"amount": 0.0, "currency": "EUR", "name": "Base Charge"}
-            ],
+            "extra_charges": [{"amount": 0.0, "currency": "EUR", "name": "Base Charge"}],
         },
         {
             "carrier_id": "dpd",
@@ -104,9 +102,7 @@ ParsedRateResponse = [
             "service": "dpd_express_12h",
             "total_charge": 0.0,
             "transit_days": 1,
-            "extra_charges": [
-                {"amount": 0.0, "currency": "EUR", "name": "Base Charge"}
-            ],
+            "extra_charges": [{"amount": 0.0, "currency": "EUR", "name": "Base Charge"}],
         },
         {
             "carrier_id": "dpd",
@@ -120,9 +116,7 @@ ParsedRateResponse = [
             "service": "dpd_express_18h_guarantee",
             "total_charge": 0.0,
             "transit_days": 1,
-            "extra_charges": [
-                {"amount": 0.0, "currency": "EUR", "name": "Base Charge"}
-            ],
+            "extra_charges": [{"amount": 0.0, "currency": "EUR", "name": "Base Charge"}],
         },
         {
             "carrier_id": "dpd",
@@ -136,9 +130,7 @@ ParsedRateResponse = [
             "service": "dpd_express_b2b_predict",
             "total_charge": 0.0,
             "transit_days": 1,
-            "extra_charges": [
-                {"amount": 0.0, "currency": "EUR", "name": "Base Charge"}
-            ],
+            "extra_charges": [{"amount": 0.0, "currency": "EUR", "name": "Base Charge"}],
         },
     ],
     [],

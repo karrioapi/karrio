@@ -5,25 +5,24 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('providers', '0102_add_pricing_config'),
+        ("providers", "0102_add_pricing_config"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='servicelevel',
-            name='carrier_service_code',
+            model_name="servicelevel",
+            name="carrier_service_code",
             field=models.CharField(blank=True, max_length=100, null=True),
         ),
         migrations.AlterField(
-            model_name='servicelevel',
-            name='service_code',
-            field=models.CharField(max_length=100, validators=[django.core.validators.RegexValidator('^[a-z0-9_]+$')]),
+            model_name="servicelevel",
+            name="service_code",
+            field=models.CharField(max_length=100, validators=[django.core.validators.RegexValidator("^[a-z0-9_]+$")]),
         ),
         migrations.AlterField(
-            model_name='servicelevel',
-            name='service_name',
+            model_name="servicelevel",
+            name="service_name",
             field=models.CharField(max_length=100),
         ),
     ]

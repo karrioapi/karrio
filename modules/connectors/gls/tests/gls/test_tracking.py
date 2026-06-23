@@ -2,10 +2,12 @@
 
 import unittest
 from unittest.mock import patch
-from .fixture import gateway
-import karrio.sdk as karrio
-import karrio.lib as lib
+
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 
 class TestGLSGroupTracking(unittest.TestCase):
@@ -27,21 +29,13 @@ class TestGLSGroupTracking(unittest.TestCase):
     def test_parse_tracking_response(self):
         with patch("karrio.mappers.gls.proxy.lib.request") as mock:
             mock.return_value = TrackingResponse
-            parsed_response = (
-                karrio.Tracking.fetch(self.TrackingRequest)
-                .from_(gateway)
-                .parse()
-            )
+            parsed_response = karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             self.assertListEqual(lib.to_dict(parsed_response), ParsedTrackingResponse)
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.gls.proxy.lib.request") as mock:
             mock.return_value = ErrorResponse
-            parsed_response = (
-                karrio.Tracking.fetch(self.TrackingRequest)
-                .from_(gateway)
-                .parse()
-            )
+            parsed_response = karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             self.assertListEqual(lib.to_dict(parsed_response), ParsedTrackingErrorResponse)
 
 
@@ -49,15 +43,17 @@ if __name__ == "__main__":
     unittest.main()
 
 # Test data
+# `requested` and `unitno` are kept distinct (real-world values) to guard that
+# tracking details key by `requested`, not `unitno` — see SPECS.md § Tracking.
 TrackingPayload = {
-    "tracking_numbers": ["36301917596"],
+    "tracking_numbers": ["604831862623"],
 }
 
 TrackingResponse = """{
   "parcels": [
     {
-      "requested": "36301917596",
-      "unitno": "36301917596",
+      "requested": "604831862623",
+      "unitno": "60483186262",
       "status": "INTRANSIT",
       "statusDateTime": "2024-10-11T15:24:57+0200",
       "events": [
@@ -85,7 +81,7 @@ TrackingResponse = """{
 ErrorResponse = """{
   "parcels": [
     {
-      "requested": "36301917596",
+      "requested": "604831862623",
       "errorCode": "E_404_01",
       "errorMessage": "Resource Not Found"
     }
@@ -115,12 +111,12 @@ ParsedTrackingResponse = [
                 },
             ],
             "meta": {
-                "requested": "36301917596",
+                "requested": "604831862623",
                 "status_datetime": "2024-10-11T15:24:57+0200",
-                "unitno": "36301917596",
+                "unitno": "60483186262",
             },
             "status": "in_transit",
-            "tracking_number": "36301917596",
+            "tracking_number": "604831862623",
         }
     ],
     [],
@@ -134,7 +130,7 @@ ParsedTrackingErrorResponse = [
             "carrier_id": "gls",
             "carrier_name": "gls",
             "code": "E_404_01",
-            "details": {"tracking_number": "36301917596"},
+            "details": {"tracking_number": "604831862623"},
             "message": "Resource Not Found",
         }
     ],

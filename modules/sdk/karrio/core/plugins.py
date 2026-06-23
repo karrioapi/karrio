@@ -68,14 +68,15 @@ Plugin Metadata:
         - "LSP": Logistics Service Providers (address validation, geocoding, duties calculation, etc.)
 """
 
-import os
-import sys
-import inspect
 import importlib
-import traceback
-import pkgutil
-from typing import List, Optional, Dict, Any, Tuple
 import importlib.metadata as importlib_metadata
+import inspect
+import os
+import pkgutil
+import sys
+import traceback
+from typing import Any
+
 from karrio.core.utils.logger import logger
 
 # Default plugin directories to scan
@@ -85,7 +86,7 @@ DEFAULT_PLUGINS = [
 ]
 
 # Track failed plugin loads
-FAILED_PLUGIN_MODULES: Dict[str, Any] = {}
+FAILED_PLUGIN_MODULES: dict[str, Any] = {}
 
 # Entrypoint group for Karrio plugins
 ENTRYPOINT_GROUP = "karrio.plugins"
@@ -97,6 +98,7 @@ except ImportError:
     # Create an empty module for plugins if it doesn't exist
     try:
         import types
+
         import karrio
 
         karrio.plugins = types.ModuleType("karrio.plugins")
@@ -107,7 +109,7 @@ except ImportError:
         logger.error("Failed to create karrio.plugins module", error=str(e))
 
 
-def get_custom_plugin_dirs() -> List[str]:
+def get_custom_plugin_dirs() -> list[str]:
     """
     Get custom plugin directory from environment variable.
 
@@ -162,7 +164,7 @@ def add_plugin_directory(directory: str) -> None:
             pass  # Silently ignore if references module can't be imported
 
 
-def discover_plugins(plugin_dirs: Optional[List[str]] = None) -> List[str]:
+def discover_plugins(plugin_dirs: list[str] | None = None) -> list[str]:
     """
     Discover available plugins in the specified directories.
 
@@ -177,11 +179,7 @@ def discover_plugins(plugin_dirs: Optional[List[str]] = None) -> List[str]:
     Returns:
         List of paths to valid plugin directories
     """
-    if plugin_dirs is None:
-        plugin_dirs = DEFAULT_PLUGINS
-    else:
-        # Ensure plugin_dirs has unique entries
-        plugin_dirs = list(dict.fromkeys(plugin_dirs))
+    plugin_dirs = DEFAULT_PLUGINS if plugin_dirs is None else list(dict.fromkeys(plugin_dirs))
 
     plugins = []
     for plugin_dir in plugin_dirs:
@@ -211,8 +209,8 @@ def discover_plugins(plugin_dirs: Optional[List[str]] = None) -> List[str]:
 
 
 def discover_plugin_modules(
-    plugin_dirs: Optional[List[str]] = None, module_types: List[str] = None
-) -> Dict[str, Dict[str, Any]]:
+    plugin_dirs: list[str] | None = None, module_types: list[str] = None
+) -> dict[str, dict[str, Any]]:
     """
     Discover and collect modules from plugins by type.
 
@@ -233,7 +231,7 @@ def discover_plugin_modules(
         module_types = ["plugins", "mappers"]
 
     plugin_paths = discover_plugins(plugin_dirs)
-    plugin_modules: Dict[str, Dict[str, Any]] = {}
+    plugin_modules: dict[str, dict[str, Any]] = {}
 
     for plugin_path in plugin_paths:
         plugin_name = os.path.basename(plugin_path)
@@ -276,9 +274,7 @@ def discover_plugin_modules(
                         if module_type not in plugin_modules[plugin_name]:
                             plugin_modules[plugin_name][module_type] = {}
 
-                        plugin_modules[plugin_name][module_type][
-                            submodule_name
-                        ] = module
+                        plugin_modules[plugin_name][module_type][submodule_name] = module
 
                     except Exception as e:
                         # Track failed module imports
@@ -287,7 +283,7 @@ def discover_plugin_modules(
                             plugin_name=plugin_name,
                             module_type=module_type,
                             submodule_name=submodule_name,
-                            error=str(e)
+                            error=str(e),
                         )
                         key = f"{plugin_name}.{module_type}.{submodule_name}"
                         FAILED_PLUGIN_MODULES[key] = {
@@ -302,8 +298,8 @@ def discover_plugin_modules(
 
 
 def collect_plugin_metadata(
-    plugin_modules: Dict[str, Dict[str, Any]],
-) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    plugin_modules: dict[str, dict[str, Any]],
+) -> tuple[dict[str, Any], dict[str, Any]]:
     """
     Collect metadata from discovered plugin modules.
 
@@ -392,7 +388,7 @@ def collect_plugin_metadata(
     return plugin_metadata, failed_metadata
 
 
-def load_local_plugins(plugin_dirs: Optional[List[str]] = None) -> List[str]:
+def load_local_plugins(plugin_dirs: list[str] | None = None) -> list[str]:
     """
     Load plugins from local directories into the karrio namespace.
 
@@ -412,9 +408,7 @@ def load_local_plugins(plugin_dirs: Optional[List[str]] = None) -> List[str]:
 
     plugins = discover_plugins(plugin_dirs)
     loaded_plugins = []
-    already_processed = (
-        set()
-    )  # Track which plugins have been processed to avoid duplicates
+    already_processed = set()  # Track which plugins have been processed to avoid duplicates
 
     # Ensure all required namespaces exist
     required_namespaces = ["plugins", "mappers", "providers", "schemas"]
@@ -427,6 +421,7 @@ def load_local_plugins(plugin_dirs: Optional[List[str]] = None) -> List[str]:
             # Create the module if it doesn't exist
             try:
                 import types
+
                 import karrio
 
                 module = types.ModuleType(module_name)
@@ -473,9 +468,7 @@ def load_local_plugins(plugin_dirs: Optional[List[str]] = None) -> List[str]:
 
                 # Extend the module's __path__ to include our plugin directory
                 if hasattr(target_module, "__path__"):
-                    extended_path = pkgutil.extend_path(
-                        target_module.__path__, target_module.__name__
-                    )
+                    extended_path = pkgutil.extend_path(target_module.__path__, target_module.__name__)
                     if module_dir not in extended_path:
                         extended_path.append(module_dir)
                     target_module.__path__ = extended_path
@@ -505,7 +498,7 @@ def load_local_plugins(plugin_dirs: Optional[List[str]] = None) -> List[str]:
     return loaded_plugins
 
 
-def get_failed_plugin_modules() -> Dict[str, Any]:
+def get_failed_plugin_modules() -> dict[str, Any]:
     """
     Get information about plugin modules that failed to load.
 
@@ -515,7 +508,7 @@ def get_failed_plugin_modules() -> Dict[str, Any]:
     return FAILED_PLUGIN_MODULES  # type: ignore
 
 
-def discover_entrypoint_plugins() -> Dict[str, Dict[str, Any]]:
+def discover_entrypoint_plugins() -> dict[str, dict[str, Any]]:
     """
     Discover plugins registered via setuptools entrypoints.
 
@@ -539,11 +532,7 @@ def discover_entrypoint_plugins() -> Dict[str, Dict[str, Any]]:
         elif hasattr(entry_points, "get"):  # Python 3.8, 3.9
             plugin_entry_points = entry_points.get(ENTRYPOINT_GROUP, [])  # type: ignore
         else:  # Older versions or different implementation
-            plugin_entry_points = [
-                ep
-                for ep in entry_points
-                if getattr(ep, "group", None) == ENTRYPOINT_GROUP
-            ]  # type: ignore
+            plugin_entry_points = [ep for ep in entry_points if getattr(ep, "group", None) == ENTRYPOINT_GROUP]  # type: ignore
 
         for entry_point in plugin_entry_points:
             plugin_name = entry_point.name
@@ -554,9 +543,7 @@ def discover_entrypoint_plugins() -> Dict[str, Dict[str, Any]]:
 
                 # Create a structured dict similar to discover_plugin_modules output
                 if plugin_name not in entrypoint_plugins:
-                    entrypoint_plugins[plugin_name] = {
-                        "entrypoint": {plugin_name: plugin_module}
-                    }
+                    entrypoint_plugins[plugin_name] = {"entrypoint": {plugin_name: plugin_module}}
 
             except Exception as e:
                 # Track failed entrypoint loads

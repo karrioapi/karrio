@@ -1,10 +1,11 @@
 """Karrio Hooks abstract class definition module."""
 
 import abc
+
 import attr
-import typing
-import karrio.core.models as models
+
 import karrio.core.errors as errors
+import karrio.core.models as models
 import karrio.core.settings as core_settings
 
 
@@ -16,7 +17,7 @@ class Hooks(abc.ABC):
 
     def on_webhook_event(
         self, payload: models.RequestPayload
-    ) -> typing.Tuple[models.WebhookEventDetails, typing.List[models.Message]]:
+    ) -> tuple[models.WebhookEventDetails, list[models.Message]]:
         """Process a webhook event from a carrier webservice
 
         Args:
@@ -36,7 +37,7 @@ class Hooks(abc.ABC):
 
     def on_oauth_authorize(
         self, payload: models.OAuthAuthorizePayload
-    ) -> typing.Tuple[models.OAuthAuthorizeRequest, typing.List[models.Message]]:
+    ) -> tuple[models.OAuthAuthorizeRequest, list[models.Message]]:
         """Create a OAuth authorize request for a carrier OAuth flow
 
         Args:
@@ -54,9 +55,7 @@ class Hooks(abc.ABC):
             self.settings.carrier_name,
         )
 
-    def on_oauth_callback(
-        self, payload: models.RequestPayload
-    ) -> typing.Tuple[typing.Optional[typing.Dict], typing.List[models.Message]]:
+    def on_oauth_callback(self, payload: models.RequestPayload) -> tuple[dict | None, list[models.Message]]:
         """Process a OAuth callback from a carrier webservice
 
         Args:

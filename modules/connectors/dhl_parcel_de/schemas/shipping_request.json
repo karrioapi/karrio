@@ -77,12 +77,16 @@
         },
         "bulkyGoods": true,
         "cashOnDelivery": {
-          "currency": "EUR",
-          "value": 100.00,
-          "accountHolder": "Max Mustermann",
-          "bankName": "DHL Bank",
-          "iban": "DE12345678901234567890",
-          "bic": "DHLBANKDE",
+          "amount": {
+            "currency": "EUR",
+            "value": 100.00
+          },
+          "bankAccount": {
+            "accountHolder": "Max Mustermann",
+            "bankName": "DHL Bank",
+            "iban": "DE12345678901234567890",
+            "bic": "DHLBANKDE"
+          },
           "accountReference": "Order No. 1234",
           "transferNote1": "Transfer Note 1",
           "transferNote2": "Transfer Note 2"

@@ -21,9 +21,7 @@ class Migration(migrations.Migration):
         migrations.AddIndex(
             model_name="tracingrecord",
             index=models.Index(
-                django.db.models.fields.json.KeyTextTransform(
-                    "workflow_action_id", "meta"
-                ),
+                django.db.models.fields.json.KeyTextTransform("workflow_action_id", "meta"),
                 condition=models.Q(("meta__workflow_action_id__isnull", False)),
                 name="workflow_action_idx",
             ),
@@ -31,9 +29,7 @@ class Migration(migrations.Migration):
         migrations.AddIndex(
             model_name="tracingrecord",
             index=models.Index(
-                django.db.models.fields.json.KeyTextTransform(
-                    "workflow_event_id", "meta"
-                ),
+                django.db.models.fields.json.KeyTextTransform("workflow_event_id", "meta"),
                 condition=models.Q(("meta__workflow_event_id__isnull", False)),
                 name="workflow_event_idx",
             ),

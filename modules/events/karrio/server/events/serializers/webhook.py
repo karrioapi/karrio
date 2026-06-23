@@ -1,6 +1,7 @@
-from karrio.server.serializers import owned_model_serializer
-from karrio.server.events.serializers import WebhookData, Webhook
 import karrio.server.events.models as models
+from karrio.server.events.serializers import Webhook as Webhook
+from karrio.server.events.serializers import WebhookData
+from karrio.server.serializers import owned_model_serializer
 
 
 @owned_model_serializer
@@ -11,13 +12,8 @@ class WebhookSerializer(WebhookData):
             **validated_data,
         )
 
-    def update(
-        self, instance: models.Webhook, validated_data: dict, **kwargs
-    ) -> models.Webhook:
-        if (
-            "disabled" in validated_data
-            and validated_data["disabled"] != instance.disabled
-        ):
+    def update(self, instance: models.Webhook, validated_data: dict, **kwargs) -> models.Webhook:
+        if "disabled" in validated_data and validated_data["disabled"] != instance.disabled:
             instance.failure_streak_count = 0
 
         for key, val in validated_data.items():

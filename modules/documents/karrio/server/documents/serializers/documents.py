@@ -1,5 +1,5 @@
-import karrio.server.serializers as serializers
 import karrio.server.documents.models as models
+import karrio.server.serializers as serializers
 
 
 @serializers.owned_model_serializer

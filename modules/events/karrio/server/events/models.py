@@ -1,11 +1,11 @@
 from functools import partial
-from django.db import models
-from django.conf import settings
-from django.db.models.fields import json
 
-import karrio.server.core.models as core
 import karrio.server.core.fields as core_fields
+import karrio.server.core.models as core
 import karrio.server.events.serializers.base as serializers
+from django.conf import settings
+from django.db import models
+from django.db.models.fields import json
 
 
 @core.register_model
@@ -31,9 +31,7 @@ class Webhook(core.OwnedEntity):
         help_text="Webhook events",
     )
     url = models.URLField(max_length=200)
-    secret = models.CharField(
-        max_length=100, default=partial(core.uuid, prefix="whsec_")
-    )
+    secret = models.CharField(max_length=100, default=partial(core.uuid, prefix="whsec_"))
     test_mode = models.BooleanField(null=False)
     disabled = models.BooleanField(null=True, default=False)
     description = models.CharField(max_length=200, null=True, blank=True)

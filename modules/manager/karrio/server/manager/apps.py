@@ -11,3 +11,6 @@ class ManagerConfig(AppConfig):
         from karrio.server.manager import signals
 
         signals.register_signals()
+
+        # Eager import so @background_task handlers register with the task backend.
+        from karrio.server.manager import tasks  # noqa: F401

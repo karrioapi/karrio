@@ -1,43 +1,41 @@
-from typing import Tuple, List
+import karrio.lib as lib
 import karrio.schemas.dhl_express.modify_pickup_global_req_3_0 as dhl
-from karrio.schemas.dhl_express.modify_pickup_global_res_3_0 import ModifyPUResponse
-from karrio.schemas.dhl_express.pickupdatatypes_global_3_0 import (
-    Requestor,
-    Place,
-    RequestorContact,
-    Pickup,
-    WeightSeg,
-)
-from karrio.core.utils import (
-    Serializable,
-    Element,
-    DF,
-    NF,
-    XP,
-)
 from karrio.core.models import (
+    ChargeDetails,
     Message,
     PickupDetails,
-    ChargeDetails,
     PickupUpdateRequest,
 )
 from karrio.core.units import Packages
+from karrio.core.utils import (
+    DF,
+    NF,
+    XP,
+    Element,
+    Serializable,
+)
+from karrio.providers.dhl_express.error import parse_error_response
 from karrio.providers.dhl_express.units import (
     CountryRegion,
+)
+from karrio.providers.dhl_express.units import (
     WeightUnit as DHLWeightUnit,
 )
 from karrio.providers.dhl_express.utils import Settings, reformat_time
-from karrio.providers.dhl_express.error import parse_error_response
-import karrio.lib as lib
+from karrio.schemas.dhl_express.modify_pickup_global_res_3_0 import ModifyPUResponse
+from karrio.schemas.dhl_express.pickupdatatypes_global_3_0 import (
+    Pickup,
+    Requestor,
+    RequestorContact,
+    WeightSeg,
+)
 
 
 def parse_pickup_update_response(
     _response: lib.Deserializable[lib.Element], settings: Settings
-) -> Tuple[PickupDetails, List[Message]]:
+) -> tuple[PickupDetails, list[Message]]:
     response = _response.deserialize()
-    successful = (
-        len(response.xpath(".//*[local-name() = $name]", name="ConfirmationNumber")) > 0
-    )
+    successful = len(response.xpath(".//*[local-name() = $name]", name="ConfirmationNumber")) > 0
     pickup = _extract_pickup(response, settings) if successful else None
     return pickup, parse_error_response(response, settings)
 
@@ -54,9 +52,7 @@ def _extract_pickup(response: Element, settings: Settings) -> PickupDetails:
         if pickup.PickupCharge is not None
         else None
     )
-    pickup_date = (
-        DF.fdate(pickup.NextPickupDate) if pickup.NextPickupDate is not None else None
-    )
+    pickup_date = DF.fdate(pickup.NextPickupDate) if pickup.NextPickupDate is not None else None
 
     return PickupDetails(
         carrier_name=settings.carrier_name,
@@ -69,19 +65,13 @@ def _extract_pickup(response: Element, settings: Settings) -> PickupDetails:
     )
 
 
-def pickup_update_request(
-    payload: PickupUpdateRequest, settings: Settings
-) -> Serializable:
+def pickup_update_request(payload: PickupUpdateRequest, settings: Settings) -> Serializable:
     packages = Packages(payload.parcels)
 
     request = dhl.ModifyPURequest(
-        Request=settings.Request(
-            MetaData=dhl.MetaData(SoftwareName="XMLPI", SoftwareVersion=1.0)
-        ),
+        Request=settings.Request(MetaData=dhl.MetaData(SoftwareName="XMLPI", SoftwareVersion=1.0)),
         schemaVersion=3.0,
-        RegionCode=CountryRegion[payload.address.country_code].value
-        if payload.address.country_code
-        else "AM",
+        RegionCode=CountryRegion[payload.address.country_code].value if payload.address.country_code else "AM",
         ConfirmationNumber=payload.confirmation_number,
         Requestor=Requestor(
             AccountNumber=settings.account_number,
@@ -104,9 +94,7 @@ def pickup_update_request(
             Address1=payload.address.address_line1,
             Address2=payload.address.address_line2,
         ),
-        PickupContact=RequestorContact(
-            PersonName=payload.address.person_name, Phone=payload.address.phone_number
-        ),
+        PickupContact=RequestorContact(PersonName=payload.address.person_name, Phone=payload.address.phone_number),
         Pickup=Pickup(
             Pieces=len(payload.parcels),
             PickupDate=payload.pickup_date,

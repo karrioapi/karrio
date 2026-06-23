@@ -5,16 +5,15 @@ import karrio.server.core.models as core
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('providers', '0089_servicelevel_cost_max_volume'),
+        ("providers", "0089_servicelevel_cost_max_volume"),
     ]
 
     operations = [
         # Add surcharges field to RateSheet (shared surcharge definitions)
         migrations.AddField(
-            model_name='ratesheet',
-            name='surcharges',
+            model_name="ratesheet",
+            name="surcharges",
             field=models.JSONField(
                 blank=True,
                 null=True,
@@ -24,8 +23,8 @@ class Migration(migrations.Migration):
         ),
         # Add zone_ids to ServiceLevel (references shared zones)
         migrations.AddField(
-            model_name='servicelevel',
-            name='zone_ids',
+            model_name="servicelevel",
+            name="zone_ids",
             field=models.JSONField(
                 blank=True,
                 null=True,
@@ -35,8 +34,8 @@ class Migration(migrations.Migration):
         ),
         # Add surcharge_ids to ServiceLevel (references shared surcharges)
         migrations.AddField(
-            model_name='servicelevel',
-            name='surcharge_ids',
+            model_name="servicelevel",
+            name="surcharge_ids",
             field=models.JSONField(
                 blank=True,
                 null=True,

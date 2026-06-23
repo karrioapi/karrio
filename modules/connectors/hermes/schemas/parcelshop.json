@@ -1,0 +1,24 @@
+{
+  "parcelShopNumber": "DE40501",
+  "typeID": 0,
+  "name": "Hermes PaketShop",
+  "description": "Kiosk am Essener Bogen",
+  "street": "Essener Bogen",
+  "houseNumber": "1a",
+  "city": "Hamburg",
+  "zip": "DE22419",
+  "countryIsoA2Code": "DE",
+  "countryIsoA3Code": "DEU",
+  "phone": "040 / 76114143",
+  "latitude": 53.5896,
+  "longitude": 10.0716,
+  "distance": 0.35,
+  "openToday": "08:00-18:00",
+  "hours": [
+    {
+      "weekday": 1,
+      "openFrom": "08:00",
+      "openTil": "18:00"
+    }
+  ]
+}

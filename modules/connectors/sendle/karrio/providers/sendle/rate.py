@@ -1,21 +1,20 @@
+import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
+import karrio.providers.sendle.error as error
+import karrio.providers.sendle.units as provider_units
+import karrio.providers.sendle.utils as provider_utils
 import karrio.schemas.sendle.product_request as sendle
 import karrio.schemas.sendle.product_response as rating
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
-import karrio.core.models as models
-import karrio.providers.sendle.error as error
-import karrio.providers.sendle.utils as provider_utils
-import karrio.providers.sendle.units as provider_units
 
 
 def parse_rate_response(
-    _response: lib.Deserializable[typing.List[dict]],
+    _response: lib.Deserializable[list[dict]],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+) -> tuple[list[models.RateDetails], list[models.Message]]:
     responses = _response.deserialize()
 
-    package_rates: typing.List[typing.Tuple[str, typing.List[models.RateDetails]]] = [
+    package_rates: list[tuple[str, list[models.RateDetails]]] = [
         (
             f"{_}",
             [

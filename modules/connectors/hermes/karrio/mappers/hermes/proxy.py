@@ -1,10 +1,11 @@
 """Karrio Hermes client proxy."""
 
-import karrio.lib as lib
 import karrio.api.proxy as proxy
+import karrio.core.models as models
+import karrio.lib as lib
 import karrio.mappers.hermes.settings as provider_settings
-import karrio.universal.mappers.rating_proxy as rating_proxy
 import karrio.providers.hermes.utils as provider_utils
+import karrio.universal.mappers.rating_proxy as rating_proxy
 from karrio.providers.hermes.units import LabelType
 
 
@@ -15,7 +16,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
         return super().get_rates(request)
 
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        """Create shipment order(s) with label(s). Sequential for multi-piece linking."""
+        """Create shipment order(s) with label(s); sequential for multi-piece. See SPECS.md."""
         requests_data, is_multi_piece = provider_utils.prepare_shipment_data(request)
         label_type = self.settings.connection_config.label_type.state or "PDF"
         accept_header = LabelType.map(label_type).value or "application/pdf"
@@ -46,7 +47,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
         return lib.Deserializable(responses, lambda res: res)
 
     def schedule_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        """Create a pickup order. Endpoint: POST /pickuporders"""
+        """Create a pickup order."""
         response = lib.request(
             url=f"{self.settings.server_url}/pickuporders",
             data=lib.to_json(request.serialize()),
@@ -63,7 +64,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
         return lib.Deserializable(response, lib.to_dict)
 
     def cancel_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        """Cancel a pickup order. Endpoint: DELETE /pickuporders/{pickupOrderID}"""
+        """Cancel a pickup order."""
         payload = request.serialize()
         pickup_order_id = payload.get("pickupOrderID")
 
@@ -82,7 +83,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
         return lib.Deserializable(response, lib.to_dict)
 
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        """Get tracking information. Endpoint: GET /shipmentinfo"""
+        """Get tracking information."""
         tracking_numbers = request.serialize()
         query_params = "&".join([f"shipmentID={num}" for num in tracking_numbers])
 
@@ -95,6 +96,35 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
                 "Accept": "application/json",
                 "Accept-Language": self.settings.connection_config.language.state or "DE",
                 "Authorization": f"Bearer {provider_utils.get_access_token(self.settings)}",
+            },
+        )
+
+        return lib.Deserializable(response, lib.to_dict)
+
+    def get_locations(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        """Search ParcelShops via the PSF Search API. See SPECS.md (ParcelShop finder)."""
+        api_key = self.settings.connection_config.psf_api_key.state
+        if not api_key:
+            messages = [
+                models.Message(
+                    carrier_id=self.settings.carrier_id,
+                    carrier_name=self.settings.carrier_name,
+                    code="MISSING_PSF_API_KEY",
+                    message="A ParcelShop Finder apiKey (config.psf_api_key) is required to search locations.",
+                )
+            ]
+            return lib.Deserializable(messages, lambda res: res)
+
+        endpoint = request.ctx["endpoint"]
+        query = lib.to_query_string(request.serialize())
+
+        response = lib.request(
+            url=f"{self.settings.psf_url}/{endpoint}/?{query}",
+            trace=self.trace_as("json"),
+            method="GET",
+            headers={
+                "Accept": "application/json",
+                "apiKey": api_key,
             },
         )
 

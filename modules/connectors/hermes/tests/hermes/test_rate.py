@@ -1,8 +1,10 @@
 import unittest
+
 import karrio.sdk as karrio
-from karrio.core.utils import DP
 from karrio.core.models import RateRequest
+from karrio.core.utils import DP
 from karrio.providers.hermes import units
+
 from .fixture import gateway
 
 
@@ -37,14 +39,10 @@ class TestHermesServiceFiltering(unittest.TestCase):
 
     def test_domestic_service_marked_correctly(self):
         """Test that domestic service has domicile=True."""
-        domestic_service = next(
-            (s for s in self.services if s.service_code == "hermes_standard"), None
-        )
+        domestic_service = next((s for s in self.services if s.service_code == "hermes_standard"), None)
 
         self.assertIsNotNone(domestic_service)
-        self.assertTrue(
-            domestic_service.domicile, "Domestic service should have domicile=True"
-        )
+        self.assertTrue(domestic_service.domicile, "Domestic service should have domicile=True")
 
     def test_international_service_marked_correctly(self):
         """Test that international service has international=True and domicile=False."""
@@ -131,9 +129,7 @@ class TestHermesServiceFiltering(unittest.TestCase):
             }
         )
 
-        parsed_response = (
-            karrio.Rating.fetch(international_request).from_(gateway).parse()
-        )
+        parsed_response = karrio.Rating.fetch(international_request).from_(gateway).parse()
         rates = parsed_response[0]
 
         # All returned services should be international
@@ -147,9 +143,7 @@ class TestHermesServiceFiltering(unittest.TestCase):
 
     def test_weight_limits_respected(self):
         """Test that weight limits are properly set."""
-        domestic_service = next(
-            (s for s in self.services if s.service_code == "hermes_standard"), None
-        )
+        domestic_service = next((s for s in self.services if s.service_code == "hermes_standard"), None)
 
         self.assertIsNotNone(domestic_service)
         self.assertEqual(domestic_service.min_weight, 0.01)
@@ -199,18 +193,18 @@ ParsedRateResponse = [
             "currency": "EUR",
             "extra_charges": [
                 {
-                    "amount": 6.99,
+                    "amount": 0.0,
                     "currency": "EUR",
                     "name": "Base Charge",
                 }
             ],
             "meta": {
                 "service_name": "Hermes Standard",
-                "shipping_charges": 6.99,
+                "shipping_charges": 0.0,
                 "shipping_currency": "EUR",
             },
             "service": "hermes_standard",
-            "total_charge": 6.99,
+            "total_charge": 0.0,
             "transit_days": 2,
         },
         {
@@ -219,18 +213,18 @@ ParsedRateResponse = [
             "currency": "EUR",
             "extra_charges": [
                 {
-                    "amount": 9.99,
+                    "amount": 0.0,
                     "currency": "EUR",
                     "name": "Base Charge",
                 }
             ],
             "meta": {
                 "service_name": "Hermes Next Day",
-                "shipping_charges": 9.99,
+                "shipping_charges": 0.0,
                 "shipping_currency": "EUR",
             },
             "service": "hermes_next_day",
-            "total_charge": 9.99,
+            "total_charge": 0.0,
             "transit_days": 1,
         },
         {
@@ -239,18 +233,18 @@ ParsedRateResponse = [
             "currency": "EUR",
             "extra_charges": [
                 {
-                    "amount": 6.99,
+                    "amount": 0.0,
                     "currency": "EUR",
                     "name": "Base Charge",
                 }
             ],
             "meta": {
                 "service_name": "Hermes Stated Day",
-                "shipping_charges": 6.99,
+                "shipping_charges": 0.0,
                 "shipping_currency": "EUR",
             },
             "service": "hermes_stated_day",
-            "total_charge": 6.99,
+            "total_charge": 0.0,
             "transit_days": 1,
         },
         {
@@ -259,18 +253,18 @@ ParsedRateResponse = [
             "currency": "EUR",
             "extra_charges": [
                 {
-                    "amount": 4.99,
+                    "amount": 0.0,
                     "currency": "EUR",
                     "name": "Base Charge",
                 }
             ],
             "meta": {
                 "service_name": "Hermes Parcel Shop",
-                "shipping_charges": 4.99,
+                "shipping_charges": 0.0,
                 "shipping_currency": "EUR",
             },
             "service": "hermes_parcel_shop",
-            "total_charge": 4.99,
+            "total_charge": 0.0,
             "transit_days": 2,
         },
     ],

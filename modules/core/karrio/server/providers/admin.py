@@ -6,19 +6,17 @@ Provides admin interfaces for:
 - Carrier: User/org-owned connections (registered via proxy models)
 - LabelTemplate: Hidden from admin module navigation
 """
-import functools
-from django import forms
-from django.db import models
-from django.contrib import admin
-from django.conf import settings
-from django.contrib.auth import get_user_model
 
 import karrio.lib as lib
 import karrio.references as ref
-import karrio.server.core.utils as utils
-import karrio.server.serializers as serializers
 import karrio.server.core.dataunits as dataunits
+import karrio.server.core.utils as utils
 import karrio.server.providers.models as providers
+import karrio.server.serializers as serializers
+from django import forms
+from django.contrib import admin
+from django.contrib.auth import get_user_model
+from django.db import models
 
 User = get_user_model()
 
@@ -112,26 +110,18 @@ def system_connection_admin(ext: str, connection_proxy):
                 config = instance.config or {}
 
                 # Populate credential fields
-                for key in [
-                    k for k in self.base_fields.keys() if k in connection_fields.keys()
-                ]:
+                for key in [k for k in self.base_fields.keys() if k in connection_fields.keys()]:
                     self.base_fields[key].initial = credentials.get(key)
 
                 # Populate config fields
-                for key in [
-                    k for k in self.base_fields.keys() if k in connection_configs.keys()
-                ]:
+                for key in [k for k in self.base_fields.keys() if k in connection_configs.keys()]:
                     self.base_fields[key].initial = config.get(key)
 
-            super(_Form, self).__init__(*args, **kwargs)
+            super().__init__(*args, **kwargs)
 
         def save(self, commit: bool = True):
-            config_data = lib.to_dict(
-                {key: self.cleaned_data.get(key) for key in connection_configs.keys()}
-            )
-            credentials_data = lib.to_dict(
-                {key: self.cleaned_data.get(key) for key in connection_fields.keys()}
-            )
+            config_data = lib.to_dict({key: self.cleaned_data.get(key) for key in connection_configs.keys()})
+            credentials_data = lib.to_dict({key: self.cleaned_data.get(key) for key in connection_fields.keys()})
 
             # Remove processed fields from cleaned_data
             for key in connection_fields.keys():
@@ -142,7 +132,7 @@ def system_connection_admin(ext: str, connection_proxy):
                 if key in self.cleaned_data:
                     self.cleaned_data.pop(key)
 
-            connection = super(_Form, self).save(commit)
+            connection = super().save(commit)
 
             # Save credentials
             if any(connection_fields.keys()) and (commit or connection.pk is not None):
@@ -153,9 +143,7 @@ def system_connection_admin(ext: str, connection_proxy):
 
             # Save config
             if any(connection_configs.keys()) and (commit or connection.pk is not None):
-                connection.config = serializers.process_dictionaries_mutations(
-                    ["config"], config_data, connection
-                )
+                connection.config = serializers.process_dictionaries_mutations(["config"], config_data, connection)
                 connection.save()
 
             return connection
@@ -228,7 +216,7 @@ def system_connection_admin(ext: str, connection_proxy):
         }
 
         def get_form(self, request, *args, **kwargs):
-            form = super(_Admin, self).get_form(request, *args, **kwargs)
+            form = super().get_form(request, *args, **kwargs)
             form.request = request
 
             # Customize capabilities options specific to a carrier

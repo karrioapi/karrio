@@ -1,9 +1,10 @@
-import typing
 import datetime
+import typing
 import uuid
-import karrio.lib as lib
+
 import karrio.api.proxy as proxy
 import karrio.core.errors as errors
+import karrio.lib as lib
 import karrio.providers.ups.error as provider_error
 from karrio.mappers.ups.settings import Settings
 
@@ -17,10 +18,22 @@ class Proxy(proxy.Proxy):
 
     def get_token(self) -> str:
         """Retrieve access_token using client credentials, with caching."""
-        cache_key = f"{self.settings.carrier_name}|{self.settings.client_id}|{self.settings.client_secret}"
+        # merchant_id is part of the cache key — the token is fetched with an
+        # optional x-merchant-id header (see SPECS.md § Authentication).
+        merchant_id = self.settings.connection_config.merchant_id.state
+        cache_key = "|".join(
+            filter(
+                None,
+                [
+                    self.settings.carrier_name,
+                    self.settings.connection_client_id,
+                    self.settings.connection_client_secret,
+                    merchant_id,
+                ],
+            )
+        )
 
         def fetch_token():
-            merchant_id = self.settings.connection_config.merchant_id.state
             response = lib.request(
                 url=f"{self.settings.server_url}/security/v1/oauth/token",
                 trace=self.trace_as("json"),
@@ -39,9 +52,9 @@ class Proxy(proxy.Proxy):
             if any(messages):
                 raise errors.ParsedMessagesError(messages=messages)
 
-            expiry = datetime.datetime.fromtimestamp(
-                float(response.get("issued_at")) / 1000
-            ) + datetime.timedelta(seconds=float(response.get("expires_in", 0)))
+            expiry = datetime.datetime.fromtimestamp(float(response.get("issued_at")) / 1000) + datetime.timedelta(
+                seconds=float(response.get("expires_in", 0))
+            )
             return {**response, "expiry": lib.fdatetime(expiry)}
 
         return self.settings.connection_cache.thread_safe(
@@ -95,12 +108,12 @@ class Proxy(proxy.Proxy):
 
         return lib.Deserializable(response, lib.to_dict)
 
-    def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[typing.List[typing.Tuple[str, dict]]]:
+    def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[list[tuple[str, dict]]]:
         locale = self.settings.connection_config.locale.state or "en_US"
         token = self.get_token()
         transaction_source = "karrio-test" if self.settings.test_mode else "karrio-prod"
 
-        def fetch_tracking(tracking_number: str) -> typing.Tuple[str, typing.Any]:
+        def fetch_tracking(tracking_number: str) -> tuple[str, typing.Any]:
             trans_id = str(uuid.uuid4())
 
             return (
