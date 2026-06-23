@@ -637,6 +637,7 @@ LOG_LEVEL = "DEBUG" if DEBUG else config("LOG_LEVEL", default="INFO")
 DJANGO_LOG_LEVEL = "INFO" if DEBUG else config("DJANGO_LOG_LEVEL", default="WARNING")
 LOG_FILE_DIR = config("LOG_DIR", default=WORK_DIR)
 LOG_FILE_NAME = os.path.join(LOG_FILE_DIR, "debug.log")
+LOG_COLORIZE = config("LOG_COLORIZE", default=True, cast=bool)
 DRF_TRACKING_ADMIN_LOG_READONLY = True
 
 # Option to use Loguru (default: True)
@@ -722,6 +723,7 @@ if USE_LOGURU:
             log_file=LOG_FILE_NAME,
             intercept_django=True,
             enqueue=True,  # Thread-safe async logging
+            colorize=LOG_COLORIZE,
         )
     except ImportError as e:
         # Note: Using print here as Loguru failed to load
