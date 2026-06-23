@@ -1,0 +1,1889 @@
+
+---
+openapi: 3.0.3
+info:
+  title: International Prices
+  description: |
+    Contact Us: [USPS API Support](https://emailus.usps.com/s/usps-APIs) | [Terms of Service](https://about.usps.com/termsofuse.htm)
+    
+    The International Prices API allows users to retrieve International postage rates for packages by:
+    * Look up International Base Postage based on a set of given package characteristics
+    * Look up International Base Postage based on a given SKU
+
+    The USPS&#174; has implemented Stock Keeping Units (SKUs) which provide unique identification for their products. These SKUs are available for download online for mailers.
+
+
+    For further details on package specifications, delivery information, and more, please consult the [International Mail Manual. (IMM)](https://pe.usps.com/text/imm/welcome.htm).
+    For a list of published rates please refer to the [USPS Price List](https://pe.usps.com/text/dmm300/Notice123.htm)
+    To discover the rate ingredients for this API, take a look at [Publication 205](http://postalpro.usps.com/pub205).
+
+
+
+    **Authentication, Authorization and Access Control**
+      
+      Client applications are given authorized access to protected information resources. Authorization is accomplished via the USPS&#174; Customer Onboarding Platform, where Customer Registration users may grant applications access to their protected business information. All client applications must go through this onboarding process. Any Customer Registration user wishing to share their protected business information with client application(s) may also grant authorized access.
+
+    The OAuth2, version 3 (/v3), API is based on this authorization grant and must be used to get tokens for all V3 APIs.
+    * The resulting OAuth2 access token is to be placed in the **Authorization** header, using the **Bearer** authentication scheme.
+    * All version 3 APIs validate access to protected information resources and will respond with a *401* HTTP status, *Unauthorized* reason, when the client application has not been authorized to access the given information resource.
+
+    The following APIs may include payment account or permit identification used to get contract rates.
+
+  version: 3.3.11
+
+servers:
+  - url: https://apis.usps.com/international-prices/v3
+    description: Production Environment Endpoint
+  - url: https://apis-tem.usps.com/international-prices/v3
+    description: Testing Environment Endpoint
+tags:
+- name: Resources
+  description: ""
+paths:
+  /base-rates/search:
+    post:
+      tags:
+      - Resources
+      summary: Performs a search for international SKUs and price using the submitted rate ingredients.
+      description: |
+        Given a set of SSF or scan-based rate ingredients, returns a international rates.
+        Include contract-based rates in the results when the contractId and productId are present.
+      operationId: get-international-base-rates-search
+      requestBody:
+        description: The search parameters to be used for the query.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BaseRatesQuery'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/BaseRatesQuery'
+      responses:
+        "200":
+          description: Successful Response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RateOption'
+              examples:
+                BaseRatesSearchResponseExample:
+                  $ref: '#/components/examples/BaseRatesSearchResponseExample'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/RateOption'
+        "400":
+          description: Bad Request.  There is an error in the received request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "401":
+          description: Unauthorized request.
+          headers:
+            WWW-Authenticate:
+              $ref: '#/components/headers/WWWAuthenticate'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is denied.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "404":
+          description: Resource Not Found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "429":
+          description: Too Many Requests. Too many requests have been received from client in a short amount of time.
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: Service is unavailable.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        default:
+          description: Other unanticipated errors that may occur.
+          content: {}
+      security:
+      - OAuth:
+        - international-prices
+  /extra-service-rates/search:
+    post:
+      tags:
+      - Resources
+      summary: Performs a search for international extra service SKUs using the submitted rate ingredients.
+      description: |
+        Given a set of rate ingredients, returns international extra service rates.
+        If contractId and productId are present, include contract-based rates in the results.
+      operationId: get-international-extra-service-rates-search
+      requestBody:
+        description: The search parameters to be used for the query.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExtraServiceRateQuery'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/ExtraServiceRateQuery'
+      responses:
+        "200":
+          description: Successful Response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExtraServiceRateDetails'
+              examples:
+                ExtraServiceRatesSearchResponseExample:
+                  $ref: '#/components/examples/ExtraServiceRatesSearchResponseExample'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ExtraServiceRateDetails'
+        "400":
+          description: Bad Request.  There is an error in the received request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "401":
+          description: Unauthorized request.
+          headers:
+            WWW-Authenticate:
+              $ref: '#/components/headers/WWWAuthenticate'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is denied.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "404":
+          description: Resource Not Found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "429":
+          description: Too Many Requests. Too many requests have been received from client in a short amount of time.
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: Service is unavailable.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        default:
+          description: Other unanticipated errors that may occur.
+          content: {}
+      security:
+      - OAuth:
+        - international-prices
+  /base-rates-list/search:
+    post:
+      tags:
+      - Resources
+      summary: Performs a search for a International rate (outbound only) using the submitted values.
+      description: |
+        Given size/weight/destination of pieces, returns a list of potential rates. Can also search for contract rates by providing mailer id, EPS, permit number or vendor number and account.     If searching for contract rates, then a specified mail class is required.
+      operationId: get-rate-list
+      requestBody:
+        description: The search parameters to be used for the query.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InternationalRateListQuery'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/InternationalRateListQuery'
+      responses:
+        "200":
+          description: Successful Response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternationalRateListQueryResult'
+              examples:
+                BaseRatesListSearchResponseExample:
+                  $ref: '#/components/examples/BaseRatesListSearchResponseExample'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/InternationalRateListQueryResult'
+        "400":
+          description: Bad Request.  There is an error in the received request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "401":
+          description: Unauthorized request.
+          headers:
+            WWW-Authenticate:
+              $ref: '#/components/headers/WWWAuthenticate'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is denied.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "404":
+          description: Resource Not Found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "429":
+          description: Too Many Requests. Too many requests have been received from client in a short amount of time.
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: Service is unavailable.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        default:
+          description: Other unanticipated errors that may occur.
+          content: {}
+      security:
+      - OAuth:
+        - international-prices
+  /total-rates/search:
+    post:
+      tags:
+      - Resources
+      summary: Returns an eligible price given a set of package rate ingredients.
+      description: |
+        Performs a search for base price and extraServices using the submitted rate ingredients.  If itemValue is not included the response will not include insurance, registered mail, and collect on delivery extra services.  If the extraService array is not specified then all eligible extra services will be included.
+      operationId: post-total-rates-search
+      requestBody:
+        description: The search parameters to be used for the query.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TotalRatesQuery'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/TotalRatesQuery'
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TotalRatesQueryResult'
+              examples:
+                TotalRatesSearchResponseExample:
+                  $ref: '#/components/examples/TotalRatesSearchResponseExample'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/TotalRatesQueryResult'
+        "400":
+          description: Bad Request.  There is an error in the received request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "401":
+          description: Unauthorized request.
+          headers:
+            WWW-Authenticate:
+              $ref: '#/components/headers/WWWAuthenticate'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is denied.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "404":
+          description: Resource Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "429":
+          description: Too Many Requests. Too many requests have been received from client in a short amount of time.
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: Service is unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        default:
+          description: Other unanticipated errors that may occur.
+          content: {}
+      security:
+      - OAuth:
+        - international-prices
+  /letter-rates/search:
+    post:
+      tags:
+        - Resources
+      summary: Performs a search for First-Class Mail International letter prices using the submitted rate ingredients.
+      description: |
+        Returns an eligible price given a set of letter rate ingredients for First-Class Mail International.
+      operationId: post-letter-rates-search
+      requestBody:
+        description: The search parameters to be used for the query.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InternationalLetterRatesQuery'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/InternationalLetterRatesQuery'
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LetterRatesOption'
+              examples:
+                LetterRatesSearchResponseExample:
+                  $ref: '#/components/examples/LetterRatesSearchResponseExample'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/LetterRatesOption'
+        "400":
+          description: Bad Request.  There is an error in the received request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "401":
+          description: Unauthorized request.
+          headers:
+            WWW-Authenticate:
+              $ref: '#/components/headers/WWWAuthenticate'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is denied.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "404":
+          description: Resource Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "429":
+          description: Too Many Requests. Too many requests have been received from client in a short amount of time.
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: Service is unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        default:
+          description: Other unanticipated errors that may occur.
+          content: { }
+      security:
+        - OAuth:
+            - international-prices
+components:
+  schemas:
+    BaseRatesQuery:
+      title: International Base Rates Query
+      required:
+      - destinationCountryCode
+      - destinationEntryFacilityType
+      - height
+      - length
+      - mailClass
+      - originZIPCode
+      - priceType
+      - processingCategory
+      - rateIndicator
+      - weight
+      - width
+      type: object
+      properties:
+        originZIPCode:
+          $ref: '#/components/schemas/originZIPCode'
+        weight:
+          $ref: '#/components/schemas/WeightPounds'
+        length:
+          $ref: '#/components/schemas/Length'
+        width:
+          $ref: '#/components/schemas/Width'
+        height:
+          $ref: '#/components/schemas/Height'
+        mailClass:
+          type: string
+          description: |-
+            The mail service requested.
+             * 'FIRST-CLASS_PACKAGE_INTERNATIONAL_SERVICE'
+             * 'PRIORITY_MAIL_INTERNATIONAL'
+             * 'PRIORITY_MAIL_EXPRESS_INTERNATIONAL'
+             * 'GLOBAL_EXPRESS_GUARANTEED' - Global Express Guaranteed Service is suspended as of September 29, 2024.
+          enum:
+          - FIRST-CLASS_PACKAGE_INTERNATIONAL_SERVICE
+          - PRIORITY_MAIL_INTERNATIONAL
+          - PRIORITY_MAIL_EXPRESS_INTERNATIONAL
+          - GLOBAL_EXPRESS_GUARANTEED
+        processingCategory:
+          type: string
+          description: |-
+            Value designates if shipment is `MACHINABLE`, `NONSTANDARD, or `FLATS`.
+            
+            Note:
+            * `NON_MACHINABLE` is deprecated and will convert to `NONSTANDARD` as of 01/19/2025.
+          enum:
+          - FLATS
+          - MACHINABLE
+          - NON_MACHINABLE
+          - NONSTANDARD
+        rateIndicator:
+          type: string
+          description: |-
+            Use to specify USPS&#174; containers/packaging or container attributes that may affect postage.
+             * E4 - Priority Mail Express Flat Rate Envelope - Post Office To Addressee
+             * E6 - Priority Mail Express Legal Flat Rate Envelope
+             * FA - Legal Flat Rate Envelope
+             * FB - Medium Flat Rate Box/Large Flat Rate Bag
+             * FE - Flat Rate Envelope
+             * FP - Padded Flat Rate Envelope
+             * FS - Small Flat Rate Box
+             * PA - Priority Mail Express International Single Piece
+             * PL - Large Flat Rate Box
+             * SP - Single Piece
+             * EP - ECOMPRO Single Piece
+             * HA - ECOMPRO Legal Flat Rate Envelope
+             * HB - ECOMPRO Medium Flat Rate Box
+             * HE - ECOMPRO Flat Rate Envelope
+             * HL - ECOMPRO Large Flat Rate Box
+             * HP - ECOMPRO Padded Flat Rate Envelope
+             * HS - ECOMPRO Small Flat Rate Box
+             * LE - Single-piece parcel
+          enum:
+          - E4
+          - E6
+          - E7
+          - FA
+          - FB
+          - FE
+          - FP
+          - FS
+          - PA
+          - PL
+          - SP
+          - EP
+          - HA
+          - HB
+          - HE
+          - HL
+          - HP
+          - HS
+          - LE
+        destinationEntryFacilityType:
+          type: string
+          description: "Types of Facilities \n  * NONE - Translate to Destination Rate Indicator N\n  * INTERNATIONAL_SERVICE_CENTER - Translate to Destination Rate Indicator I"
+          enum:
+          - NONE
+          - INTERNATIONAL_SERVICE_CENTER
+        priceType:
+          $ref: '#/components/schemas/InternationalPriceType'
+        mailingDate:
+          $ref: '#/components/schemas/MailingDate'
+        foreignPostalCode:
+          $ref: '#/components/schemas/ForeignPostalCode'
+        destinationCountryCode:
+          $ref: '#/components/schemas/DestinationCountryCode'
+        accountType:
+          type: string
+          description: |
+            The type of payment account linked to a contract rate.
+
+            Note:
+            - `METER` pricing is only available to PC Postage providers.
+          example: EPS
+          enum:
+          - EPS
+          - PERMIT
+          - METER
+        accountNumber:
+          pattern: ^\d+$
+          type: string
+          description: "The Enterprise Payment Account, Permit number or PC Postage meter number associated with a contract."
+      additionalProperties: false
+      description: Search parameters for base rates.
+      xml:
+        name: baseRateQuery
+        wrapped: true
+    ExtraServiceRateQuery:
+      title: International Extra Service Rate Query
+      required:
+      - destinationCountryCode
+      - mailClass
+      - priceType
+      - rateIndicator
+      - weight
+      type: object
+      properties:
+        extraServices:
+          type: array
+          description: |-
+            Extra Service Code requested
+             * `370` - USPS Delivery Duties Paid Fee
+             * `813` - HAZMAT Class 7 - Radioactive Materials Package
+             * `820` - HAZMAT Class 9 - Lithium batteries, unmarked package
+             * `826` - HAZMAT Division 6.2 – Infectious Substances Package
+             * `857` - Hazardous Material
+             * `930` - Insurance <= $500
+             * `931` - Insurance > $500
+             * `955` - Return Receipt (Unsupported as of 01/19/2025)
+          items:
+            type: integer
+            enum:
+            - 370
+            - 813
+            - 820
+            - 826
+            - 857
+            - 930
+            - 931
+            - 955
+        extraService:
+          title: Extra Service Codes
+          type: integer
+          description: |-
+            Extra Service Code requested
+             * `370` - USPS Delivery Duties Paid Fee
+             * `813` - HAZMAT Class 7 - Radioactive Materials Package
+             * `820` - HAZMAT Class 9 - Lithium batteries, unmarked package
+             * `826` - HAZMAT Division 6.2 – Infectious Substances Package
+             * `857` - Hazardous Material
+             * `930` - Insurance <= $500
+             * `931` - Insurance > $500
+             * `955` - Return Receipt (Unsupported as of 01/19/2025)
+          enum:
+          - 370
+          - 813
+          - 820
+          - 826
+          - 857
+          - 930
+          - 931
+          - 955
+        mailClass:
+          type: string
+          description: |-
+            The mail service requested.
+             * 'FIRST-CLASS_PACKAGE_INTERNATIONAL_SERVICE'
+             * 'PRIORITY_MAIL_INTERNATIONAL'
+             * 'PRIORITY_MAIL_EXPRESS_INTERNATIONAL'
+             * 'GLOBAL_EXPRESS_GUARANTEED' - Global Express Guaranteed Service is suspended as of September 29, 2024.
+          enum:
+          - FIRST-CLASS_PACKAGE_INTERNATIONAL_SERVICE
+          - PRIORITY_MAIL_INTERNATIONAL
+          - PRIORITY_MAIL_EXPRESS_INTERNATIONAL
+          - GLOBAL_EXPRESS_GUARANTEED
+        priceType:
+          type: string
+          description: "Price type can be \n  * 'RETAIL'\n  * 'COMMERCIAL'\n  * 'COMMERCIAL_PLUS'\n  * 'NSA"
+          enum:
+          - RETAIL
+          - COMMERCIAL
+          - COMMERCIAL_PLUS
+          - NSA
+        itemValue:
+          type: string
+          description: 'The value of the item. Required for Insurance and Registered Mail.'
+        weight:
+          $ref: '#/components/schemas/WeightPounds'
+        mailingDate:
+          $ref: '#/components/schemas/MailingDate'
+        rateIndicator:
+          type: string
+          description: |-
+            Use to specify USPS containers/packaging or container attributes that may affect postage.
+             * E4 - Priority Mail Express Flat Rate Envelope - Post Office To Addressee
+             * E6 - Priority Mail Express Legal Flat Rate Envelope
+             * FA - Legal Flat Rate Envelope
+             * FB - Medium Flat Rate Box/Large Flat Rate Bag
+             * FE - Flat Rate Envelope
+             * FP - Padded Flat Rate Envelope
+             * FS - Small Flat Rate Box
+             * PA - Priority Mail Express International Single Piece
+             * PL - Large Flat Rate Box
+             * SP - Single Piece
+             * EP - ECOMPRO Single Piece
+             * HA - ECOMPRO Legal Flat Rate Envelope
+             * HB - ECOMPRO Medium Flat Rate Box
+             * HE - ECOMPRO Flat Rate Envelope
+             * HL - ECOMPRO Large Flat Rate Box
+             * HP - ECOMPRO Padded Flat Rate Envelope
+             * HS - ECOMPRO Small Flat Rate Box
+             * LE - Single-piece parcel
+          enum:
+          - E4
+          - E6
+          - E7
+          - FA
+          - FB
+          - FE
+          - FP
+          - FS
+          - PA
+          - PL
+          - SP
+          - EP
+          - HA
+          - HB
+          - HE
+          - HL
+          - HP
+          - HS
+          - LE
+        destinationCountryCode:
+          $ref: '#/components/schemas/DestinationCountryCode'
+        accountType:
+          type: string
+          description: |
+            The type of payment account linked to a contract rate.
+
+            Note:
+            - `METER` pricing is only available to PC Postage providers.
+          example: EPS
+          enum:
+          - EPS
+          - PERMIT
+          - METER
+        accountNumber:
+          pattern: ^\d+$
+          type: string
+          description: "The Enterprise Payment Account, Permit number or PC Postage meter number associated with a contract."
+      additionalProperties: false
+      description: Search parameters for extra services rates.
+      xml:
+        name: extraServiceRateQuery
+        wrapped: true
+    ExtraServiceRateDetails:
+      title: International Extra Rate Details
+      description: International pricing extra service details being returned from the API.
+      type: object
+      properties:
+        extraServices:
+          description: List of extra services associated with the shipment.
+          type: array
+          items:
+            type: object
+            properties:
+              SKU:
+                $ref: '#/components/schemas/SKU'
+              price:
+                $ref: '#/components/schemas/Price'
+              priceType:
+                $ref: '#/components/schemas/InternationalPriceType'
+              extraService:
+                title: Extra Service Codes
+                type: integer
+                description: |
+                  Extra Service Code requested
+                  * `370` - USPS Delivery Duties Paid Fee
+                  * `813` - HAZMAT Class 7 - Radioactive Materials Package
+                  * `820` - HAZMAT Class 9 - Lithium batteries, unmarked package
+                  * `826` - HAZMAT Division 6.2 – Infectious Substances Package
+                  * `857` - Hazardous Material
+                  * `930` - Insurance <= $500
+                  * `931` - Insurance > $500
+                  * `955` - Return Receipt (Unsupported as of 01/19/2025)
+                example: 930
+                enum:
+                  - 370
+                  - 813
+                  - 820
+                  - 826
+                  - 857
+                  - 930
+                  - 931
+                  - 955
+              name:
+                $ref: '#/components/schemas/ExtraServiceName'
+              warnings:
+                $ref: '#/components/schemas/WarningsList'
+    ExtraServiceName:
+      type: string
+      description: Description of the Extra Service
+      example: Insurance <= $500
+    InternationalRateListQuery:
+      title: International Rate List Query
+      required:
+      - destinationCountryCode
+      - height
+      - length
+      - originZIPCode
+      - weight
+      - width
+      type: object
+      properties:
+        originZIPCode:
+          $ref: '#/components/schemas/originZIPCode'
+        foreignPostalCode:
+          $ref: '#/components/schemas/ForeignPostalCode'
+        destinationCountryCode:
+          $ref: '#/components/schemas/DestinationCountryCode'
+        weight:
+          $ref: '#/components/schemas/WeightPounds'
+        mailingDate:
+          $ref: '#/components/schemas/MailingDate'
+        length:
+          $ref: '#/components/schemas/Length'
+        width:
+          $ref: '#/components/schemas/Width'
+        height:
+          $ref: '#/components/schemas/Height'
+        priceType:
+          $ref: '#/components/schemas/InternationalPriceType'
+        mailClass:
+          type: string
+          description: |-
+            The mail service requested.
+             * 'FIRST-CLASS_PACKAGE_INTERNATIONAL_SERVICE'
+             * 'PRIORITY_MAIL_INTERNATIONAL'
+             * 'PRIORITY_MAIL_EXPRESS_INTERNATIONAL'
+             * 'GLOBAL_EXPRESS_GUARANTEED' - Global Express Guaranteed Service is suspended as of September 29, 2024.
+             * 'ALL'
+          enum:
+          - FIRST-CLASS_PACKAGE_INTERNATIONAL_SERVICE
+          - PRIORITY_MAIL_INTERNATIONAL
+          - PRIORITY_MAIL_EXPRESS_INTERNATIONAL
+          - GLOBAL_EXPRESS_GUARANTEED
+          - ALL
+        accountType:
+          type: string
+          description: |
+            The type of payment account linked to a contract rate.
+
+            Note:
+            - `METER` pricing is only available to PC Postage providers.
+          example: EPS
+          enum:
+          - EPS
+          - PERMIT
+          - METER
+        accountNumber:
+          pattern: ^\d+$
+          type: string
+          description: "The Enterprise Payment Account, Permit number or PC Postage meter number associated with a contract."
+      additionalProperties: false
+      description: Informative details about all possible rate based on the ingredients.
+      xml:
+        name: internationalratelistquery
+        wrapped: true
+    InternationalRateListQueryResult:
+      description: A list of rate options.
+      type: object
+      properties:
+        rateOptions:
+          $ref: '#/components/schemas/RateOptions'
+      xml:
+        name: rateOptions
+        wrapped: true
+    TotalRatesQuery:
+      title: Total Rates Query
+      type: object
+      description: Search parameters for base rate and extra service rate.
+      allOf:
+      - $ref: '#/components/schemas/InternationalRateListQuery'
+      - type: object
+        properties:
+          requestDutiesTaxesFees:
+            type: boolean
+            description: 'When `true` the returned `rateOption` elements will include the duties and taxes cost for each item and package fees.'
+            default: false
+          destinationCity:
+            type: string
+            maxLength: 28
+            minLength: 1
+            description: 'When `requestDutiesTaxesFees` is `true` then `destinationCity` may be required based on the country of import.'
+          destinationState:
+            type: string
+            maxLength: 2
+            minLength: 2
+            pattern: "^\\w{2}$"
+            description: 'When `requestDutiesTaxesFees` is `true` then `destinationState` may be required based on the country of import.'
+          items:
+            type: array
+            maxItems: 30
+            description: 'A list of items utilized for pricing when `requestDutiesTaxesFees` is `true`.'
+            items:
+              $ref: '#/components/schemas/TotalRatesRequestLandedCostItem'
+          itemValue:
+            type: number
+            description: 'The value of the all items in the package. Required for Insurance and Registered Mail.'
+            format: double
+            minimum: 0
+          extraServices:
+            type: array
+            description: A list of Extra Services to be included in the total rates search. If no extra services are specified all applicable extra services for the mail class will be returned.
+            items:
+              type: integer
+              description: |-
+                Extra Service Code requested
+                 * `370` - USPS Delivery Duties Paid Fee
+                 * `813` - HAZMAT Class 7 - Radioactive Materials Package
+                 * `820` - HAZMAT Class 9 - Lithium batteries, unmarked package
+                 * `826` - HAZMAT Division 6.2 – Infectious Substances Package
+                 * `857` - Hazardous Material
+                 * `930` - Insurance <= $500
+                 * `931` - Insurance > $500
+                 * `955` - Return Receipt (Unsupported as of 01/19/2025)
+              enum:
+              - 370
+              - 813
+              - 820
+              - 826
+              - 857
+              - 930
+              - 931
+              - 955
+    TotalRatesQueryResult:
+      title: Total Rate Details
+      type: object
+      properties:
+        rateOptions:
+          type: array
+          description: List of rate options including total base price and rates
+          xml:
+            name: rateOptions
+          items:
+            allOf:
+            - $ref: '#/components/schemas/RateOption'
+            - type: object
+              properties:
+                dutiesTaxesFeesQuote:
+                  type: object
+                  description: "The duties, taxes, and fees details. Included if `requestDutiesTaxesFees` is `true` and the shipping destination has applicable duties, taxes, and fees."
+                  properties:
+                    packageFee:
+                      type: number
+                      format: float
+                      description: "The value of the total landed cost fee associated with the package."
+                    itemQuotes:
+                      type: array
+                      description: "The total landed cost prices for taxes and duties on each item."
+                      items:
+                        type: object
+                        properties:
+                          dutyPrice:
+                            type: number
+                            format: float
+                            description: "The value of the duties associated with the item."
+                          taxPrice:
+                            type: number
+                            format: float
+                            description: "The value of the taxes associated with the item."
+                          itemId:
+                            type: string
+                            description: "The corresponding `itemId` provided in the request."
+                extraServices:
+                  type: array
+                  description: A list of Extra Services to be included in the total rates search. If no extra services are specified all applicable extra services for the mail class will be returned.
+                  items:
+                    type: object
+                    properties:
+                      SKU:
+                        $ref: '#/components/schemas/SKU'
+                      price:
+                        $ref: '#/components/schemas/Price'
+                      priceType:
+                        $ref: '#/components/schemas/InternationalPriceType'
+                      extraService:
+                        type: string
+                        description: Extra Service Code
+                        example: "930"
+                      name:
+                        $ref: '#/components/schemas/ExtraServiceName'
+                      warnings:
+                        $ref: '#/components/schemas/WarningsList'
+                totalPrice:
+                  type: number
+                  description: |
+                    The total price, including the `totalBasePrice` and all extra service prices.
+
+                    Note: This field is only returned when `extraServices` are passed in the request.
+                  example: 3.35
+      description: A list of rate options including applicable extra services.
+    InternationalLetterRatesQuery:
+      title: International Letter Rates Query
+      required:
+        - height
+        - length
+        - processingCategory
+        - thickness
+        - weight
+        - destinationCountryCode
+      type: object
+      properties:
+        weight:
+          $ref: '#/components/schemas/WeightOunces'
+        length:
+          minimum: 0
+          exclusiveMinimum: true
+          type: number
+          description: The letter/flat length measured in inches.  For  _`LETTERS`_ the length is the dimension parallel to the delivery address as read. For  _`FLATS`_ the length is the longest dimension.
+          format: double
+        height:
+          minimum: 0
+          exclusiveMinimum: true
+          type: number
+          description: The letter/flat height measured in inches.  The height is the dimension perpendicular to the length.
+          format: double
+        thickness:
+          minimum: 0
+          exclusiveMinimum: true
+          type: number
+          description: The letter/flat thickness measured in inches. The minimum dimension is always the thickness.
+          format: double
+        processingCategory:
+          type: string
+          description: "To be eligible for mailing at the price for letters, a piece must be:\n   * Rectangular\n   * At least 3-1/2 inches high x 5 inches long x 0.007 inch thick.\n   * No more than 6-1/8 inches high x 11-1/2 inches long x 1/4 inch thick.\n  \nFor additional information on letters, please refer to the [Postal Explorer](https://pe.usps.com/businessmail101?ViewName=Letters).\n\nThe Postal Service uses the word \"flats\" to refer to large envelopes, newsletters, and magazines. The words large envelopes and flats are used interchangeably. Whatever you call them, flats must:\n\n   * Have one dimension that is greater than 6-1/8 inches high OR 11-½ inches long OR ¼ inch thick.\n   * Be no more than 12 inches high x 15 inches long x ¾ inch thick.\n  \n For additional information on flats, please refer to the [Postal Explorer](https://pe.usps.com/businessmail101?ViewName=Flats). \n\n * LETTERS\n * FLATS         "
+          enum:
+            - LETTERS
+            - FLATS
+            - CARDS
+        mailingDate:
+          $ref: '#/components/schemas/MailingDate'
+        nonMachinableIndicators:
+          type: object
+          properties:
+            isPolybagged:
+              type: boolean
+              description: "Is the letter/flat polybagged, polywrapped, enclosed in any plastic material, or has an exterior surface made of a material that is not paper. Windows in envelopes made of paper do not make mailpieces nonmachinable. Attachments allowable under applicable eligibility standards do not make mailpieces nonmachinable."
+              default: false
+            hasClosureDevices:
+              type: boolean
+              description: "Does the letter/flat have clasps, strings, buttons, or similar closure devices."
+              default: false
+            hasLooseItems:
+              type: boolean
+              description: "Does the letter/flat contain items such as pens, pencils, keys, or coins that cause the thickness of the mailpiece to be uneven; or loose keys or coins or similar objects not affixed to the contents within the mailpiece. Loose items may cause a letter to be nonmailable when mailed in paper envelopes; (see [DMM 601.3.3](https://pe.usps.com/text/dmm300/601.htm#ep1196660))."
+              default: false
+            isRigid:
+              type: boolean
+              description: Is the letter/flat too rigid (does not bend easily when subjected to a transport belt tension of 40 pounds around an 11-inch diameter turn).
+              default: false
+            isSelfMailer:
+              type: boolean
+              description: "Is the letter/flat a self-mailer that is not prepared according to [DMM 201.3.14](https://pe.usps.com/text/dmm300/201.htm#ep1079302)."
+              default: false
+            isBooklet:
+              type: boolean
+              description: "Is the letter/flat a booklet that is not prepared according to [DMM 201.3.16](https://pe.usps.com/text/dmm300/201.htm#ep1092751)."
+              default: false
+          additionalProperties: false
+          description: Set of boolean indicators used to determine whether a letter qualifies as nonmachinable.
+        extraServices:
+          type: array
+          description: |
+            Extra Service Code requested.
+            * 940 - Registered Mail
+            * 955 - Return Receipt
+          items:
+            type: integer
+            enum:
+              - 940
+              - 955
+        destinationCountryCode:
+          $ref: '#/components/schemas/DestinationCountryCode'
+        itemValue:
+          type: number
+          description: |
+            Declared value of the item for Registered Mail.
+
+            Merchandise cannot be mailed with First-Class Mail International.  For product eligibility, please review [section 242 of the International Mail Manual](https://pe.usps.com/text/imm/immc2_018.htm).
+
+            For details on Registered Mail indemnity and availability, please review [section 333 of the International Mail Manual](https://pe.usps.com/text/imm/immc3_009.htm).
+          format: double
+          minimum: 0
+      additionalProperties: false
+      description: Letter rate ingredients for calculating base prices.
+      xml:
+        wrapped: true
+    RateOption:
+      title: Base Rates Query Result
+      type: object
+      properties:
+        totalBasePrice:
+          type: number
+          description: "The total price, including the rate, fees and pound postage."
+          example: 3.35
+        rates:
+          type: array
+          description: List of rate details, including SKU, description and rate ingredients
+          xml:
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/RateDetails'
+      additionalProperties: true
+      description: The prices that match the search criteria.
+      xml:
+        name: rateOption
+    RateDetails:
+      title: Rate Details
+      type: object
+      properties:
+        SKU:
+          type: string
+          description: The stock keeping unit for the designated rate.
+          example: DPXX0XXXXX07200
+        description:
+          type: string
+          description: The description of the price.
+        priceType:
+          type: string
+          description: |-
+            The type of price applied.
+             * Valid Options for Domestic Prices include: 'RETAIL','COMMERCIAL' & 'CONTRACT'
+             * Valid Options for International Prices include: 'RETAIL', 'COMMERCIAL', 'COMMERCIAL_BASE', 'COMMERCIAL_PLUS' & 'CONTRACT'
+          enum:
+          - RETAIL
+          - COMMERCIAL
+          - COMMERCIAL_BASE
+          - COMMERCIAL_PLUS
+          - CONTRACT
+        price:
+          type: number
+          description: The postage price.
+          format: double
+          example: 3.35
+        weight:
+          type: number
+          description: The calculated weight for the package based on user input.  The greater of dimWeight and weight will be used to calculated the rate.
+          format: double
+          example: 5
+        dimWeight:
+          type: number
+          description: The calculated dimensional weight for the package based on user provided dimensions. The greater of dimWeight and weight will be used to calculated the rate.
+          format: double
+          example: 5
+        fees:
+          type: array
+          description: The fees associated with the package.
+          xml:
+            wrapped: true
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: The name of the fee.
+              SKU:
+                type: string
+                description: The pricing SKU for the fee.
+              price:
+                type: number
+                description: The price for the fee.
+                format: double
+            xml:
+              name: fee
+        startDate:
+          type: string
+          description: Effective start date of the rate.
+          format: date
+          example: "2021-07-16"
+        endDate:
+          type: string
+          description: Effective end date of the rate.  If blank the rate doesn't have an end date as of yet.
+          pattern: '^$|^[0-9]{4}-[0-9]{2}-[0-9]{2}$'
+          example: "2021-07-16"
+        mailClass:
+          type: string
+          description: The mail class of the price.
+        zone:
+          type: string
+          description: Indicates the price group for a given `destinationCountryCode`, `mailClass`, `mailingDate`, and `rateIndicator`.
+          example: "01"
+        processingCategory:
+          type: string
+          description: |
+            Processing category for the provided rate, this value can be used in the international labels API to ensure the provided rate is applied.
+
+            * `CARDS` - Cards, translates to PTR code `0`
+            * `LETTERS` - Letters, translates to PTR code `1`
+            * `FLATS` - Flats, translates to PTR code `2`
+            * `MACHINABLE` - Machinable Parcel, translates to PTR code `3`
+            * `IRREGULAR` - Irregular Parcel, translates to PTR code `4` - This option is deprecated in favor of `NONSTANDARD` and will no longer be returned as of 01/19/2025.
+            * `NON_MACHINABLE` - Non-machinable parcel, translates to PTR code `5` - This option is deprecated in favor of `NONSTANDARD` and will no longer be returned as of 01/19/2025.
+            * `NONSTANDARD` - Nonstandard Parcel, translates to PTR code `5`
+            * `CATALOGS` - Catalogs, translates to PTR code `C`
+            * `OPEN_AND_DISTRIBUTE` - Open and Distribute, translates to PTR code `O`
+            * `RETURNS` - Returns, translates to PTR code `R`
+            * `SOFT_PACK_MACHINABLE` - Soft Pack Machinable, translates to PTR code `S`
+            * `SOFT_PACK_NON_MACHINABLE` - Soft Package Non-machinable, translates to PTR code `T`
+          enum:
+            - CARDS
+            - LETTERS
+            - FLATS
+            - MACHINABLE
+            - IRREGULAR
+            - NON_MACHINABLE
+            - NONSTANDARD
+            - CATALOGS
+            - OPEN_AND_DISTRIBUTE
+            - RETURNS
+            - SOFT_PACK_MACHINABLE
+            - SOFT_PACK_NON_MACHINABLE
+          example: MACHINABLE
+        rateIndicator:
+          type: string
+          description: Two-digit rate indicator code for the provided rate, this value can be used in the international labels API to ensure the provided rate is applied.
+          example: "SP"
+        destinationEntryFacilityType:
+          type: string
+          description: |
+            Destination Entry Facility type for the provided rate, this value can be used in the international labels API to ensure the provided rate is applied.
+
+            * `NONE` - None, translates to PTR code `N`
+            * `INTERNATIONAL_SERVICE_CENTER` - International Service Center, translates to PTR code `I`
+          enum:
+            - NONE
+            - INTERNATIONAL_SERVICE_CENTER
+          example: INTERNATIONAL_SERVICE_CENTER
+        warnings:
+          $ref: '#/components/schemas/WarningsList'
+        productName:
+          type: string
+          description: A business friendly name for a product that can be displayed to a customer on a shipping portal
+          example: Priority Mail Express International
+        productDefinition:
+          type: string
+          description: A business friendly description for a product that can be displayed to a customer on a shipping portal
+          example: Fastest international service with date-certain delivery to multiple countries.
+      additionalProperties: false
+      description: Informative details about the price.
+      xml:
+        name: rate
+    ErrorMessage:
+      title: Error
+      type: object
+      properties:
+        apiVersion:
+          type: string
+          description: The version of the API that was used and that raised the error.
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              description: The error status code that has been returned in response to the request.
+            message:
+              type: string
+              description: A human-readable message describing the error.
+            errors:
+              type: array
+              description: Additional information regarding the error that was received.
+              items:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: The status code response returned to the client.
+                  code:
+                    type: string
+                    description: An internal subordinate code used for error diagnosis.
+                  title:
+                    type: string
+                    description: A human-readable title that identifies the error.
+                  detail:
+                    type: string
+                    description: A human-readable description of the error that occurred.
+                  source:
+                    type: object
+                    properties:
+                      parameter:
+                        type: string
+                        description: The input in the request which caused an error.
+                      example:
+                        type: string
+                        description: An example of a valid value for the input parameter.
+                    additionalProperties: true
+                    description: The element that is suspected of originating the error.  Helps to pinpoint the problem.
+                additionalProperties: true
+          additionalProperties: true
+          description: The high-level error that has occurred as indicated by the status code.
+      additionalProperties: true
+      description: Standard error message response.
+    LetterRatesOption:
+      title: Letter Rates Query Result
+      type: object
+      properties:
+        totalBasePrice:
+          type: number
+          description: "The total price, including the rate and fees."
+          format: double
+          example: 0.63
+        rates:
+          type: array
+          description: List of rate details, including SKU, description and rate ingredients
+          xml:
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/LettersRateDetails'
+      additionalProperties: false
+      description: The prices that match the search criteria.
+      xml:
+        name: rateOption
+    LettersRateDetails:
+      title: Letter Rates
+      type: object
+      description: Rate Details for the request letter search criteria.
+      allOf:
+        - $ref: '#/components/schemas/LetterRateDetail'
+        - type: object
+          properties:
+            warnings:
+              type: array
+              description: List of warnings
+              xml:
+                wrapped: true
+              items:
+                type: string
+                xml:
+                  name: warning
+    LetterRateDetail:
+      title: Letter Rate Details
+      type: object
+      properties:
+        SKU:
+          type: string
+          description: The stock keeping unit for the designated rate.
+          example: DPXX0XXXXX07200
+        description:
+          type: string
+          description: The description of the price.
+          example: "First Class Letter Metered"
+        priceType:
+          type: string
+          description: The type of price type applied (Retail).
+          enum:
+            - RETAIL
+        price:
+          type: number
+          description: The postage price.
+          format: double
+          example: 3.35
+        weight:
+          type: number
+          description: The calculated weight for the package based on user input.  The greater of dimWeight and weight will be used to calculated the rate.
+          format: double
+          example: 5
+        fees:
+          type: array
+          description: The fees associated with the package.
+          xml:
+            wrapped: true
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: The name of the fee.
+              SKU:
+                type: string
+                description: The pricing SKU for the fee.
+              price:
+                type: number
+                description: The price for the fee.
+                format: double
+            xml:
+              name: fee
+        startDate:
+          type: string
+          description: Effective start date of the rate.
+          format: date
+          example: "2021-07-16"
+        endDate:
+          type: string
+          description: Effective end date of the rate.  If blank the rate doesn't have an end date as of yet.
+          pattern: '^$|^[0-9]{4}-[0-9]{2}-[0-9]{2}$'
+          example: "2021-07-16"
+        mailClass:
+          type: string
+          description: The mail class of the price.
+          enum:
+            - FIRST-CLASS_MAIL
+        extraServices:
+          type: array
+          description: A list of Extra Services to be included in the total rates search. If no extra services are specified all applicable extra services for the mail class will be returned.
+          items:
+            type: object
+            properties:
+              SKU:
+                $ref: '#/components/schemas/SKU'
+              price:
+                $ref: '#/components/schemas/Price'
+              priceType:
+                $ref: '#/components/schemas/InternationalPriceType'
+              extraService:
+                type: string
+                description: Extra Service Code
+                example: "930"
+              name:
+                $ref: '#/components/schemas/ExtraServiceName'
+              warnings:
+                $ref: '#/components/schemas/WarningsList'
+        zone:
+          type: string
+          description: Indicates the price group for a given `destinationCountryCode` and `mailingDate`.
+          example: "00"
+      additionalProperties: true
+      description: Informative details about the price.
+      xml:
+        name: rate
+    originZIPCode:
+      pattern: "^\\d{5}(?:[-\\s]\\d{4})?$"
+      type: string
+      description: The originating ZIP Code for the package.
+    ForeignPostalCode:
+      type: string
+      description: |
+        The foreign postal code for the package.
+
+        Note:
+        - Different shipping destinations may require a postal code for shipping.  For more details, review the [Individual Country Listing](https://pe.usps.com/text/imm/immctry.htm) for your shipping destination
+    WeightPounds:
+      type: number
+      description: The calculated weight for the package based on user input.  The greater of dimWeight and weight will be used to calculated the rate. Weight unit of measurement is in pounds.
+      format: double
+      example: 5
+    WeightOunces:
+      type: number
+      description: The calculated weight for the package based on user input.  The greater of dimWeight and weight will be used to calculated the rate. Weight unit of measurement is in ounces.
+      format: double
+      example: 5
+    Length:
+      type: number
+      description: The package length in inches.  The maximum dimension is always length.
+      format: double
+    Width:
+      type: number
+      description: The package width in inches.  The second longest dimension is always width.
+      format: double
+    Height:
+      type: number
+      description: The package height in inches.
+      format: double
+    InternationalPriceType:
+      type: string
+      description: Price type can be  * 'RETAIL' * 'COMMERCIAL' * 'COMMERCIAL_BASE' * 'COMMERCIAL_PLUS' * 'CONTRACT'
+      enum:
+      - RETAIL
+      - COMMERCIAL
+      - COMMERCIAL_BASE
+      - COMMERCIAL_PLUS
+      - CONTRACT
+    MailingDate:
+      type: string
+      description: 'The date the package or letter/flat will be mailed. The mailing date may be today plus 0 to 7 days in advance.        '
+      format: date
+      example: "2021-07-01"
+    SKU:
+      type: string
+      description: The stock keeping unit for the designated rate.
+      example: DPXX0XXXXX07200
+    Price:
+      type: number
+      description: The postage rate.
+      format: double
+      example: 3.35
+    RateOptions:
+      title: Base Rates Query Result
+      type: array
+      description: The prices that match the search criteria.
+      xml:
+        name: rateOptions
+      items:
+        $ref: '#/components/schemas/RateOption'
+    DestinationCountryCode:
+      title: Destination Country Code
+      pattern: ^[A-Z]{2}$
+      type: string
+      description: The ISO 3166-1 alpha-2 code representing the shipping destination.
+      example: "CA"
+    WarningsList:
+      title: Warnings
+      type: array
+      description: A list of warnings associated with the rate calculation.
+      xml:
+        wrapped: true
+      items:
+        type: object
+        properties:
+          warningCode:
+            type: string
+            description: Code representing the type of warning.
+            example: "001"
+          warningDescription:
+            type: string
+            description: Description of the warning.
+            example: "Contract rate not found for request. Published rate returned."
+        xml:
+          name: warning
+    TotalRatesRequestLandedCostItem:
+      title: Delivery Duties, Taxes, and Fees Item
+      description: 'When `requestDutiesTaxesFees` is true at least one item is required.'
+      type: object
+      required:
+        - itemId
+        - itemValue
+        - itemQuantity
+      properties:
+        itemId:
+          type: string
+          maxLength: 20
+          minLength: 1
+          description: 'A user-provided item identifier. The itemId is echoed in the response to correlate duties and taxes to this item.'
+          pattern: "^\\w{1,20}$"
+          example: "001"
+        itemValue:
+          maximum: 999999.99
+          minimum: 0.01
+          type: number
+          format: float
+          description: 'The value of the item.'
+        itemQuantity:
+          minimum: 1
+          type: number
+          description: 'The quantity of the item.'
+          example: 3
+        weight:
+          minimum: 0.001
+          type: number
+          description: The calculated weight for each individual item within a quantity based on user input.
+          format: double
+          example: 5
+        countryOfOrigin:
+          pattern: "[A-Z]{2}"
+          type: string
+          description: 'A two digit Alpha Country Code defined by ISO representing where the item is from.'
+          example: 'CA'
+        HSTariffNumber:
+          maxLength: 14
+          minLength: 6
+          type: string
+          description: 'The HS tariff number is based on the Harmonized Commodity Description and Coding System developed by the World Customs Organization.  The value should follow the regular expression pattern: `^\.*(?:[A-Za-z\d]\.*){6,14}$`.  For more information, see: [https://hts.usitc.gov/current](https://hts.usitc.gov/current).'
+  examples:
+    BaseRatesSearchResponseExample:
+      summary: Example Base Rates Search Response
+      description: An example of a base rates search response.
+      value:
+        rates:
+          - mailClass: PRIORITY_MAIL_INTERNATIONAL
+            priceType: COMMERCIAL_BASE
+            zone: "01"
+            rateIndicator: SP
+            processingCategory: MACHINABLE
+            dimWeight: 0
+            fees: [ ]
+            warnings: [ ]
+            startDate: "2025-10-05"
+            endDate: ""
+            SKU: IPXX0XXXXB01040
+            price: 50.6
+            destinationEntryFacilityType: NONE
+            weight: 4
+            description: Priority Mail International Machinable Single-piece
+        totalBasePrice: 50.6
+    ExtraServiceRatesSearchResponseExample:
+        summary: Example Extra Service Rates Search Response
+        description: An example of an extra service rates search response.
+        value:
+          extraServices:
+            - SKU: IXIE0XXXXCX0400
+              priceType: COMMERCIAL
+              price: 15.0
+              extraService: 930
+              name: Insurance <= $500
+              warnings:
+                - warningCode: "001"
+                  warningDescription: Contract rate not found for request. Published rate returned.
+    BaseRatesListSearchResponseExample:
+        summary: Example Base Rates List Search Response
+        description: An example of a base rates list search response.
+        value:
+          rateOptions:
+            - rates:
+                - mailClass: PRIORITY_MAIL_EXPRESS_INTERNATIONAL
+                  priceType: COMMERCIAL_BASE
+                  dimWeight: 0
+                  zone: "01"
+                  rateIndicator: PA
+                  processingCategory: FLATS
+                  fees: [ ]
+                  startDate: "2025-10-05"
+                  endDate: ""
+                  productName: ""
+                  productDefinition: ""
+                  SKU: IEXX0XXXXB01010
+                  price: 59.99
+                  weight: 1
+                  destinationEntryFacilityType: INTERNATIONAL_SERVICE_CENTER
+                  description: Priority Mail Express International ISC Single-piece
+              totalBasePrice: 59.99
+            - rates:
+                - mailClass: PRIORITY_MAIL_EXPRESS_INTERNATIONAL
+                  priceType: COMMERCIAL_BASE
+                  dimWeight: 0
+                  zone: "01"
+                  rateIndicator: FP
+                  processingCategory: FLATS
+                  fees: [ ]
+                  startDate: "2025-10-05"
+                  endDate: ""
+                  productName: ""
+                  productDefinition: ""
+                  SKU: IEFE2XXXXB01040
+                  price: 56.1
+                  weight: 1
+                  destinationEntryFacilityType: INTERNATIONAL_SERVICE_CENTER
+                  description: Priority Mail Express International ISC Padded Flat Rate Envelope
+              totalBasePrice: 56.1
+    TotalRatesSearchResponseExample:
+      summary: Example Total Rates Response
+      description: An example of a total rates response.
+      value:
+        rateOptions:
+          - totalBasePrice: 73.24
+            totalPrice: 73.24
+            rates:
+              - description: Priority Mail International Machinable ISC Large Flat Rate Box
+                priceType: COMMERCIAL_BASE
+                price: 73.24
+                weight: 1.2
+                dimWeight: 0.0
+                fees: [ ]
+                startDate: "2025-10-05"
+                endDate: ""
+                mailClass: PRIORITY_MAIL_INTERNATIONAL
+                zone: "01"
+                productName: ""
+                productDefinition: ""
+                processingCategory: MACHINABLE
+                rateIndicator: PL
+                destinationEntryFacilityType: INTERNATIONAL_SERVICE_CENTER
+                SKU: IPFB0XXXXB01200
+            extraServices:
+              - extraService: "930"
+                name: Insurance <= $500
+                priceType: COMMERCIAL
+                price: 0.00
+                warnings:
+                  - warningCode: "001"
+                    warningDescription: Contract rate not found for request. Published rate returned.
+                SKU: IXIP0XXXXCX0200
+          - totalBasePrice: 58.06
+            totalPrice: 58.06
+            rates:
+              - description: Priority Mail International Machinable ISC Medium Flat Rate Box
+                priceType: COMMERCIAL_BASE
+                price: 58.06
+                weight: 1.2
+                dimWeight: 0.0
+                fees: [ ]
+                startDate: "2025-10-05"
+                endDate: ""
+                mailClass: PRIORITY_MAIL_INTERNATIONAL
+                zone: "01"
+                productName: ""
+                productDefinition: ""
+                processingCategory: MACHINABLE
+                rateIndicator: FB
+                destinationEntryFacilityType: INTERNATIONAL_SERVICE_CENTER
+                SKU: IPFB1XXXXB01200
+            extraServices:
+              - extraService: "930"
+                name: Insurance <= $500
+                priceType: COMMERCIAL
+                price: 0.00
+                warnings:
+                  - warningCode: "001"
+                    warningDescription: Contract rate not found for request. Published rate returned.
+                SKU: IXIP0XXXXCX0200
+          - totalBasePrice: 29.66
+            totalPrice: 29.66
+            rates:
+              - description: Priority Mail International Machinable ISC Padded Flat Rate Envelope
+                priceType: COMMERCIAL_BASE
+                price: 29.66
+                weight: 1.2
+                dimWeight: 0.0
+                fees: [ ]
+                startDate: "2025-10-05"
+                endDate: ""
+                mailClass: PRIORITY_MAIL_INTERNATIONAL
+                zone: "01"
+                productName: ""
+                productDefinition: ""
+                processingCategory: MACHINABLE
+                rateIndicator: FP
+                destinationEntryFacilityType: INTERNATIONAL_SERVICE_CENTER
+                SKU: IPFE2XXXXB01040
+            extraServices:
+              - extraService: "930"
+                name: Insurance <= $500
+                priceType: COMMERCIAL
+                price: 0.00
+                warnings:
+                  - warningCode: "001"
+                    warningDescription: Contract rate not found for request. Published rate returned.
+                SKU: IXIP0XXXXCX0200
+          - totalBasePrice: 44.18
+            totalPrice: 44.18
+            rates:
+              - description: Priority Mail International ISC Single-piece
+                priceType: COMMERCIAL_BASE
+                price: 44.18
+                weight: 1.2
+                dimWeight: 0.0
+                fees: [ ]
+                startDate: "2025-10-05"
+                endDate: ""
+                mailClass: PRIORITY_MAIL_INTERNATIONAL
+                zone: "01"
+                productName: ""
+                productDefinition: ""
+                processingCategory: FLATS
+                rateIndicator: SP
+                destinationEntryFacilityType: INTERNATIONAL_SERVICE_CENTER
+                SKU: IPXX0XXXXB01020
+            extraServices:
+              - extraService: "930"
+                name: Insurance <= $500
+                priceType: COMMERCIAL
+                price: 0.00
+                warnings:
+                  - warningCode: "001"
+                    warningDescription: Contract rate not found for request. Published rate returned.
+                SKU: IXIP0XXXXCX0200
+          - totalBasePrice: 44.18
+            totalPrice: 44.18
+            rates:
+              - description: Priority Mail International Machinable ISC Single-piece
+                priceType: COMMERCIAL_BASE
+                price: 44.18
+                weight: 1.2
+                dimWeight: 0.0
+                fees: [ ]
+                startDate: "2025-10-05"
+                endDate: ""
+                mailClass: PRIORITY_MAIL_INTERNATIONAL
+                zone: "01"
+                productName: ""
+                productDefinition: ""
+                processingCategory: MACHINABLE
+                rateIndicator: SP
+                destinationEntryFacilityType: INTERNATIONAL_SERVICE_CENTER
+                SKU: IPXX0XXXXB01020
+            extraServices:
+              - extraService: "930"
+                name: Insurance <= $500
+                priceType: COMMERCIAL
+                price: 0.00
+                warnings:
+                  - warningCode: "001"
+                    warningDescription: Contract rate not found for request. Published rate returned.
+                SKU: IXIP0XXXXCX0200
+    LetterRatesSearchResponseExample:
+        summary: Example Letter Rates Response
+        description: An example of a letter rates response.
+        value:
+          totalBasePrice: 30.64
+          rates:
+            - SKU: IFXL0XXXXR09010
+              description: First Class Letter Metered
+              priceType: RETAIL
+              price: 1.7
+              weight: 1
+              fees:
+                - name: Nonmachinable letter fee
+                  SKU: IX1F0XXLXRX0000
+                  price: 0.49
+              startDate: "2025-10-05"
+              endDate: ""
+              warnings: [ ]
+              mailClass: FIRST-CLASS_MAIL
+              zone: "00"
+              extraServices:
+                - warnings: [ ]
+                  priceType: RETAIL
+                  SKU: IXRF0XXXXRX0000
+                  price: 6.7
+                  name: Return Receipt
+                  extraService: "955"
+                - warnings: [ ]
+                  priceType: RETAIL
+                  SKU: IXGF0XXXXRX0000
+                  price: 21.75
+                  name: Registered Mail
+                  extraService: "940"
+  headers:
+    WWWAuthenticate:
+      description: Hint to the client application which security scheme to authorize a resource request.
+      required: false
+      schema:
+        type: string
+        example: "WWW-Authenticate: Bearer realm=\"https://api.usps.com\""
+    RetryAfter:
+      description: Indicate to the client application a time after which they can retry a resource request.
+      required: false
+      schema:
+        type: string
+        example: "Retry-After: 30"
+  securitySchemes:
+    OAuth:
+      type: oauth2
+      description: The specified APIs accept an access token formatted as a JSON Web Token. The relative path to the OAuth2 version 3 API which supplies this access token is provided below for reference.
+      flows:
+        clientCredentials:
+          tokenUrl: /oauth2/v3/token
+          scopes:
+            international-prices: get prices based on ingredients
+        authorizationCode:
+          authorizationUrl: /oauth2/v3/authorize
+          tokenUrl: /oauth2/v3/token
+          scopes:
+            international-prices: get prices based on ingredients

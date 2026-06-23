@@ -30,7 +30,7 @@ info:
     The following APIs may include payment account or permit identification used to get contract rates.
 
     If all mail classes are needed, please use the /total-rates/search endpoint.
-  version: 3.4.27
+  version: 3.4.30
 servers:
   - url: https://apis.usps.com/prices/v3
     description: Production Environment Endpoint
@@ -557,15 +557,15 @@ components:
           description: This is destination ZIP Code&#8482; for the package.
           example: "63118"
         weight:
-          $ref: '#/components/schemas/weightPounds'
+          $ref: '#/components/schemas/WeightPounds'
         length:
-          $ref: '#/components/schemas/length'
+          $ref: '#/components/schemas/Length'
         width:
-          $ref: '#/components/schemas/width'
+          $ref: '#/components/schemas/Width'
         height:
-          $ref: '#/components/schemas/height'
+          $ref: '#/components/schemas/Height'
         mailClass:
-          $ref: '#/components/schemas/mailClass'
+          $ref: '#/components/schemas/MailClass'
         processingCategory:
           type: string
           description: |-
@@ -689,9 +689,9 @@ components:
             - DESTINATION_SERVICE_HUB
             - DESTINATION_REGIONAL_PROCESSING_DISTRIBUTION_CENTER
         priceType:
-          $ref: '#/components/schemas/priceType'
+          $ref: '#/components/schemas/PriceType'
         mailingDate:
-          $ref: '#/components/schemas/mailingDate'
+          $ref: '#/components/schemas/MailingDate'
         accountType:
           type: string
           description: |
@@ -731,25 +731,25 @@ components:
       type: object
       properties:
         originZIPCode:
-          $ref: '#/components/schemas/originZIPCode'
+          $ref: '#/components/schemas/OriginZIPCode'
         destinationZIPCode:
-          $ref: '#/components/schemas/destinationZIPCode'
+          $ref: '#/components/schemas/DestinationZIPCode'
         weight:
-          $ref: '#/components/schemas/weightPounds'
+          $ref: '#/components/schemas/WeightPounds'
         length:
-          $ref: '#/components/schemas/length'
+          $ref: '#/components/schemas/Length'
         width:
-          $ref: '#/components/schemas/width'
+          $ref: '#/components/schemas/Width'
         height:
-          $ref: '#/components/schemas/height'
+          $ref: '#/components/schemas/Height'
         mailClass:
-          $ref: '#/components/schemas/mailClassOutboundOnly'
+          $ref: '#/components/schemas/MailClassOutboundOnly'
         mailClasses:
-          $ref: '#/components/schemas/mailClassesOutboundOnly'
+          $ref: '#/components/schemas/MailClassesOutboundOnly'
         priceType:
-          $ref: '#/components/schemas/priceType'
+          $ref: '#/components/schemas/PriceType'
         mailingDate:
-          $ref: '#/components/schemas/mailingDate'
+          $ref: '#/components/schemas/MailingDate'
         accountType:
           type: string
           description: The type of payment account linked to a contract rate.
@@ -780,16 +780,16 @@ components:
         extraServices:
           $ref: '#/components/schemas/ExtraService'
         mailClass:
-          $ref: '#/components/schemas/mailClass'
+          $ref: '#/components/schemas/MailClass'
         priceType:
-          $ref: '#/components/schemas/priceType'
+          $ref: '#/components/schemas/PriceType'
         itemValue:
           type: number
           description: The value of the item. Required for Insurance and Collect On Delivery.  The price for Insurance, Registered Mail, and Collect On Delivery extra services will vary based on this value.
           format: double
           minimum: 0
         weight:
-          $ref: '#/components/schemas/weightPounds'
+          $ref: '#/components/schemas/WeightPounds'
         originZIPCode:
           pattern: "^\\d{5}(?:[-\\s]\\d{4})?$"
           type: string
@@ -799,7 +799,7 @@ components:
           type: string
           description: The destination ZIP code for the package.
         mailingDate:
-          $ref: '#/components/schemas/mailingDate'
+          $ref: '#/components/schemas/MailingDate'
         accountType:
           type: string
           description: The type of payment account linked to a contract rate.
@@ -822,18 +822,18 @@ components:
       type: object
       properties:
         extraServices:
-         $ref: '#/components/schemas/ExtraServices'
+          $ref: '#/components/schemas/ExtraServices'
         mailClass:
-          $ref: '#/components/schemas/mailClass'
+          $ref: '#/components/schemas/MailClass'
         priceType:
-          $ref: '#/components/schemas/priceType'
+          $ref: '#/components/schemas/PriceType'
         itemValue:
           type: number
           description: The value of the item. Required for Insurance and Collect On Delivery.  The price for Insurance, Registered Mail, and Collect On Delivery extra services will vary based on this value.
           format: double
           minimum: 0
         weight:
-          $ref: '#/components/schemas/weightPounds'
+          $ref: '#/components/schemas/WeightPounds'
         originZIPCode:
           pattern: "^\\d{5}(?:[-\\s]\\d{4})?$"
           type: string
@@ -843,7 +843,7 @@ components:
           type: string
           description: The destination ZIP code for the package.
         mailingDate:
-          $ref: '#/components/schemas/mailingDate'
+          $ref: '#/components/schemas/MailingDate'
         accountType:
           type: string
           description: |
@@ -1247,6 +1247,7 @@ components:
       type: object
       properties:
         rateOptions:
+          description: List of total rate details
           type: array
           items:
             allOf:
@@ -1279,7 +1280,7 @@ components:
       type: object
       properties:
         weight:
-          $ref: '#/components/schemas/weightOunces'
+          $ref: '#/components/schemas/WeightOunces'
         length:
           minimum: 0
           exclusiveMinimum: true
@@ -1332,7 +1333,7 @@ components:
             - FLATS
             - CARDS
         mailingDate:
-          $ref: '#/components/schemas/mailingDate'
+          $ref: '#/components/schemas/MailingDate'
         nonMachinableIndicators:
           type: object
           properties:
@@ -1661,6 +1662,7 @@ components:
         - type: object
           properties:
             warnings:
+              description: List of warnings
               type: array
               xml:
                 wrapped: true
@@ -1735,39 +1737,40 @@ components:
       description: Informative details about the price.
       xml:
         name: rate
-    weightPounds:
+    WeightPounds:
       type: number
       description: This is the calculated weight for the package based on user input.  The greater of dimWeight and weight will be used to calculated the rate. Weight unit of measurement is in pounds.
       format: double
       example: 5
-    weightOunces:
+    WeightOunces:
       type: number
       description: This is the calculated weight for the package based on user input.  The greater of dimWeight and weight will be used to calculated the rate. Weight unit of measurement is in ounces.
       format: double
       example: 5
-    length:
+    Length:
       type: number
       description: This is the package length in inches.  The maximum dimension is always length.
       format: double
-    width:
+    Width:
       type: number
       description: This is the package width in inches.  The second longest dimension is always width.
       format: double
-    height:
+    Height:
       type: number
       description: This is the package height in inches.
       format: double
-    mailClass:
+    MailClass:
       type: string
       description: |-
         The mail service requested.
 
         Note:
-        - `PARCEL_SELECT_LIGHTWEIGHT` is deprecated and will convert to `PARCEL_SELECT`
-        - `FIRST-CLASS_PACKAGE_SERVICE` is deprecated and will convert to `USPS_GROUND_ADVANTAGE`
-        - `FIRST-CLASS_PACKAGE_RETURN_SERVICE` is deprecated and will convert to `USPS_GROUND_ADVANTAGE_RETURN_SERVICE`
-        - `GROUND_RETURN_SERVICE` is deprecated and will convert to `USPS_GROUND_ADVANTAGE_RETURN_SERVICE`
-        - `USPS_RETAIL_GROUND` is no longer supported and will return a 400 if used
+        - `PARCEL_SELECT_LIGHTWEIGHT` is deprecated and will convert to `PARCEL_SELECT`.
+        - `FIRST-CLASS_PACKAGE_SERVICE` is deprecated and will convert to `USPS_GROUND_ADVANTAGE`.
+        - `FIRST-CLASS_PACKAGE_RETURN_SERVICE` is deprecated and will convert to `USPS_GROUND_ADVANTAGE_RETURN_SERVICE`.
+        - `GROUND_RETURN_SERVICE` is deprecated and will convert to `USPS_GROUND_ADVANTAGE_RETURN_SERVICE`.
+        - `USPS_RETAIL_GROUND` is no longer supported and will return a 400 if used.
+        - Certain mail classes, such as `MEDIA_MAIL`, `BOUND_PRINTED_MATTER`, and `LIBRARY_MAIL`, have eligibility rules on what can be mailed using that service.  For more details on these mail classes, please visit [What are Package Services?](https://faq.usps.com/s/article/What-are-Package-Services).
       enum:
         - PARCEL_SELECT
         - PARCEL_SELECT_LIGHTWEIGHT
@@ -1788,31 +1791,37 @@ components:
         - PRIORITY_MAIL_RETURN_SERVICE
         - PRIORITY_MAIL_EXPRESS_RETURN_SERVICE
       example: USPS_GROUND_ADVANTAGE
-    priceType:
+    PriceType:
       type: string
-      description: Price type can be  * 'RETAIL' * 'COMMERCIAL' * 'CONTRACT' * 'NSA' (deprecated)
+      description:
+        The type of price applied (Retail, Commercial, Contract, NSA (deprecated)). If an accountNumber is provided, it overrides the requested priceType and the response will return contract rates (if they exist for that account).
       enum:
         - RETAIL
         - COMMERCIAL
         - CONTRACT
         - NSA
       example: COMMERCIAL
-    mailingDate:
+    MailingDate:
       type: string
-      description: 'The date the package or letter/flat/card will be mailed. The mailing date may be today plus 0 to 7 days in advance.        '
+      description: |
+        The date the package or letter/flat/card will be mailed.
+        
+        The mailing date may be today plus 0 to 7 days in advance.
+        
+        Enter the date in the full-date notation as defined by [RFC 3339, section 5.6](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6).
       format: date
       example: "2021-07-01"
-    originZIPCode:
+    OriginZIPCode:
       pattern: "^\\d{5}(?:[-\\s]\\d{4})?$"
       type: string
       description: The originating ZIP code for the package.
       example: "22407"
-    destinationZIPCode:
+    DestinationZIPCode:
       pattern: "^\\d{5}(?:[-\\s]\\d{4})?$"
       type: string
       description: The destination ZIP code for the package.
       example: "63118"
-    mailClassOutboundOnly:
+    MailClassOutboundOnly:
       type: string
       description: |-
         The mail service requested.
@@ -1838,20 +1847,21 @@ components:
         - USPS_GROUND_ADVANTAGE
         - USPS_RETAIL_GROUND
         - ALL
-    mailClassesOutboundOnly:
+    MailClassesOutboundOnly:
       type: array
       description: |
-        An list of mail classes
+        A list of mail classes.
 
         Note:
-        - `PARCEL_SELECT_LIGHTWEIGHT` is deprecated and will convert to `PARCEL_SELECT`
-        - `FIRST-CLASS_PACKAGE_SERVICE` is deprecated and will convert to `USPS_GROUND_ADVANTAGE`
-        - `USPS_RETAIL_GROUND` is no longer supported and will return a 400 if used
+        - `PARCEL_SELECT_LIGHTWEIGHT` is deprecated and will convert to `PARCEL_SELECT`.
+        - `FIRST-CLASS_PACKAGE_SERVICE` is deprecated and will convert to `USPS_GROUND_ADVANTAGE`.
+        - `USPS_RETAIL_GROUND` is no longer supported and will return a 400 if used.
+        - Certain mail classes, such as `MEDIA_MAIL`, `BOUND_PRINTED_MATTER`, and `LIBRARY_MAIL`, have eligibility rules on what can be mailed using that service.  For more details on these mail classes, please visit [What are Package Services?](https://faq.usps.com/s/article/What-are-Package-Services).
       example:
         - USPS_GROUND_ADVANTAGE
         - PARCEL_SELECT
       items:
-        $ref: '#/components/schemas/mailClassOutboundOnly'
+        $ref: '#/components/schemas/MailClassOutboundOnly'
     RateOptions:
       title: Base Rates Query Result
       type: array

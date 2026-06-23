@@ -29,7 +29,7 @@ class Settings(core.Settings):
 
     @property
     def server_url(self):
-        return "https://api-cat.usps.com" if self.test_mode else "https://apis.usps.com"
+        return "https://apis-tem.usps.com" if self.test_mode else "https://apis.usps.com"
 
     @property
     def tracking_url(self):

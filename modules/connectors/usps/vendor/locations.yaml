@@ -1,0 +1,1563 @@
+openapi: 3.0.1
+info:
+  title: Locations
+  description: |
+    Contact Us: [USPS API Support](https://emailus.usps.com/s/usps-APIs) | [Terms of Service](https://about.usps.com/termsofuse.htm)
+
+    The U.S. Postal Service&#174; offers services at locations other than a Post Office. The Locations API can be used to find USPS&#174; facility addresses, hours of operations, available services, locker lookup, and more. USPS&#174; has specific rules to receive destination entry rates at eligible entry locations. The Locations APIs can be used to find these locations to use in the Labels API when creating shipping labels as the destination entry facility address.
+  version: 3.5.6
+servers:
+- url: https://apis.usps.com/locations/v3
+  description: Production Environment Endpoint
+- url: https://apis-tem.usps.com/locations/v3
+  description: Testing Environment Endpoint
+paths:
+  /dropoff-locations:
+    get:
+      tags:
+      - Resources
+      summary: Lookup a valid entry location for destination entry parcels
+      description: "The Drop Off Location API can be used to find convenient \nUSPS&#174; entry facilities for destination entry volume. If you supply a valid\n5-digit destination ZIP Code&#8482; and optional parameters you will be provided \nwith one or more acceptable entry locations which can be utilized to prevent mis-shipped adjustments. \n\nThis API can be used in lieu of the Parcel, Address, and Mail Direction Files \ncurrently available through FAST. "
+      operationId: get-dropoff-location
+      parameters:
+      - $ref: '#/components/parameters/DestinationZIPCode'
+      - $ref: '#/components/parameters/DestinationZIPPlus4'
+      - $ref: '#/components/parameters/MailClass'
+      - $ref: '#/components/parameters/ProcessingCategory'
+      - $ref: '#/components/parameters/DestinationEntryFacilityType'
+      - $ref: '#/components/parameters/Palletized'
+      - $ref: '#/components/parameters/MailingDate'
+      responses:
+        "200":
+          description: Successful Operation. If no facilities match the provided search criteria, the response array will be empty (`[]`).
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DropShipmentLocation'
+            application/xml:
+              schema:
+                type: array
+                xml:
+                  name: dropShipmentLocations
+                  wrapped: true
+                items:
+                  $ref: '#/components/schemas/DropShipmentLocation'
+        "400":
+          description: Invalid Address Information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "401":
+          description: Unauthorized
+          headers:
+            WWW-Authenticate:
+              $ref: '#/components/headers/WWWAuthenticate'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access Denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "429":
+          description: Too Many Requests. Too many requests have been received from client in a short time.
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: Service Unavailable
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        default:
+          description: An unknown error has occurred.
+          content: {}
+      security:
+      - OAuth:
+        - locations
+  /post-office-locations:
+    get:
+      tags:
+      - Resources
+      summary: Get a list of post office locations based on the search criteria
+      description: "A complete query consists of one of the following:\n  * Complete domestic address \n  * City/State Pair \n  * ZIP Code&#8482; \n  * Latitude/Longitude pair\n\nUsers can provide additional filters such as a radius (distance and units, defaults to 20 miles), location type, desired services, open times, and package dimensions."
+      operationId: get-post-office-location
+      parameters:
+      - $ref: '#/components/parameters/StreetAddress'
+      - $ref: '#/components/parameters/SecondaryAddress'
+      - $ref: '#/components/parameters/City'
+      - $ref: '#/components/parameters/State'
+      - $ref: '#/components/parameters/Urbanization'
+      - $ref: '#/components/parameters/ZIPCode'
+      - $ref: '#/components/parameters/ZIPPlus4'
+      - $ref: '#/components/parameters/Latitude'
+      - $ref: '#/components/parameters/Longitude'
+      - $ref: '#/components/parameters/PostOfficeType'
+      - $ref: '#/components/parameters/MailingService'
+      - $ref: '#/components/parameters/BusinessService'
+      - $ref: '#/components/parameters/PassportService'
+      - $ref: '#/components/parameters/PickupService'
+      - $ref: '#/components/parameters/FinancialService'
+      - $ref: '#/components/parameters/Hours'
+      - $ref: '#/components/parameters/Radius'
+      - $ref: '#/components/parameters/Length'
+      - $ref: '#/components/parameters/Width'
+      - $ref: '#/components/parameters/Height'
+      - $ref: '#/components/parameters/offsetParam'
+      - $ref: '#/components/parameters/limitParam'
+      responses:
+        "200":
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  locations:
+                    description: A list of Post Office locations that match the search criteria, sorted by distance (closest first).
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PostOfficeLocation'
+                  warnings:
+                    type: array
+                    readOnly: true
+                    xml:
+                      wrapped: true
+                    items:
+                      type: object
+                      properties:
+                        warningCode:
+                          type: string
+                        warningDescription:
+                          type: string
+                      xml:
+                        name: warning
+                  metadata:
+                    $ref: '#/components/schemas/PaginationMetadata'
+            application/xml:
+              schema:
+                type: object
+                properties:
+                  locations:
+                    type: array
+                    xml:
+                      name: postOfficeLocations
+                      wrapped: true
+                    items:
+                      $ref: '#/components/schemas/PostOfficeLocation'
+                  metadata:
+                    $ref: '#/components/schemas/PaginationMetadata'
+                xml:
+                  name: locations
+                  wrapped: true
+        "400":
+          description: Invalid Address Information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "401":
+          description: Unauthorized
+          headers:
+            WWW-Authenticate:
+              $ref: '#/components/headers/WWWAuthenticate'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access Denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "429":
+          description: Too Many Requests. Too many requests have been received from client in a short time.
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: Service Unavailable
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        default:
+          description: An unknown error has occurred.
+          content: {}
+  /parcel-locker-locations:
+    get:
+      tags:
+        - Resources
+      summary: Get a list of USPS Parcel Lockers based on the search criteria.
+      description: |
+        The Parcel Locker Locations API can be used to search for operational USPS Parcel Locker locations by city/state combination or ZIP code.
+        
+        Parcel lockers are uniquely identified by their facility ID, found in the `facilityId` field. A parcel locker's facility ID is required when creating a label for a package destined for a parcel locker.  Labels can be created via the [Domestic Labels 3.0 API](https://developer.usps.com/domesticlabelsv3).
+
+        A complete query consists of one of the following:
+        - City/State Pair
+        - ZIP Code&#8482;
+        - City/State Pair and ZIP Code&#8482;
+
+        Notes:
+          - Parcel locker data is broken up ("paginated") across several requests using the `offset=0&limit=50` query parameters.  Please see the documentation for each parameter.
+      operationId: get-parcel_locker-location
+      parameters:
+        - name: city
+          in: query
+          schema:
+            type: string
+            maxLength: 200
+          description: |
+            This is the city to search.  Clients should URI-encode this value so that spaces are properly represented.  For example, if looking for
+            parcel lockers in "Los Angeles", the `city` parameter's value should look like this: `city=Los%20Angeles`. (Note: the space is converted to `%20`.)
+
+            Notes:
+              - If `city` is set, then `state` must also be set.  The API will respond with a 400 Bad Request if `state` does not accompany `city`.
+          required: false
+          example: "Johnston"
+        - name: state
+          in: query
+          schema:
+            type: string
+            maxLength: 2
+            minLength: 2
+            pattern: ^(AA|AE|AL|AK|AP|AS|AZ|AR|CA|CO|CT|DE|DC|FM|FL|GA|GU|HI|ID|IL|IN|IA|KS|KY|LA|ME|MH|MD|MA|MI|MN|MS|MO|MP|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PW|PA|PR|RI|SC|SD|TN|TX|UT|VT|VI|VA|WA|WV|WI|WY)$
+          description: |
+            This is the two-character code for the state to search.
+
+            Notes:
+              - If `state` is set, then `city` must also be set.  The API will respond with a 400 Bad Request if `city` does not accompany `state`.
+          required: false
+          example: "IA"
+        - name: ZIPCode
+          in: query
+          schema:
+            type: string
+            pattern: "^\\d{5}$"
+          description: |
+            This is the 5-digit ZIP code.  Nine-digit and eleven-digit ZIP codes are not accepted.
+          required: false
+          example: "50131"
+        - name: offset
+          in: query
+          schema:
+            type: number
+            minimum: 0
+            maximum: 500
+            default: 0
+          description: |
+            Specifies the number of parcel lockers to skip.
+
+            Examples:
+              - Given the request `GET /parcel-locker-locations?offset=0&limit=20`, if there are 100 total results, the response will contain the first 20 parcel lockers available at that ZIPCode.  See the documentation on the `limit` parameter.
+              - Given the request `GET /parcel-locker-locations?ZIPCode=56789&offset=40&limit=20`, if there are 100 total results, the API will skip the first 40 parcel lockers and respond with the next 20.
+              - Given the request `GET /parcel-locker-locations?city=Denver&state=CO&offset=20&limit=20`, if there are 15 total results, the response will include no parcel lockers because the API skipped over all 15 lockers.
+          style: form
+        - name: limit
+          in: query
+          schema:
+            type: number
+            default: 30
+            minimum: 1
+            maximum: 100
+          description: |
+            Indicates how many parcel lockers to include in the response.
+
+            Notes:
+              - If the number of total results is less than `limit`, then all results are returned.
+              - The last page will have the remaining amount of parcel lockers out of the total amount if the value of `limit` does not evenly divide by the total amount of parcel lockers that match the city/state or ZIPCode.
+          style: form
+          example: 60
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParcelLockerLocation'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ParcelLockerLocation'
+        "400":
+          description: Bad Request.  There is an error in the received request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            examples: {}
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "401":
+          description: Unauthorized request.
+          headers:
+            WWW-Authenticate:
+              $ref: '#/components/headers/WWWAuthenticate'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            examples: {}
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is denied.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            examples: {}
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "429":
+          description: Too Many Requests. Too many requests have been received from client in a short amount of time.
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            examples: {}
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: Service is unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            examples: {}
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        default:
+          description: Other unanticipated errors that may occur.
+          content: {}
+      security:
+        - OAuth:
+            - parcel-locker
+components:
+  schemas:
+    ParcelLockerLocation:
+      title: Parcel Locker Location
+      type: array
+      items:
+        type: object
+        properties:
+          facilityID:
+            type: string
+            description: Unique identifier of the Post Office where the parcel locker is located.
+            example: "1368559"
+          locationName:
+            type: string
+            description: The name of the facility where the parcel locker is located.
+            example: JOSE MARTI
+          locationAddress:
+            $ref: '#/components/schemas/DomesticAddress'
+          latitude:
+            type: number
+            description: The latitude geo coordinate.
+            example: 38.8951
+          longitude:
+            type: number
+            description: The longitude geo coordinate.
+            example: -77.0364
+          deliveryAddress:
+            $ref: '#/components/schemas/DomesticAddress'
+          deliveryPoint:
+            type: string
+            description: 2-digit Delivery Point Code (DPC) of the Parcel Locker.
+          lockerStatus:
+            type: string
+            description: The current status of the parcel locker.
+          lockerOnline:
+            type: boolean
+            description: Indicates whether the parcel locker is currently online or offline.
+          lockerSizeMaximumLength:
+            type: number
+            description: Length of the largest locker.
+            format: double
+          lockerSizeMaximumWidth:
+            type: number
+            description: Width of the largest locker.
+            format: double
+          lockerSizeMaximumHeight:
+            type: number
+            description: Height of the largest locker.
+            format: double
+          serviceDirectShip:
+            type: boolean
+            description: Indicates whether the parcel locker can accept Direct-to-Locker packages.
+          serviceRedelivery:
+            type: boolean
+            description: Indicates whether the parcel locker can accept redelivery packages.
+          servicePOBoxOverflow:
+            type: boolean
+            description: Indicates whether the parcel locker can accept packages that do not fit into a PO Box.
+          servicePrepaid:
+            type: boolean
+            deprecated: true
+            description: DEPRECATED, replaced by `servicePrepaidReturns`. Indicates whether the parcel locker can accept prepaid returns packages.
+          servicePrepaidReturns:
+            type: boolean
+            description: Indicates whether the parcel locker can accept prepaid returns packages.
+          serviceLabelPrinting:
+            type: boolean
+            description: Indicates whether the parcel locker has printing capability.
+    DropShipmentLocation:
+      title: Parcel Drop Shipment Facility Location
+      type: object
+      properties:
+        dropShipmentKey:
+          type: string
+          description: the unique identifier for the facility.
+          example: SV21038
+        facilityName:
+          type: string
+          description: The name of the facility.
+          example: LEnfant Plaza
+        facilityAddress:
+          type: object
+          properties:
+            address:
+              $ref: '#/components/schemas/DomesticAddress'
+          example:
+            streetAddress: 100 MAIN ST
+            secondaryAddress: APT 101
+            city: ANYTOWN
+            state: VA
+            ZIPCode: "99999"
+            ZIPPlus4: "9999"
+        dropSitePhoneNumber:
+          pattern: "\\d{10}"
+          type: string
+          description: The phone number for the facility.
+          example: "9999999999"
+        destinationZIPCode:
+          $ref: '#/components/schemas/ZIPCode'
+        destinationEntryFacilityType:
+          type: string
+          description: |-
+            The destination entry service accepted at the facility.
+            
+            Note:
+            * Effective 01/18/2026: `DESTINATION_NETWORK_DISTRIBUTION_CENTER` with `PARCEL_SELECT` is no longer eligible.
+            * Effective 01/18/2026: (NSA Only) `DESTINATION_REGIONAL_PROCESSING_DISTRIBUTION_CENTER` with `PARCEL_SELECT` is available as an option.
+          example: DESTINATION_DELIVERY_UNIT
+          enum:
+          - DESTINATION_NETWORK_DISTRIBUTION_CENTER
+          - DESTINATION_SECTIONAL_CENTER_FACILITY
+          - DESTINATION_SERVICE_HUB
+          - DESTINATION_DELIVERY_UNIT
+          - DESTINATION_REGIONAL_PROCESSING_DISTRIBUTION_CENTER
+        acceptedPackageTypes:
+          type: array
+          description: Accepted Package Types at USPS&#174; Destination Entry Drop Shipment Location.
+          xml:
+            name: acceptedPackageTypes
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/AcceptedPackageTypes'
+        dropShipAcceptanceTimes:
+          type: array
+          description: The available acceptance times and days for drop shipments.
+          items:
+            $ref: '#/components/schemas/HoursOfOperation'
+        dropShipmentFacilityDetails:
+          $ref: '#/components/schemas/FacilityDetails'
+        USPSConnectDetails:
+          $ref: '#/components/schemas/USPSConnect'
+        timeZone:
+          type: string
+          description: The time zone returned for a given facility.
+        DSTObserved:
+          type: boolean
+          description: Indicator for whether Daylight Savings Time is observed for a given facility.
+      additionalProperties: false
+      description: USPS&#174; Destination Entry Drop Shipment Location
+      xml:
+        name: dropoffLocation
+    AcceptedPackageTypes:
+      title: Package Types Accepted
+      type: object
+      properties:
+        mailClass:
+          maxLength: 25
+          minLength: 0
+          type: string
+          description: The mail class accepted at the facility
+          example: PARCEL_SELECT
+          enum:
+          - PARCEL_SELECT
+          - PARCEL_SELECT_LIGHTWEIGHT
+          - USPS_CONNECT_LOCAL
+          - USPS_CONNECT_MAIL
+          - USPS_CONNECT_REGIONAL
+          - LIBRARY_MAIL
+          - MEDIA_MAIL
+          - BOUND_PRINTED_MATTER
+        processingCategory:
+          maxLength: 25
+          minLength: 0
+          type: string
+          description: |
+            Designates what shape the facility accepts for packages. For more information on package shapes see the [Physical Standards for Parcels](https://pe.usps.com/text/dmm300/201.htm#ep1097220).
+
+             Note:
+             - `IRREGULAR` is unsupported as of 2/1/2025 and will no longer return.
+             - `NON_MACHINABLE` is unsupported as of 2/1/2025 and will no longer return.
+          example: MACHINABLE
+          enum:
+          - FLATS
+          - MACHINABLE
+          - IRREGULAR
+          - NON_MACHINABLE
+          - NONSTANDARD
+        palletized:
+          maxLength: 25
+          minLength: 0
+          type: string
+          description: "Designates whether the facility accepts palletized, non-palletized, or both."
+          example: PALLETIZED
+          enum:
+          - PALLETIZED
+          - NON_PALLETIZED
+          - BOTH
+      additionalProperties: false
+      description: Accepted Package Types at USPS&#174; Destination Entry Drop Shipment Location.
+      xml:
+        name: acceptedPackageType
+    FacilityDetails:
+      title: Additional Facility Details
+      type: object
+      properties:
+        dock:
+          type: object
+          properties:
+            width:
+              maximum: 999999
+              minimum: 0
+              exclusiveMinimum: true
+              type: integer
+              description: The width of the dock from one end to the other  (in feet).
+              example: 100
+            depth:
+              maximum: 999999
+              minimum: 0
+              exclusiveMinimum: true
+              type: integer
+              description: "The depth of the dock, or distance from the dock doors to the wall which separates the dock from the other sections of the facility (in feet)."
+              example: 60
+            height:
+              maximum: 999999
+              minimum: 0
+              exclusiveMinimum: true
+              type: integer
+              description: "The loading dock height, or distance from the yard surface to the dock surface level (in inches)."
+              example: 60
+        canopyClearance:
+          maximum: 9999
+          minimum: 0
+          type: integer
+          description: Clearance between the yard surface and the underside of the loading / unloading area canopy or overhang (in feet).
+        liftTypes:
+          type: object
+          properties:
+            manualLift:
+              type: boolean
+              description: Indicates whether a manual lift is available at the facility.
+              example: false
+            electricGasLift:
+              type: boolean
+              description: Indicates whether a electric or gas lift is available at the facility.
+              example: true
+            cageStackerLift:
+              type: boolean
+              description: Indicates whether a cage stacker lift is available at the facility.
+              example: false
+            rollerTableExtenderLift:
+              type: boolean
+              description: Indicates whether a roller table or extender lift is available at the facility.
+              example: false
+          description: Types of lifts available at the facility.
+        ramps:
+          type: object
+          properties:
+            numberOfRamps:
+              minimum: 0
+              type: integer
+              description: The number of inclined ramps at the facility.
+              example: 1
+            widestRamp:
+              minimum: 0
+              type: integer
+              description: The widest inclined ramp available at the facility (in feet).
+              example: 12
+          description: Details on ramps available at the facility.
+        truckManeuveringArea:
+          type: object
+          properties:
+            length:
+              maximum: 999999
+              minimum: 0
+              exclusiveMinimum: true
+              type: integer
+              description: The length of the truck maneuvering area (in feet).
+              example: 70
+            width:
+              maximum: 999999
+              minimum: 0
+              type: integer
+              description: The width of the truck maneuvering area (in feet).
+              example: 40
+            surfaceType:
+              type: string
+              description: The type of material used to create the truck maneuvering area.
+              example: ASPHALT
+              enum:
+              - ASPHALT
+              - DIRT
+              - CONCRETE
+              - GRAVEL
+              - OTHER
+          description: Details on the maneuvering area at the facility.
+        levelers:
+          type: object
+          description: The amount of levelers, by leveler type, available at a facility.
+          properties:
+            manualLevelers:
+              maximum: 999
+              minimum: 0
+              type: integer
+              description: The number of manual levelers available at the facility.
+              example: 6
+            hydraulicLevelers:
+              maximum: 999
+              minimum: 0
+              type: integer
+              description: The number of hydraulic levelers available at the facility.
+              example: 6
+            scissorLevelers:
+              maximum: 999
+              minimum: 0
+              type: integer
+              description: The number of scissor levelers available at the facility.
+              example: 1
+        doorDetails:
+          type: object
+          description: Information regarding the dock door size and yard surface distance to the loading dock door.
+          properties:
+            height:
+              type: integer
+              description: The height of the tallest dock door (in feet).
+            width:
+              type: integer
+              description: The width of the largest dock door (in feet).
+            numberOfSteps:
+              type: integer
+              description: The number of steps between the yard surface and the loading dock door.
+        overpassDetails:
+          type: object
+          description: The number of overpasses and the lowest overpass height between the facility and the highway exit.
+          properties:
+            numberOfOverpasses:
+              type: integer
+              description: the number of overpasses between the facility and the highway exit.
+            lowestOverpass:
+              type: integer
+              description: The lowest overpass height between the facility and highway exit (in feet).
+      additionalProperties: false
+      description: Information about the drop-off location facility.
+      xml:
+        name: facilityDetails
+    USPSConnect:
+      title: USPS Connect&#8482; Services
+      type: object
+      properties:
+        sameDayDelivery:
+          type: boolean
+          description: Indicates whether same day delivery service is offered at the given facility.
+        sameDayPickUp:
+          type: string
+          description: Indicates the latest time same day pick up can be scheduled for the given facility. If no time is given same day pick up service is not supported.
+          format: "\\d{4}"
+          example: "1100"
+        nextDayPickUp:
+          type: string
+          description: Indicates the latest time next day pick up can be scheduled for the given facility. If no time is given next day pick up service is not supported.
+          format: "\\d{4}"
+          example: "1300"
+        SundayDelivery:
+          type: boolean
+          description: Indicates whether sunday delivery service is offered at the given facility.
+        sameDayDropOffCutOffTimes:
+          deprecated: true
+          description: This field will be removed in Version 4.
+          type: array
+          items:
+            $ref: '#/components/schemas/CutOffTimesDropOff'
+        sameDayCarrierPickupCutOffTimes:
+          deprecated: true
+          description: This field will be removed in Version 4.
+          type: array
+          items:
+            $ref: '#/components/schemas/CutOffTimesPickup'
+        nextDayDropOffCutOffTimes:
+          deprecated: true
+          description: This field will be removed in Version 4.
+          type: array
+          items:
+            $ref: '#/components/schemas/CutOffTimesDropOff'
+      additionalProperties: false
+      description: Provides details on USPS Connect&#174; services offered at the facility.
+    PostOfficeLocation:
+      title: Post Office Location
+      type: object
+      properties:
+        facilityName:
+          type: string
+          description: The name of the facility
+          example: LEnfant Plaza
+        facilityAddress:
+          xml:
+            name: facilityAddress
+            wrapped: true
+          allOf:
+          - $ref: '#/components/schemas/DomesticAddress'
+        facilityID:
+          type: string
+          description: "The USPS&#174; facility ID. When requesting Parcel Locker Delivery while generating a label, this ID should be provided in the request."
+        geoCoordinates:
+          type: object
+          description: The latitude and longitude values.
+          properties:
+            latitude:
+              type: number
+              description: The latitude geo coordinate.
+              example: 42.727486
+            longitude:
+              type: number
+              description: The longitude geo coordinate.
+              example: -73.848186
+        postOfficeType:
+          type: string
+          description: The type of location.
+          default: POST_OFFICE
+          enum:
+          - CONTRACT_POSTAL_UNIT
+          - POST_OFFICE
+          - SELF_SERVICE_KIOSK
+          - VILLAGE_POST_OFFICE
+        distance:
+          type: number
+          description: The distance from the provided address to the Post Office (in miles).
+          example: 10.3
+        phoneNumbers:
+          type: object
+          properties:
+            phone:
+              $ref: '#/components/schemas/Phone'
+            fax:
+              $ref: '#/components/schemas/Phone'
+          description: Post office contact information.
+        services:
+          type: array
+          description: A list of services offered at the location.
+          items:
+            type: object
+            properties:
+              service:
+                type: string
+                description: The services supported at the facility.
+                example: PO_BOX
+              hours:
+                type: array
+                description: the days & hours that the associated service is available at the post office.
+                items:
+                  $ref: '#/components/schemas/HoursOfOperation'
+              additionalInformation:
+                type: object
+                properties:
+                  mailClasses:
+                    type: array
+                    description: The list of mail classes that are supported for the Hold for Pickup service at a given facility.
+                    example:
+                      - USPS_GROUND_ADVANTAGE
+                    xml:
+                      wrapped: true
+                    items:
+                      type: string
+                      xml:
+                        name: mailClass
+        temporaryClosure:
+          type: boolean
+          description: Indicator if the location has a current or upcoming temporary closure.
+          example: true
+        temporaryClosureDate:
+          type: string
+          description: The start date of the temporary closure.
+          format: date
+          example: '2023-01-01'
+        specialHours:
+          $ref: '#/components/schemas/SpecialHoursOfOperation'
+        parking:
+          type: string
+          description: The type of parking available at the location.
+          enum:
+          - LOT
+          - STREET
+        passports:
+          type: object
+          description: Facility information for passport services.
+          properties:
+            phone:
+              $ref: '#/components/schemas/Phone'
+            photoCost:
+              type: number
+              description: The cost of passport photos at the location in dollars.
+              example: 15
+            appointmentRequired:
+              type: boolean
+              description: Whether appointments are required to take passport photos at the location.
+              example: true
+        timeZone:
+          type: string
+          description: The time zone returned for a given facility.
+        DSTObserved:
+          type: boolean
+          description: Indicator for whether Daylight Savings Time is observed for a given facility.
+      additionalProperties: false
+      description: USPS&#174; Destination Entry Drop Shipment Location
+      xml:
+        name: postOfficeLocation
+        wrapped: true
+    CutOffTimesDropOff:
+      type: object
+      properties:
+        dayOfWeek:
+          type: string
+          description: The day of the week for the cut off time.
+          enum:
+          - MONDAY
+          - TUESDAY
+          - WEDNESDAY
+          - THURSDAY
+          - FRIDAY
+          - SATURDAY
+          - SUNDAY
+          - HOLIDAY
+        cutOffTime:
+          type: string
+          description: The cut off time represented in military time.
+          example: "0800"
+      additionalProperties: false
+      description: The latest supported drop off times to receive Connect Local&#174; Same/Next Day service.
+    CutOffTimesPickup:
+      type: object
+      properties:
+        dayOfWeek:
+          type: string
+          description: The day of the week for the cut off time.
+          enum:
+          - MONDAY
+          - TUESDAY
+          - WEDNESDAY
+          - THURSDAY
+          - FRIDAY
+          - SATURDAY
+          - SUNDAY
+          - HOLIDAY
+        cutOffTime:
+          type: string
+          description: The cut off time represented in military time.
+          example: "0800"
+      additionalProperties: false
+      description: The latest supported carrier pickup time to receive Connect Local&#174; Same Day service.
+    HoursOfOperation:
+      type: object
+      properties:
+        dayOfWeek:
+          type: string
+          description: The day of the week for the set of hours.
+          enum:
+          - MONDAY
+          - TUESDAY
+          - WEDNESDAY
+          - THURSDAY
+          - FRIDAY
+          - SATURDAY
+          - SUNDAY
+        times:
+          type: array
+          description: Hours
+          items:
+            type: object
+            properties:
+              openTime:
+                type: string
+                description: The time that the facility opens.
+                example: "0800"
+              closeTime:
+                type: string
+                description: The time that the facility closes.
+                example: "1200"
+      additionalProperties: false
+      description: Facility hours of operation intervals of a day.
+    SpecialHoursOfOperation:
+      type: array
+      description: Facility hours of operation intervals of a day.
+      items:
+        type: object
+        properties:
+          date:
+            type: string
+            description: The day of the week for the set of hours.
+            format: date
+          open:
+            type: boolean
+            description: Indicates if the facility is open.
+          times:
+            type: array
+            description: Holiday Hours
+            items:
+              type: object
+              properties:
+                openTime:
+                  type: string
+                  description: The time that the facility opens.
+                  example: "0800"
+                closeTime:
+                  type: string
+                  description: The time that the facility closes.
+                  example: "1200"
+    ErrorMessage:
+      title: Error
+      type: object
+      properties:
+        apiVersion:
+          type: string
+          description: The version of the API that was used and that raised the error.
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              description: The error status code that has been returned in response to the request.
+            message:
+              type: string
+              description: A human-readable message describing the error.
+            errors:
+              type: array
+              items:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: The status code response returned to the client.
+                  code:
+                    type: string
+                    description: An internal subordinate code used for error diagnosis.
+                  title:
+                    type: string
+                    description: A human-readable title that identifies the error.
+                  detail:
+                    type: string
+                    description: A human-readable description of the error that occurred.
+                  source:
+                    type: object
+                    properties:
+                      parameter:
+                        type: string
+                        description: The input in the request which caused an error.
+                      example:
+                        type: string
+                        description: An example of a valid value for the input parameter.
+                    additionalProperties: true
+                    description: The element that is suspected of originating the error.  Helps to pinpoint the problem.
+                additionalProperties: true
+          additionalProperties: true
+          description: The high-level error that has occurred as indicated by the status code.
+      additionalProperties: true
+      description: Standard error message response.
+    PaginationMetadata:
+      title: Pagination Metadata
+      required:
+      - limit
+      - offset
+      type: object
+      properties:
+        totalCount:
+          type: integer
+          description: Total number of resources return in the API request.
+          example: 140
+        page:
+          type: integer
+          description: The current page number.
+          example: 3
+        totalPages:
+          type: integer
+          description: "Total number of pages, based on the user provided limit and [totalCount]"
+          example: 7
+        limit:
+          type: integer
+          description: "The number of resources returned per call, based on the user provided limit"
+          example: 20
+        offset:
+          type: integer
+          description: "The current offset, based on the user provided offset"
+          example: 40
+        links:
+          $ref: '#/components/schemas/Links'
+      additionalProperties: false
+      description: Standard error message response.
+    Links:
+      title: Hypermedia Links
+      type: array
+      description: Hypermedia links to related resources.
+      items:
+        required:
+        - href
+        - rel
+        type: object
+        properties:
+          rel:
+            type: array
+            description: The short name(s) of the relationship corresponding to the link.
+            items:
+              type: string
+          title:
+            type: string
+            description: A human-readable description of the link relationship.
+          href:
+            type: string
+            description: The URL to a related resource.
+            format: uri
+          method:
+            type: string
+            description: The HTTP method to use to access this link.
+            enum:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+          submissionMediaType:
+            type: string
+            description: The media type of the resource request.
+          targetMediaType:
+            type: string
+            description: The media type of the resource response.
+        additionalProperties: false
+    DomesticAddress:
+      title: Domestic Address
+      description: Address fields for US locations
+      allOf:
+      - $ref: '#/components/schemas/Address'
+      - type: object
+        properties:
+          city:
+            maxLength: 28
+            minLength: 1
+            type: string
+            description: This is the city name of the address.
+          state:
+            maxLength: 2
+            minLength: 2
+            pattern: ^(AA|AE|AL|AK|AP|AS|AZ|AR|CA|CO|CT|DE|DC|FM|FL|GA|GU|HI|ID|IL|IN|IA|KS|KY|LA|ME|MH|MD|MA|MI|MN|MS|MO|MP|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PW|PA|PR|RI|SC|SD|TN|TX|UT|VT|VI|VA|WA|WV|WI|WY)$
+            type: string
+            description: This is two-character state code of the address.
+          ZIPCode:
+            pattern: "\\d{5}"
+            type: string
+            description: This is the 5-digit ZIP code.
+          ZIPPlus4:
+            pattern: "\\d{4}"
+            type: string
+            description: This is the ZIP+4 extension.
+          urbanization:
+            maxLength: 96
+            type: string
+            description: "An area, sector, or residential development within a geographic area (typically used for addresses in Puerto Rico)"
+        additionalProperties: true
+      example:
+        streetAddress: 100 MAIN ST
+        city: ANYTOWN
+        state: VA
+        ZIPCode: "99999"
+        ZIPPlus4: "9999"
+    Address:
+      title: Address
+      type: object
+      properties:
+        streetAddress:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: The number of a building along with the name of the road or street on which it is located.
+        streetAddressAbbreviation:
+          maxLength: 50
+          minLength: 0
+          type: string
+          description: This is the abbreviation of street address line for the address.
+          readOnly: true
+        secondaryAddress:
+          maxLength: 50
+          type: string
+          description: "The secondary unit designator, such as apartment(APT) or suite(STE) number, defining the exact location of the address within a building.  For more information please see [Postal Explorer](https://pe.usps.com/text/pub28/28c2_003.htm)."
+        cityAbbreviation:
+          type: string
+          description: This is the abbreviation of city name for the address.
+          readOnly: true
+      additionalProperties: true
+      description: Address fields standard to all locations.
+      xml:
+        name: Address
+    ZIPCode:
+      pattern: "\\d{5}"
+      type: string
+      description: 5-digit ZIP code.
+    Phone:
+      pattern: "^\\+?[1-9][0-9]{7,14}$"
+      type: string
+      description: "The phone number, including the country extension and area code, with no punctuation."
+  parameters:
+    DestinationZIPCode:
+      name: destinationZIPCode
+      in: query
+      description: The destination ZIP Code&#8482; of the package.
+      required: true
+      style: form
+      explode: true
+      schema:
+        pattern: "\\d{5}"
+        type: string
+      example: "12345"
+    DestinationZIPPlus4:
+      name: destinationZIPPlus4
+      in: query
+      description: This is the 4-digit component of the ZIP+4 code. Using the correct Zip+4 reduces the number of times your mail is handled and can decrease the chance of a misdelivery or error.
+      required: false
+      style: form
+      explode: true
+      schema:
+        pattern: "\\d{4}"
+        type: string
+      example: "1234"
+    MailClass:
+      name: mailClass
+      in: query
+      description: |-
+        The mail class of the package being shipped:
+          example: PARCEL_SELECT
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+        enum:
+        - PARCEL_SELECT
+        - PARCEL_SELECT_LIGHTWEIGHT
+        - USPS_CONNECT_LOCAL
+        - USPS_CONNECT_MAIL
+        - USPS_CONNECT_REGIONAL
+        - LIBRARY_MAIL
+        - MEDIA_MAIL
+        - BOUND_PRINTED_MATTER
+    ProcessingCategory:
+      name: processingCategory
+      in: query
+      description: |
+        The shape of the package being shipped, for more information on package shapes see the [Physical Standards for Parcels](https://pe.usps.com/text/dmm300/201.htm#ep1097220).
+
+        Note:
+        - `IRREGULAR` is deprecated as of 2/1/2025 and will convert to `NONSTANDARD`.
+        - `NON_MACHINABLE` is deprecated as of 2/1/2025 and will convert to `NONSTANDARD`.
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+        enum:
+        - FLATS
+        - MACHINABLE
+        - IRREGULAR
+        - NON_MACHINABLE
+        - NONSTANDARD
+    DestinationEntryFacilityType:
+      name: destinationEntryFacilityType
+      in: query
+      description: Indicates the facility type at which the packages will be dropped off.
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+        enum:
+        - DESTINATION_NETWORK_DISTRIBUTION_CENTER
+        - DESTINATION_SECTIONAL_CENTER_FACILITY
+        - DESTINATION_SERVICE_HUB
+        - DESTINATION_DELIVERY_UNIT
+        - DESTINATION_REGIONAL_PROCESSING_DISTRIBUTION_CENTER
+    Palletized:
+      name: palletized
+      in: query
+      description: Indicates if the shipment or part of the shipment is being received on a pallet.
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+        enum:
+        - PALLETIZED
+        - NON_PALLETIZED
+        - BOTH
+    MailingDate:
+      name: mailingDate
+      in: query
+      description: |
+        The date the package will be mailed.
+        Defaults to today when omitted.
+        The mailing date may be today plus 0 to 7 days in advance.
+        Enter the date in the full-date notation as defined by [RFC 3339, section 5.6](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6).
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+        format: date
+        example: '2023-01-01'
+    Latitude:
+      name: LAT
+      in: query
+      description: The latitude geo coordinate.
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: number
+        example: 38.8951
+    Longitude:
+      name: LONG
+      in: query
+      description: The longitude geo coordinate.
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: number
+        example: -77.0364
+    PostOfficeType:
+      name: postOfficeType
+      in: query
+      description: The type of post office requested.
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+          - CONTRACT_POSTAL_UNIT
+          - POST_OFFICE
+          - SELF_SERVICE_KIOSK
+          - VILLAGE_POST_OFFICE
+    MailingService:
+      name: mailingService
+      in: query
+      description: Mailing Service supported at the facility
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+          - CARRIER_SERVICES
+          - GENERAL_DELIVERY
+          - GLOBAL_EXPRESS_GUARANTEED
+          - LABEL_BROKER
+          - LABEL_BROKER_SELF-SERVICE_KIOSK
+          - PRIORITY_MAIL_INTERNATIONAL
+          - PO_BOX
+          - SELF-SERVICE_KIOSK
+          - USPS_CONNECT_LOCAL
+    BusinessService:
+      name: businessService
+      in: query
+      description: Business Service supported at the facility
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+          - BULK_MAIL_ACCEPTANCE
+          - BUSINESS_REPLY_MAIL_ACCOUNT_BALANCE
+          - BULK_MAIL_ACCOUNT_BALANCE
+          - BULK_MAIL_NEW_PERMIT
+          - BUSINESS_REPLY_MAIL_NEW_PERMIT
+          - CALL_REFERRAL
+    PassportService:
+      name: passportService
+      in: query
+      description: Passport Service supported at the facility
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+          - PASSPORT_APPOINTMENT
+          - PASSPORT_PHOTO
+          - PASSPORT_WALK-IN
+    PickupService:
+      name: pickupService
+      in: query
+      description: "Pick-Up Service supported at the facility. If requesting PICKUP_PARCEL_LOCKER then the length, width and height parameters are always required."
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+          - PICKUP_ACCOUNTABLE_MAIL
+          - PICKUP_HOLD_MAIL
+          - PICKUP_NOTICE_LEFT_MAIL
+          - PICKUP_PARCEL_LOCKER
+          - HOLD_FOR_PICKUP
+    FinancialService:
+      name: financialService
+      in: query
+      description: "Financial Service supported at the facility."
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+          - BURIAL_FLAG
+          - DUCK_STAMP
+          - GIFT_CARDS
+          - GREETING_CARDS
+          - MONEY_ORDER_DOMESTIC
+          - MONEY_ORDER_INQUIRY
+    Hours:
+      name: hours
+      in: query
+      description: "Limit the response Post Office Locations to those supporting Retail Services at the enumerated times. If not provided, all with be returned."
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+        enum:
+        - WEEKDAY_AFTER_5
+        - SATURDAY_HOURS
+        - SUNDAY_HOURS
+        - 24-HOUR_FACILITIES
+    Radius:
+      name: radius
+      in: query
+      description: The max distance (in miles) from the location given to the respective Post Office. If no radius is provided a default radius of 20 miles will be used
+      required: false
+      style: form
+      explode: true
+      schema:
+        maximum: 100
+        minimum: 1
+        type: integer
+        default: 20
+    StreetAddress:
+      name: streetAddress
+      in: query
+      description: The number of a building along with the name of the road or street on which it is located.
+      required: false
+      schema:
+        type: string
+    SecondaryAddress:
+      name: secondaryAddress
+      in: query
+      description: "The secondary unit designator, such as apartment(APT) or suite(STE) number, defining the exact location of the address within a building.  For more information please see [Postal Explorer](https://pe.usps.com/text/pub28/28c2_003.htm)."
+      required: false
+      schema:
+        type: string
+    City:
+      name: city
+      in: query
+      description: This is the city name of the address.
+      required: false
+      schema:
+        type: string
+    State:
+      name: state
+      in: query
+      description: This is two-character state code of the address.
+      required: false
+      schema:
+        maxLength: 2
+        minLength: 2
+        pattern: ^(AA|AE|AL|AK|AP|AS|AZ|AR|CA|CO|CT|DE|DC|FM|FL|GA|GU|HI|ID|IL|IN|IA|KS|KY|LA|ME|MH|MD|MA|MI|MN|MS|MO|MP|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PW|PA|PR|RI|SC|SD|TN|TX|UT|VT|VI|VA|WA|WV|WI|WY)$
+        type: string
+    Urbanization:
+      name: urbanization
+      in: query
+      description: This is the urbanization code relevant only for Puerto Rico addresses.
+      required: false
+      schema:
+        type: string
+    ZIPCode:
+      name: ZIPCode
+      in: query
+      description: This is the 5-digit ZIP code.
+      required: false
+      schema:
+        pattern: "^\\d{5}"
+        type: string
+    ZIPPlus4:
+      name: ZIPPlus4
+      in: query
+      description: This is the 4-digit component of the ZIP+4 code. Using the correct Zip+4 reduces the number of times your mail is handled and can decrease the chance of a misdelivery or error.
+      required: false
+      schema:
+        pattern: "^\\d{4}"
+        type: string
+    Length:
+      name: length
+      in: query
+      description: This is the package length in inches.  The maximum dimension is always length.
+      required: false
+      schema:
+        minimum: 0
+        exclusiveMinimum: true
+        type: number
+        format: double
+    Width:
+      name: width
+      in: query
+      description: This is the package width in inches.  The second longest dimension is always width.
+      required: false
+      schema:
+        minimum: 0
+        exclusiveMinimum: true
+        type: number
+        format: double
+    Height:
+      name: height
+      in: query
+      description: This is the package height in inches.
+      required: false
+      schema:
+        minimum: 0
+        exclusiveMinimum: true
+        type: number
+        format: double
+    offsetParam:
+      name: offset
+      in: query
+      description: The number of items to skip before returning the results
+      schema:
+        minimum: 0
+        type: integer
+    limitParam:
+      name: limit
+      in: query
+      description: The number of items to return
+      schema:
+        maximum: 100
+        minimum: 1
+        type: integer
+        format: int32
+        default: 20
+  headers:
+    WWWAuthenticate:
+      description: Hint to the client application which security scheme to authorize a resource request.
+      required: false
+      schema:
+        type: string
+        example: "WWW-Authenticate: Bearer realm=\"https://api.usps.com\""
+    RetryAfter:
+      description: Indicate to the client application a time after which they can retry a resource request.
+      required: false
+      schema:
+        type: string
+        example: "Retry-After: 30"
+  securitySchemes:
+    OAuth:
+      type: oauth2
+      description: The specified APIs accept an access token formatted as a JSON Web Token. The relative path to the OAuth2 version 3 API which supplies this access token is provided below for reference.
+      flows:
+        clientCredentials:
+          tokenUrl: /oauth2/v3/token
+          scopes:
+            locations: read location resources
+        authorizationCode:
+          authorizationUrl: /oauth2/v3/authorize
+          tokenUrl: /oauth2/v3/token
+          scopes:
+            locations: read location resources
