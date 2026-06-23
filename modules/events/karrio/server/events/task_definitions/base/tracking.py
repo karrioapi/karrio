@@ -43,6 +43,10 @@ TRACKER_BATCH_DELAY = int(getattr(settings, "TRACKER_BATCH_DELAY", 3))
 TRACKER_MAX_ACTIVE_DAYS = int(getattr(settings, "TRACKER_MAX_ACTIVE_DAYS", 90))
 
 
+def get_scheduler_lock_name(schema: typing.Optional[str] = None) -> str:
+    return f"background_trackers_update:{schema or 'public'}"
+
+
 # ─────────────────────────────────────────────────────────────────
 # Dispatcher
 # ─────────────────────────────────────────────────────────────────

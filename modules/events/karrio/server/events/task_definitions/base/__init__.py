@@ -49,15 +49,22 @@ DEFAULT_TRACKERS_UPDATE_INTERVAL = max(
 def background_trackers_update():
     from karrio.server.events.task_definitions.base import tracking
 
-    try:
-        with huey_instance.lock_task("background_trackers_update"):
-            @utils.run_on_all_tenants
-            def _run(**kwargs):
-                tracking.update_trackers(schema=kwargs.get("schema"))
+    @utils.run_on_all_tenants
+    def _run(**kwargs):
+        schema = kwargs.get("schema")
+        lock_name = tracking.get_scheduler_lock_name(schema)
 
-            _run()
-    except TaskLockedException:
-        logger.info("Tracker update already in progress, skipping duplicate run")
+        try:
+            with huey_instance.lock_task(lock_name):
+                tracking.update_trackers(schema=schema)
+        except TaskLockedException:
+            logger.info(
+                "Tracker update already in progress, skipping duplicate run",
+                schema=schema,
+                lock_name=lock_name,
+            )
+
+    _run()
 
 
 @db_task(retries=2, retry_delay=30)

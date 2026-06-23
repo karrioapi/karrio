@@ -1,5 +1,6 @@
 import json
 import datetime
+from contextlib import nullcontext
 from time import sleep
 from unittest.mock import patch, ANY
 from django.urls import reverse
@@ -8,6 +9,7 @@ from karrio.core.models import TrackingDetails, TrackingEvent
 from karrio.server.core.tests import APITestCase
 from karrio.server.core.utils import create_carrier_snapshot
 from karrio.server.manager import models
+import karrio.server.events.task_definitions.base as tasks
 from karrio.server.events.task_definitions.base import tracking
 
 
@@ -104,6 +106,25 @@ class TestTrackersBackgroundUpdate(APITestCase):
 
             for call_args in mock_task.call_args_list:
                 self.assertEqual(call_args.kwargs["schema"], "test_schema")
+
+    def test_background_trackers_update_locks_per_schema(self):
+        def run_on_schema(fn):
+            def wrapper(*args, **kwargs):
+                return fn(schema="tenant_a")
+
+            return wrapper
+
+        with patch.object(
+            tasks.utils, "run_on_all_tenants", side_effect=run_on_schema
+        ), patch.object(
+            tasks.huey_instance, "lock_task", return_value=nullcontext()
+        ) as lock_task, patch(
+            "karrio.server.events.task_definitions.base.tracking.update_trackers"
+        ) as update_trackers:
+            tasks.background_trackers_update.call_local()
+
+            lock_task.assert_called_once_with("background_trackers_update:tenant_a")
+            update_trackers.assert_called_once_with(schema="tenant_a")
 
     def test_process_carrier_trackers_incremental_save(self):
         """process_carrier_trackers fetches and saves each batch immediately."""
