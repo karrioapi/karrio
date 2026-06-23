@@ -1,6 +1,16 @@
 # Data migration: Populate carrier JSONField from FK relationships
 
+import logging
+
 from django.db import migrations
+
+logger = logging.getLogger("karrio.server")
+
+# Stream rows in bounded chunks and write them back with bulk_update so the
+# migration never loads an entire table into memory or issues one UPDATE per row
+# (GH #1123). Each table is processed independently and is idempotent: rows whose
+# snapshot is already populated are skipped, so re-running is a no-op.
+BATCH_SIZE = 2000
 
 
 def get_carrier_name(carrier):
@@ -28,6 +38,42 @@ def create_carrier_snapshot(carrier):
     }
 
 
+def _populate_from_fk(Model, fk_field, label):
+    """Copy a carrier FK snapshot into the ``carrier`` JSONField in bounded batches.
+
+    Streams only rows that still need a snapshot (FK set, carrier empty) via a
+    server-side cursor, and writes them back with bulk_update in fixed-size
+    batches. Returns the number of rows updated.
+    """
+    queryset = (
+        Model.objects.filter(**{f"{fk_field}__isnull": False, "carrier__isnull": True})
+        .select_related(fk_field)
+        .order_by("pk")
+    )
+
+    batch = []
+    total = 0
+
+    def flush():
+        nonlocal total
+        if batch:
+            Model.objects.bulk_update(batch, ["carrier"], batch_size=BATCH_SIZE)
+            total += len(batch)
+            logger.info(f"0078 populate {label}: {total} rows updated")
+            batch.clear()
+
+    for instance in queryset.iterator(chunk_size=BATCH_SIZE):
+        carrier = getattr(instance, fk_field)
+        if carrier and not instance.carrier:
+            instance.carrier = create_carrier_snapshot(carrier)
+            batch.append(instance)
+        if len(batch) >= BATCH_SIZE:
+            flush()
+
+    flush()
+    return total
+
+
 def populate_carrier_snapshots(apps, schema_editor):
     """
     Populate carrier JSONField from FK relationships.
@@ -38,42 +84,22 @@ def populate_carrier_snapshots(apps, schema_editor):
     - DocumentUploadRecord.upload_carrier -> DocumentUploadRecord.carrier
     - Manifest.manifest_carrier -> Manifest.carrier
     - Shipment.selected_rate_carrier -> Shipment.carrier (dedicated field, consistent with other models)
+
+    Production-safe (GH #1123): each table is streamed in chunks and written
+    back with bulk_update — no per-row save, no full-table load — and is
+    idempotent so it can be re-run safely.
     """
-    Pickup = apps.get_model("manager", "Pickup")
-    Tracking = apps.get_model("manager", "Tracking")
-    DocumentUploadRecord = apps.get_model("manager", "DocumentUploadRecord")
-    Manifest = apps.get_model("manager", "Manifest")
-    Shipment = apps.get_model("manager", "Shipment")
+    mappings = [
+        ("Pickup", "pickup_carrier"),
+        ("Tracking", "tracking_carrier"),
+        ("DocumentUploadRecord", "upload_carrier"),
+        ("Manifest", "manifest_carrier"),
+        ("Shipment", "selected_rate_carrier"),
+    ]
 
-    # Populate Pickup.carrier from pickup_carrier FK
-    for pickup in Pickup.objects.select_related("pickup_carrier").all():
-        if pickup.pickup_carrier and not pickup.carrier:
-            pickup.carrier = create_carrier_snapshot(pickup.pickup_carrier)
-            pickup.save(update_fields=["carrier"])
-
-    # Populate Tracking.carrier from tracking_carrier FK
-    for tracking in Tracking.objects.select_related("tracking_carrier").all():
-        if tracking.tracking_carrier and not tracking.carrier:
-            tracking.carrier = create_carrier_snapshot(tracking.tracking_carrier)
-            tracking.save(update_fields=["carrier"])
-
-    # Populate DocumentUploadRecord.carrier from upload_carrier FK
-    for record in DocumentUploadRecord.objects.select_related("upload_carrier").all():
-        if record.upload_carrier and not record.carrier:
-            record.carrier = create_carrier_snapshot(record.upload_carrier)
-            record.save(update_fields=["carrier"])
-
-    # Populate Manifest.carrier from manifest_carrier FK
-    for manifest in Manifest.objects.select_related("manifest_carrier").all():
-        if manifest.manifest_carrier and not manifest.carrier:
-            manifest.carrier = create_carrier_snapshot(manifest.manifest_carrier)
-            manifest.save(update_fields=["carrier"])
-
-    # Populate Shipment.carrier from selected_rate_carrier FK (consistent with other models)
-    for shipment in Shipment.objects.select_related("selected_rate_carrier").all():
-        if shipment.selected_rate_carrier and not shipment.carrier:
-            shipment.carrier = create_carrier_snapshot(shipment.selected_rate_carrier)
-            shipment.save(update_fields=["carrier"])
+    for model_name, fk_field in mappings:
+        Model = apps.get_model("manager", model_name)
+        _populate_from_fk(Model, fk_field, model_name)
 
 
 def reverse_migration(apps, schema_editor):

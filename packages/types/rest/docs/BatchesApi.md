@@ -190,8 +190,8 @@ import {
 const configuration = new Configuration();
 const apiInstance = new BatchesApi(configuration);
 
-let exportFormat: 'billing' | 'order' | 'shipment' | 'trackers'; // (default to undefined)
-let resourceType: 'billing' | 'order' | 'shipment' | 'trackers'; // (default to undefined)
+let exportFormat: 'billing' | 'order' | 'rate_sheet' | 'shipment' | 'trackers'; // (default to undefined)
+let resourceType: 'billing' | 'order' | 'rate_sheet' | 'shipment' | 'trackers'; // (default to undefined)
 let dataTemplate: string; //A data template slug to use for the import.<br/>         **When nothing is specified, the system default headers are expected.**          (optional) (default to undefined)
 
 const { status, data } = await apiInstance.exportFile(
@@ -205,8 +205,8 @@ const { status, data } = await apiInstance.exportFile(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **exportFormat** | [**&#39;billing&#39; | &#39;order&#39; | &#39;shipment&#39; | &#39;trackers&#39;**]**Array<&#39;billing&#39; &#124; &#39;order&#39; &#124; &#39;shipment&#39; &#124; &#39;trackers&#39;>** |  | defaults to undefined|
-| **resourceType** | [**&#39;billing&#39; | &#39;order&#39; | &#39;shipment&#39; | &#39;trackers&#39;**]**Array<&#39;billing&#39; &#124; &#39;order&#39; &#124; &#39;shipment&#39; &#124; &#39;trackers&#39;>** |  | defaults to undefined|
+| **exportFormat** | [**&#39;billing&#39; | &#39;order&#39; | &#39;rate_sheet&#39; | &#39;shipment&#39; | &#39;trackers&#39;**]**Array<&#39;billing&#39; &#124; &#39;order&#39; &#124; &#39;rate_sheet&#39; &#124; &#39;shipment&#39; &#124; &#39;trackers&#39;>** |  | defaults to undefined|
+| **resourceType** | [**&#39;billing&#39; | &#39;order&#39; | &#39;rate_sheet&#39; | &#39;shipment&#39; | &#39;trackers&#39;**]**Array<&#39;billing&#39; &#124; &#39;order&#39; &#124; &#39;rate_sheet&#39; &#124; &#39;shipment&#39; &#124; &#39;trackers&#39;>** |  | defaults to undefined|
 | **dataTemplate** | [**string**] | A data template slug to use for the import.&lt;br/&gt;         **When nothing is specified, the system default headers are expected.**          | (optional) defaults to undefined|
 
 
@@ -234,9 +234,9 @@ const { status, data } = await apiInstance.exportFile(
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **importFile**
-> BatchOperation importFile()
+> { [key: string]: any; } importFile()
 
-Import csv, xls and xlsx data files for: `Beta`<br/> - trackers data - orders data - shipments data - billing data (soon)<br/><br/> **This operation will return a batch operation that you can poll to follow the import progression.**
+Import csv, xls and xlsx data files for: `Beta`<br/> - trackers data - orders data - shipments data - rate_sheet data (Excel/CSV)<br/><br/> **For rate_sheet imports, pass dry_run=true to validate and preview a diff without writing. For other resource types, a BatchOperation is returned.**
 
 ### Example
 
@@ -251,9 +251,10 @@ const apiInstance = new BatchesApi(configuration);
 
 let dataFile: File; // (optional) (default to undefined)
 let dataTemplate: string; //A data template slug to use for the import.<br/>         **When nothing is specified, the system default headers are expected.**          (optional) (default to undefined)
-let resourceType: 'billing' | 'order' | 'shipment' | 'trackers'; //The type of the resource to import (optional) (default to undefined)
+let resourceType: 'billing' | 'order' | 'rate_sheet' | 'shipment' | 'trackers'; //The type of the resource to import (optional) (default to undefined)
 let resourceType2: string; // (optional) (default to undefined)
 let dataTemplate2: string; // (optional) (default to undefined)
+let dryRun: boolean; // (optional) (default to undefined)
 let dataFile2: File; // (optional) (default to undefined)
 
 const { status, data } = await apiInstance.importFile(
@@ -262,6 +263,7 @@ const { status, data } = await apiInstance.importFile(
     resourceType,
     resourceType2,
     dataTemplate2,
+    dryRun,
     dataFile2
 );
 ```
@@ -272,15 +274,16 @@ const { status, data } = await apiInstance.importFile(
 |------------- | ------------- | ------------- | -------------|
 | **dataFile** | [**File**] |  | (optional) defaults to undefined|
 | **dataTemplate** | [**string**] | A data template slug to use for the import.&lt;br/&gt;         **When nothing is specified, the system default headers are expected.**          | (optional) defaults to undefined|
-| **resourceType** | [**&#39;billing&#39; | &#39;order&#39; | &#39;shipment&#39; | &#39;trackers&#39;**]**Array<&#39;billing&#39; &#124; &#39;order&#39; &#124; &#39;shipment&#39; &#124; &#39;trackers&#39;>** | The type of the resource to import | (optional) defaults to undefined|
+| **resourceType** | [**&#39;billing&#39; | &#39;order&#39; | &#39;rate_sheet&#39; | &#39;shipment&#39; | &#39;trackers&#39;**]**Array<&#39;billing&#39; &#124; &#39;order&#39; &#124; &#39;rate_sheet&#39; &#124; &#39;shipment&#39; &#124; &#39;trackers&#39;>** | The type of the resource to import | (optional) defaults to undefined|
 | **resourceType2** | [**string**] |  | (optional) defaults to undefined|
 | **dataTemplate2** | [**string**] |  | (optional) defaults to undefined|
+| **dryRun** | [**boolean**] |  | (optional) defaults to undefined|
 | **dataFile2** | [**File**] |  | (optional) defaults to undefined|
 
 
 ### Return type
 
-**BatchOperation**
+**{ [key: string]: any; }**
 
 ### Authorization
 
@@ -295,6 +298,7 @@ const { status, data } = await apiInstance.importFile(
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
+|**200** |  |  -  |
 |**202** |  |  -  |
 |**400** |  |  -  |
 |**500** |  |  -  |

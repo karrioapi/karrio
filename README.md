@@ -18,7 +18,6 @@
 The open-source shipping platform for modern logistics
 
 [![Karrio OSS](https://img.shields.io/badge/License-LGPL_3.0-blue.svg)](./LICENSE)
-[![Karrio Enterprise](https://img.shields.io/badge/Enterprise-Karrio_EE-orange.svg)](./LICENSE_EE)
 [![karrio-tests](https://github.com/karrioapi/karrio/actions/workflows/tests.yml/badge.svg)](https://github.com/karrioapi/karrio/actions/workflows/tests.yml)
 [![karrio-build](https://github.com/karrioapi/karrio/actions/workflows/build.yml/badge.svg)](https://github.com/karrioapi/karrio/actions/workflows/build.yml)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/cc2ac4fcb6004bca84e42a90d8acfe41)](https://www.codacy.com/gh/karrioapi/karrio/dashboard?utm_source=github.com&utm_medium=referral&utm_content=karrioapi/karrio&utm_campaign=Badge_Grade)
@@ -138,9 +137,8 @@ The `/ee` directory contains enterprise-only features under the [Karrio Enterpri
 | **Advanced workflows** | Shipping automation and rules engine |
 | **Audit logging**      | Compliance and security tracking     |
 | **SSO/SAML**           | Enterprise authentication            |
-| **Priority support**   | SLA-backed support and services      |
 
-Enterprise features require a valid [Karrio subscription](https://karrio.io/pricing).
+The `/ee` components are licensed separately under the [Karrio Enterprise License](./LICENSE_EE).
 
 ### Plugin Development
 

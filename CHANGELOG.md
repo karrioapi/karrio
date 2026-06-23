@@ -1,3 +1,53 @@
+# Karrio 2026.1.32
+
+> Patch release. Resolves six pressing operational and security issues reported
+> by self-hosted operators, plus reviewed carrier fixes for FedEx and USPS. No
+> breaking changes.
+
+## Changes
+
+### Fix
+
+- fix(providers): guard migration `0093` against cascade data-loss — it now
+  depends on `manager/0079`, so the legacy carrier FK columns are removed before
+  the `is_system` carrier rows are deleted and the delete can no longer cascade
+  into tracking/shipment/pickup history (GH #1116).
+- fix(settings): scope the MD5 `PASSWORD_HASHERS` override to the test runner, so
+  production no longer stores MD5 password hashes or locks out PBKDF2 users on
+  upgrade (GH #1094).
+- fix(events): delete the `periodic_data_archiving` backlog in bounded batches to
+  avoid OOM on the first run after deployment (GH #1125).
+- fix(settings): import `workers` before `apm` so Huey binds the configured
+  `REDIS_HOST` when `OTEL_ENABLED=true` instead of falling back to localhost
+  (GH #1124).
+- fix(manager): make migration `0078_populate_carrier_snapshots` production-safe
+  — chunked iterator + `bulk_update`, idempotent (GH #1123).
+- fix(core): clean up async DB connections after tracing writes to stop the
+  connection/memory runaway introduced with trace persistence (GH #1119, phase 1).
+- fix(usps): update USPS and USPS International server URLs to `apis.usps.com` /
+  `apis-tem.usps.com` after USPS retired the legacy Web Tools / `api-cat` hosts;
+  fixes test-mode "Invalid credentials" (GH #1118).
+- fix(fedex): populate the full set of shipment `customerReferences`
+  (INVOICE_NUMBER, CUSTOMER_REFERENCE, DEPARTMENT_NUMBER, P_O_NUMBER,
+  RMA_ASSOCIATION); fixes the empty REF field on labels (GH #1082).
+
+### Feat
+
+- feat(fedex): make `pickupType` settable via the `fedex_pickup_type` shipping
+  option (DROPOFF_AT_FEDEX_LOCATION / CONTACT_FEDEX_TO_SCHEDULE /
+  USE_SCHEDULED_PICKUP); default behaviour unchanged (GH #1105).
+- feat(fedex): pickup improvements — map `instruction` to `remarks`, add the
+  `fedex_pickup_address_type` option, and resolve `package_location` through an
+  enum (GH #1112).
+
+### Chore
+
+- chore(usps): vendor the official USPS Developer Portal v3 OpenAPI specs for the
+  `usps` and `usps_international` connectors.
+- chore(rules): require explicit permission before writing to `main`.
+
+---
+
 # Karrio 2026.1.31
 
 > Hotfix release. Tracking lookups returned a 500 with

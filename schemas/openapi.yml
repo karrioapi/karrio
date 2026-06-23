@@ -14,7 +14,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2026.1.31`.
+    The current version is `2026.1.32`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -84,7 +84,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2026.1.31
+  version: 2026.1.32
 paths:
   /:
     get:
@@ -501,6 +501,7 @@ paths:
           enum:
           - billing
           - order
+          - rate_sheet
           - shipment
           - trackers
         required: true
@@ -511,6 +512,7 @@ paths:
           enum:
           - billing
           - order
+          - rate_sheet
           - shipment
           - trackers
         required: true
@@ -549,9 +551,9 @@ paths:
         - trackers data
         - orders data
         - shipments data
-        - billing data (soon)<br/><br/>
-        **This operation will return a batch operation that you can poll to follow
-        the import progression.**
+        - rate_sheet data (Excel/CSV)<br/><br/>
+        **For rate_sheet imports, pass dry_run=true to validate and preview a diff
+        without writing. For other resource types, a BatchOperation is returned.**
       summary: Import data files
       parameters:
       - in: query
@@ -572,6 +574,7 @@ paths:
           enum:
           - billing
           - order
+          - rate_sheet
           - shipment
           - trackers
         description: The type of the resource to import
@@ -587,6 +590,8 @@ paths:
                   type: string
                 data_template:
                   type: string
+                dry_run:
+                  type: boolean
                 data_file:
                   type: string
                   format: binary
@@ -596,6 +601,13 @@ paths:
       - OAuth2: []
       - JWT: []
       responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
         '202':
           content:
             application/json:
@@ -838,6 +850,12 @@ paths:
       operationId: '&&list'
       description: Returns the list of configured carriers
       summary: List all carriers
+      parameters:
+      - in: query
+        name: lang
+        schema:
+          type: string
+        description: Language code for translated labels (e.g., 'de', 'en').
       tags:
       - Carriers
       responses:
@@ -1084,6 +1102,12 @@ paths:
                         type: boolean
                   summary: Carrier List
           description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
         '500':
           content:
             application/json:
@@ -1108,7 +1132,7 @@ paths:
           `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
           `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
           `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `smartkargo`, `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
           `veho`, `zoom2u`'
         required: true
       tags:
@@ -1150,7 +1174,7 @@ paths:
           `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
           `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
           `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `smartkargo`, `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
           `veho`, `zoom2u`'
         required: true
       tags:
@@ -1203,7 +1227,7 @@ paths:
           `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
           `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
           `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `smartkargo`, `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
           `veho`, `zoom2u`'
         required: true
       tags:
@@ -1277,7 +1301,7 @@ paths:
           `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
           `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
           `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `smartkargo`, `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
           `veho`, `zoom2u`'
       - in: query
         name: metadata_key
@@ -1869,7 +1893,7 @@ paths:
           `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
           `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
           `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `smartkargo`, `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
           `veho`, `zoom2u`'
       - in: query
         name: created_after
@@ -2238,7 +2262,11 @@ paths:
   /v1/orders/{id}/cancel:
     post:
       operationId: '&&&&cancel'
-      description: Cancel an order.
+      description: |-
+        Cancel an order.
+
+        ``pk`` can be either the karrio order ID or a ``request_id``
+        stored in ``order.meta["request_id"]``.
       summary: Cancel an order
       parameters:
       - in: path
@@ -2507,7 +2535,7 @@ paths:
           `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
           `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
           `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `smartkargo`, `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
           `veho`, `zoom2u`'
       - in: query
         name: confirmation_number
@@ -2523,6 +2551,10 @@ paths:
         schema:
           type: string
           format: date-time
+      - in: query
+        name: is_archived
+        schema:
+          type: boolean
       - in: query
         name: keyword
         schema:
@@ -2771,7 +2803,11 @@ paths:
   /v1/pickups/{id}/cancel:
     post:
       operationId: $$$$cancel
-      description: Cancel a pickup of one or more shipments.
+      description: |-
+        Cancel a pickup of one or more shipments.
+
+        ``pk`` can be either the karrio pickup ID (``pck_…``) or a
+        ``request_id`` stored in ``pickup.meta["request_id"]``.
       summary: Cancel a pickup
       parameters:
       - in: path
@@ -3133,6 +3169,7 @@ paths:
           - seko
           - sendle
           - shipengine
+          - smartkargo
           - spring
           - teleship
           - tge
@@ -3235,6 +3272,7 @@ paths:
           - seko
           - sendle
           - shipengine
+          - smartkargo
           - spring
           - teleship
           - tge
@@ -3337,6 +3375,7 @@ paths:
           - seko
           - sendle
           - shipengine
+          - smartkargo
           - spring
           - teleship
           - tge
@@ -3532,6 +3571,7 @@ paths:
           - seko
           - sendle
           - shipengine
+          - smartkargo
           - spring
           - teleship
           - tge
@@ -3672,6 +3712,7 @@ paths:
           - royalmail
           - seko
           - sendle
+          - smartkargo
           - spring
           - teleship
           - tge
@@ -3803,7 +3844,7 @@ paths:
           `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
           `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
           `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `smartkargo`, `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
           `veho`, `zoom2u`'
       - in: query
         name: created_after
@@ -3827,6 +3868,10 @@ paths:
         name: id
         schema:
           type: string
+      - in: query
+        name: is_archived
+        schema:
+          type: boolean
       - in: query
         name: is_return
         schema:
@@ -4059,7 +4104,13 @@ paths:
   /v1/shipments/{id}/cancel:
     post:
       operationId: $$$$$cancel
-      description: Void a shipment with the associated label.
+      description: |-
+        Void a shipment with the associated label.
+
+        ``pk`` can be either the karrio shipment ID (``shp_…``) or a
+        ``request_id`` stored in ``shipment.meta["request_id"]``.
+        When multiple records share the same ``request_id`` the most
+        recently created one is used.
       summary: Cancel a shipment
       parameters:
       - in: path
@@ -4299,7 +4350,7 @@ paths:
           `fedex`, `freightcom`, `generic`, `geodis`, `gls`, `hay_post`, `hermes`,
           `landmark`, `laposte`, `locate2u`, `mydhl`, `nationex`, `parcelone`, `postat`,
           `purolator`, `roadie`, `royalmail`, `sapient`, `seko`, `sendle`, `shipengine`,
-          `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `smartkargo`, `spring`, `teleship`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
           `veho`, `zoom2u`'
       - in: query
         name: created_after
@@ -4311,6 +4362,10 @@ paths:
         schema:
           type: string
           format: date-time
+      - in: query
+        name: is_archived
+        schema:
+          type: boolean
       - in: query
         name: keyword
         schema:
@@ -4467,6 +4522,7 @@ paths:
           - royalmail
           - seko
           - sendle
+          - smartkargo
           - spring
           - teleship
           - tge
@@ -4520,16 +4576,17 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
       x-operationId: createTracker
-  /v1/trackers/{id_or_tracking_number}:
+  /v1/trackers/{identifier}:
     get:
       operationId: $$$$$$retrieve
-      description: Retrieve a package tracker
+      description: Retrieve a package tracker by ID or tracking number.
       summary: Retrieves a package tracker
       parameters:
       - in: path
-        name: id_or_tracking_number
+        name: identifier
         schema:
           type: string
+        description: Tracker ID (trk_...) or tracking number
         required: true
       tags:
       - Trackers
@@ -4561,13 +4618,14 @@ paths:
       x-operationId: retrieveTracker
     put:
       operationId: $$$$$$update
-      description: Mixin to log requests
+      description: Update a package tracker by ID.
       summary: Update tracker data
       parameters:
       - in: path
-        name: id_or_tracking_number
+        name: identifier
         schema:
           type: string
+        description: Tracker ID (trk_...)
         required: true
       tags:
       - Trackers
@@ -4615,13 +4673,16 @@ paths:
       x-operationId: updateTracker
     delete:
       operationId: $$$$$$remove
-      description: Discard a package tracker.
+      description: Remove a package tracker by ID, tracking number, or request_id.
+        The lookup tries the karrio tracker ID first, then tracking number, then falls
+        back to request_id (most recent match).
       summary: Discard a package tracker
       parameters:
       - in: path
-        name: id_or_tracking_number
+        name: identifier
         schema:
           type: string
+        description: Tracker ID (trk_...), tracking number, or request_id
         required: true
       tags:
       - Trackers
@@ -5707,8 +5768,9 @@ components:
           - shipments
           - trackers
           - billing
+          - rate_sheet
           type: string
-          x-spec-enum-id: ab2ec94900a0feec
+          x-spec-enum-id: caabd60234799675
         resources:
           type: array
           items:
@@ -5894,6 +5956,7 @@ components:
           - seko
           - sendle
           - shipengine
+          - smartkargo
           - spring
           - teleship
           - tge
@@ -5904,7 +5967,7 @@ components:
           - veho
           - zoom2u
           type: string
-          x-spec-enum-id: fba052f05fc9e3a2
+          x-spec-enum-id: ae0f7f0940fb5243
           description: A carrier connection type.
         display_name:
           type: string
@@ -5995,6 +6058,7 @@ components:
           - seko
           - sendle
           - shipengine
+          - smartkargo
           - spring
           - teleship
           - tge
@@ -6005,7 +6069,7 @@ components:
           - veho
           - zoom2u
           type: string
-          x-spec-enum-id: fba052f05fc9e3a2
+          x-spec-enum-id: ae0f7f0940fb5243
           description: A carrier connection type.
         carrier_id:
           type: string
@@ -6106,6 +6170,7 @@ components:
           - seko
           - sendle
           - shipengine
+          - smartkargo
           - spring
           - teleship
           - tge
@@ -6116,7 +6181,7 @@ components:
           - veho
           - zoom2u
           type: string
-          x-spec-enum-id: fba052f05fc9e3a2
+          x-spec-enum-id: ae0f7f0940fb5243
           description: Indicates a carrier (type)
         display_name:
           type: string
@@ -7190,6 +7255,7 @@ components:
       - $ref: '#/components/schemas/seko'
       - $ref: '#/components/schemas/sendle'
       - $ref: '#/components/schemas/shipengine'
+      - $ref: '#/components/schemas/smartkargo'
       - $ref: '#/components/schemas/spring'
       - $ref: '#/components/schemas/teleship'
       - $ref: '#/components/schemas/tge'
@@ -8553,6 +8619,14 @@ components:
           type: string
           default: order
           description: Specifies the object type
+        is_archived:
+          type: boolean
+          default: false
+          description: Indicates whether this order is archived.
+        archived_at:
+          type: string
+          nullable: true
+          description: Timestamp when the order was archived.
         order_id:
           type: string
           description: The source' order id.
@@ -9337,6 +9411,7 @@ components:
           - seko
           - sendle
           - shipengine
+          - smartkargo
           - spring
           - teleship
           - tge
@@ -9347,7 +9422,7 @@ components:
           - veho
           - zoom2u
           type: string
-          x-spec-enum-id: fba052f05fc9e3a2
+          x-spec-enum-id: ae0f7f0940fb5243
           description: A carrier connection type.
         carrier_id:
           type: string
@@ -10213,6 +10288,14 @@ components:
           type: string
           default: pickup
           description: Specifies the object type
+        is_archived:
+          type: boolean
+          default: false
+          description: Indicates whether this pickup is archived.
+        archived_at:
+          type: string
+          nullable: true
+          description: Timestamp when the pickup was archived.
         carrier_name:
           type: string
           description: The pickup carrier
@@ -10844,6 +10927,10 @@ components:
           - $ref: '#/components/schemas/AddressData'
           nullable: true
           description: The billing address for this shipment.
+        is_return:
+          type: boolean
+          default: false
+          description: Indicates whether this is a return shipment rate request.
         carrier_ids:
           type: array
           items:
@@ -11087,6 +11174,14 @@ components:
             $ref: '#/components/schemas/Message'
           default: []
           description: The list of note or warning messages
+        is_archived:
+          type: boolean
+          default: false
+          description: Indicates whether this shipment is archived.
+        archived_at:
+          type: string
+          nullable: true
+          description: Timestamp when the shipment was archived.
         status:
           enum:
           - draft
@@ -11852,6 +11947,14 @@ components:
             $ref: '#/components/schemas/Message'
           default: []
           description: The list of note or warning messages
+        is_archived:
+          type: boolean
+          default: false
+          description: Indicates whether this shipment is archived.
+        archived_at:
+          type: string
+          nullable: true
+          description: Timestamp when the shipment was archived.
         status:
           enum:
           - draft
@@ -12054,6 +12157,14 @@ components:
           type: string
           default: tracker
           description: Specifies the object type
+        is_archived:
+          type: boolean
+          default: false
+          description: Indicates whether this tracker is archived.
+        archived_at:
+          type: string
+          nullable: true
+          description: Timestamp when the tracker was archived.
         metadata:
           type: object
           additionalProperties: {}
@@ -12184,6 +12295,7 @@ components:
           - royalmail
           - seko
           - sendle
+          - smartkargo
           - spring
           - teleship
           - tge
@@ -12194,7 +12306,7 @@ components:
           - veho
           - zoom2u
           type: string
-          x-spec-enum-id: aab0f690054e0465
+          x-spec-enum-id: b6c8e3114206d815
           description: The tracking carrier
         account_number:
           type: string
@@ -12301,6 +12413,7 @@ components:
           description: The normalized incident reason (for exception events only)
         description:
           type: string
+          nullable: true
           description: The tracking event's description
         location:
           type: string
@@ -12489,6 +12602,14 @@ components:
           type: string
           default: tracker
           description: Specifies the object type
+        is_archived:
+          type: boolean
+          default: false
+          description: Indicates whether this tracker is archived.
+        archived_at:
+          type: string
+          nullable: true
+          description: Timestamp when the tracker was archived.
         metadata:
           type: object
           additionalProperties: {}
@@ -13436,6 +13557,19 @@ components:
           nullable: true
       required:
       - api_key
+    smartkargo:
+      type: object
+      properties:
+        api_key:
+          type: string
+        account_number:
+          type: string
+        account_country_code:
+          type: string
+          nullable: true
+      required:
+      - account_number
+      - api_key
     spring:
       type: object
       properties:
@@ -13766,6 +13900,7 @@ tags:
     | seko | SEKO Logistics |
     | sendle | Sendle |
     | shipengine | ShipEngine |
+    | smartkargo | SmartKargo |
     | spring | Spring |
     | teleship | Teleship |
     | tge | TGE |
@@ -15504,6 +15639,14 @@ tags:
     | ups_2nd_day_air | UPS 2nd Day Air |
     | ups_next_day_air | UPS Next Day Air |
     | shipengine_ups_ups_ground | UPS Ground via ShipEngine |
+
+    ### SmartKargo
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | smartkargo_express | EXP |
+    | smartkargo_priority | EPR |
+    | smartkargo_standard | EST |
+    | smartkargo_economy | ECL |
 
     ### Spring
     | Code         | Service Name |

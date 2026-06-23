@@ -17,6 +17,21 @@ class TestFedExRating(unittest.TestCase):
 
         self.assertEqual(request.serialize(), RateRequest)
 
+    def test_create_rate_request_with_use_scheduled_pickup(self):
+        request = gateway.mapper.create_rate_request(
+            models.RateRequest(
+                **{
+                    **RatePayload,
+                    "options": {
+                        **RatePayload["options"],
+                        "fedex_pickup_type": "USE_SCHEDULED_PICKUP",
+                    },
+                }
+            )
+        )
+
+        self.assertEqual(request.serialize(), RateUseScheduledPickupRequest)
+
     def test_get_rate(self):
         with patch("karrio.mappers.fedex.proxy.lib.request") as mock:
             mock.return_value = "{}"
@@ -341,6 +356,14 @@ RateRequest = {
         },
         "smartPostInfoDetail": {"hubId": "1000", "indicia": "PARCEL_SELECT"},
         "totalWeight": 10.0,
+    },
+}
+
+RateUseScheduledPickupRequest = {
+    **RateRequest,
+    "requestedShipment": {
+        **RateRequest["requestedShipment"],
+        "pickupType": "USE_SCHEDULED_PICKUP",
     },
 }
 

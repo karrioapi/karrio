@@ -4312,6 +4312,7 @@ export interface UpdateServiceRate_update_service_rate_rate_sheet_service_rates 
   max_weight: number | null;
   transit_days: number | null;
   transit_time: number | null;
+  meta: any | null;
 }
 
 export interface UpdateServiceRate_update_service_rate_rate_sheet {
@@ -4354,6 +4355,7 @@ export interface BatchUpdateServiceRates_batch_update_service_rates_rate_sheet_s
   max_weight: number | null;
   transit_days: number | null;
   transit_time: number | null;
+  meta: any | null;
 }
 
 export interface BatchUpdateServiceRates_batch_update_service_rates_rate_sheet {
@@ -4616,6 +4618,7 @@ export interface GetRateSheet_rate_sheet_service_rates {
   max_weight: number | null;
   transit_days: number | null;
   transit_time: number | null;
+  meta: any | null;
 }
 
 export interface GetRateSheet_rate_sheet_services_features {
@@ -4737,6 +4740,7 @@ export interface GetRateSheets_rate_sheets_edges_node_service_rates {
   max_weight: number | null;
   transit_days: number | null;
   transit_time: number | null;
+  meta: any | null;
 }
 
 export interface GetRateSheets_rate_sheets_edges_node_services_features {
@@ -5987,6 +5991,7 @@ export enum CarrierNameEnum {
   seko = "seko",
   sendle = "sendle",
   shipengine = "shipengine",
+  smartkargo = "smartkargo",
   spring = "spring",
   teleship = "teleship",
   tge = "tge",
@@ -6408,6 +6413,7 @@ export interface ShipmentFilter {
   has_manifest?: boolean | null;
   is_return?: boolean | null;
   request_id?: string | null;
+  is_archived?: boolean | null;
 }
 
 // null
@@ -6509,6 +6515,7 @@ export interface TrackerFilter {
   status?: string[] | null;
   keyword?: string | null;
   request_id?: string | null;
+  is_archived?: boolean | null;
 }
 
 // null
@@ -6547,6 +6554,7 @@ export interface SystemCarrierMutationInput {
   id: string;
   enable?: boolean | null;
   config?: any | null;
+  tc_accepted?: boolean | null;
 }
 
 // null
@@ -6817,6 +6825,9 @@ export interface CreateServiceLevelInput {
   domicile?: boolean | null;
   international?: boolean | null;
   features?: ServiceLevelFeaturesInput | null;
+  age_check?: string | null;
+  neighbor_delivery?: boolean | null;
+  saturday_delivery?: boolean | null;
   zone_ids?: string[] | null;
   surcharge_ids?: string[] | null;
   metadata?: any | null;
@@ -6923,6 +6934,9 @@ export interface UpdateServiceLevelInput {
   domicile?: boolean | null;
   international?: boolean | null;
   features?: ServiceLevelFeaturesInput | null;
+  age_check?: string | null;
+  neighbor_delivery?: boolean | null;
+  saturday_delivery?: boolean | null;
   zone_ids?: string[] | null;
   surcharge_ids?: string[] | null;
   metadata?: any | null;
@@ -7176,6 +7190,7 @@ export interface PickupFilter {
   meta_key?: string | null;
   meta_value?: string | null;
   request_id?: string | null;
+  is_archived?: boolean | null;
 }
 
 // null

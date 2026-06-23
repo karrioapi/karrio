@@ -61,7 +61,7 @@ def pickup_update_request(
                 "fedex_building_part": lib.OptionEnum("buildingPart"),
                 "fedex_pickup_date_type": lib.OptionEnum("pickupDateType"),
                 "fedex_supplies_requested": lib.OptionEnum("suppliesRequested"),
-                "fedex_pickup_address_type": lib.OptionEnum("pickupAddressType"),
+                "fedex_pickup_address_type": lib.OptionEnum("pickupAddressType", provider_units.FedExPickupAddressType),
                 "fedex_building_part_description": lib.OptionEnum("buildingPartDescription"),
                 "fedex_associated_account_number_type": lib.OptionEnum("associatedAccountNumberType"),
             },
@@ -79,7 +79,7 @@ def pickup_update_request(
             value=settings.account_number,
         ),
         originDetail=fedex.OriginDetailType(
-            pickupAddressType=options.fedex_pickup_address_type.state,
+            pickupAddressType=options.fedex_pickup_address_type.state or "OTHER",
             pickupLocation=fedex.PickupLocationType(
                 contact=fedex.ContactType(
                     companyName=address.company_name,
@@ -105,7 +105,9 @@ def pickup_update_request(
             readyDateTimestamp=f"{payload.pickup_date}T{ready_time}:00Z",
             customerCloseTime=f"{closing_time}:00",
             pickupDateType=options.fedex_pickup_date_type.state,
-            packageLocation=payload.package_location,
+            packageLocation=provider_units.FedExPackageLocation.map(
+                payload.package_location
+            ).value,
             buildingPart=options.fedex_building_part.state,
             buildingPartDescription=options.fedex_building_part_description.state,
             earlyPickup=options.fedex_early_pickup.state,

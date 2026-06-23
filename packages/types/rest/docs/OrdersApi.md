@@ -14,7 +14,7 @@ All URIs are relative to *http://localhost*
 # **cancel**
 > Order cancel()
 
-Cancel an order.
+Cancel an order.  ``pk`` can be either the karrio order ID or a ``request_id`` stored in ``order.meta[\"request_id\"]``.
 
 ### Example
 

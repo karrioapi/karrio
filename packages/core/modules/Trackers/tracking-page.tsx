@@ -29,7 +29,7 @@ export default async function Page({ params }: { params: Promise<Collection> }) 
   });
 
   const { data: tracker, message } = await client.trackers
-    .retrieve({ idOrTrackingNumber: id })
+    .retrieve({ identifier: id })
     .then(({ data }) => ({ data, message: null }))
     .catch((_) => {
       console.log(_.response?.data?.errors || _.response);
@@ -64,7 +64,7 @@ export default async function Page({ params }: { params: Promise<Collection> }) 
     return <Clock className="h-5 w-5" />;
   };
 
-  const getEventIcon = (description?: string) => {
+  const getEventIcon = (description?: string | null) => {
     const desc = description?.toLowerCase() || "";
     if (desc.includes("delivered") || desc.includes("parcel locker")) {
       return <CheckCircle className="h-3 w-3 text-green-600" />;

@@ -182,7 +182,10 @@ def migrate_system_carriers(apps, schema_editor):
             except Exception:
                 pass  # active_users may not exist in schema yet
 
-        # 4. Delete the original Carrier record (orgs refs already cleaned up at start)
+        # 4. Delete the original Carrier record (orgs refs already cleaned up at start).
+        #    Safe against cascade data-loss: this migration depends on
+        #    manager.0079, so the manager carrier FK columns are already removed
+        #    and this delete cannot cascade into tracking/shipment/pickup history.
         carrier.delete()
 
 
@@ -239,6 +242,15 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("providers", "0092_add_system_brokered_connection_models_update_carrier"),
+        # Guard against cascade data-loss (GH discussion #1116):
+        # Deleting the legacy is_system Carrier rows (see migrate_system_carriers)
+        # cascades through the manager FKs (tracking_carrier, pickup_carrier,
+        # selected_rate_carrier, manifest_carrier, upload_carrier) — all CASCADE,
+        # most NOT NULL — and silently destroys tracking/shipment/pickup history.
+        # manager.0079 removes those FK columns AFTER snapshots are copied in
+        # manager.0078, so depending on it here guarantees the columns no longer
+        # exist when carrier.delete() runs and the delete cannot cascade.
+        ("manager", "0079_remove_carrier_fk_fields"),
         # Depend on orgs migration if orgs module is installed
         # This ensures BrokeredConnectionLink exists for org-scoped migrations
     ]

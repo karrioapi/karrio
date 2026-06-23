@@ -290,7 +290,10 @@ def shipment_request(
                 )
             ],
             recipientLocationNumber=None,
-            pickupType="DROPOFF_AT_FEDEX_LOCATION",
+            pickupType=(
+                options.fedex_pickup_type.state
+                or provider_units.FedExPickupType.DROPOFF_AT_FEDEX_LOCATION.value
+            ),
             serviceType=service,
             packagingType=lib.identity(
                 provider_units.PackagingType.map(
@@ -490,16 +493,30 @@ def shipment_request(
                             shipper.company_name or shipper.contact, max=35
                         ),
                         comments=None,
-                        customerReferences=(
-                            [
+                        customerReferences=[
+                            _ref
+                            for _ref in [
+                                # INVOICE_NUMBER: customs invoice, else the invoice_number option
                                 fedex.CustomerReferenceType(
                                     customerReferenceType="INVOICE_NUMBER",
-                                    value=customs.invoice,
-                                )
+                                    value=lib.text(
+                                        customs.invoice or options.invoice_number.state,
+                                        max=30,
+                                    ),
+                                ),
+                                fedex.CustomerReferenceType(
+                                    customerReferenceType="CUSTOMER_REFERENCE",
+                                    value=lib.text(payload.reference, max=30),
+                                ),
+                                fedex.CustomerReferenceType(
+                                    customerReferenceType="DEPARTMENT_NUMBER",
+                                    value=lib.text(
+                                        options.fedex_department_number.state, max=30
+                                    ),
+                                ),
                             ]
-                            if customs.invoice
-                            else []
-                        ),
+                            if _ref.value
+                        ],
                         taxesOrMiscellaneousCharge=None,
                         taxesOrMiscellaneousChargeType=None,
                         freightCharge=None,
@@ -714,7 +731,33 @@ def shipment_request(
                 fedex.RequestedPackageLineItemType(
                     sequenceNumber=None,
                     subPackagingType="OTHER",
-                    customerReferences=[],
+                    customerReferences=[
+                        _ref
+                        for _ref in [
+                            fedex.CustomerReferenceType(
+                                customerReferenceType="CUSTOMER_REFERENCE",
+                                value=lib.text(payload.reference, max=30),
+                            ),
+                            fedex.CustomerReferenceType(
+                                customerReferenceType="DEPARTMENT_NUMBER",
+                                value=lib.text(
+                                    options.fedex_department_number.state, max=30
+                                ),
+                            ),
+                            fedex.CustomerReferenceType(
+                                customerReferenceType="P_O_NUMBER",
+                                value=lib.text(options.fedex_po_number.state, max=30),
+                            ),
+                            # RMA_ASSOCIATION max length is 20 per the FedEx spec
+                            fedex.CustomerReferenceType(
+                                customerReferenceType="RMA_ASSOCIATION",
+                                value=lib.text(
+                                    options.fedex_rma_association.state, max=20
+                                ),
+                            ),
+                        ]
+                        if _ref.value
+                    ],
                     declaredValue=fedex.TotalDeclaredValueType(
                         amount=lib.identity(
                             lib.to_money(package.total_value)

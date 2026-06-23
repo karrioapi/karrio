@@ -1,0 +1,1322 @@
+openapi: 3.0.0
+info:
+  title: Shipping Options
+  description: |
+    Contact Us: [USPS API Support](https://emailus.usps.com/s/usps-APIs) | [Terms of Service](https://about.usps.com/termsofuse.htm)
+    
+    Find all relevant shipping options, rates, and service standards.
+  version: 3.1.29
+servers:
+- url: https://apis.usps.com/shipments/v3
+  description: Production Environment Endpoint
+- url: https://apis-tem.usps.com/shipments/v3
+  description: Testing Environment Endpoint
+paths:
+  /options/search:
+    post:
+      tags:
+      - Resources
+      summary: Presents options for shipping a package
+      description: |-
+        Based on the inputs below, the API generates a comprehensive list of shipping options that comply with USPS Shipping Standards, all within a single request.
+        
+        For deliveries with international mail classes, there are no commitments.  International delivery may vary based upon origin, destination, and customs delays.  For more details, visit [International Mail & Shipping Services](https://www.usps.com/international/mail-shipping-services.htm).
+
+        For deliveries with return mail classes, there are no commitments.  Return delivery will vary based upon when the return item is entered into the mailstream.  For more details, visit [Managing Customer Returns](https://www.usps.com/business/return-services.htm).
+        
+        APO, DPO, and FPO locations typically do not offer commitments.  For more details, visit [Military & Diplomatic Mail](https://www.usps.com/ship/apo-fpo-dpo.htm).
+        
+          | Element                          | Description |
+          | -------------------------------- | --------|
+          | **originZIPCode**                | The origin ZIP Code&#8482; is where the package is being mailed from and is used for calculating pricing. |
+          | **destinationZIPCode**           | The destination ZIP Code&#8482; of the recipient is used for calculating pricing. |
+          | **destinationEntryFacilityType** | The Destination Entry Facility Type the package will be mailed from and is used in calculating Shipping Standards. |
+          | **packageDescription**           | Package characteristics used to price the shipment including requested mail class, weight, dimensions, and more. |
+          | **pricingOptions**               | Pricing options such as price type and supporting information needed for pricing the shipping option. |
+      operationId: post-options-search
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OptionsRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/OptionsRequest'
+        required: true
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OptionsResponse'
+              examples:
+                DomesticOutboundOptionsExample:
+                  $ref: '#/components/examples/DomesticOutboundOptionsExample'
+                DomesticReturnOptionsExample:
+                  $ref: '#/components/examples/DomesticReturnOptionsExample'
+                InternationalOptionsExample:
+                  $ref: '#/components/examples/InternationalOptionsExample'
+              encoding:
+                metadata:
+                  contentType: application/json
+                  style: form
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/OptionsResponse'
+              examples:
+                DomesticOutboundOptionsExample:
+                  $ref: '#/components/examples/DomesticOutboundOptionsExample'
+                InternationalOptionsExample:
+                  $ref: '#/components/examples/InternationalOptionsExample'
+              encoding:
+                metadata:
+                  contentType: application/xml
+                  style: form
+        "400":
+          description: Bad Request.  There is an error in the received request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "401":
+          description: Unauthorized request.
+          headers:
+            WWW-Authenticate:
+              $ref: '#/components/headers/WWWAuthenticate'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is denied.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "429":
+          description: Too Many Requests. Too many requests have been received from client in a short amount of time.
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: Service is unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        default:
+          description: Other unanticipated errors that may occur.
+          content: {}
+      security:
+        - OAuth:
+            - shipments
+components:
+  schemas:
+    OptionsRequest:
+      description: All ingredients requested to calculate pricing based on USPS service standards.
+      oneOf:
+      - $ref: '#/components/schemas/DomesticOptionsRequest'
+      - $ref: '#/components/schemas/InternationalOptionsRequest'
+    DomesticOptionsRequest:
+      title: Domestic Options Request
+      description: Domestic Options Request
+      required:
+      - destinationZIPCode
+      - originZIPCode
+      - packageDescription
+      - pricingOptions
+      type: object
+      properties:
+        pricingOptions:
+          description: List of domestic pricing options
+          minItems: 1
+          type: array
+          items:
+            $ref: '#/components/schemas/DomesticPricingOption'
+        originZIPCode:
+          $ref: '#/components/schemas/OriginZIPCode'
+        destinationZIPCode:
+          $ref: '#/components/schemas/DestinationZIPCode'
+        destinationEntryFacilityType:
+          type: string
+          description: |
+            Types of Facilities:
+          
+            * NONE - Translate to Destination Rate Indicator N
+            * DESTINATION_NETWORK_DISTRIBUTION_CENTER - Translate to Destination Rate Indicator B
+            * DESTINATION_SECTIONAL_CENTER_FACILITY - Translate to Destination Rate Indicator S
+            * DESTINATION_DELIVERY_UNIT - Translate to Destination Rate Indicator D
+            * DESTINATION_SERVICE_HUB - Translate to Destination Rate Indicator H
+            * DESTINATION_REGIONAL_PROCESSING_DISTRIBUTION_CENTER - Translate to Destination Rate Indicator B
+
+            Note:
+            - The Destination Entry Facility Type is only used in calculating Shipping Standards.
+            - Effective 01/18/2026: `DESTINATION_NETWORK_DISTRIBUTION_CENTER` with `PARCEL_SELECT` is no longer eligible.
+            - Effective 01/18/2026: (NSA Only) `DESTINATION_REGIONAL_PROCESSING_DISTRIBUTION_CENTER` with `PARCEL_SELECT` is available as an option.
+          enum:
+          - NONE
+          - DESTINATION_NETWORK_DISTRIBUTION_CENTER
+          - DESTINATION_SECTIONAL_CENTER_FACILITY
+          - DESTINATION_DELIVERY_UNIT
+          - DESTINATION_SERVICE_HUB
+          - DESTINATION_REGIONAL_PROCESSING_DISTRIBUTION_CENTER
+          default: NONE
+        packageDescription:
+          $ref: '#/components/schemas/DomesticPackageDescription'
+        shippingFilter:
+          type: string
+          description: A filter for domestic results to return only one response based on lowest price or fastest service standard
+          enum:
+          - PRICE
+          - SERVICE_STANDARDS
+      additionalProperties: false
+    InternationalOptionsRequest:
+      title: International Options Request
+      description: International Options Request
+      required:
+      - destinationCountryCode
+      - originZIPCode
+      - packageDescription
+      - pricingOptions
+      type: object
+      properties:
+        pricingOptions:
+          description: List of international pricing options
+          minItems: 1
+          type: array
+          items:
+            $ref: '#/components/schemas/InternationalPricingOption'
+        originZIPCode:
+          $ref: '#/components/schemas/OriginZIPCode'
+        foreignPostalCode:
+          $ref: '#/components/schemas/PostalCode'
+        destinationCountryCode:
+          type: string
+          pattern: ^[A-Z]{2}$
+          description: The ISO 3166-1 alpha-2 code representing the shipping destination.
+          example: "CA"
+        packageDescription:
+          $ref: '#/components/schemas/InternationalPackageDescription'
+        shippingFilter:
+          type: string
+          description: A filter for international results to return only one response based on lowest price.  There are no service standards for international.
+          enum:
+          - PRICE
+        requestDutiesTaxesFees:
+          type: boolean
+          description: 'When `true` the returned `rateOption` elements will include the duties and taxes cost for each item and package fees.'
+          default: false
+        destinationCity:
+          type: string
+          maxLength: 28
+          minLength: 1
+          description: 'When `requestDutiesTaxesFees` is `true` then `destinationCity` may be required based on the country of import.'
+        destinationState:
+          type: string
+          maxLength: 2
+          minLength: 2
+          pattern: "^\\w{2}$"
+          description: 'When `requestDutiesTaxesFees` is `true` then `destinationState` may be required based on the country of import.'
+        items:
+          type: array
+          maxItems: 30
+          description: 'A list of items utilized for pricing when `requestDutiesTaxesFees` is `true`.'
+          items:
+            $ref: '#/components/schemas/InternationalOptionsRequestLandedCostItem'
+      additionalProperties: false
+    InternationalOptionsRequestLandedCostItem:
+      title: Delivery Duties, Taxes, and Fees Item
+      description: 'When `requestDutiesTaxesFees` is true at least one item is required.'
+      type: object
+      required:
+        - itemId
+        - itemValue
+        - itemQuantity
+      properties:
+        itemId:
+          type: string
+          maxLength: 20
+          minLength: 1
+          pattern: "^\\w{1,20}$"
+          description: 'A user-provided item identifier. The itemId is echoed in the response to correlate duties and taxes to this item.'
+          example: "001"
+        itemValue:
+          maximum: 999999.99
+          minimum: 0.01
+          type: number
+          format: float
+          description: 'The value of the item.'
+        itemQuantity:
+          minimum: 1
+          type: number
+          description: 'The quantity of the item.'
+          example: 3
+        itemWeight:
+          minimum: 0.001
+          type: number
+          description: The calculated weight for each individual item within a quantity based on user input.
+          format: double
+          example: 5
+        countryOfOrigin:
+          pattern: "[A-Z]{2}"
+          type: string
+          description: 'A two digit Alpha Country Code defined by ISO representing where the item is from.'
+          example: 'CA'
+        HSTariffNumber:
+          maxLength: 14
+          minLength: 6
+          type: string
+          description: 'The HS tariff number is based on the Harmonized Commodity Description and Coding System developed by the World Customs Organization.  The value should follow the regular expression pattern: `^\.*(?:[A-Za-z\d]\.*){6,14}$`.  For more information, see: [https://hts.usitc.gov/current](https://hts.usitc.gov/current).'
+    OptionsResponse:
+      type: object
+      description: The response type varies depending on which request is passed
+      oneOf:
+      - $ref: '#/components/schemas/DomesticOptionsResponse'
+      - $ref: '#/components/schemas/InternationalOptionsResponse'
+    DomesticOptionsResponse:
+      type: object
+      properties:
+        originZIPCode:
+          pattern: "^\\d{5}(?:[-\\s]\\d{4})?$"
+          type: string
+          description: This is the originating ZIP Code&#8482; for the package.
+        destinationZIPCode:
+          pattern: "^\\d{5}(?:[-\\s]\\d{4})?$"
+          type: string
+          description: This is the destination ZIP Code&#8482; for the package.
+        pricingOptions:
+          description: List of domestic pricing options
+          type: array
+          xml:
+            name: pricingOptions
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/DomesticPricingOption'
+      additionalProperties: false
+      description: TBD
+    InternationalOptionsResponse:
+      type: object
+      properties:
+        originZIPCode:
+          pattern: "^\\d{5}(?:[-\\s]\\d{4})?$"
+          type: string
+          description: This is the originating ZIP Code&#8482; for the package.
+        foreignPostalCode:
+          $ref: '#/components/schemas/PostalCode'
+        destinationCountryCode:
+          type: string
+          description: Country of destination.
+        pricingOptions:
+          description: List of international pricing options
+          type: array
+          xml:
+            name: pricingOptions
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/InternationalPricingOption'
+      additionalProperties: false
+      description: TBD
+    DomesticOptions:
+      type: object
+      properties:
+        mailClass:
+          $ref: "#/components/schemas/DomesticMailClass"
+        rateOptions:
+          description: List of domestic rate options
+          type: array
+          xml:
+            name: rateOptions
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/DomesticRateOptions'
+      additionalProperties: false
+      description: TBD
+      xml:
+        name: shippingOption
+        wrapped: true
+    InternationalOptions:
+      description: Options specific to international shipments
+      type: object
+      properties:
+        mailClass:
+          $ref: "#/components/schemas/InternationalMailClass"
+        rateOptions:
+          description: List of rate options
+          type: array
+          xml:
+            name: rateOptions
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/InternationalRateOptions'
+      additionalProperties: false
+      xml:
+        name: shippingOption
+        wrapped: true
+    InternationalRateOptions:
+      type: object
+      description: Options for international rate
+      allOf:
+      - type: object
+        properties:
+          dutiesTaxesFeesQuote:
+            $ref: '#/components/schemas/DutiesTaxesFeesQuote'
+      - $ref: '#/components/schemas/RateOptions'
+    DomesticRateOptions:
+      type: object
+      description: Options for domestic rate
+      allOf:
+      - type: object
+        properties:
+          commitment:
+            $ref: '#/components/schemas/Commitment'
+      - $ref: '#/components/schemas/RateOptions'
+    RateOptions:
+      type: object
+      description: Options used to determine the rate
+      properties:
+        totalPrice:
+          type: number
+          description: |
+            The total price, including the `totalBasePrice` and all extra service prices.
+
+            Note: This field is only returned when `extraServices` are passed in the request.
+          format: double
+          example: 3.35
+        totalBasePrice:
+          type: number
+          description: "The price of the rate, fees, and pound postage."
+          format: double
+          example: 0.63
+        rates:
+          description: List of available rates for the package including base postage and extra service fees
+          type: array
+          xml:
+            wrapped: true
+          items:
+            type: object
+            properties:
+              description:
+                type: string
+                description: The description of the price.
+              startDate:
+                type: string
+                description: Effective start date of the rate.
+                format: date
+                example: "2021-07-16"
+              endDate:
+                description: Effective end date of the rate. If blank, the rate does not have an end date as of yet.
+                type: string
+                example: "2021-07-16"
+                pattern: '^$|^[0-9]{4}-[0-9]{2}-[0-9]{2}$'
+              SKU:
+                type: string
+                description: Pricing SKU.
+              price:
+                type: number
+                description: "Amount of Postage Required, does not include insurance or other extra service fees."
+                format: double
+              zone:
+                type: string
+                description: |
+                  For domestic requests: indicates the calculated zone between the provided `originZIPCode` and `destinationZIPCode` for a given `mailClass`, `mailingDate`, and `weight`.
+                  
+                  For international requests: indicates the price group for a given `destinationCountryCode`, `mailClass`, `mailingDate`, and `rateIndicator`.
+              weight:
+                type: number
+                description: "The package weight, in weightUOM. Items must weigh 70 pounds (1120 ounces) or less."
+              dimWeight:
+                type: number
+                description: "The dimensional weight of the package, if greater than specified in weight, in ounces."
+              dimensionalWeight:
+                type: number
+                description: "The dimensional weight of package, if greater than specified in weight, in ounces. This will be removed in July 2025."
+                deprecated: true
+              priceType:
+                $ref: "#/components/schemas/PriceType"
+              fees:
+                type: array
+                description: Fees associated to the package.
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      description: Name of the fee.
+                    SKU:
+                      type: string
+                      description: Pricing SKU.
+                    price:
+                      type: number
+                      description: The price for the fee.
+                      format: double
+                xml:
+                  wrapped: true
+              productName:
+                type: string
+                description: A business friendly name associated to the product that can be displayed to a customer on a shipping portal.
+              productDefinition:
+                type: string
+                description: A business friendly description associated to the product that can be displayed to a customer on a shipping portal.
+              processingCategory:
+                type: string
+                description: |
+                  Processing category for the provided rate, this value can be used in the labels API to ensure the provided rate is applied.
+
+                  * `CARDS` - Cards, translates to PTR code `0`
+                  * `LETTERS` - Letters, translates to PTR code `1`
+                  * `FLATS` - Flats, translates to PTR code `2`
+                  * `MACHINABLE` - Machinable Parcel, translates to PTR code `3`
+                  * `IRREGULAR` - Irregular Parcel, translates to PTR code `4` - This option is deprecated in favor of `NONSTANDARD` and will no longer be returned as of 01/19/2025.
+                  * `NON_MACHINABLE` - Non-machinable parcel, translates to PTR code `5` - This option is deprecated in favor of `NONSTANDARD` and will no longer be returned as of 01/19/2025.
+                  * `NONSTANDARD` - Nonstandard parcel, translates to PTR code `5`
+                  * `CATALOGS` - Catalogs, translates to PTR code `C`
+                  * `OPEN_AND_DISTRIBUTE` - Open and Distribute, translates to PTR code `O`
+                  * `RETURNS` - Returns, translates to PTR code `R`
+                  * `SOFT_PACK_MACHINABLE` - Soft Pack Machinable, translates to PTR code `S`
+                  * `SOFT_PACK_NON_MACHINABLE` - Soft Package Non-machinable, translates to PTR code `T`
+
+                enum:
+                  - CARDS
+                  - LETTERS
+                  - FLATS
+                  - MACHINABLE
+                  - IRREGULAR
+                  - NON_MACHINABLE
+                  - NONSTANDARD
+                  - CATALOGS
+                  - OPEN_AND_DISTRIBUTE
+                  - RETURNS
+                  - SOFT_PACK_MACHINABLE
+                  - SOFT_PACK_NON_MACHINABLE
+                example: NONSTANDARD
+              rateIndicator:
+                type: string
+                description: Two-digit rate indicator code for the provided rate, this value can be used in the labels API to ensure the provided rate is applied.
+                example: "SP"
+              destinationEntryFacilityType:
+                type: string
+                description: |
+                  Destination Entry Facility type for the provided rate, this value can be used in the labels API to ensure the provided rate is applied.
+
+                  * `NONE` - None, translates to PTR code `N`
+                  * `AREA_DISTRIBUTION_CENTER` - Area Distribution Center, translates to PTR code `A`
+                  * `AUXILIARY_SERVICE_FACILITY` - Auxiliary Service Facility, translates to PTR code `F`
+                  * `DESTINATION_DELIVERY_UNIT` - Destination Delivery Unit, translates to PTR code `D`
+                  * `DESTINATION_NETWORK_DISTRIBUTION_CENTER` - Destination Network Distribution Center, translates to PTR code `B`
+                  * `DESTINATION_SECTIONAL_CENTER_FACILITY` - Destination Sectional Center Facility, translates to PTR code `S`
+                  * `DESTINATION_SERVICE_HUB` - Destination Service Hub, translates to PTR code `H`
+                  * `INTERNATIONAL_SERVICE_CENTER` - International Service Center, translates to PTR code `I`
+                  * `DESTINATION_REGIONAL_PROCESSING_DISTRIBUTION_CENTER` - Destination Regional Processing Distribution Center, translates to PTR code `B`
+                  
+                  Note:
+                  * Effective 01/18/2026: `DESTINATION_NETWORK_DISTRIBUTION_CENTER` with `PARCEL_SELECT` is no longer eligible.
+                  * Effective 01/18/2026: (NSA Only) `DESTINATION_REGIONAL_PROCESSING_DISTRIBUTION_CENTER` with `PARCEL_SELECT` is available as an option.
+                enum:
+                  - NONE
+                  - AREA_DISTRIBUTION_CENTER
+                  - AUXILIARY_SERVICE_FACILITY
+                  - DESTINATION_DELIVERY_UNIT
+                  - DESTINATION_NETWORK_DISTRIBUTION_CENTER
+                  - DESTINATION_SECTIONAL_CENTER_FACILITY
+                  - DESTINATION_SERVICE_HUB
+                  - INTERNATIONAL_SERVICE_CENTER
+                  - DESTINATION_REGIONAL_PROCESSING_DISTRIBUTION_CENTER
+                example: NONE
+              mailClass:
+                $ref: "#/components/schemas/AllMailClasses"
+            additionalProperties: false
+            xml:
+              name: rate
+              wrapped: true
+        extraServices:
+          type: array
+          description: Extra services requested on the package.
+          xml:
+            name: extraServices
+            wrapped: true
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: Name of the extra service.
+              SKU:
+                type: string
+                description: SKU of the extra service.
+              price:
+                type: number
+                description: The price for the extra service.
+                format: double
+              extraService:
+                type: string
+                description: The code for the extra service.
+                example: "957"
+              priceType:
+                $ref: "#/components/schemas/PriceType"
+              warnings:
+                type: array
+                description: List of warnings
+                xml:
+                  wrapped: true
+                items:
+                  type: object
+                  properties:
+                    warningCode:
+                      type: string
+                      description: Warning code in response to the request.
+                      example: "001"
+                    warningDescription:
+                      type: string
+                      description: A human-readable message describing the warning.
+                      example: Contract rate not found for request. Published rate returned.
+            additionalProperties: false
+      additionalProperties: true
+    DomesticPackageDescription:
+      description: Details of package being shipped
+      allOf:
+      - $ref: '#/components/schemas/ShippingOptionsPackageDescription'
+      - required:
+        - mailClass
+        type: object
+        properties:
+          mailClass:
+            type: string
+            description: |
+              Mail classes for the label.
+
+              Note:
+              - `PARCEL_SELECT_LIGHTWEIGHT` is deprecated and will convert to `PARCEL_SELECT`.
+              - `FIRST-CLASS_PACKAGE_SERVICE` is deprecated and will convert to `USPS_GROUND_ADVANTAGE`.
+              - `ALL` is deprecated and will convert to `ALL_OUTBOUND`.
+              - Certain mail classes, such as `MEDIA_MAIL`, `BOUND_PRINTED_MATTER`, and `LIBRARY_MAIL`, have eligibility rules on what can be mailed using that service.  For more details on these mail classes, please visit [What are Package Services?](https://faq.usps.com/s/article/What-are-Package-Services).
+            enum:
+            - PARCEL_SELECT
+            - PARCEL_SELECT_LIGHTWEIGHT
+            - USPS_CONNECT_LOCAL
+            - USPS_CONNECT_REGIONAL
+            - USPS_CONNECT_MAIL
+            - USPS_GROUND_ADVANTAGE
+            - USPS_GROUND_ADVANTAGE_RETURN_SERVICE
+            - PRIORITY_MAIL_EXPRESS
+            - PRIORITY_MAIL_EXPRESS_RETURN_SERVICE
+            - PRIORITY_MAIL
+            - PRIORITY_MAIL_RETURN_SERVICE
+            - FIRST-CLASS_PACKAGE_SERVICE
+            - LIBRARY_MAIL
+            - MEDIA_MAIL
+            - BOUND_PRINTED_MATTER
+            - ALL
+            - ALL_OUTBOUND
+            - ALL_RETURNS
+          extraServices:
+            maxItems: 5
+            minItems: 0
+            type: array
+            description: |         
+              Extra Services requested on the package. The available options are:
+              * 365 - Global Direct Entry
+              * 415 - USPS Label Delivery
+              * 452 - USPS Returns
+              * 480 - Tracking Plus 6 Months
+              * 481 - Tracking Plus 1 Year
+              * 482 - Tracking Plus 3 Years
+              * 483 - Tracking Plus 5 Years
+              * 484 - Tracking Plus 7 Years
+              * 485 - Tracking Plus 10 Years
+              * 486 - Tracking Plus Signature 3 Years
+              * 487 - Tracking Plus Signature 5 Years
+              * 488 - Tracking Plus Signature 7 Years
+              * 489 - Tracking Plus Signature 10 Years
+              * 498 - PO Box Locker – Stocking Fee (NSA Only)
+              * 500 - PO Box Locker – Self-Service Pickup Fee (NSA Only)
+              * 501 - PO Box Locker – Clerk-Assisted Pickup Fee (NSA Only)
+              * 502 - PO Box Locker – Local Delivery Fee (NSA Only)
+              * 810 - HAZMAT Air Eligible Ethanol Package
+              * 811 - HAZMAT Class 1 - Toy Propellant/Safety Fuse Package
+              * 812 - HAZMAT Class 3 – Flammable Liquid Package
+              * 813 - HAZMAT Class 7 - Radioactive Materials Package
+              * 814 - HAZMAT Class 8 - Corrosive Materials Package
+              * 815 - HAZMAT Class 8 - Nonspillable Wet Battery Package
+              * 816 - HAZMAT Class 9 - Lithium Battery Marked - Ground Only Package
+              * 817 - HAZMAT Class 9 - Lithium Battery - Returns Package
+              * 818 - HAZMAT Class 9 - Lithium batteries, marked package
+              * 819 - HAZMAT Class 9 - Dry Ice Package
+              * 820 - HAZMAT Class 9 - Lithium batteries, unmarked package
+              * 821 - HAZMAT Class 9 - Magnetized Materials Package
+              * 822 - HAZMAT Division 4.1 – Flammable Solids or Safety Matches Package
+              * 823 - HAZMAT Division 5.1 - Oxidizers Package
+              * 824 - HAZMAT Division 5.2 - Organic Peroxides Package
+              * 825 - HAZMAT Division 6.1 – Toxic Materials Package
+              * 826 - HAZMAT Division 6.2 – Infectious Substances Package
+              * 827 - HAZMAT Excepted Quantity Provision Package
+              * 828 - HAZMAT Ground Only
+              * 829 - HAZMAT ID8000 Consumer Commodity Package
+              * 830 - HAZMAT Lighters Package
+              * 831 - HAZMAT LTD QTY Ground Package
+              * 832 - HAZMAT Small Quantity Provision Package
+              * 853 - Perishable Material
+              * 856 - Live Animals Transportation Fee
+              * 857 - Hazardous Material
+              * 858 - Cremated Remains
+              * 910 - Certified Mail
+              * 911 - Certified Mail Restricted Delivery
+              * 912 - Certified Mail Adult Signature Required
+              * 913 - Certified Mail Adult Signature Restricted Delivery
+              * 915 - Collect on Delivery (COD)
+              * 917 - COD Restricted Delivery
+              * 920 - USPS Tracking
+              * 921 - Signature Confirmation
+              * 922 - Adult Signature Required 21 or Over
+              * 923 - Adult Signature Restricted Delivery 21 or Over
+              * 924 - Signature Confirmation Restricted Delivery
+              * 925 - Priority Mail Express Merchandise Insurance
+              * 930 - Insurance <= $500
+              * 931 - Insurance > $500
+              * 934 - Insurance Restricted Delivery
+              * 940 - Registered Mail
+              * 941 - Registered Mail Restricted Delivery
+              * 955 - Return Receipt
+              * 957 - Return Receipt Electronic
+              * 972 - Live Animal and Perishable Handling Fee
+              * 981 - Signature Requested (PRIORITY_MAIL_EXPRESS only)
+              * 984 - Parcel Locker Delivery
+              * 986 - PO to Addressee (PRIORITY_MAIL_EXPRESS only)
+              * 991 - Sunday Delivery
+            xml:
+              name: extraServices
+              wrapped: true
+            items:
+              $ref: '#/components/schemas/ExtraService'
+          packageValue:
+            minimum: 0
+            type: number
+            description: "The merchandise value of the package, in US dollars. Required to receive prices for Insurance and Collect On Delivery extra services.  The price of Insurance, Collect On Delivery, and Registered Mail extra services will vary based on the `packageValue` requested."
+            example: 35
+          mailingDate:
+            description: |
+              The local date on which the package will be mailed. If the time is not provided, it will be defaulted to 6:00 p.m. local time.  The local time is based on the `originZIPCode` provided in the request.
+            type: string
+            oneOf:
+            - $ref: '#/components/schemas/MailingDate'
+            - $ref: '#/components/schemas/MailingDateTime'
+        additionalProperties: true
+        description: "Package characteristics used to price the shipment including requested mail class, weight, dimensions, and more."
+    InternationalPackageDescription:
+      description: Details of package being shipped
+      allOf:
+      - $ref: '#/components/schemas/ShippingOptionsPackageDescription'
+      - required:
+        - mailClass
+        type: object
+        properties:
+          mailClass:
+            type: string
+            description: |
+              International Mail classes for the label.
+
+              `GLOBAL_EXPRESS_GUARANTEED` is supported by shipping options, but is not supported by labels. Global Express Guaranteed Service is suspended as of September 29, 2024.
+            enum:
+            - FIRST-CLASS_PACKAGE_INTERNATIONAL_SERVICE
+            - PRIORITY_MAIL_INTERNATIONAL
+            - PRIORITY_MAIL_EXPRESS_INTERNATIONAL
+            - GLOBAL_EXPRESS_GUARANTEED
+            - ALL
+          extraServices:
+            maxItems: 5
+            minItems: 0
+            type: array
+            description: |
+              Extra Services requested on the package. The available options are:
+              * 370 - USPS Delivery Duties Paid Fee
+              * 813 - HAZMAT Class 7 - Radioactive Materials Package
+              * 820 - HAZMAT Class 9 - Lithium batteries, unmarked package
+              * 826 - HAZMAT Division 6.2 – Infectious Substances Package
+              * 857 - Hazardous Material          
+              * 930 - Insurance <= $500
+              * 931 - Insurance > $500
+              * 955 - Return Receipt (Unsupported as of 01/19/2025)
+            xml:
+              name: extraServices
+              wrapped: true
+            items:
+              $ref: '#/components/schemas/InternationalExtraService'
+          packageValue:
+            minimum: 0
+            type: number
+            description: "The merchandise value of the package, in US dollars. Required to receive prices for Insurance.  The price of the Insurance extra service will vary based on the `packageValue` requested."
+            example: 35
+          mailingDate:
+            type: string
+            description: "Supports either a date or date-time entry, if using a date the time will be defaulted to 6:00 pm local time for the purpose of Service Delivery Standard estimates. A mailing date of 0-30 days in advance can be requested. "
+            oneOf:
+            - $ref: '#/components/schemas/MailingDate'
+            - $ref: '#/components/schemas/MailingDateTime'
+        additionalProperties: true
+        description: "Package characteristics used to price the shipment including requested mail class, weight, dimensions, and more."
+    DutiesTaxesFeesQuote:
+      title: Duties, taxes, and fees details.
+      type: object
+      description: "The duties, taxes, and fees details. Included if `requestDutiesTaxesFees` is `true` and the shipping destination has applicable duties, taxes, and fees."
+      properties:
+        packageFee:
+          type: number
+          format: float
+          description: "The value of the total landed cost fee associated with the package."
+        itemQuotes:
+          type: array
+          description: "The total landed cost prices for taxes and duties on each item."
+          items:
+            type: object
+            properties:
+              dutyPrice:
+                type: number
+                format: float
+                description: "The value of the duties associated with the item."
+              taxPrice:
+                type: number
+                format: float
+                description: "The value of the taxes associated with the item."
+              itemId:
+                type: string
+                description: "The corresponding `itemId` provided in the request."
+    ExtraService:
+      title: Extra Service Codes
+      type: integer
+      description: Available extra service codes.
+      enum:
+      - 365
+      - 415
+      - 452
+      - 480
+      - 481
+      - 482
+      - 483
+      - 484
+      - 485
+      - 486
+      - 487
+      - 488
+      - 489
+      - 498
+      - 500
+      - 501
+      - 502
+      - 810
+      - 811
+      - 812
+      - 813
+      - 814
+      - 815
+      - 816
+      - 817
+      - 818
+      - 819
+      - 820
+      - 821
+      - 822
+      - 823
+      - 824
+      - 825
+      - 826
+      - 827
+      - 828
+      - 829
+      - 830
+      - 831
+      - 832
+      - 853
+      - 856
+      - 857
+      - 858
+      - 910
+      - 911
+      - 912
+      - 913
+      - 915
+      - 917
+      - 920
+      - 921
+      - 922
+      - 923
+      - 924
+      - 925
+      - 930
+      - 931
+      - 934
+      - 940
+      - 941
+      - 955
+      - 957
+      - 972
+      - 981
+      - 984
+      - 986
+      - 991
+    InternationalExtraService:
+      title: Extra Service Codes
+      type: integer
+      description: |
+        Extra Services requested on the package. The available options are:
+        * 370 - USPS Delivery Duties Paid Fee
+        * 813 - HAZMAT Class 7 - Radioactive Materials Package
+        * 820 - HAZMAT Class 9 - Lithium batteries, unmarked package
+        * 826 - HAZMAT Division 6.2 – Infectious Substances Package
+        * 857 - Hazardous Material
+        * 930 - Insurance <= $500
+        * 931 - Insurance > $500
+        * 955 - Return Receipt (Unsupported as of 01/19/2025)
+      enum:
+        - 370
+        - 813
+        - 820
+        - 826
+        - 857
+        - 930
+        - 931
+        - 955
+    Commitment:
+      title: Commitment
+      type: object
+      properties:
+        name:
+          type: string
+          description: "Commitment name such as 1 Day, 2 Days, 3 Days, MILITARY, DPO, NO STD, or UNAVAILABLE."
+        scheduleDeliveryDate:
+          type: string
+          description: |
+            Date USPS expects that the package or mailpiece will be delivered based on the origin, destination, and drop-off time and date in the request. Actual delivery date may vary based on when the package or mailpiece is entered or other conditions.
+            
+            Note: This field has been deprecated in favor of `expectedDeliveryDate` and will be removed in a future release. Please transition to using `expectedDeliveryDate`.
+          format: date
+          deprecated: true
+        expectedDeliveryDate:
+          type: string
+          description: Date in the YYYY-MM-DD format.
+        guaranteedDelivery:
+          type: boolean
+          description: "If true, the expectedDeliveryDate is guaranteed."
+        isPriorityMailNextDay:
+          type: boolean
+          description: "Indicates if the commitment is for Priority Mail Next Day service."
+      additionalProperties: true
+      description: The commitment and the scheduled delivery date of the package.
+    DomesticPricingOption:
+      description: The option for domestic pricing
+      type: object
+      properties:
+        shippingOptions:
+          description: List of available shipping options and delivery options for the package
+          type: array
+          readOnly: true
+          xml:
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/DomesticOptions'
+        priceType:
+          $ref: '#/components/schemas/PriceTypeRequest'
+        paymentAccount:
+          description: The total amount to be charged for the shipment
+          allOf:
+            - $ref: '#/components/schemas/PaymentAccount'
+            - type: object
+              properties:
+                CRID:
+                  type: string
+                  description: Customer Registration ID (CRID) associated with the business or mailer. Used to retrieve any contract-specific service standards.
+                  example: "12345678"
+              additionalProperties: true
+      additionalProperties: false
+      xml:
+        name: pricingOption
+    InternationalPricingOption:
+      type: object
+      description: Option for international pricing
+      properties:
+        shippingOptions:
+          description: List of available shipping services and delivery options for the package
+          type: array
+          readOnly: true
+          xml:
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/InternationalOptions'
+        priceType:
+         $ref: '#/components/schemas/PriceTypeRequest'
+        paymentAccount:
+          $ref: '#/components/schemas/PaymentAccount'
+      additionalProperties: false
+      xml:
+        name: pricingOption
+    PaymentAccount:
+      title: Payment Account
+      type: object
+      properties:
+        accountType:
+          type: string
+          description: |
+            The type of payment account.
+            
+            Note:
+            - `EPS`, `PERMIT`, and `METER` are only available for Outbound Mail Classes. 
+            - `METER` is only available to PC Postage Providers.  
+            - `MID` is only available for Return Mail Classes.
+          example: EPS
+          enum:
+          - EPS
+          - PERMIT
+          - METER
+          - MID
+        accountNumber:
+          type: string
+          description: "The Enterprise Payment Account, Permit number, Mailer ID (MID), or PC Postage meter number associated with a contract."
+      additionalProperties: true
+      description: Payment account information. Used only if `priceType` is `CONTRACT`.
+    PriceTypeRequest:
+      title: Price Type
+      type: string
+      description: |
+        Price type of the Shipping Request.
+
+        Note: 
+        - If `priceType` is `CONTRACT`, `paymentAccount` is required.
+      default: COMMERCIAL
+      enum:
+        - RETAIL
+        - COMMERCIAL
+        - CONTRACT
+    ErrorMessage:
+      title: Error
+      type: object
+      properties:
+        apiVersion:
+          type: string
+          description: The version of the API that was used and that raised the error.
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              description: The error status code that has been returned in response to the request.
+            message:
+              type: string
+              description: A human-readable message describing the error.
+            errors:
+              type: array
+              description: List of errors
+              items:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: The status code response returned to the client.
+                  code:
+                    type: string
+                    description: An internal subordinate code used for error diagnosis.
+                  title:
+                    type: string
+                    description: A human-readable title that identifies the error.
+                  detail:
+                    type: string
+                    description: A human-readable description of the error that occurred.
+                  source:
+                    type: object
+                    properties:
+                      parameter:
+                        type: string
+                        description: The input in the request which caused an error.
+                      example:
+                        type: string
+                        description: An example of a valid value for the input parameter.
+                    additionalProperties: true
+                    description: The element that is suspected of originating the error.  Helps to pinpoint the problem.
+                additionalProperties: true
+          additionalProperties: true
+          description: The high-level error that has occurred as indicated by the status code.
+      additionalProperties: true
+      description: Standard error message response.
+    OriginZIPCode:
+      pattern: "^\\d{5}(?:[-\\s]\\d{4})?$"
+      type: string
+      description: The originating ZIP code for the package.
+    DestinationZIPCode:
+      pattern: "^\\d{5}(?:[-\\s]\\d{4})?$"
+      type: string
+      description: The destination ZIP code for the package.
+    PostalCode:
+      maxLength: 11
+      type: string
+      description: |
+        This is the Postal Code used in an international addresses.
+
+        Note:
+        - Different shipping destinations may require a postal code for shipping.  For more details, review the [Individual Country Listing](https://pe.usps.com/text/imm/immctry.htm) for your shipping destination
+    ShippingOptionsPackageDescription:
+      title: Package Description
+      type: object
+      required:
+        - height
+        - length
+        - weight
+        - width
+      properties:
+        weight:
+          minimum: 0
+          exclusiveMinimum: true
+          type: number
+          description: "The package weight, in weightUOM (Unit Of Measure). Items must weigh 70 pounds (1120 ounces) or less."
+        length:
+          minimum: 0
+          exclusiveMinimum: true
+          type: number
+          description: "The length of the container, in dimensionsUOM. If partial dimensions are provided, an error response will return. Length, Width, Height are required for accurate pricing of a rectangular package when any dimension of the item exceeds 12 inches. In addition, Girth is required only for a non- rectangular package in addition to Length, Width, Height when any dimension of the package exceeds 12 inches. For rectangular packages, the Girth dimension must be left blank as this dimension is to only be used for non- rectangular packages."
+        height:
+          minimum: 0
+          exclusiveMinimum: true
+          type: number
+          description: "The height of the container, in dimensionsUOM. If partial dimensions are provided, an error response will return. Length, Width, Height are required for accurate pricing of a rectangular package when any dimension of the item exceeds 12 inches. In addition, Girth is required only for a non- rectangular package in addition to Length, Width, Height when any dimension of the package exceeds 12 inches. For rectangular packages, the Girth dimension must be left blank as this dimension is to only be used for non- rectangular packages."
+        width:
+          minimum: 0
+          exclusiveMinimum: true
+          type: number
+          description: "The width of the container, in dimensionsUOM. If partial dimensions are provided, an error response will return. Length, Width, Height are required for accurate pricing of a rectangular package when any dimension of the item exceeds 12 inches. In addition, Girth is required only for a non- rectangular package in addition to Length, Width, Height when any dimension of the package exceeds 12 inches. For rectangular packages, the Girth dimension must be left blank as this dimension is to only be used for non- rectangular packages."
+        girth:
+          minimum: 0
+          exclusiveMinimum: true
+          type: number
+          description: "The girth of the container, in dimensionsUOM. If partial dimensions are provided, an error response will return. Length, Width, Height are required for accurate pricing of a rectangular package when any dimension of the item exceeds 12 inches. In addition, Girth is required only for a non- rectangular package in addition to Length, Width, Height when any dimension of the package exceeds 12 inches. For rectangular packages, the Girth dimension must be left blank as this dimension is to only be used for non- rectangular packages."
+        hasNonstandardCharacteristics:
+          default: false
+          type: boolean
+          description: "Package is nonstandard. Nonstandard packages include cylindrical tubes and rolls, certain high-density items, cartons containing more than 24 ounces of liquids in one or more glass containers, cartons containing 1 gallon or more of liquid in metal or plastic containers, and items in [201.7.6.2](https://pe.usps.com/text/dmm300/201.htm#7.6.2)."
+      additionalProperties: true
+      description: Package Definitions
+    MailingDate:
+      type: string
+      description: "The date package will be mailed. The mailing date may be today plus 0 to 30 days in advance. Enter the date in the full-date notation as defined by [RFC 3339, section 5.6](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6)."
+      format: date
+    MailingDateTime:
+      type: string
+      description: "The date and time a package will be mailed. The mailing date may be today plus 0 to 30 days in advance. Enter the date in the date-time notation as defined by [RFC 3339, section 5.6](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6)."
+      format: date-time
+    DomesticMailClass:
+      type: string
+      description: |
+        The domestic mail service requested.
+      enum:
+        - PARCEL_SELECT
+        - USPS_CONNECT_LOCAL
+        - USPS_CONNECT_REGIONAL
+        - USPS_CONNECT_MAIL
+        - USPS_GROUND_ADVANTAGE
+        - USPS_GROUND_ADVANTAGE_RETURN_SERVICE
+        - PRIORITY_MAIL_EXPRESS
+        - PRIORITY_MAIL_EXPRESS_RETURN_SERVICE
+        - PRIORITY_MAIL
+        - PRIORITY_MAIL_RETURN_SERVICE
+        - LIBRARY_MAIL
+        - MEDIA_MAIL
+        - BOUND_PRINTED_MATTER
+      example: PARCEL_SELECT
+    InternationalMailClass:
+      type: string
+      description: |
+        The international mail service requested.
+
+        Note:
+        - `GLOBAL_EXPRESS_GUARANTEED` - Global Express Guaranteed Service is suspended as of September 29, 2024.
+      enum:
+        - FIRST-CLASS_PACKAGE_INTERNATIONAL_SERVICE
+        - PRIORITY_MAIL_INTERNATIONAL
+        - PRIORITY_MAIL_EXPRESS_INTERNATIONAL
+        - GLOBAL_EXPRESS_GUARANTEED
+      example: PRIORITY_MAIL_INTERNATIONAL
+    AllMailClasses:
+      description: List or enumeration of the domestic or international mail classes available
+      oneOf:
+        - $ref: "#/components/schemas/DomesticMailClass"
+        - $ref: "#/components/schemas/InternationalMailClass"
+    PriceType:
+      type: string
+      description: |-
+        The type of price applied.
+         * Valid Options for Domestic Prices include: 'RETAIL', 'COMMERCIAL', & 'CONTRACT'
+         * Valid Options for International Prices include: 'RETAIL', 'COMMERCIAL', 'COMMERCIAL_BASE', 'COMMERCIAL_PLUS', & 'CONTRACT'
+      enum:
+        - RETAIL
+        - COMMERCIAL
+        - COMMERCIAL_BASE
+        - COMMERCIAL_PLUS
+        - CONTRACT
+      example: "COMMERCIAL"
+  examples:
+    DomesticOutboundOptionsExample:
+      summary: Domestic Outbound Options Response
+      description: Example response for a Domestic Outbound Options Request
+      value:
+        originZIPCode: "50311"
+        destinationZIPCode: "60119"
+        pricingOptions:
+          - shippingOptions:
+              - mailClass: PARCEL_SELECT
+                rateOptions:
+                  - commitment:
+                      name: 2 Days
+                      scheduleDeliveryDate: "2024-10-04"
+                      deprecated: true
+                      expectedDeliveryDate: "2024-10-04"
+                      guaranteedDelivery: false
+                      isPriorityMailNextDay: false
+                    totalBasePrice: 9.17
+                    rates:
+                      - description: Parcel Select Nonstandard DNDC Single-piece
+                        startDate: "2024-07-14"
+                        endDate: "2024-10-05"
+                        price: 6.17
+                        zone: "00"
+                        weight: 1.0
+                        dimensionalWeight: 0.0
+                        dimWeight: 0.0
+                        fees:
+                          - name: Nonstandard Length > 22
+                            price: 3.00
+                            SKU: D811XVCXXXX0000
+                        priceType: COMMERCIAL
+                        mailClass: PARCEL_SELECT
+                        productName: ""
+                        productDefinition: ""
+                        processingCategory: "NONSTANDARD"
+                        rateIndicator: "SP"
+                        destinationEntryFacilityType: "DESTINATION_NETWORK_DISTRIBUTION_CENTER"
+                        SKU: DVXP0XXCXC00010
+                    extraServices:
+                      - name: Return Receipt Electronic
+                        price: 2.62
+                        extraService: "957"
+                        priceType: COMMERCIAL
+                        warnings:
+                          - warningCode: "001"
+                            warningDescription: "Contract rate not found for request. Published rate returned."
+                        SKU: DXRX0EXXXCX0000
+            priceType: CONTRACT
+            paymentAccount:
+              accountType: EPS
+              accountNumber: "12345767890"
+    DomesticReturnOptionsExample:
+      summary: Domestic Returns Options Response
+      description: Example response for a Domestic Returns Options Request
+      value:
+        originZIPCode: "50311"
+        destinationZIPCode: "60119"
+        pricingOptions:
+          - shippingOptions:
+              - mailClass: USPS_GROUND_ADVANTAGE_RETURN_SERVICE
+                rateOptions:
+                  - totalBasePrice: 4.65
+                    rates:
+                      - description: USPS Ground Advantage Return Machinable Single-piece
+                        startDate: "2025-07-13"
+                        endDate: ""
+                        price: 4.65
+                        zone: "01"
+                        weight: 0.50
+                        dimensionalWeight: 0.0
+                        dimWeight: 0.0
+                        priceType: COMMERCIAL
+                        mailClass: USPS_GROUND_ADVANTAGE_RETURN_SERVICE
+                        productName: ""
+                        productDefinition: ""
+                        processingCategory: "NONSTANDARD"
+                        rateIndicator: "SP"
+                        destinationEntryFacilityType: "NONE"
+                        SKU: DUXP0RXXUC01080
+                    extraServices: []
+            priceType: CONTRACT
+            paymentAccount:
+              accountType: MID
+              accountNumber: "123456789"
+    InternationalOptionsExample:
+      summary: International Options Response
+      description: Example response for an International Options Request
+      value:
+        originZIPCode: "22407"
+        foreignPostalCode: "63118"
+        destinationCountryCode: CA
+        pricingOptions:
+          - shippingOptions:
+              - mailClass: PRIORITY_MAIL_EXPRESS_INTERNATIONAL
+                rateOptions:
+                  - totalBasePrice: 65.64
+                    rates:
+                      - description: Priority Mail Express International ISC Single-piece
+                        startDate: "2024-07-14"
+                        endDate: "2024-10-05"
+                        price: 65.64
+                        zone: "01"
+                        weight: 1.2
+                        dimensionalWeight: 0.0
+                        dimWeight: 0.0
+                        fees: []
+                        priceType: COMMERCIAL_BASE
+                        mailClass: PRIORITY_MAIL_EXPRESS_INTERNATIONAL
+                        productName: ""
+                        productDefinition: ""
+                        processingCategory: "FLATS"
+                        rateIndicator: "PA"
+                        destinationEntryFacilityType: "INTERNATIONAL_SERVICE_CENTER"
+                        SKU: IEXX0XXXXB01020
+                    extraServices:
+                      - name: Insurance <= $500
+                        price: 20.15
+                        extraService: "930"
+                        priceType: COMMERCIAL
+                        warnings:
+                          - warningCode: "001"
+                            warningDescription: Contract rate not found for request. Published rate returned.
+                        SKU: IXIE0XXXXCX0500
+            priceType: CONTRACT
+            paymentAccount:
+              accountType: METER
+              accountNumber: "123456789"
+
+  headers:
+    WWWAuthenticate:
+      description: Hint to the client application which security scheme to authorize a resource request.
+      required: false
+      schema:
+        type: string
+        example: "WWW-Authenticate: Bearer realm=\"https://api.usps.com\""
+    RetryAfter:
+      description: Indicate to the client application a time after which they can retry a resource request.
+      required: false
+      schema:
+        type: string
+        example: "Retry-After: 30"
+  securitySchemes:
+    OAuth:
+      type: oauth2
+      description: The specified APIs accept an access token formatted as a JSON Web Token. The relative path to the OAuth2 version 3 API which supplies this access token is provided below for reference.
+      flows:
+        clientCredentials:
+          tokenUrl: /oauth2/v3/token
+          scopes:
+            shipments: Read access to Shipping Options API.

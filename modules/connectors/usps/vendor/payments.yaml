@@ -1,0 +1,575 @@
+openapi: 3.0.0
+info:
+  title: Payments
+  description: |
+    Contact Us: [USPS API Support](https://emailus.usps.com/s/usps-APIs) | [Terms of Service](https://about.usps.com/termsofuse.htm)
+    
+    The payment authorization token is a prerequisite for using labels and international-labels APIs. The USPS&#174; payments API verifies payment transaction details to enable their use in future transactions. This generates a payment authorization token that can be utilized in APIs requiring a payment authorization token. The resulting payment authorization token also satisfies USPS&#174; requirements identifying the parties involved in each transaction according to their role.  The roles involved in payment transactions will include payment account identification.
+    
+    The Payment Authorization Token is a prerequisite for using the Domestic Labels, International Labels, and Open and Distribute APIs.  Please review those API specifications for more details on how to utilize the Payment Authorization Token within those requests.
+    
+    For information on requirements for Mailer IDs (MID), please see [Publication 199](http://postalpro.usps.com/pub199).
+
+    **Note**:
+
+    Payment Authorization Tokens are valid for eight hours after issuance.  The Payments API should not be called for every label created during this timeframe.
+    
+    **Authentication, Authorization and Access Control**
+      
+      Client applications are given authorized access to protected information resources. Authorization is accomplished via the USPS&#174; Customer Onboarding Platform, where Customer Registration users may grant applications access to their protected business information. All client applications must go through this onboarding process. Any Customer Registration user wishing to share their protected business information with client application(s) may also grant authorized access.
+
+    The OAuth2, version 3 (/v3), API is based on this authorization grant and must be used to get tokens for all V3 APIs.
+    * The resulting OAuth2 access token is to be placed in the **Authorization** header, using the **Bearer** authentication scheme.
+    * All version 3 APIs validate access to protected information resources and will respond with a *401* HTTP status, *Unauthorized* reason, when the client application has not been authorized to access the given information resource.
+
+  version: 3.1.20
+servers:
+- url: https://apis.usps.com/payments/v3
+  description: Production Environment Endpoint
+- url: https://apis-tem.usps.com/payments/v3
+  description: Testing Environment Endpoint
+paths:
+  /payment-authorization:
+    post:
+      tags:
+      - Resources
+      summary: Set payment account information.
+      description: |-
+        Create a payment authorization token that can be subsequently used for purchasing labels. Tokens are valid for eight hours after issuance.
+        The roles input is required to generate this token. The roles object should contain information for each role for the transaction in which this token will be used. The `PAYER` and `LABEL_OWNER` roles are required to pay for any label transaction. The available roles are:
+        * **PAYER** - This role is used to specify who will pay for the transaction. When using the `PAYER` role, the `accountType` and `CRID` must be specified. If the `accountType` is `EPS`, the `accountNumber` must be active in the Enterprise Payment System (EPS).
+        * **RATE_HOLDER** - This role is used to specify whose rates will be used in the transaction and will be used to lookup any contract-specific service standards. When using the `RATE_HOLDER` role, the `accountType` and `CRID` must be specified.
+        * **LABEL_OWNER** - This role is used to specify whose label ranges will be used in the transaction. When using the `LABEL_OWNER` role, the `CRID`, `MID` and `manifestMID` must be specified. The `MID` and `CRID` must be enrolled in USPS Ship Outbound or Returns.
+        * **SHIPPER** - This role is used to specify who is entering the packages into the mailstream. When using `SHIPPER` role, the `CRID` must be specified.
+        * **MAIL_OWNER** - This role is used to specify who owns the package contents. When using the `MAIL_OWNER` role, the `CRID` must be specified.  This does not populate the mail owner field in the D1 record of the Shipping Service File (SSF).  Please use the `packageDescription.mailOwnerMID` field in the Label Request to populate the D1 field.
+        * **PLATFORM** - This role is used to specify the platform used to make the API calls. When using the `PLATFORM` role, the `CRID` must be specified.
+        * **RETURN_LABEL_PAYER** - This role is used to specify who will pay for the return label transaction. Optional if outbound and return label payer are the same. When using the `RETURN_LABEL_PAYER` role, the `accountType` and `CRID` must be specified. If the `accountType` is `EPS`, the `accountNumber` must be active in the Enterprise Payment System (EPS).
+        * **RETURN_LABEL_RATE_HOLDER** - This role is used to specify the owner of the Contracted Postage Rates for the return label in a combined outbound/return request. Optional if outbound and return label rate holder are the same. When using the `RETURN_LABEL_RATE_HOLDER` role, the `accountType` and `CRID` must be specified.
+        * **RETURN_LABEL_OWNER** - This role is used to specify whose label ranges will be used in the return label in a combined outbound/return request. Optional if outbound and return label owner are the same. When using the RETURN_LABEL_OWNER role, the `CRID`, `MID` and `manifestMID` must be specified. The `MID` and `CRID` must be enrolled in USPS Ship Returns.
+        * **LABEL_PROVIDER** - This role is used to specify the label provider for the transaction. When using the `LABEL_PROVIDER` role, the `CRID`, `accountNumber`, and `accountType` must be specified and the only supported accountType is `EPS`. The `accountNumber` must be active in the Enterprise Payment System (EPS).
+      operationId: post-payments-payment-authorization
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Parties'
+            examples:
+              MinimumPaymentAuthorizationRequest:
+                $ref: '#/components/examples/MinimumPaymentAuthorizationRequest'
+              MinimumPaymentAuthorizationRequestPCPostage:
+                $ref: '#/components/examples/MinimumPaymentAuthorizationRequestPCPostage'
+              AllRolesPaymentAuthorizationRequest:
+                $ref: '#/components/examples/AllRolesPaymentAuthorizationRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Parties'
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Parties'
+              examples:
+                MinimumRequiredPaymentAuthorization:
+                  $ref: '#/components/examples/PaymentAuthorizationResponseWithRateHolder'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Parties'
+        "400":
+          description: Bad Request.  There is an error in the received request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "401":
+          description: Unauthorized request.
+          headers:
+            WWW-Authenticate:
+              $ref: '#/components/headers/WWWAuthenticate'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is denied.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "429":
+          description: Too Many Requests. Too many requests have been received from client in a short amount of time.
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: Service is unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        default:
+          description: Other unanticipated errors that may occur.
+          content: {}
+      security:
+      - OAuth:
+        - payments
+  /payment-account/{account-number}:
+    get:
+      tags:
+      - Resources
+      summary: Payment account inquiry
+      description: |
+        You can check if sufficient funds exist in the account, if you pass the amount parameter.  In case you omit the amount parameter, you can still retrieve general information about the account, such as its non-profit status.
+      operationId: get-payment-account-account-number
+      parameters:
+      - name: account-number
+        in: path
+        description: Account number for payment account
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: accountType
+        in: query
+        description: The type of payment account either Electronic Payment System account or Permit.
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          enum:
+          - EPS
+          - PERMIT
+      - name: permitZIPCode
+        in: query
+        description: The ZIP Code&#8482; associated to the permit number.  This value is required when the account-type is 'PERMIT'.
+        required: false
+        style: form
+        explode: true
+        schema:
+          pattern: "^\\d{5}$"
+          type: string
+          example: "22012"
+      - name: amount
+        in: query
+        description: "If amount is supplied, the account will be checked to see if there are sufficient funds at present to process a payment transaction for that amount."
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: number
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentAccount'
+              examples:
+                PaymentAccountInquiry:
+                  $ref: '#/components/examples/PaymentAccountInquiry'
+                PaymentAccountAmountInquiry:
+                  $ref: '#/components/examples/PaymentAccountAmountInquiry'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/PaymentAccount'
+        "400":
+          description: Bad Request.  There is an error in the received request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "401":
+          description: Unauthorized request.
+          headers:
+            WWW-Authenticate:
+              $ref: '#/components/headers/WWWAuthenticate'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is denied.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "404":
+          description: Not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "429":
+          description: Too Many Requests. Too many requests have been received from client in a short amount of time.
+          headers:
+            Retry-After:
+              $ref: '#/components/headers/RetryAfter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: Service is unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        default:
+          description: Other unanticipated errors that may occur.
+          content: {}
+      security:
+      - OAuth:
+        - payments
+components:
+  schemas:
+    Parties:
+      title: Interested parties identity information
+      type: object
+      required:
+        - roles
+      properties:
+        paymentAuthorizationToken:
+          type: string
+          description: "The Payment Authorization Token is used in the labels and international-labels API calls to authorize payment, NSA contract Rates, and label MID ranges."
+          readOnly: true
+          example: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6I kpvaG4gRG9lIiwiYWRtaW4iOmZhbHNlfQ.gWDlJdpCTIHVYKkJSfAVNUn0ZkAjMxskDDm-5Fhe WJ7xXgW8k5CllcGk4C9qPrfa1GdqfBrbX_1x1E39JY8BYLobAfAg1fs_Ky8Z7U1oCl6HL63yJq_ wVNBHp49hWzg3-ERxkqiuTv0tIuDOasIdZ5FtBdtIP5LM9Oc1tsuMXQXCGR8GqGf1Hl2qv8MCyn NZJuVdJKO_L3WGBJouaTpK1u2SEleVFGI2HFvrX_jS2ySzDxoO9KjbydK0LNv_zOI7kWv-gAmA j-v0mHdJrLbxD7LcZJEGRScCSyITzo6Z59_jG_97oNLFgBKJbh12nvvPibHpUYWmZuHkoGvuy5RLUA
+        roles:
+          type: array
+          description: Each Role represents a participant in the transaction and must only be used once.  The `LABEL_OWNER` Role must be specified. The `PAYER` role must be specified, unless following the PC Postage flow.
+          readOnly: false
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/Role'
+      additionalProperties: true
+      description: This block identifies all interested parties involved in transaction.
+    Role:
+      title: Transaction roles
+      type: object
+      additionalProperties: true
+      description: Role each party plays in the transaction
+      xml:
+        name: role
+        wrapped: true
+      allOf:
+      - type: object
+        properties:
+          roleName:
+            type: string
+            description: |
+              * PAYER - Payer of the Postage
+              
+              * RATE_HOLDER - Owner of the Contracted Postage Rates
+              
+              * LABEL_OWNER - Party supplying Label MIDs used for generating tracking numbers printed on physical label
+              
+              * SHIPPER - Party entering package into the mailstream
+              
+              * PLATFORM - Platform used
+              
+              * RETURN_LABEL_PAYER - Payer of the Postage for the return label in a combined outbound/return request. Optional if outbound and return label payer are the same.
+              
+              * RETURN_LABEL_RATE_HOLDER - Owner of the Contracted Postage Rates for the return label in a combined outbound/return request. Optional if outbound and return label rate holder are the same.
+              
+              * RETURN_LABEL_OWNER - Party supplying Label MIDs used for generating tracking numbers printed on physical label for the return label in a combined outbound/return request. Optional if outbound and return label owner are the same.
+              
+              * MAIL_OWNER - This role is used to specify who owns the package contents. When using the MAIL_OWNER role, the CRID must be specified.  This does not populate the mail owner field in the D1 record of the Shipping Service File (SSF).  Please use the `packageDescription.mailerOwnerMID` field to populate the D1 field.
+              
+              * LABEL_PROVIDER - This role is used to specify the label provider for the transaction. When using the LABEL_PROVIDER role, the CRID, accountNumber, and accountType must be specified and the only supported accountType is 'EPS'. The accountNumber must be active in the Enterprise Payment System (EPS).
+            example: SHIPPER
+            enum:
+            - PAYER
+            - RATE_HOLDER
+            - LABEL_OWNER
+            - SHIPPER
+            - MAIL_OWNER
+            - PLATFORM
+            - RETURN_LABEL_PAYER
+            - RETURN_LABEL_RATE_HOLDER
+            - RETURN_LABEL_OWNER
+            - LABEL_PROVIDER
+          CRID:
+            $ref: '#/components/schemas/CRID'
+          MID:
+            $ref: '#/components/schemas/MID'
+          manifestMID:
+            $ref: '#/components/schemas/ManifestMID'
+        additionalProperties: true
+      - $ref: '#/components/schemas/PaymentAccount'
+    PaymentAccount:
+      title: Payment Account
+      type: object
+      properties:
+        accountType:
+          type: string
+          description: The type of payment account.  METER pricing is only available to PC Postage providers.
+          example: EPS
+          enum:
+          - EPS
+          - PERMIT
+          - METER
+          - OMAS
+        accountNumber:
+          type: string
+          description: The Enterprise Payment Account number or PC Postage meter number to use for payment. Required when `accountType` is `EPS` or `METER`.
+        permitNumber:
+          type: string
+          description: The permit number or Federal Agency Number to use for payment. Required when `accountType` is `PERMIT` or `OMAS`.
+        permitZIP:
+          maxLength: 5
+          type: string
+          description: The ZIP Code&#8482; associated to the permit number. Required when `accountType` is `PERMIT` or `OMAS`.
+          example: "12345"
+        nonProfitStatus:
+          type: boolean
+          description: This status is applicable only for permits and indicates whether the permit has been issued to a non-profit organization.
+          readOnly: true
+        sufficientFunds:
+          type: boolean
+          description: "This attribute is relevant only when an amount parameter is provided, and it informs the API caller whether the payment account holds sufficient funds to process the payment."
+          readOnly: true
+      additionalProperties: true
+      description: Payment account information.
+      xml:
+        name: paymentAccount
+        wrapped: true
+    MID:
+      title: Mailer Identifier
+      pattern: "^(\\d{6}|\\d{9})$"
+      type: string
+      description: "The Mailer Identifier (MID) is a field within the Intelligent Mail barcode that is used to identify mailers. MIDs are assigned by the USPS® to a Mail Owner, Mailing Agent or other service providers who request them."
+      example: "123456789"
+      xml:
+        name: MID
+    ManifestMID:
+      title: Mailer Identification code
+      pattern: "^(\\d{6}|\\d{9})$"
+      type: string
+      description: The unique mailer identifier designated for the manifest.
+      example: "123456789"
+      xml:
+        name: MID
+    ErrorMessage:
+      title: Error
+      type: object
+      properties:
+        apiVersion:
+          type: string
+          description: The version of the API that was used and that raised the error.
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              description: The error status code that has been returned in response to the request.
+            message:
+              type: string
+              description: A human-readable message describing the error.
+            errors:
+              type: array
+              items:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: The status code response returned to the client.
+                  code:
+                    type: string
+                    description: An internal subordinate code used for error diagnosis.
+                  title:
+                    type: string
+                    description: A human-readable title that identifies the error.
+                  detail:
+                    type: string
+                    description: A human-readable description of the error that occurred.
+                  source:
+                    type: object
+                    properties:
+                      parameter:
+                        type: string
+                        description: The input in the request which caused an error.
+                      example:
+                        type: string
+                        description: An example of a valid value for the input parameter.
+                    additionalProperties: true
+                    description: The element that is suspected of originating the error.  Helps to pinpoint the problem.
+                additionalProperties: true
+          additionalProperties: true
+          description: The high-level error that has occurred as indicated by the status code.
+      additionalProperties: true
+      description: Standard error message response.
+    CRID:
+      title: Customer Registration Identifier
+      maxLength: 18
+      minLength: 2
+      type: string
+      description: A Customer Registration Identification number (CRID) is a USPS-generated numeric code that uniquely identifies a business at a location.
+      example: "12345678"
+      xml:
+        name: CRID
+  examples:
+    MinimumPaymentAuthorizationRequest:
+      summary: Minimum Payment Authorization Request
+      description: Minimum Payment Authorization Request with PAYER and LABEL_OWNER role defined.
+      value:
+        roles:
+          - roleName: PAYER
+            CRID: "12345678"
+            MID: "123456"
+            manifestMID: "123456"
+            accountType: EPS
+            accountNumber: "1234"
+          - roleName: LABEL_OWNER
+            CRID: "12345678"
+            MID: "123456"
+            manifestMID: "123456"
+    MinimumPaymentAuthorizationRequestPCPostage:
+      summary: Minimum Payment Authorization Request for PC Postage
+      description: Minimum Payment Authorization Request with LABEL_OWNER role defined for a PC Postage provider.
+      value:
+        roles:
+          - roleName: LABEL_OWNER
+            CRID: "12345678"
+            MID: "123456"
+            manifestMID: "123456"
+    AllRolesPaymentAuthorizationRequest:
+      summary: All roles Payment Authorization Request
+      description: Includes an example with all roles populated for a payment authorization request.
+      value:
+        roles:
+          - roleName: PAYER
+            CRID: "12345678"
+            MID: "123456789"
+            manifestMID: "987654321"
+            accountType: EPS
+            accountNumber: "1000000000"
+          - roleName: RETURN_LABEL_PAYER
+            MID: "123456789"
+            CRID: "12345678"
+            manifestMID: "123456789"
+            accountType: EPS
+            accountNumber: "2000000000"
+          - roleName: RATE_HOLDER
+            MID: "123456789"
+            CRID: "12345678"
+            manifestMID: "123456789"
+            accountType: PERMIT
+            permitNumber: "123456789"
+            permitZIP: "12345"
+          - roleName: RETURN_LABEL_RATE_HOLDER
+            MID: "123456789"
+            CRID: "12345678"
+            manifestMID: "123456789"
+            accountType: EPS
+            accountNumber: "4000000000"
+          - roleName: MAIL_OWNER
+            CRID: "1234567"
+          - roleName: PLATFORM
+            CRID: "123456"
+          - roleName: SHIPPER
+            CRID: "12345"
+          - roleName: LABEL_OWNER
+            CRID: "12345678"
+            MID: "123456789"
+            manifestMID: "123456789"
+          - roleName: RETURN_LABEL_OWNER
+            CRID: "87654321"
+            MID: "987654"
+            manifestMID: "123456"
+          - roleName: LABEL_PROVIDER
+            CRID: "56789012"
+            accountType: EPS
+            accountNumber: "6000000000"
+    PaymentAuthorizationResponseWithRateHolder:
+      summary: Payment Authorization Response with Rate Holder
+      description: Payment Authorization Response with a Payer, Label Owner, and Rate Holder role defined.
+      value:
+        paymentAuthorizationToken: header.body.signature
+        roles:
+        - roleName: PAYER
+          CRID: "12345678"
+          MID: "123456"
+          manifestMID: "123456"
+          accountType: EPS
+          accountNumber: "1234"
+        - roleName: LABEL_OWNER
+          CRID: "12345678"
+          MID: "123456"
+          manifestMID: "123456"
+        - roleName: RATE_HOLDER
+          CRID: "12345678"
+          accountType: EPS
+          accountNumber: "1234"
+    PaymentAccountAmountInquiry:
+      summary: Acknowledgement that amount is within account limits.
+      value:
+        accountType: EPS
+        accountNumber: "12345678"
+        nonProfitStatus: false
+        sufficientFunds: true
+    PaymentAccountInquiry:
+      summary: General payment account inquiry.
+      value:
+        accountType: EPS
+        accountNumber: "12345678"
+        nonProfitStatus: true
+  headers:
+    WWWAuthenticate:
+      description: Hint to the client application which security scheme to authorize a resource request.
+      required: false
+      schema:
+        type: string
+        example: "WWW-Authenticate: Bearer realm=\"https://api.usps.com\""
+    RetryAfter:
+      description: Indicate to the client application a time after which they can retry a resource request.
+      required: false
+      schema:
+        type: string
+        example: "Retry-After: 30"
+  securitySchemes:
+    OAuth:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: /oauth2/token
+          scopes:
+            payments: Both read and write access to the payments API.

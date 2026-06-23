@@ -3,9 +3,16 @@ __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 import importlib.util
 from karrio.server.settings.base import *
+
+# IMPORTANT: workers must be imported before apm. apm's OTEL block does
+# `from huey.contrib.djhuey import HUEY`, and djhuey reads `settings.HUEY` once
+# at import time — falling back to a localhost RedisHuey (and caching it for the
+# process) if it is not yet defined. workers defines settings.HUEY, so importing
+# it first ensures djhuey binds to the configured broker even when OTEL_ENABLED
+# forces the early djhuey import (GH #1124).
+from karrio.server.settings.workers import *
 from karrio.server.settings.apm import *
 from karrio.server.settings.cache import *
-from karrio.server.settings.workers import *
 from karrio.server.settings.debug import *
 from karrio.server.settings.email import *
 from karrio.server.settings.constance import *

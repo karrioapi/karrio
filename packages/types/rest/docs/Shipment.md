@@ -26,6 +26,8 @@ Name | Type | Description | Notes
 **created_at** | **string** | The shipment creation datetime.&lt;br/&gt;         Date Format: &#x60;YYYY-MM-DD HH:MM:SS.mmmmmmz&#x60;          | [default to undefined]
 **metadata** | **{ [key: string]: any; }** | User metadata for the shipment | [optional] [default to undefined]
 **messages** | [**Array&lt;Message&gt;**](Message.md) | The list of note or warning messages | [optional] [default to undefined]
+**is_archived** | **boolean** | Indicates whether this shipment is archived. | [optional] [default to false]
+**archived_at** | **string** | Timestamp when the shipment was archived. | [optional] [default to undefined]
 **status** | **string** | The current Shipment status | [optional] [default to StatusEnum_Draft]
 **carrier_name** | **string** | The shipment carrier | [optional] [default to undefined]
 **carrier_id** | **string** | The shipment carrier configured identifier | [optional] [default to undefined]
@@ -69,6 +71,8 @@ const instance: Shipment = {
     created_at,
     metadata,
     messages,
+    is_archived,
+    archived_at,
     status,
     carrier_name,
     carrier_id,
