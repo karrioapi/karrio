@@ -1,10 +1,9 @@
-import karrio.schemas.dhl_universal.tracking as dhl
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.dhl_universal.error as error
-import karrio.providers.dhl_universal.utils as provider_utils
 import karrio.providers.dhl_universal.units as provider_units
+import karrio.providers.dhl_universal.utils as provider_utils
+import karrio.schemas.dhl_universal.tracking as dhl
 
 date_formats = [
     "%Y-%m-%d",
@@ -15,15 +14,13 @@ date_formats = [
 
 
 def parse_tracking_response(
-    _response: lib.Deserializable[typing.List[dict]],
+    _response: lib.Deserializable[list[dict]],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+) -> tuple[list[models.TrackingDetails], list[models.Message]]:
     response = _response.deserialize()
     errors = [e for e in response if "shipments" not in e]
     details = [
-        _extract_detail(lib.to_object(dhl.Shipment, d["shipments"][0]), settings)
-        for d in response
-        if "shipments" in d
+        _extract_detail(lib.to_object(dhl.Shipment, d["shipments"][0]), settings) for d in response if "shipments" in d
     ]
 
     return details, error.parse_error_response(errors, settings)
@@ -34,21 +31,15 @@ def _extract_detail(
     settings: provider_utils.Settings,
 ) -> models.TrackingDetails:
     latest_status = lib.failsafe(
-        lambda: (
-            shipment.status.statusCode
-            or shipment.status.status
-            or shipment.events[0].statusCode
-        )
+        lambda: shipment.status.statusCode or shipment.status.status or shipment.events[0].statusCode
     ).lower()
     status = next(
-        (
-            status.name
-            for status in list(provider_units.TrackingStatus)
-            if latest_status in status.value
-        ),
+        (status.name for status in list(provider_units.TrackingStatus) if latest_status in status.value),
         provider_units.TrackingStatus.in_transit.name,
     )
-    shorten_date = lambda _date: _date.split(".")[0] if _date else None
+
+    def shorten_date(_date):
+        return _date.split(".")[0] if _date else None
 
     return models.TrackingDetails(
         carrier_name=settings.carrier_name,
@@ -65,9 +56,7 @@ def _extract_detail(
                     else None
                 ),
                 code=event.statusCode or "",
-                time=lib.flocaltime(
-                    shorten_date(event.timestamp), try_formats=date_formats
-                ),
+                time=lib.flocaltime(shorten_date(event.timestamp), try_formats=date_formats),
                 timestamp=lib.fiso_timestamp(
                     shorten_date(event.timestamp),
                     current_format="%Y-%m-%dT%H:%M:%S",
@@ -76,17 +65,14 @@ def _extract_detail(
                     (
                         s.name
                         for s in list(provider_units.TrackingStatus)
-                        if (event.statusCode or "").lower() in s.value
-                        or (event.status or "").lower() in s.value
+                        if (event.statusCode or "").lower() in s.value or (event.status or "").lower() in s.value
                     ),
                     None,
                 ),
             )
             for event in shipment.events or []
         ],
-        estimated_delivery=lib.fdate(
-            shorten_date(shipment.estimatedTimeOfDelivery), try_formats=date_formats
-        ),
+        estimated_delivery=lib.fdate(shorten_date(shipment.estimatedTimeOfDelivery), try_formats=date_formats),
         delivered=status == "delivered",
         info=models.TrackingInfo(
             carrier_tracking_link=settings.tracking_url.format(shipment.id),
@@ -101,18 +87,10 @@ def _extract_detail(
                     or lib.text(shipment.details.receiver.organizationName)
                 )
             ),
-            shipment_destination_country=lib.failsafe(
-                lambda: shipment.destination.address.countryCode
-            ),
-            shipment_destination_postal_code=lib.failsafe(
-                lambda: shipment.destination.address.postalCode
-            ),
-            shipment_origin_country=lib.failsafe(
-                lambda: shipment.origin.address.countryCode
-            ),
-            shipment_origin_postal_code=lib.failsafe(
-                lambda: shipment.origin.address.postalCode
-            ),
+            shipment_destination_country=lib.failsafe(lambda: shipment.destination.address.countryCode),
+            shipment_destination_postal_code=lib.failsafe(lambda: shipment.destination.address.postalCode),
+            shipment_origin_country=lib.failsafe(lambda: shipment.origin.address.countryCode),
+            shipment_origin_postal_code=lib.failsafe(lambda: shipment.origin.address.postalCode),
             package_weight=lib.failsafe(lambda: shipment.details.weight.value),
             package_weight_unit=lib.failsafe(lambda: shipment.details.weight.unitText),
             signed_by=lib.failsafe(

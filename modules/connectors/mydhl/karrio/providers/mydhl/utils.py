@@ -1,9 +1,7 @@
 import base64
-import datetime
-import karrio.lib as lib
+
 import karrio.core as core
-import karrio.core.errors as errors
-from karrio.core.utils.caching import ThreadSafeTokenManager
+import karrio.lib as lib
 
 
 class Settings(core.Settings):
@@ -20,11 +18,7 @@ class Settings(core.Settings):
 
     @property
     def server_url(self):
-        return (
-            "https://express.api.dhl.com/mydhlapi/test"
-            if self.test_mode
-            else "https://express.api.dhl.com/mydhlapi"
-        )
+        return "https://express.api.dhl.com/mydhlapi/test" if self.test_mode else "https://express.api.dhl.com/mydhlapi"
 
     @property
     def tracking_url(self):
@@ -100,6 +94,7 @@ def get_proof_of_delivery(tracking_number: str, settings: Settings):
     response = lib.to_dict(
         lib.request(
             url=f"{settings.server_url}/shipments/{tracking_number}/proof-of-delivery",
+            trace=settings.trace_as("json"),
             method="GET",
             headers={
                 "Authorization": f"Basic {settings.authorization}",

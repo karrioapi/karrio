@@ -1,0 +1,78 @@
+{
+  "url": "/shipments?trackingNumber=FRT-123456789",
+  "shipments": [
+    {
+      "id": "FRT-123456789",
+      "service": "freight",
+      "origin": {
+        "address": {
+          "countryCode": "SE",
+          "postalCode": "41758",
+          "addressLocality": "GOTHENBURG"
+        }
+      },
+      "destination": {
+        "address": {
+          "countryCode": "DE",
+          "postalCode": "53113",
+          "addressLocality": "BONN"
+        }
+      },
+      "status": {
+        "timestamp": "2026-12-31T07:53:47Z",
+        "location": {
+          "address": {
+            "countryCode": "SE",
+            "postalCode": "41758",
+            "addressLocality": "GOTHENBURG"
+          }
+        },
+        "statusCode": "transit",
+        "status": "IN_TRANSIT",
+        "description": "Shipment is in transit",
+        "remark": "",
+        "nextSteps": ""
+      },
+      "estimatedTimeOfDelivery": "2027-01-03T00:00:00Z",
+      "estimatedDeliveryTimeFrame": {
+        "estimatedFrom": "2027-01-03T08:00:00Z",
+        "estimatedThrough": "2027-01-03T17:00:00Z"
+      },
+      "serviceUrl": "https://www.dhl.com/global-en/home/tracking/tracking-freight.html?tracking-id=FRT-123456789",
+      "details": {
+        "carrier": { "@type": "Organization", "organizationName": "DHL Freight" },
+        "product": { "productName": "DHL Freight Euroconnect" },
+        "receiver": { "@type": "Organization", "organizationName": "Ford Romania" },
+        "sender": { "@type": "Organization", "organizationName": "Rower Gear NL" },
+        "totalNumberOfPieces": 2,
+        "pieceIds": ["00370000000000000001", "00370000000000000002"],
+        "weight": { "value": 1100, "unitText": "kg" },
+        "volume": { "value": 2.52 },
+        "loadingMeters": 0,
+        "dimensions": {
+          "width": { "value": 90, "unitText": "cm" },
+          "height": { "value": 140, "unitText": "cm" },
+          "length": { "value": 100, "unitText": "cm" }
+        },
+        "references": { "number": "ORDER-9001", "type": "customer-reference" }
+      },
+      "events": [
+        {
+          "timestamp": "2026-12-31T07:53:47",
+          "location": {
+            "address": {
+              "countryCode": "SE",
+              "postalCode": "41758",
+              "addressLocality": "GOTHENBURG"
+            }
+          },
+          "statusCode": "transit",
+          "status": "IN_TRANSIT",
+          "description": "Departed from origin terminal",
+          "remark": "",
+          "nextSteps": ""
+        }
+      ]
+    }
+  ]
+}

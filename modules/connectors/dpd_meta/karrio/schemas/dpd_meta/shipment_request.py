@@ -31,6 +31,7 @@ class ExporterAddressType:
 
 @attr.s(auto_attribs=True)
 class ExporterContactType:
+    contactPerson: typing.Optional[str] = None
     phone1: typing.Optional[str] = None
     email: typing.Optional[str] = None
 
@@ -127,23 +128,11 @@ class InsuranceType:
 
 
 @attr.s(auto_attribs=True)
-class Email1Type:
-    notificationType: typing.Optional[str] = None
-    notificationEmail: typing.Optional[str] = None
-    notificationLanguage: typing.Optional[str] = None
-
-
-@attr.s(auto_attribs=True)
-class Sms1Type:
-    notificationType: typing.Optional[str] = None
-    notificationPhone: typing.Optional[str] = None
-    notificationLanguage: typing.Optional[str] = None
-
-
-@attr.s(auto_attribs=True)
-class MessagesType:
-    email1: typing.Optional[Email1Type] = jstruct.JStruct[Email1Type]
-    sms1: typing.Optional[Sms1Type] = jstruct.JStruct[Sms1Type]
+class MessageType:
+    messageType: typing.Optional[str] = None
+    messageDestination: typing.Optional[str] = None
+    messageLanguage: typing.Optional[str] = None
+    senderCompany: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
@@ -160,21 +149,28 @@ class ParcelInfosType:
 
 
 @attr.s(auto_attribs=True)
-class PersonType:
-    personToNotify: typing.Optional[str] = None
-    personToDeliver: typing.Optional[str] = None
-
-
-@attr.s(auto_attribs=True)
 class ParcelType:
     parcelInfos: typing.Optional[ParcelInfosType] = jstruct.JStruct[ParcelInfosType]
     parcelContent: typing.Optional[str] = None
     senderParcelRefs: typing.Optional[typing.List[str]] = None
-    hazardous: typing.Optional[HazardousType] = jstruct.JStruct[HazardousType]
+    hazardous: typing.Optional[typing.List[HazardousType]] = jstruct.JList[HazardousType]
     cod: typing.Optional[CodType] = jstruct.JStruct[CodType]
     insurance: typing.Optional[InsuranceType] = jstruct.JStruct[InsuranceType]
-    messages: typing.Optional[MessagesType] = jstruct.JStruct[MessagesType]
-    person: typing.Optional[PersonType] = jstruct.JStruct[PersonType]
+    messages: typing.Optional[typing.List[MessageType]] = jstruct.JList[MessageType]
+    partnerParcelRefs: typing.Optional[typing.List[str]] = None
+    hazardousLimitedQuantities: typing.Any = None
+    hazardousPackingCode: typing.Any = None
+
+
+@attr.s(auto_attribs=True)
+class PersonType:
+    personalDeliveryType: typing.Any = None
+    personalAuthorizedName: typing.Any = None
+    personalIdNumber: typing.Any = None
+    personalDateOfBirth: typing.Any = None
+    phone1: typing.Any = None
+    phone2: typing.Any = None
+    address: typing.Any = None
 
 
 @attr.s(auto_attribs=True)
@@ -217,6 +213,7 @@ class LegalEntityType:
 
 @attr.s(auto_attribs=True)
 class ReceiverType:
+    pudoId: typing.Optional[str] = None
     address: typing.Optional[ReceiverAddressType] = jstruct.JStruct[ReceiverAddressType]
     contact: typing.Optional[ReceiverContactType] = jstruct.JStruct[ReceiverContactType]
     legalEntity: typing.Optional[LegalEntityType] = jstruct.JStruct[LegalEntityType]
@@ -241,6 +238,7 @@ class SenderType:
 @attr.s(auto_attribs=True)
 class ShipmentInfosType:
     productCode: typing.Optional[str] = None
+    additionalServiceCode: typing.Optional[str] = None
     shipmentId: typing.Optional[str] = None
     weight: typing.Optional[str] = None
     cifcost: typing.Optional[CustomsAmountType] = jstruct.JStruct[CustomsAmountType]
@@ -250,9 +248,13 @@ class ShipmentInfosType:
 @attr.s(auto_attribs=True)
 class ShipmentRequestElementType:
     numberOfParcels: typing.Optional[str] = None
+    customerReferenceNumbers: typing.Optional[typing.List[str]] = None
+    sendingDepot: typing.Optional[str] = None
     shipmentInfos: typing.Optional[ShipmentInfosType] = jstruct.JStruct[ShipmentInfosType]
     sender: typing.Optional[SenderType] = jstruct.JStruct[SenderType]
     receiver: typing.Optional[ReceiverType] = jstruct.JStruct[ReceiverType]
     parcel: typing.Optional[typing.List[ParcelType]] = jstruct.JList[ParcelType]
+    mpsCompleteDelivery: typing.Any = None
+    person: typing.Optional[PersonType] = jstruct.JStruct[PersonType]
     international: typing.Optional[InternationalType] = jstruct.JStruct[InternationalType]
     delivery: typing.Optional[DeliveryType] = jstruct.JStruct[DeliveryType]

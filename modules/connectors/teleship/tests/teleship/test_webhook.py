@@ -2,27 +2,22 @@
 
 import unittest
 from unittest.mock import patch
-from .fixture import gateway
 
-import karrio.sdk as karrio
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 
 class TestTeleshipWebhook(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        self.WebhookRegistrationRequest = models.WebhookRegistrationRequest(
-            **WebhookRegistrationPayload
-        )
-        self.WebhookDeregistrationRequest = models.WebhookDeregistrationRequest(
-            **WebhookDeregistrationPayload
-        )
+        self.WebhookRegistrationRequest = models.WebhookRegistrationRequest(**WebhookRegistrationPayload)
+        self.WebhookDeregistrationRequest = models.WebhookDeregistrationRequest(**WebhookDeregistrationPayload)
 
     def test_create_webhook_registration_request(self):
-        request = gateway.mapper.create_webhook_registration_request(
-            self.WebhookRegistrationRequest
-        )
+        request = gateway.mapper.create_webhook_registration_request(self.WebhookRegistrationRequest)
 
         self.assertEqual(lib.to_dict(request.serialize()), WebhookRegistrationRequest)
 
@@ -39,20 +34,12 @@ class TestTeleshipWebhook(unittest.TestCase):
     def test_parse_webhook_registration_response(self):
         with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
             mock.return_value = WebhookRegistrationResponse
-            parsed_response = (
-                karrio.Webhook.register(self.WebhookRegistrationRequest)
-                .from_(gateway)
-                .parse()
-            )
+            parsed_response = karrio.Webhook.register(self.WebhookRegistrationRequest).from_(gateway).parse()
 
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedWebhookRegistrationResponse
-            )
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedWebhookRegistrationResponse)
 
     def test_create_webhook_deregistration_request(self):
-        request = gateway.mapper.create_webhook_deregistration_request(
-            self.WebhookDeregistrationRequest
-        )
+        request = gateway.mapper.create_webhook_deregistration_request(self.WebhookDeregistrationRequest)
 
         self.assertEqual(lib.to_dict(request.serialize()), WebhookDeregistrationRequest)
 
@@ -69,24 +56,14 @@ class TestTeleshipWebhook(unittest.TestCase):
     def test_parse_webhook_deregistration_response(self):
         with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
             mock.return_value = ""
-            parsed_response = (
-                karrio.Webhook.deregister(self.WebhookDeregistrationRequest)
-                .from_(gateway)
-                .parse()
-            )
+            parsed_response = karrio.Webhook.deregister(self.WebhookDeregistrationRequest).from_(gateway).parse()
 
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedWebhookDeregistrationResponse
-            )
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedWebhookDeregistrationResponse)
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.teleship.proxy.lib.request") as mock:
             mock.return_value = ErrorResponse
-            parsed_response = (
-                karrio.Webhook.register(self.WebhookRegistrationRequest)
-                .from_(gateway)
-                .parse()
-            )
+            parsed_response = karrio.Webhook.register(self.WebhookRegistrationRequest).from_(gateway).parse()
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 

@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("manager", "0073_make_shipment_fk_nullable"),
         ("orders", "0021_add_json_fields"),

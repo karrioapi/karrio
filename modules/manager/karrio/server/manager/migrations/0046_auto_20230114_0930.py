@@ -8,17 +8,9 @@ def forwards_func(apps, schema_editor):
 
     db_alias = schema_editor.connection.alias
     Shipment = apps.get_model("manager", "Shipment")
-    shipments = (
-        Shipment.objects.using(db_alias)
-        .filter(selected_rate_carrier__isnull=False)
-        .iterator()
-    )
+    shipments = Shipment.objects.using(db_alias).filter(selected_rate_carrier__isnull=False).iterator()
     Tracker = apps.get_model("manager", "Tracking")
-    trackers = (
-        Tracker.objects.using(db_alias)
-        .filter(tracking_carrier__isnull=False)
-        .iterator()
-    )
+    trackers = Tracker.objects.using(db_alias).filter(tracking_carrier__isnull=False).iterator()
 
     _shipments = []
     _trackers = []
@@ -27,9 +19,7 @@ def forwards_func(apps, schema_editor):
         carrier = providers.Carrier.objects.get(pk=shipment.selected_rate_carrier.pk)
         meta = shipment.meta or {}
         rate_provider = (
-            getattr(carrier.settings, "custom_carrier_name", None)
-            or meta.get("rate_provider")
-            or carrier.carrier_name
+            getattr(carrier.settings, "custom_carrier_name", None) or meta.get("rate_provider") or carrier.carrier_name
         )
         shipment.meta = {
             **meta,
@@ -42,10 +32,7 @@ def forwards_func(apps, schema_editor):
         tracking_carrier = providers.Carrier.objects.get(pk=tracker.tracking_carrier.pk)
         meta = tracker.meta or {}
         carrier = (
-            (
-                (list(tracker.options.values())[0] or {}).get("carrier")
-                or tracking_carrier.carrier_name
-            )
+            ((list(tracker.options.values())[0] or {}).get("carrier") or tracking_carrier.carrier_name)
             if len(tracker.options.values()) > 0
             else tracking_carrier.carrier_name
         )

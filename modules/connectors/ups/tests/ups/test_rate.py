@@ -1,9 +1,11 @@
 import unittest
-from unittest.mock import patch, ANY
-import karrio.lib as lib
+from unittest.mock import ANY, patch
+
 import karrio.core.models as models
-from .fixture import gateway
+import karrio.lib as lib
 import karrio.sdk as karrio
+
+from .fixture import gateway
 
 
 class TestUPSRating(unittest.TestCase):
@@ -17,9 +19,7 @@ class TestUPSRating(unittest.TestCase):
         self.assertEqual(request.serialize(), RateRequestData)
 
     def test_create_rate_with_package_preset_request(self):
-        request = gateway.mapper.create_rate_request(
-            models.RateRequest(**RateWithPresetPayload)
-        )
+        request = gateway.mapper.create_rate_request(models.RateRequest(**RateWithPresetPayload))
         self.assertEqual(request.serialize(), RateRequestWithPackagePresetData)
 
     @patch("karrio.mappers.ups.proxy.lib.request", return_value="<a></a>")
@@ -35,9 +35,7 @@ class TestUPSRating(unittest.TestCase):
     def test_parse_rate_response(self):
         with patch("karrio.mappers.ups.proxy.lib.request") as mock:
             mock.return_value = RateResponseJSON
-            parsed_response = (
-                karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertListEqual(lib.to_dict(parsed_response), ParsedRateResponse)
 
     def test_parse_fr_rate_response(self):
@@ -55,22 +53,14 @@ class TestUPSRating(unittest.TestCase):
     def test_parse_rate_response_with_total_charges(self):
         with patch("karrio.mappers.ups.proxy.lib.request") as mock:
             mock.return_value = RateResponseWithTotalChargesJSON
-            parsed_response = (
-                karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
-            )
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedRateResponseWithTotalCharges
-            )
+            parsed_response = karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedRateResponseWithTotalCharges)
 
     def test_parse_rate_response_with_missing_amount(self):
         with patch("karrio.mappers.ups.proxy.lib.request") as mock:
             mock.return_value = RateResponseWithMissingAmountJSON
-            parsed_response = (
-                karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
-            )
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedRateResponseWithMissingAmount
-            )
+            parsed_response = karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedRateResponseWithMissingAmount)
 
     def test_rate_request_contains_semantic_shipper_recipient_fields(self):
         """Semantic assertion on structured UPS request payload."""
@@ -169,8 +159,8 @@ ParsedRateResponse = [
                 {"amount": 16.38, "currency": "CAD", "name": "GST"},
                 {"amount": 16.38, "currency": "CAD", "name": "GST"},
             ],
-            "meta": {"rate_zone": "708", "service_name": "ups_express_early_ca"},
-            "service": "ups_express_early_ca",
+            "meta": {"rate_zone": "708", "service_name": "ups_next_day_air_early"},
+            "service": "ups_next_day_air_early",
             "total_charge": 344.0,
             "transit_days": 1,
         },
@@ -184,8 +174,8 @@ ParsedRateResponse = [
                 {"amount": 14.45, "currency": "CAD", "name": "GST"},
                 {"amount": 14.45, "currency": "CAD", "name": "GST"},
             ],
-            "meta": {"rate_zone": "408", "service_name": "ups_express_ca"},
-            "service": "ups_express_ca",
+            "meta": {"rate_zone": "408", "service_name": "ups_next_day_air"},
+            "service": "ups_next_day_air",
             "total_charge": 303.48,
             "transit_days": 1,
         },
@@ -199,8 +189,8 @@ ParsedRateResponse = [
                 {"amount": 12.91, "currency": "CAD", "name": "GST"},
                 {"amount": 12.91, "currency": "CAD", "name": "GST"},
             ],
-            "meta": {"rate_zone": "508", "service_name": "ups_express_saver_ca"},
-            "service": "ups_express_saver_ca",
+            "meta": {"rate_zone": "508", "service_name": "ups_next_day_air_saver"},
+            "service": "ups_next_day_air_saver",
             "total_charge": 271.07,
             "transit_days": 1,
         },
@@ -214,8 +204,8 @@ ParsedRateResponse = [
                 {"amount": 12.26, "currency": "CAD", "name": "GST"},
                 {"amount": 12.26, "currency": "CAD", "name": "GST"},
             ],
-            "meta": {"rate_zone": "308", "service_name": "ups_expedited_ca"},
-            "service": "ups_expedited_ca",
+            "meta": {"rate_zone": "308", "service_name": "ups_2nd_day_air"},
+            "service": "ups_2nd_day_air",
             "total_charge": 257.41,
             "transit_days": 2,
         },
@@ -229,8 +219,8 @@ ParsedRateResponse = [
                 {"amount": 6.33, "currency": "CAD", "name": "GST"},
                 {"amount": 6.33, "currency": "CAD", "name": "GST"},
             ],
-            "meta": {"rate_zone": "208", "service_name": "ups_standard_ca"},
-            "service": "ups_standard_ca",
+            "meta": {"rate_zone": "208", "service_name": "ups_standard"},
+            "service": "ups_standard",
             "total_charge": 132.84,
             "transit_days": 6,
         },
@@ -249,8 +239,8 @@ ParsedFRRateResponse = [
                 {"amount": 2.74, "currency": "EUR", "name": "FUEL SURCHARGE"},
                 {"amount": 3.02, "currency": "EUR", "name": "TVA"},
             ],
-            "meta": {"service_name": "ups_express_eu"},
-            "service": "ups_express_eu",
+            "meta": {"service_name": "ups_express"},
+            "service": "ups_express",
             "total_charge": 18.13,
             "transit_days": 1,
         },
@@ -263,8 +253,8 @@ ParsedFRRateResponse = [
                 {"amount": 2.26, "currency": "EUR", "name": "FUEL SURCHARGE"},
                 {"amount": 2.49, "currency": "EUR", "name": "TVA"},
             ],
-            "meta": {"service_name": "ups_worldwide_saver_eu"},
-            "service": "ups_worldwide_saver_eu",
+            "meta": {"service_name": "ups_worldwide_saver"},
+            "service": "ups_worldwide_saver",
             "total_charge": 14.96,
             "transit_days": 1,
         },
@@ -277,8 +267,8 @@ ParsedFRRateResponse = [
                 {"amount": 1.16, "currency": "EUR", "name": "FUEL SURCHARGE"},
                 {"amount": 1.87, "currency": "EUR", "name": "TVA"},
             ],
-            "meta": {"service_name": "ups_standard_eu"},
-            "service": "ups_standard_eu",
+            "meta": {"service_name": "ups_standard"},
+            "service": "ups_standard",
             "total_charge": 11.25,
             "transit_days": 1,
         },
@@ -296,8 +286,8 @@ ParsedRateResponseWithTotalCharges = [
                 {"amount": 54.4, "currency": "CAD", "name": "BASE CHARGE"},
                 {"amount": 11.83, "currency": "CAD", "name": "FUEL SURCHARGE"},
             ],
-            "meta": {"service_name": "ups_express_early_ca"},
-            "service": "ups_express_early_ca",
+            "meta": {"service_name": "ups_next_day_air_early"},
+            "service": "ups_next_day_air_early",
             "total_charge": 66.23,
             "transit_days": 1,
         },
@@ -309,8 +299,8 @@ ParsedRateResponseWithTotalCharges = [
                 {"amount": 25.75, "currency": "CAD", "name": "BASE CHARGE"},
                 {"amount": 5.6, "currency": "CAD", "name": "FUEL SURCHARGE"},
             ],
-            "meta": {"service_name": "ups_worldwide_express_ca"},
-            "service": "ups_worldwide_express_ca",
+            "meta": {"service_name": "ups_express"},
+            "service": "ups_express",
             "total_charge": 31.35,
             "transit_days": 1,
         },
@@ -322,8 +312,8 @@ ParsedRateResponseWithTotalCharges = [
                 {"amount": 14.28, "currency": "CAD", "name": "BASE CHARGE"},
                 {"amount": 3.11, "currency": "CAD", "name": "FUEL SURCHARGE"},
             ],
-            "meta": {"service_name": "ups_express_saver_intl_ca"},
-            "service": "ups_express_saver_intl_ca",
+            "meta": {"service_name": "ups_worldwide_saver"},
+            "service": "ups_worldwide_saver",
             "total_charge": 17.39,
             "transit_days": 1,
         },
@@ -335,8 +325,8 @@ ParsedRateResponseWithTotalCharges = [
                 {"amount": 12.38, "currency": "CAD", "name": "BASE CHARGE"},
                 {"amount": 2.69, "currency": "CAD", "name": "FUEL SURCHARGE"},
             ],
-            "meta": {"service_name": "ups_worldwide_expedited_ca"},
-            "service": "ups_worldwide_expedited_ca",
+            "meta": {"service_name": "ups_worldwide_expedited"},
+            "service": "ups_worldwide_expedited",
             "total_charge": 15.07,
             "transit_days": 2,
         },
@@ -348,8 +338,8 @@ ParsedRateResponseWithTotalCharges = [
                 {"amount": 18.6, "currency": "CAD", "name": "BASE CHARGE"},
                 {"amount": 4.05, "currency": "CAD", "name": "FUEL SURCHARGE"},
             ],
-            "meta": {"service_name": "ups_3_day_select_ca_us"},
-            "service": "ups_3_day_select_ca_us",
+            "meta": {"service_name": "ups_3_day_select"},
+            "service": "ups_3_day_select",
             "total_charge": 22.65,
             "transit_days": 3,
         },
@@ -362,8 +352,8 @@ ParsedRateResponseWithTotalCharges = [
                 {"amount": 1.69, "currency": "CAD", "name": "FUEL SURCHARGE"},
                 {"amount": 0.55, "currency": "CAD", "name": "434"},
             ],
-            "meta": {"service_name": "ups_standard_ca"},
-            "service": "ups_standard_ca",
+            "meta": {"service_name": "ups_standard"},
+            "service": "ups_standard",
             "total_charge": 13.54,
             "transit_days": 3,
         },
@@ -383,8 +373,8 @@ ParsedRateResponseWithMissingAmount = [
                 {"amount": 17.74, "currency": "CAD", "name": "FUEL SURCHARGE"},
                 {"amount": 26.25, "currency": "CAD", "name": "SATURDAY DELIVERY"},
             ],
-            "meta": {"service_name": "ups_express_early_ca"},
-            "service": "ups_express_early_ca",
+            "meta": {"service_name": "ups_next_day_air_early"},
+            "service": "ups_next_day_air_early",
             "total_charge": 98.39,
             "transit_days": 1,
         },
@@ -398,8 +388,8 @@ ParsedRateResponseWithMissingAmount = [
                 {"amount": 11.44, "currency": "CAD", "name": "FUEL SURCHARGE"},
                 {"amount": 26.25, "currency": "CAD", "name": "SATURDAY DELIVERY"},
             ],
-            "meta": {"service_name": "ups_worldwide_express_ca"},
-            "service": "ups_worldwide_express_ca",
+            "meta": {"service_name": "ups_express"},
+            "service": "ups_express",
             "total_charge": 63.44,
             "transit_days": 1,
         },
@@ -411,8 +401,8 @@ ParsedRateResponseWithMissingAmount = [
                 {"amount": 54.4, "currency": "CAD", "name": "BASE CHARGE"},
                 {"amount": 11.97, "currency": "CAD", "name": "FUEL SURCHARGE"},
             ],
-            "meta": {"service_name": "ups_express_early_ca"},
-            "service": "ups_express_early_ca",
+            "meta": {"service_name": "ups_next_day_air_early"},
+            "service": "ups_next_day_air_early",
             "total_charge": 66.37,
             "transit_days": 1,
         },
@@ -424,8 +414,8 @@ ParsedRateResponseWithMissingAmount = [
                 {"amount": 25.75, "currency": "CAD", "name": "BASE CHARGE"},
                 {"amount": 5.67, "currency": "CAD", "name": "FUEL SURCHARGE"},
             ],
-            "meta": {"service_name": "ups_worldwide_express_ca"},
-            "service": "ups_worldwide_express_ca",
+            "meta": {"service_name": "ups_express"},
+            "service": "ups_express",
             "total_charge": 31.42,
             "transit_days": 1,
         },
@@ -437,8 +427,8 @@ ParsedRateResponseWithMissingAmount = [
                 {"amount": 14.28, "currency": "CAD", "name": "BASE CHARGE"},
                 {"amount": 3.14, "currency": "CAD", "name": "FUEL SURCHARGE"},
             ],
-            "meta": {"service_name": "ups_express_saver_intl_ca"},
-            "service": "ups_express_saver_intl_ca",
+            "meta": {"service_name": "ups_worldwide_saver"},
+            "service": "ups_worldwide_saver",
             "total_charge": 17.42,
             "transit_days": 1,
         },
@@ -450,8 +440,8 @@ ParsedRateResponseWithMissingAmount = [
                 {"amount": 12.38, "currency": "CAD", "name": "BASE CHARGE"},
                 {"amount": 2.72, "currency": "CAD", "name": "FUEL SURCHARGE"},
             ],
-            "meta": {"service_name": "ups_worldwide_expedited_ca"},
-            "service": "ups_worldwide_expedited_ca",
+            "meta": {"service_name": "ups_worldwide_expedited"},
+            "service": "ups_worldwide_expedited",
             "total_charge": 15.1,
             "transit_days": 1,
         },
@@ -463,8 +453,8 @@ ParsedRateResponseWithMissingAmount = [
                 {"amount": 18.6, "currency": "CAD", "name": "BASE CHARGE"},
                 {"amount": 4.09, "currency": "CAD", "name": "FUEL SURCHARGE"},
             ],
-            "meta": {"service_name": "ups_3_day_select_ca_us"},
-            "service": "ups_3_day_select_ca_us",
+            "meta": {"service_name": "ups_3_day_select"},
+            "service": "ups_3_day_select",
             "total_charge": 22.69,
             "transit_days": 2,
         },
@@ -477,8 +467,8 @@ ParsedRateResponseWithMissingAmount = [
                 {"amount": 1.69, "currency": "CAD", "name": "FUEL SURCHARGE"},
                 {"amount": 0.55, "currency": "CAD", "name": "434"},
             ],
-            "meta": {"service_name": "ups_standard_ca"},
-            "service": "ups_standard_ca",
+            "meta": {"service_name": "ups_standard"},
+            "service": "ups_standard",
             "total_charge": 13.54,
             "transit_days": 3,
         },
@@ -508,9 +498,7 @@ RateRequestData = {
                         "UnitOfMeasurement": {"Code": "CM", "Description": "Dimension"},
                         "Width": "3.0",
                     },
-                    "PackageServiceOptions": {
-                        "DeliveryConfirmation": {"DCISType": "1"}
-                    },
+                    "PackageServiceOptions": {"DeliveryConfirmation": {"DCISType": "1"}},
                     "PackageWeight": {
                         "UnitOfMeasurement": {"Code": "KGS", "Description": "Weight"},
                         "Weight": "0.5",

@@ -1,12 +1,15 @@
-import re
+import contextlib
+import contextvars
 import json
-import uuid
+import re
 import threading
+import uuid
+
+import karrio.lib as lib
 from django.db.models import Q
 from django.http import HttpResponse
 from karrio.core.utils import Tracer
 from karrio.server.conf import settings
-
 
 # --- X-Request-ID utilities ---
 
@@ -45,10 +48,7 @@ class RequestIDMiddleware:
     def __call__(self, request):
         try:
             client_id = request.META.get("HTTP_X_REQUEST_ID", "").strip()
-            request.request_id = (
-                client_id if _is_valid_request_id(client_id)
-                else _generate_request_id()
-            )
+            request.request_id = client_id if _is_valid_request_id(client_id) else _generate_request_id()
         except (AttributeError, TypeError):
             request.request_id = _generate_request_id()
 
@@ -89,6 +89,7 @@ class SessionContext:
     """
 
     _threadmap: dict = {}
+    _request_var: contextvars.ContextVar = contextvars.ContextVar("current_request", default=None)
 
     def __init__(self, get_response):
         self.get_response = get_response
@@ -111,6 +112,7 @@ class SessionContext:
             tracer.add_context({"request_id": request_id})
 
         self._threadmap[threading.get_ident()] = request
+        self._request_var.set(request)
 
         # Track request timing
         start_time = time.time()
@@ -121,18 +123,22 @@ class SessionContext:
         # (in case it was set/modified during request processing)
         try:
             import sentry_sdk
+
             request_id = getattr(request, "request_id", None)
             if request_id:
                 sentry_sdk.set_tag("request_id", request_id)
                 with sentry_sdk.configure_scope() as scope:
                     scope.set_tag("request_id", request_id)
-                    scope.set_context("request_tracking", {
-                        "request_id": request_id,
-                        "method": request.method,
-                        "path": request.path,
-                    })
+                    scope.set_context(
+                        "request_tracking",
+                        {
+                            "request_id": request_id,
+                            "method": request.method,
+                            "path": request.path,
+                        },
+                    )
         except Exception:
-            pass
+            ...
 
         # Record request metrics
         self._record_request_metrics(request, response, start_time)
@@ -142,6 +148,7 @@ class SessionContext:
         try:
             self._save_tracing_records(request, schema=settings.schema)
             del self._threadmap[threading.get_ident()]
+            self._request_var.set(None)
         except KeyError:
             pass
 
@@ -187,20 +194,30 @@ class SessionContext:
             # (Sentry Django integration doesn't pick up custom request attributes automatically)
             try:
                 import sentry_sdk
+
                 if request_id:
                     sentry_sdk.set_tag("request_id", request_id)
             except Exception:
-                pass
+                ...
 
             # Set test_mode tag if available
             test_mode = getattr(request, "test_mode", None)
             if test_mode is not None:
                 tracer.set_tag("test_mode", str(test_mode).lower())
 
-            # Set org context for multi-tenant deployments
-            org = getattr(request, "org", None)
-            if org:
-                tracer.set_tag("org_id", str(org.id) if hasattr(org, "id") else str(org))
+            # Set org context for multi-tenant deployments.
+            # `request.org` is a SimpleLazyObject whose resolver (get_request_org)
+            # can raise AuthenticationFailed for a non-member tenant request — the
+            # expected state for a user who hasn't activated the Shipping app
+            # (see PRDs/STRICT_TENANT_ONBOARDING.md). This runs before view
+            # dispatch, so a raised exception here cannot be mapped to a 401 by
+            # DRF and Django turns it into a 500. Telemetry tagging is best-effort
+            # and must never break the request path, so resolve it defensively via
+            # lib.failsafe; the real auth check still runs (and returns a proper
+            # 401/empty result) when the DRF view touches request.org.
+            org_id = lib.failsafe(lambda: getattr(getattr(request, "org", None), "id", None))
+            if org_id:
+                tracer.set_tag("org_id", str(org_id))
 
         except ImportError:
             # Telemetry module not available, continue with NoOpTelemetry
@@ -235,7 +252,9 @@ class SessionContext:
             telemetry.record_metric("karrio.http.request", 1, tags=tags, metric_type="counter")
 
             # Record response time distribution
-            telemetry.record_metric("karrio.http.duration", duration_ms, unit="millisecond", tags=tags, metric_type="distribution")
+            telemetry.record_metric(
+                "karrio.http.duration", duration_ms, unit="millisecond", tags=tags, metric_type="distribution"
+            )
 
             # Record error count for 4xx/5xx responses
             if response.status_code >= 400:
@@ -252,7 +271,37 @@ class SessionContext:
 
     @classmethod
     def get_current_request(cls):
+        # Try contextvars first — propagates to child threads in asyncio
+        # executors (e.g. Strawberry GraphQL ThreadPoolExecutor workers).
+        request = cls._request_var.get(None)
+        if request is not None:
+            return request
+        # Fall back to thread-local map for plain WSGI.
         return cls._threadmap.get(threading.get_ident())
+
+    @classmethod
+    @contextlib.contextmanager
+    def scope(cls, request):
+        """Bind ``request`` as the current request for the duration of the block.
+
+        For background jobs that drive carrier gateway calls off the HTTP path:
+        ``CarrierConnection.gateway`` reads its tracer from
+        ``get_current_request()``, so a job that wants its carrier HTTP calls
+        traced binds a request-like object carrying a ``lib.Tracer()`` here.
+        Restores the previous binding on exit. See observability.md.
+        """
+        ident = threading.get_ident()
+        previous = cls._threadmap.get(ident)
+        token = cls._request_var.set(request)
+        cls._threadmap[ident] = request
+        try:
+            yield request
+        finally:
+            cls._request_var.reset(token)
+            if previous is not None:
+                cls._threadmap[ident] = previous
+            else:
+                cls._threadmap.pop(ident, None)
 
 
 class NonHtmlDebugToolbarMiddleware:
@@ -272,10 +321,7 @@ class NonHtmlDebugToolbarMiddleware:
 
         if request.GET.get("debug") == "":
             if response["Content-Type"] == "application/octet-stream":
-                new_content = (
-                    "<html><body>Binary Data, "
-                    "Length: {}</body></html>".format(len(response.content))
-                )
+                new_content = f"<html><body>Binary Data, Length: {len(response.content)}</body></html>"
                 response = HttpResponse(new_content)
             elif response["Content-Type"] != "text/html":
                 content = response.content
@@ -284,8 +330,6 @@ class NonHtmlDebugToolbarMiddleware:
                     content = json.dumps(json_, sort_keys=True, indent=2)
                 except ValueError:
                     pass
-                response = HttpResponse(
-                    "<html><body><pre>{}" "</pre></body></html>".format(content)
-                )
+                response = HttpResponse(f"<html><body><pre>{content}</pre></body></html>")
 
         return response

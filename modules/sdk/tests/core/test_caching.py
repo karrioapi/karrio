@@ -1,5 +1,5 @@
-import unittest
 import datetime
+import unittest
 
 from karrio.core.utils.caching import Cache, ThreadSafeTokenManager
 
@@ -74,18 +74,88 @@ class TestCacheGetSet(unittest.TestCase):
         cache = Cache(token="abc123")
         self.assertEqual(cache.get("token"), "abc123")
 
+    def test_delete_removes_value(self):
+        cache = Cache()
+        cache.set("key", "value")
+        self.assertEqual(cache.get("key"), "value")
+        cache.delete("key")
+        self.assertIsNone(cache.get("key"))
+
+    def test_delete_missing_key_is_noop(self):
+        Cache().delete("nonexistent")  # must not raise
+
+    def test_delete_propagates_to_underlying_cache(self):
+        """``Cache.delete`` evicts the key from both layers — used by
+        ``ThreadSafeTokenManager.invalidate`` to drop a rejected OAuth token."""
+
+        class FakeBackend:
+            def __init__(self):
+                self.deleted = []
+                self.store = {}
+
+            def get(self, key):
+                return self.store.get(key)
+
+            def set(self, key, value, **kwargs):
+                self.store[key] = value
+
+            def delete(self, key):
+                self.deleted.append(key)
+                self.store.pop(key, None)
+
+        backend = FakeBackend()
+        cache = Cache(backend)
+        cache.set("token", "tok-1")
+        cache.delete("token")
+        self.assertEqual(backend.deleted, ["token"])
+
+
+class TestThreadSafeTokenManagerInvalidate(unittest.TestCase):
+    """Tests for ThreadSafeTokenManager.invalidate — used by carrier proxies
+    to drop a cached OAuth token after the upstream rejects it (401/403)."""
+
+    def setUp(self):
+        self.maxDiff = None
+        self.future_expiry = (datetime.datetime.now() + datetime.timedelta(hours=2)).strftime("%Y-%m-%d %H:%M:%S")
+
+    def test_invalidate_drops_cached_token(self):
+        cache = Cache()
+        manager = cache.thread_safe(
+            refresh_func=lambda: {"access_token": "fresh", "expiry": self.future_expiry},
+            cache_key="carrier|cid|csecret",
+        )
+        # Prime the cache with a "stale" token.
+        cache.set("carrier|cid|csecret", {"access_token": "stale", "expiry": self.future_expiry})
+
+        manager.invalidate()
+        self.assertIsNone(cache.get("carrier|cid|csecret"))
+
+    def test_invalidate_then_get_token_calls_refresh(self):
+        cache = Cache()
+        refresh_calls = {"n": 0}
+
+        def refresh():
+            refresh_calls["n"] += 1
+            return {"access_token": f"tok-{refresh_calls['n']}", "expiry": self.future_expiry}
+
+        manager = cache.thread_safe(refresh_func=refresh, cache_key="carrier|cid|csecret")
+
+        first = manager.get_token()
+        manager.invalidate()
+        second = manager.get_token()
+
+        self.assertEqual(first, "tok-1")
+        self.assertEqual(second, "tok-2")
+        self.assertEqual(refresh_calls["n"], 2)
+
 
 class TestThreadSafeTokenManager(unittest.TestCase):
     """Tests for ThreadSafeTokenManager token lifecycle."""
 
     def setUp(self):
         self.maxDiff = None
-        self.future_expiry = (
-            datetime.datetime.now() + datetime.timedelta(hours=2)
-        ).strftime("%Y-%m-%d %H:%M:%S")
-        self.past_expiry = (
-            datetime.datetime.now() - datetime.timedelta(hours=1)
-        ).strftime("%Y-%m-%d %H:%M:%S")
+        self.future_expiry = (datetime.datetime.now() + datetime.timedelta(hours=2)).strftime("%Y-%m-%d %H:%M:%S")
+        self.past_expiry = (datetime.datetime.now() - datetime.timedelta(hours=1)).strftime("%Y-%m-%d %H:%M:%S")
 
     def test_get_token_calls_refresh_when_no_cached_token(self):
         cache = Cache()
@@ -155,10 +225,13 @@ class TestThreadSafeTokenManager(unittest.TestCase):
         self.assertEqual(call_count["n"], 1)
 
         # Simulate expiry by setting an expired token in cache
-        cache.set(manager.cache_key, {
-            "access_token": "token_1",
-            "expiry": self.past_expiry,
-        })
+        cache.set(
+            manager.cache_key,
+            {
+                "access_token": "token_1",
+                "expiry": self.past_expiry,
+            },
+        )
 
         # Next call should trigger a new refresh
         token = manager.get_token()
@@ -178,9 +251,7 @@ class TestThreadSafeTokenManager(unittest.TestCase):
     def test_get_token_propagates_refresh_errors(self):
         cache = Cache()
         manager = cache.thread_safe(
-            refresh_func=lambda: (_ for _ in ()).throw(
-                ConnectionError("network down")
-            ),
+            refresh_func=lambda: (_ for _ in ()).throw(ConnectionError("network down")),
             cache_key="test|key",
         )
 

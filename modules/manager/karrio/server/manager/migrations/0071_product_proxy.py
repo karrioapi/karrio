@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("manager", "0070_add_meta_and_product_fields"),
     ]

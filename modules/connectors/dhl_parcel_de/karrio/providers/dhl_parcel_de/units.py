@@ -1,4 +1,5 @@
 import csv
+import re
 import attr
 import typing
 import pathlib
@@ -150,6 +151,7 @@ class ServiceBillingNumberType:
     service: ShippingService  # Required: shipping service enum
     billing_number: str  # Required: billing number for this service
 
+    id: typing.Optional[str] = None  # Optional: stable row id for duplicate services
     name: typing.Optional[str] = None  # Optional: friendly name for this entry
 
 
@@ -157,29 +159,17 @@ class ServiceBillingNumberType:
 # https://developer.dhl.com/api-reference/parcel-de-shipping-post-parcel-germany-v2
 DEFAULT_TEST_BILLING_NUMBERS: typing.List[ServiceBillingNumberType] = [
     # V01PAK - DHL Paket (incl. services)
-    ServiceBillingNumberType(
-        service="dhl_parcel_de_paket", billing_number="33333333330102"
-    ),
+    ServiceBillingNumberType(service="dhl_parcel_de_paket", billing_number="33333333330102"),
     # V53WPAK - DHL Paket International
-    ServiceBillingNumberType(
-        service="dhl_parcel_de_paket_international", billing_number="33333333335301"
-    ),
+    ServiceBillingNumberType(service="dhl_parcel_de_paket_international", billing_number="33333333335301"),
     # V54EPAK - DHL Europaket
-    ServiceBillingNumberType(
-        service="dhl_parcel_de_europaket", billing_number="33333333335401"
-    ),
+    ServiceBillingNumberType(service="dhl_parcel_de_europaket", billing_number="33333333335401"),
     # V62KP - DHL Kleinpaket
-    ServiceBillingNumberType(
-        service="dhl_parcel_de_kleinpaket", billing_number="33333333336201"
-    ),
+    ServiceBillingNumberType(service="dhl_parcel_de_kleinpaket", billing_number="33333333336201"),
     # V66WPI - Warenpost International
-    ServiceBillingNumberType(
-        service="dhl_parcel_de_warenpost_international", billing_number="33333333336601"
-    ),
+    ServiceBillingNumberType(service="dhl_parcel_de_warenpost_international", billing_number="33333333336601"),
     # V07PAK - DHL Retoure
-    ServiceBillingNumberType(
-        service="dhl_parcel_de_retoure", billing_number="33333333330701"
-    ),
+    ServiceBillingNumberType(service="dhl_parcel_de_retoure", billing_number="33333333330701"),
 ]
 
 # Default test billing number (V01PAK with services)
@@ -187,45 +177,101 @@ DEFAULT_TEST_BILLING_NUMBER = "33333333330102"
 
 
 class ConnectionConfig(lib.Enum):
+    # configurable=False: label format is configured per shipping-method, not per
+    # connection — kept here so it can still be set via API/admin, but hidden from
+    # the shipping-app carrier-connection config tab.
     label_type = lib.OptionEnum(
         "label_type",
         lib.units.create_enum("LabelType", [_.name for _ in LabelType]),  # type: ignore
+        meta=dict(category="LABEL", configurable=False),
     )
-    language = lib.OptionEnum(
-        "language",
-        lib.units.create_enum("Language", ["de", "en"]), default="en"
-    )
-    default_billing_number = lib.OptionEnum(
-        "default_billing_number", default=DEFAULT_TEST_BILLING_NUMBER
-    )
+    language = lib.OptionEnum("language", lib.units.create_enum("Language", ["de", "en"]), default="en")
+    # configurable=False: billing/profile/cost-center/creation-software fields are
+    # managed per shipping-method (or server-side), not per connection — kept here
+    # so they remain settable via API/admin, but hidden from the shipping-app
+    # carrier-connection config tab.
+    default_billing_number = lib.OptionEnum("default_billing_number", meta=dict(configurable=False))
     service_billing_numbers = lib.OptionEnum(
         "service_billing_numbers",
         typing.List[ServiceBillingNumberType],
-        default=DEFAULT_TEST_BILLING_NUMBERS,
     )
-    pickup_billing_number = lib.OptionEnum(
-        "pickup_billing_number", str, default="22222222220801"
-    )
-    return_billing_number = lib.OptionEnum(
-        "return_billing_number", str, default="33333333330701"
-    )
-    profile = lib.OptionEnum("profile")
-    cost_center = lib.OptionEnum("cost_center")
-    creation_software = lib.OptionEnum("creation_software")
+    pickup_billing_number = lib.OptionEnum("pickup_billing_number", str)
+    return_billing_number = lib.OptionEnum("return_billing_number", str, meta=dict(configurable=False))
+    profile = lib.OptionEnum("profile", meta=dict(configurable=False))
+    cost_center = lib.OptionEnum("cost_center", meta=dict(configurable=False))
+    creation_software = lib.OptionEnum("creation_software", meta=dict(configurable=False))
     shipping_options = lib.OptionEnum("shipping_options", list)
     shipping_services = lib.OptionEnum("shipping_services", list)
+    cod_account_reference = lib.OptionEnum("cod_account_reference")
+    cod_bank_account_holder = lib.OptionEnum("cod_bank_account_holder")
+    cod_bank_name = lib.OptionEnum("cod_bank_name")
+    cod_bank_iban = lib.OptionEnum("cod_bank_iban")
+    cod_bank_bic = lib.OptionEnum("cod_bank_bic")
 
 
 class ShippingOption(lib.Enum):
     """Carrier specific options"""
 
     # fmt: off
+    # Reference Options
+    dhl_parcel_de_service_billing_id = lib.OptionEnum(
+        "serviceBillingId",
+        meta=dict(
+            category="SHIPMENT",
+            # Not user-editable in the shipping-method options editor —
+            # populated automatically when the merchant picks a Service
+            # whose billing row carries an id. At label purchase time
+            # the provider resolves the exact billing_number via this id.
+            configurable=False,
+            service_level=False,
+            help="Auto-set from the selected Service's billing row id when the merchant's connection has duplicate service_codes.",
+            compatible_services=[
+                "dhl_parcel_de_paket",
+                "dhl_parcel_de_paket_international",
+                "dhl_parcel_de_europaket",
+                "dhl_parcel_de_kleinpaket",
+                "dhl_parcel_de_warenpost",
+                "dhl_parcel_de_warenpost_international",
+                "dhl_parcel_de_retoure",
+            ],
+        )
+    )
+    dhl_parcel_de_reference = lib.OptionEnum(
+        "refNo",
+        meta=dict(
+            category="SHIPMENT",
+            configurable=True,
+            service_level=False,
+            # Native equivalent of the generic shipment_reference; de-dupes it
+            # for this carrier so only one reference field shows (issue #788).
+            aliases=["shipment_reference"],
+            help="Shipment reference number (overrides payload.reference for refNo)",
+            compatible_services=[
+                "dhl_parcel_de_paket",
+                "dhl_parcel_de_paket_international",
+                "dhl_parcel_de_europaket",
+                "dhl_parcel_de_kleinpaket",
+                "dhl_parcel_de_warenpost",
+                "dhl_parcel_de_warenpost_international",
+            ],
+        )
+    )
+    dhl_parcel_de_shipper_ref = lib.OptionEnum(
+        "shipperRef",
+        meta=dict(
+            category="SHIPMENT",
+            configurable=True,
+            service_level=False,
+            help="GKP shipper reference (Geschäftskundenportal). Uses predefined sender data and prints the GKP company logo on the label.",
+        )
+    )
     # Delivery Options
     dhl_parcel_de_preferred_neighbour = lib.OptionEnum(
         "preferredNeighbour",
         meta=dict(
             category="DELIVERY_OPTIONS",
             configurable=True,
+            service_level=False,
             help="Preferred neighbour for delivery if recipient not home",
             compatible_services=["dhl_parcel_de_paket"],
         )
@@ -235,6 +281,7 @@ class ShippingOption(lib.Enum):
         meta=dict(
             category="DELIVERY_OPTIONS",
             configurable=True,
+            service_level=False,
             help="Preferred drop-off location (e.g., garage, shed)",
             compatible_services=["dhl_parcel_de_paket"],
         )
@@ -244,6 +291,7 @@ class ShippingOption(lib.Enum):
         meta=dict(
             category="DELIVERY_OPTIONS",
             configurable=True,
+            service_level=True,
             help="Delivery only to the named recipient",
             compatible_services=["dhl_parcel_de_paket"],
         )
@@ -253,6 +301,7 @@ class ShippingOption(lib.Enum):
         meta=dict(
             category="SIGNATURE",
             configurable=True,
+            service_level=True,
             help="Require signature from recipient",
             compatible_services=["dhl_parcel_de_paket"],
         )
@@ -262,6 +311,7 @@ class ShippingOption(lib.Enum):
         meta=dict(
             category="DELIVERY_OPTIONS",
             configurable=True,
+            service_level=False,
             help="Preferred delivery day (format: YYYY-MM-DD)",
             compatible_services=["dhl_parcel_de_paket"],
         )
@@ -271,6 +321,7 @@ class ShippingOption(lib.Enum):
         meta=dict(
             category="DELIVERY_OPTIONS",
             configurable=True,
+            service_level=True,
             help="Do not deliver to neighbours",
             compatible_services=["dhl_parcel_de_paket"],
         )
@@ -281,6 +332,7 @@ class ShippingOption(lib.Enum):
         meta=dict(
             category="INSURANCE",
             configurable=False,
+            service_level=False,
             help="Additional insurance value in EUR (0-2500, 0-25000, or 0-50000)",
             compatible_services=["dhl_parcel_de_paket", "dhl_parcel_de_paket_international", "dhl_parcel_de_europaket", "dhl_parcel_de_kleinpaket", "dhl_parcel_de_warenpost_international"],
         )
@@ -290,6 +342,7 @@ class ShippingOption(lib.Enum):
         meta=dict(
             category="DELIVERY_OPTIONS",
             configurable=True,
+            service_level=True,
             help="Mark shipment as bulky goods (Sperrgut)",
             compatible_services=["dhl_parcel_de_paket"],
         )
@@ -298,8 +351,79 @@ class ShippingOption(lib.Enum):
         "cashOnDelivery", float,
         meta=dict(
             category="COD",
+            configurable=True,
+            service_level=False,
+            help="Cash on delivery amount in EUR. For multi-package shipments the amount is collected from the first parcel only — other parcels are delivered without CoD.",
+            compatible_services=["dhl_parcel_de_paket"],
+        )
+    )
+    dhl_parcel_de_cod_account_reference = lib.OptionEnum(
+        "cod_account_reference",
+        meta=dict(
+            category="COD",
             configurable=False,
-            help="Cash on delivery amount in EUR",
+            service_level=False,
+            help="DHL Business Portal account reference for the CoD bank account. Configure once on the carrier connection.",
+            compatible_services=["dhl_parcel_de_paket"],
+        )
+    )
+    dhl_parcel_de_cod_transfer_note1 = lib.OptionEnum(
+        "cod_transfer_note1",
+        meta=dict(
+            category="COD",
+            configurable=True,
+            service_level=False,
+            help="Payment reference (Verwendungszweck) printed on the CoD transfer. Defaults to the shipment reference.",
+            compatible_services=["dhl_parcel_de_paket"],
+        )
+    )
+    dhl_parcel_de_cod_transfer_note2 = lib.OptionEnum(
+        "cod_transfer_note2",
+        meta=dict(
+            category="COD",
+            configurable=True,
+            service_level=False,
+            help="Optional second free-text line on the CoD transfer.",
+            compatible_services=["dhl_parcel_de_paket"],
+        )
+    )
+    dhl_parcel_de_cod_bank_account_holder = lib.OptionEnum(
+        "cod_bank_account_holder",
+        meta=dict(
+            category="COD",
+            configurable=False,
+            service_level=False,
+            help="CoD bank account holder name. Configure once on the carrier connection.",
+            compatible_services=["dhl_parcel_de_paket"],
+        )
+    )
+    dhl_parcel_de_cod_bank_name = lib.OptionEnum(
+        "cod_bank_name",
+        meta=dict(
+            category="COD",
+            configurable=False,
+            service_level=False,
+            help="CoD bank name. Configure once on the carrier connection.",
+            compatible_services=["dhl_parcel_de_paket"],
+        )
+    )
+    dhl_parcel_de_cod_bank_iban = lib.OptionEnum(
+        "cod_bank_iban",
+        meta=dict(
+            category="COD",
+            configurable=False,
+            service_level=False,
+            help="CoD bank IBAN. Configure once on the carrier connection.",
+            compatible_services=["dhl_parcel_de_paket"],
+        )
+    )
+    dhl_parcel_de_cod_bank_bic = lib.OptionEnum(
+        "cod_bank_bic",
+        meta=dict(
+            category="COD",
+            configurable=False,
+            service_level=False,
+            help="CoD bank BIC/SWIFT code. Configure once on the carrier connection.",
             compatible_services=["dhl_parcel_de_paket"],
         )
     )
@@ -308,15 +432,18 @@ class ShippingOption(lib.Enum):
         meta=dict(
             category="INSTRUCTIONS",
             configurable=True,
+            service_level=False,
             help="Custom sender note for the label",
         )
     )
-    dhl_parcel_de_premium = lib.OptionEnum(
-        "premium", bool,
+    dhl_parcel_de_delivery_tier = lib.OptionEnum(
+        "delivery_tier",
+        lib.units.create_enum("DeliveryTier", ["premium", "economy"]),
         meta=dict(
             category="DELIVERY_OPTIONS",
             configurable=True,
-            help="Premium shipping service",
+            service_level=True,
+            help="Delivery speed tier: premium or economy (leave unset for standard)",
             compatible_services=["dhl_parcel_de_paket_international", "dhl_parcel_de_warenpost_international"],
         )
     )
@@ -326,6 +453,7 @@ class ShippingOption(lib.Enum):
         meta=dict(
             category="PUDO",
             configurable=True,
+            service_level=True,
             help="Deliver to closest drop point (CDP)",
             compatible_services=["dhl_parcel_de_paket"],
         )
@@ -335,6 +463,7 @@ class ShippingOption(lib.Enum):
         meta=dict(
             category="PUDO",
             configurable=True,
+            service_level=True,
             help="Filial routing - deliver to retail outlet",
             compatible_services=["dhl_parcel_de_paket", "dhl_parcel_de_kleinpaket"],
         )
@@ -345,6 +474,7 @@ class ShippingOption(lib.Enum):
         meta=dict(
             category="PAPERLESS",
             configurable=True,
+            service_level=True,
             help="Postal Delivered Duty Paid (pDDP) - sender pays customs duties",
             compatible_services=["dhl_parcel_de_paket_international", "dhl_parcel_de_europaket"],
         )
@@ -352,19 +482,19 @@ class ShippingOption(lib.Enum):
     # Address/Delivery Location Options (not typically configurable at method level)
     dhl_parcel_de_postal_charges = lib.OptionEnum(
         "postalCharges", float,
-        meta=dict(configurable=False)
+        meta=dict(configurable=False, service_level=False)
     )
     dhl_parcel_de_post_number = lib.OptionEnum(
-        "postNumber",
-        meta=dict(category="PUDO", configurable=False, help="Postnummer for Packstation delivery")
+        "postNumber", lib.to_int,
+        meta=dict(category="PUDO", configurable=False, service_level=False, help="Postnummer for Packstation delivery")
     )
     dhl_parcel_de_retail_id = lib.OptionEnum(
-        "retailID",
-        meta=dict(category="PUDO", configurable=False, help="Retail outlet ID")
+        "retailID", lib.to_int,
+        meta=dict(category="PUDO", configurable=False, service_level=False, help="Retail outlet ID")
     )
     dhl_parcel_de_po_box_id = lib.OptionEnum(
-        "poBoxID",
-        meta=dict(category="PUDO", configurable=False, help="PO Box ID")
+        "poBoxID", lib.to_int,
+        meta=dict(category="PUDO", configurable=False, service_level=False, help="PO Box ID")
     )
     # Customs/Export Options
     dhl_parcel_de_shipper_customs_ref = lib.OptionEnum(
@@ -372,6 +502,7 @@ class ShippingOption(lib.Enum):
         meta=dict(
             category="INVOICE",
             configurable=True,
+            service_level=False,
             help="Sender EORI number for customs",
             compatible_services=["dhl_parcel_de_paket_international", "dhl_parcel_de_europaket", "dhl_parcel_de_warenpost_international"],
         )
@@ -381,6 +512,7 @@ class ShippingOption(lib.Enum):
         meta=dict(
             category="INVOICE",
             configurable=True,
+            service_level=False,
             help="Recipient ID for customs",
             compatible_services=["dhl_parcel_de_paket_international", "dhl_parcel_de_europaket", "dhl_parcel_de_warenpost_international"],
         )
@@ -390,6 +522,7 @@ class ShippingOption(lib.Enum):
         meta=dict(
             category="INVOICE",
             configurable=True,
+            service_level=False,
             help="Export permit number",
             compatible_services=["dhl_parcel_de_paket_international", "dhl_parcel_de_europaket", "dhl_parcel_de_warenpost_international"],
         )
@@ -399,6 +532,7 @@ class ShippingOption(lib.Enum):
         meta=dict(
             category="INVOICE",
             configurable=True,
+            service_level=False,
             help="Attestation number",
             compatible_services=["dhl_parcel_de_paket_international", "dhl_parcel_de_europaket", "dhl_parcel_de_warenpost_international"],
         )
@@ -407,7 +541,9 @@ class ShippingOption(lib.Enum):
         "hasElectronicExportNotification", bool,
         meta=dict(
             category="PAPERLESS",
+            flow="flag_only",
             configurable=True,
+            service_level=False,
             help="Electronic export notification (EEN)",
             compatible_services=["dhl_parcel_de_paket_international", "dhl_parcel_de_europaket", "dhl_parcel_de_warenpost_international"],
         )
@@ -417,6 +553,7 @@ class ShippingOption(lib.Enum):
         meta=dict(
             category="INVOICE",
             configurable=True,
+            service_level=False,
             help="Movement Reference Number for customs declaration",
             compatible_services=["dhl_parcel_de_paket_international", "dhl_parcel_de_europaket", "dhl_parcel_de_warenpost_international"],
         )
@@ -426,6 +563,7 @@ class ShippingOption(lib.Enum):
         meta=dict(
             category="LOCKER",
             configurable=False,
+            service_level=False,
             help="Packstation locker ID",
             compatible_services=["dhl_parcel_de_paket", "dhl_parcel_de_kleinpaket"],
         )
@@ -433,7 +571,7 @@ class ShippingOption(lib.Enum):
     # Identity/Age Verification (object type - not UI configurable but used in API)
     dhl_parcel_de_ident_check = lib.OptionEnum(
         "identCheck", ship_req.IdentCheckType,
-        meta=dict(configurable=False, compatible_services=["dhl_parcel_de_paket"])
+        meta=dict(configurable=False, service_level=False, compatible_services=["dhl_parcel_de_paket"])
     )
     # Return options (DHL Retoure) - individual fields for UI configuration
     dhl_parcel_de_return_enabled = lib.OptionEnum(
@@ -441,6 +579,7 @@ class ShippingOption(lib.Enum):
         meta=dict(
             category="RETURN",
             configurable=True,
+            service_level=True,
             help="Enable DHL Retoure - include return label with shipment",
             compatible_services=["dhl_parcel_de_paket", "dhl_parcel_de_kleinpaket"],
         )
@@ -450,6 +589,7 @@ class ShippingOption(lib.Enum):
         meta=dict(
             category="RETURN",
             configurable=True,
+            service_level=False,
             help="DHL Receiver ID for returns (configured in DHL Business Portal)",
             compatible_services=["dhl_parcel_de_paket", "dhl_parcel_de_kleinpaket"],
         )
@@ -459,6 +599,7 @@ class ShippingOption(lib.Enum):
         meta=dict(
             category="RETURN",
             configurable=True,
+            service_level=False,
             help="Billing number for returns (if different from main billing number)",
             compatible_services=["dhl_parcel_de_paket", "dhl_parcel_de_kleinpaket"],
         )
@@ -468,6 +609,7 @@ class ShippingOption(lib.Enum):
         meta=dict(
             category="RETURN",
             configurable=True,
+            service_level=False,
             help="Reference text for the return label",
             compatible_services=["dhl_parcel_de_paket", "dhl_parcel_de_kleinpaket"],
         )
@@ -478,6 +620,7 @@ class ShippingOption(lib.Enum):
         meta=dict(
             category="RETURN",
             configurable=False,
+            service_level=False,
             help="DHL Retoure configuration for return labels",
             compatible_services=["dhl_parcel_de_paket", "dhl_parcel_de_kleinpaket"],
         )
@@ -488,6 +631,7 @@ class ShippingOption(lib.Enum):
         meta=dict(
             category="DELIVERY_OPTIONS",
             configurable=True,
+            service_level=True,
             help="Visual age check at delivery (A16=16+, A18=18+)",
             compatible_services=["dhl_parcel_de_paket"],
         )
@@ -499,16 +643,8 @@ class ShippingOption(lib.Enum):
         meta=dict(
             category="DELIVERY_OPTIONS",
             configurable=True,
+            service_level=False,
             help="Action if delivery fails (RETURN or ABANDON)",
-            compatible_services=["dhl_parcel_de_paket_international", "dhl_parcel_de_warenpost_international"],
-        )
-    )
-    dhl_parcel_de_economy = lib.OptionEnum(
-        "economy", bool,
-        meta=dict(
-            category="DELIVERY_OPTIONS",
-            configurable=True,
-            help="Economy shipping service",
             compatible_services=["dhl_parcel_de_paket_international", "dhl_parcel_de_warenpost_international"],
         )
     )
@@ -517,6 +653,7 @@ class ShippingOption(lib.Enum):
         meta=dict(
             category="DELIVERY_OPTIONS",
             configurable=True,
+            service_level=True,
             help="GoGreen Plus climate-neutral shipping",
             compatible_services=["dhl_parcel_de_paket", "dhl_parcel_de_kleinpaket", "dhl_parcel_de_paket_international", "dhl_parcel_de_europaket", "dhl_parcel_de_warenpost_international"],
         )
@@ -529,6 +666,7 @@ class ShippingOption(lib.Enum):
     shipping_charges = dhl_parcel_de_postal_charges
     insurance = dhl_parcel_de_additional_insurance
     locker_id = dhl_parcel_de_locker_id
+    paperless_trade = dhl_parcel_de_has_electronic_export_notification
 
     # Method-level label / billing / returns configuration (SHIP2-978, SHIP2-979, SHIP2-981)
     dhl_parcel_de_label_type = lib.OptionEnum(
@@ -537,6 +675,7 @@ class ShippingOption(lib.Enum):
         meta=dict(
             category="DELIVERY_OPTIONS",
             configurable=True,
+            service_level=False,
             help="Label format for this shipping method (PDF or ZPL variant). Overrides carrier connection setting.",
         )
     )
@@ -545,6 +684,7 @@ class ShippingOption(lib.Enum):
         meta=dict(
             category="INVOICE",
             configurable=True,
+            service_level=False,
             help="Cost center code for billing allocation. Overrides carrier connection setting.",
         )
     )
@@ -554,6 +694,7 @@ class ShippingOption(lib.Enum):
         meta=dict(
             category="RETURN",
             configurable=True,
+            service_level=False,
             help="Return service for this shipping method (determines return billing number). Overrides carrier connection setting.",
             compatible_services=["dhl_parcel_de_paket", "dhl_parcel_de_kleinpaket"],
         )
@@ -563,6 +704,7 @@ class ShippingOption(lib.Enum):
         meta=dict(
             category="OTHER",
             configurable=True,
+            service_level=False,
             help="DHL shipping profile (Gruppenprofil). Overrides carrier connection setting.",
         )
     )
@@ -572,40 +714,131 @@ class ShippingOption(lib.Enum):
 def shipping_options_initializer(
     options: dict,
     package_options: units.ShippingOptions = None,
+    recipient: typing.Optional[models.Address] = None,
 ) -> units.ShippingOptions:
     """
     Apply default values to the given options.
+
+    When `recipient` is provided we also pre-resolve DHL droppoint identifiers
+    (Packstation / Postfiliale / Postfach) from the recipient address into the
+    options dict — see `_augment_droppoint_options` (SHIP2-1135). The shipment
+    request can then build the consignee from a single uniform source: options.
     """
 
     if package_options is not None:
         options.update(package_options.content)
+
+    # Backward compat: migrate legacy premium/economy booleans → delivery_tier enum
+    _legacy_premium = options.pop("dhl_parcel_de_premium", None)
+    _legacy_economy = options.pop("dhl_parcel_de_economy", None)
+    if "dhl_parcel_de_delivery_tier" not in options:
+        if _legacy_premium:
+            options["dhl_parcel_de_delivery_tier"] = "premium"
+        elif _legacy_economy:
+            options["dhl_parcel_de_delivery_tier"] = "economy"
+
+    # SHIP2-1135: derive droppoint identifiers from the recipient address and
+    # merge them into a NEW dict — `models.ShipmentRequest` defaults `options`
+    # to a shared class-level `{}`, so mutating it would leak across instances.
+    augmented = {**options, **_droppoint_overrides(options, recipient)} if recipient is not None else options
 
     # Read dhlRetoure from raw options — the OptionEnum code "dhlRetoure"
     # doesn't match enum member name "dhl_parcel_de_dhl_retoure" so we handle
     # the key mapping and dict-to-object conversion here.
     # NOTE: use get() not pop() to avoid mutating the shared payload.options dict
     # which is reused by to_packages for per-package option initialization.
-    _retoure_data = options.get("dhlRetoure")
+    _retoure_data = augmented.get("dhlRetoure")
     if _retoure_data is None:
-        _retoure_data = options.get("dhl_parcel_de_dhl_retoure")
+        _retoure_data = augmented.get("dhl_parcel_de_dhl_retoure")
 
     def items_filter(key: str) -> bool:
         return key in ShippingOption or key in units.ShippingOption  # type: ignore
 
-    _options = units.ShippingOptions(options, ShippingOption, items_filter=items_filter)
+    _options = units.ShippingOptions(augmented, ShippingOption, items_filter=items_filter)
 
     # Inject properly converted dhlRetoure option
     if _retoure_data is not None:
         _retoure_obj = (
-            lib.to_object(ship_req.DhlRetoureType, _retoure_data)
-            if isinstance(_retoure_data, dict)
-            else _retoure_data
+            lib.to_object(ship_req.DhlRetoureType, _retoure_data) if isinstance(_retoure_data, dict) else _retoure_data
         )
         _options._options["dhl_parcel_de_dhl_retoure"] = lib.OptionEnum(
             "dhlRetoure", ship_req.DhlRetoureType, state=_retoure_obj
         )
 
     return _options
+
+
+# ---------------------------------------------------------------------------
+# SHIP2-1135 — DHL droppoint consignee
+# ---------------------------------------------------------------------------
+# DHL's `Consignee` schema is a `oneOf`: Locker (Packstation), PostOffice
+# (Postfiliale / Filiale / Paketshop), POBox (Postfach), or a regular Contact
+# address. Sending a contact-address shape with droppoint identifiers attached
+# is rejected. The helpers below detect the droppoint kind from the recipient
+# address (German keywords, anchored at the start of the street name) and
+# pre-resolve the matching ID into options; the shipment request then selects
+# the correct schema variant inline from that option state.
+#
+# JTL Wawi typically sends Wawi-split addresses — `street_name="Packstation"`,
+# `street_number="105"` — but we also accept the single-field form
+# (`address_line1="Packstation 105"`) since `lib.to_address(...)` exposes a
+# `ComputedAddress` that splits a trailing digit token for us.
+
+_PACKSTATION_RE = re.compile(r"^\s*pack[\s\-]?station\b", re.IGNORECASE)
+_POSTFILIALE_RE = re.compile(
+    r"^\s*(?:post[\s\-]?filiale|filiale|paket[\s\-]?shop)\b",
+    re.IGNORECASE,
+)
+_POSTFACH_RE = re.compile(r"^\s*post[\s\-]?fach\b", re.IGNORECASE)
+# Postnummer (DHL customer reference): 6–10 digits.
+_POSTNUMMER_RE = re.compile(r"^\s*(\d{6,10})\s*$")
+
+
+def _droppoint_kind_from_address(recipient: typing.Any) -> typing.Optional[str]:
+    """Return "locker" / "post_office" / "po_box" / None from address text alone."""
+    street_name = getattr(recipient, "street_name", None) or getattr(recipient, "address_line1", None)
+    if not street_name:
+        return None
+    if _PACKSTATION_RE.match(street_name):
+        return "locker"
+    if _POSTFILIALE_RE.match(street_name):
+        return "post_office"
+    if _POSTFACH_RE.match(street_name):
+        return "po_box"
+    return None
+
+
+_DROPPOINT_ID_KEY = {
+    "locker": "dhl_parcel_de_locker_id",
+    "post_office": "dhl_parcel_de_retail_id",
+    "po_box": "dhl_parcel_de_po_box_id",
+}
+
+
+def _droppoint_overrides(options: dict, recipient: typing.Any) -> dict:
+    """Resolve droppoint identifiers from the recipient address.
+
+    Returns the keys to merge into options without mutating the input.
+    Explicit options always win; we only fill in the gaps. The Postnummer
+    can arrive via the dedicated option or — when the upstream system has
+    nowhere else to put it — as a digit-only `address_line2`.
+    """
+    overrides: dict = {}
+    kind = _droppoint_kind_from_address(recipient)
+    if kind is not None:
+        # `lib.to_int` raises on empty/non-numeric strings; failsafe normalises
+        # those to None for the parsed `street_number`.
+        parsed_id = lib.failsafe(lambda: lib.to_int(getattr(recipient, "street_number", None)))
+        id_key = _DROPPOINT_ID_KEY[kind]
+        if parsed_id is not None and id_key not in options:
+            overrides[id_key] = parsed_id
+
+    if "dhl_parcel_de_post_number" not in options:
+        line2 = getattr(recipient, "address_line2", None)
+        if line2 and _POSTNUMMER_RE.match(line2):
+            overrides["dhl_parcel_de_post_number"] = lib.to_int(line2)
+
+    return overrides
 
 
 class CustomsOption(lib.Enum):
@@ -618,10 +851,33 @@ class CustomsOption(lib.Enum):
 
 
 class TrackingStatus(lib.Enum):
-    delivered = ["delivered", "dlvrd"]
-    in_transit = ["transit", "srted", "ulfmv", "ldtmv", "pckdu", "shrcu"]
-    delivery_failed = ["failure", "ndelv"]
+    """Maps DHL ICE codes and TTPRO standard-event-codes to karrio tracking statuses.
+
+    ICE codes: from tracking API response (e.g. dlvrd, srted, ulfmv)
+    TTPRO codes: from standard-event-code field (e.g. va, aa, zu)
+    Reference: vendors/parcel_de_ice_event_ric_combinations_July_2024.csv
+    """
+
+    pending = ["va", "parcv"]  # TTPRO + ICE: Electronic pre advise
+    picked_up = ["ae", "es"]  # TTPRO: Pickup successful / Handed over to DHL
+    in_transit = [
+        "transit",
+        "srted",
+        "ulfmv",
+        "ldtmv",
+        "pckdu",
+        "shrcu",
+        "aa",
+        "ee",
+        "nb",
+    ]  # ICE + TTPRO
+    out_for_delivery = ["po"]  # TTPRO: In delivery process
+    delivered = ["delivered", "dlvrd", "zu"]  # ICE + TTPRO
+    delivery_failed = ["failure", "ndelv", "bv", "zn", "an"]  # ICE + TTPRO
     delivery_delayed = ["unknown"]
+    on_hold = ["zo"]  # TTPRO: Customs clearance
+    ready_for_pickup = ["la", "zf"]  # TTPRO: In storage / Delivery to postal outlet
+    # DD, GT = Data Service / Money transfer (not shipping milestones) → no mapping
 
 
 class TrackingIncidentReason(lib.Enum):
@@ -723,43 +979,27 @@ def load_services_from_csv() -> list:
                     "currency": row.get("currency", "EUR"),
                     "min_weight": row_min_weight,
                     "max_weight": row_max_weight,
-                    "max_length": (
-                        float(row["max_length"]) if row.get("max_length") else None
-                    ),
-                    "max_width": (
-                        float(row["max_width"]) if row.get("max_width") else None
-                    ),
-                    "max_height": (
-                        float(row["max_height"]) if row.get("max_height") else None
-                    ),
+                    "max_length": (float(row["max_length"]) if row.get("max_length") else None),
+                    "max_width": (float(row["max_width"]) if row.get("max_width") else None),
+                    "max_height": (float(row["max_height"]) if row.get("max_height") else None),
                     "weight_unit": "KG",
                     "dimension_unit": "CM",
                     "domicile": row.get("domicile", "").lower() == "true",
-                    "international": (
-                        True if row.get("international", "").lower() == "true" else None
-                    ),
+                    "international": (True if row.get("international", "").lower() == "true" else None),
                     "zones": [],
                 }
             else:
                 # Update service-level weight bounds to cover all zones
                 current = services_dict[karrio_service_code]
                 if row_min_weight is not None:
-                    if (
-                        current["min_weight"] is None
-                        or row_min_weight < current["min_weight"]
-                    ):
+                    if current["min_weight"] is None or row_min_weight < current["min_weight"]:
                         current["min_weight"] = row_min_weight
                 if row_max_weight is not None:
-                    if (
-                        current["max_weight"] is None
-                        or row_max_weight > current["max_weight"]
-                    ):
+                    if current["max_weight"] is None or row_max_weight > current["max_weight"]:
                         current["max_weight"] = row_max_weight
 
             # Parse country codes
-            country_codes = [
-                c.strip() for c in row.get("country_codes", "").split(",") if c.strip()
-            ]
+            country_codes = [c.strip() for c in row.get("country_codes", "").split(",") if c.strip()]
 
             # Create zone
             zone = models.ServiceZone(
@@ -767,20 +1007,14 @@ def load_services_from_csv() -> list:
                 rate=float(row.get("rate", 0.0)),
                 min_weight=row_min_weight,
                 max_weight=row_max_weight,
-                transit_days=(
-                    int(row["transit_days"].split("-")[0])
-                    if row.get("transit_days")
-                    else None
-                ),
+                transit_days=(int(row["transit_days"].split("-")[0]) if row.get("transit_days") else None),
                 country_codes=country_codes if country_codes else None,
             )
 
             services_dict[karrio_service_code]["zones"].append(zone)
 
     # Convert to ServiceLevel objects
-    return [
-        models.ServiceLevel(**service_data) for service_data in services_dict.values()
-    ]
+    return [models.ServiceLevel(**service_data) for service_data in services_dict.values()]
 
 
 DEFAULT_SERVICES = load_services_from_csv()

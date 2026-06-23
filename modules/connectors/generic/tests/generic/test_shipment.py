@@ -1,10 +1,11 @@
 import unittest
-import karrio.sdk as karrio
 from unittest.mock import ANY
 
-from karrio.providers.generic.units import SAMPLE_SHIPMENT_REQUEST
-from karrio.core.utils import DP
+import karrio.sdk as karrio
 from karrio.core.models import ShipmentRequest
+from karrio.core.utils import DP
+from karrio.providers.generic.units import SAMPLE_SHIPMENT_REQUEST
+
 from .fixture import gateway
 
 
@@ -14,9 +15,7 @@ class TestGenericShipment(unittest.TestCase):
         self.ShipmentRequest = ShipmentRequest(**SAMPLE_SHIPMENT_REQUEST)
 
     def test_parse_rate_response(self):
-        parsed_response = (
-            karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-        )
+        parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
 
         self.assertListEqual(DP.to_dict(parsed_response), ParsedShipmentResponse)
 

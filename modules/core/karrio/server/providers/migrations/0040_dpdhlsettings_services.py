@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('providers', '0039_auto_20220906_0612'),
+        ("providers", "0039_auto_20220906_0612"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='dpdhlsettings',
-            name='services',
-            field=models.ManyToManyField(blank=True, to='providers.ServiceLevel'),
+            model_name="dpdhlsettings",
+            name="services",
+            field=models.ManyToManyField(blank=True, to="providers.ServiceLevel"),
         ),
     ]

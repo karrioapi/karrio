@@ -4,15 +4,24 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('orders', '0003_alter_order_shipping_address'),
+        ("orders", "0003_alter_order_shipping_address"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='order',
-            name='status',
-            field=models.CharField(choices=[('created', 'created'), ('cancelled', 'cancelled'), ('fulfilled', 'fulfilled'), ('delivered', 'delivered'), ('partial', 'partial')], default='created', max_length=25),
+            model_name="order",
+            name="status",
+            field=models.CharField(
+                choices=[
+                    ("created", "created"),
+                    ("cancelled", "cancelled"),
+                    ("fulfilled", "fulfilled"),
+                    ("delivered", "delivered"),
+                    ("partial", "partial"),
+                ],
+                default="created",
+                max_length=25,
+            ),
         ),
     ]

@@ -1,14 +1,13 @@
-import math
-import typing
 import decimal
+import math
 
 
 class NUMBERFORMAT:
     @staticmethod
     def decimal(
-        value: typing.Union[str, float, bytes] = None,
-        quant: typing.Optional[float] = None,
-    ) -> typing.Optional[float]:
+        value: str | float | bytes = None,
+        quant: float | None = None,
+    ) -> float | None:
         """Parse a value into a valid decimal number.
 
         :param value: a value that can be parsed to float.
@@ -19,9 +18,7 @@ class NUMBERFORMAT:
             return None
 
         if quant is not None:
-            _result = float(
-                decimal.Decimal(str(value)).quantize(decimal.Decimal(str(quant)))
-            )
+            _result = float(decimal.Decimal(str(value)).quantize(decimal.Decimal(str(quant))))
             return _result if _result != 0 else float(decimal.Decimal(str(value)))
 
         _float = float(value)
@@ -31,7 +28,7 @@ class NUMBERFORMAT:
 
     @staticmethod
     def numeric_decimal(
-        value: typing.Union[str, float, bytes] = None,
+        value: str | float | bytes = None,
         total_digits: int = 3,
         decimal_digits: int = 3,
     ) -> str:
@@ -66,9 +63,7 @@ class NUMBERFORMAT:
         return f"{scaled_value:0{total_digits}d}"
 
     @staticmethod
-    def integer(
-        value: typing.Union[str, int, bytes] = None, base: int = None
-    ) -> typing.Optional[int]:
+    def integer(value: str | int | bytes = None, base: int = None) -> int | None:
         """Parse a value into a valid integer number.
 
         :param value: a value that can be parsed into integer.
@@ -78,6 +73,4 @@ class NUMBERFORMAT:
         if value is None or isinstance(value, bool):
             return None
 
-        return math.ceil(
-            float(value) if base is None else base * round(float(value) / base)
-        )
+        return math.ceil(float(value) if base is None else base * round(float(value) / base))

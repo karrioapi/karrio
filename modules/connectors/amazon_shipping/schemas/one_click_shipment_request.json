@@ -1,0 +1,71 @@
+{
+  "shipFrom": {
+    "name": "John Doe",
+    "addressLine1": "123 Main St",
+    "addressLine2": null,
+    "addressLine3": null,
+    "companyName": "Test Company",
+    "stateOrRegion": "WA",
+    "city": "Seattle",
+    "countryCode": "US",
+    "postalCode": "98101",
+    "email": "test@example.com",
+    "phoneNumber": "+12065551234"
+  },
+  "shipTo": {
+    "name": "Jane Doe",
+    "addressLine1": "456 Oak Ave",
+    "addressLine2": null,
+    "addressLine3": null,
+    "companyName": null,
+    "stateOrRegion": "CA",
+    "city": "Los Angeles",
+    "countryCode": "US",
+    "postalCode": "90001",
+    "email": "recipient@example.com",
+    "phoneNumber": "+13105551234"
+  },
+  "returnTo": null,
+  "shipDate": "2024-01-15T10:00:00Z",
+  "packages": [
+    {
+      "dimensions": {
+        "length": 10.0,
+        "width": 8.0,
+        "height": 6.0,
+        "unit": "INCH"
+      },
+      "weight": {
+        "value": 2.5,
+        "unit": "POUND"
+      },
+      "insuredValue": {
+        "value": 100.00,
+        "unit": "USD"
+      },
+      "packageClientReferenceId": "PKG001",
+      "items": null
+    }
+  ],
+  "channelDetails": {
+    "channelType": "EXTERNAL",
+    "amazonOrderDetails": null,
+    "amazonShipmentDetails": null
+  },
+  "labelSpecifications": {
+    "format": "PNG",
+    "size": {
+      "length": 6,
+      "width": 4,
+      "unit": "INCH"
+    },
+    "dpi": 300,
+    "pageLayout": "DEFAULT",
+    "needFileJoining": false,
+    "requestedDocumentTypes": ["LABEL"]
+  },
+  "serviceSelection": {
+    "serviceId": ["AMZN_US_STD"]
+  },
+  "shipperInstruction": null
+}

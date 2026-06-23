@@ -41,6 +41,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: "npm"
 
       - id: get_tag
         run: |
@@ -57,14 +58,14 @@ jobs:
             --additional-properties=useSingleRequestParameter=true
 
           cd packages/karriojs
-          npm install
+          npm ci
           npx gulp build --output "${GITHUB_WORKSPACE}/apps/api/karrio/server/static/karrio/js/karrio.js"
           cd -
 
       - name: Build embeddable elements
         run: |
           cd packages/elements
-          npm install
+          npm ci
           npm run build
 
           ELEMENTS_STATIC="${GITHUB_WORKSPACE}/apps/api/karrio/server/static/karrio/elements"
@@ -125,6 +126,12 @@ jobs:
         with:
           submodules: recursive
           token: ${{ secrets.GH_PAT }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4

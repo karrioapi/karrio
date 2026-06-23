@@ -1,23 +1,75 @@
 {
-  "shipmentId": "GLS123456789",
-  "trackingNumbers": [
-    "12345678901234567890"
-  ],
-  "parcels": [
-    {
-      "parcelId": "P001",
-      "trackingNumber": "12345678901234567890",
-      "weight": 5.5
-    }
-  ],
-  "labels": [
-    {
-      "trackingNumber": "12345678901234567890",
-      "labelData": "JVBERi0xLjQKJeLjz9MKMSAwIG9iago8PC9UeXBlL0NhdGFs...",
-      "labelFormat": "PDF"
-    }
-  ],
-  "createdAt": "2025-01-15T10:30:00Z",
-  "shippingDate": "2025-01-16",
-  "status": "CREATED"
+  "CreatedShipment": {
+    "ShipmentReference": ["Ref-Unit-1234", "Ref-Ship-abc"],
+    "ParcelData": [
+      {
+        "TrackID": "ZHO9AXAC",
+        "ParcelNumber": "601079500843",
+        "ExchangeParcelID": "EX-001",
+        "ShipmentUnitReference": ["UNIT-001"],
+        "Barcodes": {
+          "Primary2D": "ADE 600DE 8012760322938276a45e7ZYZHO9AXACBB",
+          "Secondary2D": "A|UrbanStyle KG|Leopoldstrasse|Munich|250",
+          "Primary1D": "601079500843",
+          "Primary1DPrint": true
+        },
+        "RoutingInfo": {
+          "Tour": "2807",
+          "GeoTour": "1829",
+          "LoadingArea": "7",
+          "DispositionFlag": "c",
+          "InboundSortingFlag": "003",
+          "FinalLocationCode": "DE 801",
+          "HubLocation": "R83",
+          "LastRoutingDate": "2025-10-29"
+        },
+        "ServiceArea": {
+          "Service": [
+            {
+              "Header": "DepositService",
+              "Information": [
+                {
+                  "Name": "Deposit Place",
+                  "Value": "Under the doormat"
+                }
+              ]
+            }
+          ]
+        },
+        "ExpressData": {
+          "AlternateDelivery": true,
+          "ImportStation": "1118",
+          "TourNumber": "2228",
+          "CourierParcelNumber": "820510120162"
+        },
+        "ExpressArea": {
+          "Kurier1D": "820510120162",
+          "KurierTourNumber": "2228",
+          "KurierImportStation": "1118"
+        },
+        "NDIArea": {
+          "NDI1D": "EH936454348GB",
+          "GBProductIdentifier": "24",
+          "GBPostOffice1D": "*NN15*",
+          "CHParcelNumber": "1234567890",
+          "CHPRI1D": "1234",
+          "CHSI1D": "5678"
+        },
+        "HandlingInformation": "S"
+      }
+    ],
+    "PrintData": [
+      {
+        "Data": "JVBERi0xLjUKJeLjz9MKOCAwIG9iago8PC9GaWx0ZXI=",
+        "LabelFormat": "PDF"
+      }
+    ],
+    "CustomerID": "2760322938",
+    "PickupLocation": "DE 600",
+    "GDPR": [
+      "Informationen zur GLS-Datenschutzrichtlinie unter",
+      "gls-group.eu/dataprotection"
+    ],
+    "Nemonico": "NEMONICO-001"
+  }
 }

@@ -1,24 +1,26 @@
 import typer
-import karrio_cli.commands.sdk as sdk
-import karrio_cli.resources.logs as logs
-import karrio_cli.commands.login as login
-import karrio_cli.resources.orders as orders
-import karrio_cli.resources.events as events
+
 import karrio_cli.commands.codegen as codegen
-import karrio_cli.resources.trackers as trackers
+import karrio_cli.commands.login as login
+import karrio_cli.commands.sdk as sdk
 import karrio_cli.resources.carriers as carriers
-import karrio_cli.resources.shipments as shipments
 import karrio_cli.resources.connections as connections
+import karrio_cli.resources.events as events
+import karrio_cli.resources.logs as logs
+import karrio_cli.resources.orders as orders
+import karrio_cli.resources.shipments as shipments
+import karrio_cli.resources.trackers as trackers
 
 try:
-    import karrio
     import karrio_cli.commands.plugins as plugins
+
     has_sdk_dep = True
 except ImportError:
     has_sdk_dep = False
 
 try:
     import karrio_cli.commands.studio as studio
+
     has_studio_dep = True
 except ImportError:
     has_studio_dep = False

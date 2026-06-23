@@ -1,29 +1,24 @@
-import typing
-import strawberry
-from strawberry.types import Info
-import django.utils.timezone as timezone
 import django.db.transaction as transaction
-from django.db.models import F
-
+import django.utils.timezone as timezone
 import karrio.lib as lib
+import karrio.server.graph.schemas.base as base
+import karrio.server.graph.schemas.orders.inputs as inputs
+import karrio.server.graph.schemas.orders.types as types
 import karrio.server.graph.utils as utils
 import karrio.server.orders.models as models
-import karrio.server.serializers as serializers
-import karrio.server.graph.schemas.base as base
-import karrio.server.graph.schemas.orders.types as types
-import karrio.server.graph.schemas.orders.inputs as inputs
 import karrio.server.orders.serializers.order as model_serializers
+import strawberry
+from django.db.models import F
+from strawberry.types import Info
 
 
 @strawberry.type
 class CreateOrderMutation(utils.BaseMutation):
-    order: typing.Optional[types.OrderType] = None
+    order: types.OrderType | None = None
 
     @staticmethod
     @utils.authentication_required
-    def mutate(
-        info: Info, **input: inputs.CreateOrderMutationInput
-    ) -> "CreateOrderMutation":
+    def mutate(info: Info, **input: inputs.CreateOrderMutationInput) -> "CreateOrderMutation":
         test_mode = info.context.request.test_mode
 
         # Generate order_id using atomic counter per scope (organization or user)
@@ -64,16 +59,14 @@ class CreateOrderMutation(utils.BaseMutation):
 
 @strawberry.type
 class UpdateOrderMutation(utils.BaseMutation):
-    order: typing.Optional[types.OrderType] = None
+    order: types.OrderType | None = None
 
     @staticmethod
     @transaction.atomic
     @utils.authentication_required
     def mutate(
         info: Info,
-        line_items: typing.Optional[
-            typing.List[base.inputs.UpdateCommodityInput]
-        ] = None,
+        line_items: list[base.inputs.UpdateCommodityInput] | None = None,
         **input: inputs.UpdateOrderMutationInput,
     ) -> "UpdateOrderMutation":
         data = lib.to_dict(input)
@@ -105,13 +98,11 @@ class UpdateOrderMutation(utils.BaseMutation):
 
 @strawberry.type
 class DeleteOrderMutation(utils.BaseMutation):
-    id: typing.Optional[str] = None
+    id: str | None = None
 
     @staticmethod
     @utils.authentication_required
-    def mutate(
-        info: Info, **input: inputs.DeleteOrderMutationInput
-    ) -> "DeleteOrderMutation":
+    def mutate(info: Info, **input: inputs.DeleteOrderMutationInput) -> "DeleteOrderMutation":
         id = input["id"]
         order = models.Order.access_by(info.context.request).get(id=id, source="draft")
         model_serializers.can_mutate_order(order, delete=True)

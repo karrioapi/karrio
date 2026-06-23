@@ -1,4 +1,5 @@
 from karrio_cli.templates.address import *
+from karrio_cli.templates.location import *
 from karrio_cli.templates.docs import *
 from karrio_cli.templates.documents import *
 from karrio_cli.templates.manifest import *

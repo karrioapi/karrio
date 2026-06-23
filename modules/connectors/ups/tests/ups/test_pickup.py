@@ -1,9 +1,11 @@
 import unittest
-from unittest.mock import patch, ANY
-from .fixture import gateway
-import karrio.sdk as karrio
-import karrio.lib as lib
+from unittest.mock import patch
+
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 
 class TestUPSPickup(unittest.TestCase):
@@ -43,30 +45,20 @@ class TestUPSPickup(unittest.TestCase):
     def test_parse_pickup_response(self):
         with patch("karrio.mappers.ups.proxy.lib.request") as mock:
             mock.return_value = PickupResponse
-            parsed_response = (
-                karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
             self.assertListEqual(lib.to_dict(parsed_response), ParsedPickupResponse)
 
     def test_parse_cancel_pickup_response(self):
         with patch("karrio.mappers.ups.proxy.lib.request") as mock:
             mock.return_value = PickupCancelResponse
-            parsed_response = (
-                karrio.Pickup.cancel(self.PickupCancelRequest).from_(gateway).parse()
-            )
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedCancelPickupResponse
-            )
+            parsed_response = karrio.Pickup.cancel(self.PickupCancelRequest).from_(gateway).parse()
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedCancelPickupResponse)
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.ups.proxy.lib.request") as mock:
             mock.return_value = PickupErrorResponse
-            parsed_response = (
-                karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
-            )
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedPickupErrorResponse
-            )
+            parsed_response = karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedPickupErrorResponse)
 
 
 if __name__ == "__main__":
@@ -166,7 +158,7 @@ PickupRequest = {
                 "ContainerCode": "01",
                 "DestinationCountryCode": "US",
                 "Quantity": "1",
-                "ServiceCode": "001",
+                "ServiceCode": "003",
             }
         ],
         "RatePickupIndicator": "Y",
@@ -243,3 +235,54 @@ PickupErrorResponse = """{
         ]
     }
 }"""
+
+
+class TestDefaultPickupServiceCode(unittest.TestCase):
+    """Test region-aware pickup service code resolution."""
+
+    def test_us_domestic(self):
+        from karrio.providers.ups.units import default_pickup_service_code
+
+        self.assertEqual(default_pickup_service_code("US"), "003")
+
+    def test_us_international(self):
+        from karrio.providers.ups.units import default_pickup_service_code
+
+        self.assertEqual(default_pickup_service_code("US", "DE"), "007")
+
+    def test_eu_intra(self):
+        from karrio.providers.ups.units import default_pickup_service_code
+
+        self.assertEqual(default_pickup_service_code("DE"), "011")
+        self.assertEqual(default_pickup_service_code("DE", "FR"), "011")
+        self.assertEqual(default_pickup_service_code("NL", "NL"), "011")
+
+    def test_eu_to_non_eu(self):
+        from karrio.providers.ups.units import default_pickup_service_code
+
+        self.assertEqual(default_pickup_service_code("DE", "US"), "007")
+        self.assertEqual(default_pickup_service_code("FR", "CN"), "007")
+
+    def test_ca_domestic(self):
+        from karrio.providers.ups.units import default_pickup_service_code
+
+        self.assertEqual(default_pickup_service_code("CA"), "011")
+        self.assertEqual(default_pickup_service_code("CA", "CA"), "011")
+
+    def test_ca_international(self):
+        from karrio.providers.ups.units import default_pickup_service_code
+
+        self.assertEqual(default_pickup_service_code("CA", "US"), "007")
+        self.assertEqual(default_pickup_service_code("CA", "DE"), "007")
+
+    def test_mx(self):
+        from karrio.providers.ups.units import default_pickup_service_code
+
+        self.assertEqual(default_pickup_service_code("MX"), "011")
+
+    def test_gb_ch_no_treated_as_eu(self):
+        from karrio.providers.ups.units import default_pickup_service_code
+
+        self.assertEqual(default_pickup_service_code("GB"), "011")
+        self.assertEqual(default_pickup_service_code("CH"), "011")
+        self.assertEqual(default_pickup_service_code("NO", "DE"), "011")

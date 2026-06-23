@@ -1,9 +1,9 @@
 import typing
-import strawberry
 
-import karrio.server.graph.utils as utils
 import karrio.server.graph.schemas.base as base
+import karrio.server.graph.utils as utils
 import karrio.server.orders.serializers as serializers
+import strawberry
 
 OrderStatusEnum: typing.Any = strawberry.enum(serializers.OrderStatus)  # type: ignore
 
@@ -11,28 +11,26 @@ OrderStatusEnum: typing.Any = strawberry.enum(serializers.OrderStatus)  # type: 
 @strawberry.input
 class CreateOrderMutationInput(utils.BaseInput):
     shipping_to: base.inputs.AddressInput
-    line_items: typing.List[base.inputs.CommodityInput]
-    order_id: typing.Optional[str] = strawberry.UNSET
-    order_date: typing.Optional[str] = strawberry.UNSET
-    shipping_from: typing.Optional[base.inputs.AddressInput] = strawberry.UNSET
-    billing_address: typing.Optional[base.inputs.AddressInput] = strawberry.UNSET
-    metadata: typing.Optional[utils.JSON] = strawberry.UNSET
-    options: typing.Optional[utils.JSON] = strawberry.UNSET
+    line_items: list[base.inputs.CommodityInput]
+    order_id: str | None = strawberry.UNSET
+    order_date: str | None = strawberry.UNSET
+    shipping_from: base.inputs.AddressInput | None = strawberry.UNSET
+    billing_address: base.inputs.AddressInput | None = strawberry.UNSET
+    metadata: utils.JSON | None = strawberry.UNSET
+    options: utils.JSON | None = strawberry.UNSET
 
 
 @strawberry.input
 class UpdateOrderMutationInput(utils.BaseInput):
     id: str
-    order_id: typing.Optional[str] = strawberry.UNSET
-    order_date: typing.Optional[str] = strawberry.UNSET
-    shipping_to: typing.Optional[base.inputs.UpdateAddressInput] = strawberry.UNSET
-    shipping_from: typing.Optional[base.inputs.UpdateAddressInput] = strawberry.UNSET
-    billing_address: typing.Optional[base.inputs.UpdateAddressInput] = strawberry.UNSET
-    metadata: typing.Optional[utils.JSON] = strawberry.UNSET
-    options: typing.Optional[utils.JSON] = strawberry.UNSET
-    line_items: typing.Optional[typing.List[base.inputs.UpdateCommodityInput]] = (
-        strawberry.UNSET
-    )
+    order_id: str | None = strawberry.UNSET
+    order_date: str | None = strawberry.UNSET
+    shipping_to: base.inputs.UpdateAddressInput | None = strawberry.UNSET
+    shipping_from: base.inputs.UpdateAddressInput | None = strawberry.UNSET
+    billing_address: base.inputs.UpdateAddressInput | None = strawberry.UNSET
+    metadata: utils.JSON | None = strawberry.UNSET
+    options: utils.JSON | None = strawberry.UNSET
+    line_items: list[base.inputs.UpdateCommodityInput] | None = strawberry.UNSET
 
 
 @strawberry.input
@@ -42,14 +40,14 @@ class DeleteOrderMutationInput(utils.BaseInput):
 
 @strawberry.input
 class OrderFilter(utils.Paginated):
-    id: typing.Optional[typing.List[str]] = strawberry.UNSET
-    keyword: typing.Optional[str] = strawberry.UNSET
-    source: typing.Optional[typing.List[str]] = strawberry.UNSET
-    order_id: typing.Optional[typing.List[str]] = strawberry.UNSET
-    option_key: typing.Optional[typing.List[str]] = strawberry.UNSET
-    address: typing.Optional[typing.List[str]] = strawberry.UNSET
-    option_value: typing.Optional[typing.List[str]] = strawberry.UNSET
-    metadata_key: typing.Optional[typing.List[str]] = strawberry.UNSET
-    metadata_value: typing.Optional[typing.List[str]] = strawberry.UNSET
-    status: typing.Optional[typing.List[OrderStatusEnum]] = strawberry.UNSET
-    request_id: typing.Optional[str] = strawberry.UNSET
+    id: list[str] | None = strawberry.UNSET
+    keyword: str | None = strawberry.UNSET
+    source: list[str] | None = strawberry.UNSET
+    order_id: list[str] | None = strawberry.UNSET
+    option_key: list[str] | None = strawberry.UNSET
+    address: list[str] | None = strawberry.UNSET
+    option_value: list[str] | None = strawberry.UNSET
+    metadata_key: list[str] | None = strawberry.UNSET
+    metadata_value: list[str] | None = strawberry.UNSET
+    status: list[OrderStatusEnum] | None = strawberry.UNSET
+    request_id: str | None = strawberry.UNSET

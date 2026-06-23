@@ -1,14 +1,13 @@
-from django.db import transaction
-
 import karrio.lib as lib
 import karrio.server.conf as conf
+import karrio.server.core.exceptions as exceptions
 import karrio.server.core.gateway as gateway
 import karrio.server.core.utils as utils
-import karrio.server.manager.models as models
-import karrio.server.serializers as serializers
-import karrio.server.core.exceptions as exceptions
-import karrio.server.manager.serializers as manager
 import karrio.server.data.serializers.base as base
+import karrio.server.manager.models as models
+import karrio.server.manager.serializers as manager
+import karrio.server.serializers as serializers
+from django.db import transaction
 
 
 @serializers.owned_model_serializer
@@ -21,16 +20,11 @@ class BatchTrackerData(serializers.Serializer):
 
     @transaction.atomic
     def create(self, validated_data: dict, context: serializers.Context, **kwargs):
-        import karrio.server.events.tasks as tasks
         import karrio.server.data.serializers.batch as batch
+        import karrio.server.events.tasks as tasks
 
         operation_data = dict(resource_type="trackers", test_mode=context.test_mode)
-        operation = (
-            batch.BatchOperationModelSerializer
-            .map(data=operation_data, context=context)
-            .save()
-            .instance
-        )
+        operation = batch.BatchOperationModelSerializer.map(data=operation_data, context=context).save().instance
 
         sid = transaction.savepoint()
         resources = BatchTrackerData.save_resources(
@@ -39,7 +33,7 @@ class BatchTrackerData(serializers.Serializer):
             batch_id=operation.id,
             format_errors=False,
         )
-        errors = [r['errors'] for r in resources if r.get('errors') is not None]
+        errors = [r["errors"] for r in resources if r.get("errors") is not None]
         transaction.savepoint_rollback(sid)
 
         if any(errors):
@@ -61,15 +55,17 @@ class BatchTrackerData(serializers.Serializer):
     @staticmethod
     def save_resources(data: dict, batch_id: str, context: serializers.Context, format_errors: bool = True):
         meta = dict(batch_id=batch_id)
-        trackers_data = data['trackers']
-        carrier_names = set([t['carrier_name'] for t in trackers_data])
+        trackers_data = data["trackers"]
+        carrier_names = set([t["carrier_name"] for t in trackers_data])
         carriers = {
-            carrier_name: utils.failsafe(lambda: gateway.Carriers.first(
-                context=context,
-                capability='tracking',
-                carrier_name=carrier_name,
-                raise_not_found=False,
-            ))
+            carrier_name: utils.failsafe(
+                lambda carrier_name=carrier_name: gateway.Carriers.first(
+                    context=context,
+                    capability="tracking",
+                    carrier_name=carrier_name,
+                    raise_not_found=False,
+                )
+            )
             for carrier_name in carrier_names
         }
         resources = []
@@ -77,7 +73,7 @@ class BatchTrackerData(serializers.Serializer):
 
         for index, tracker_data in enumerate(trackers_data):
             try:
-                carrier_name = tracker_data['carrier_name']
+                carrier_name = tracker_data["carrier_name"]
                 carrier = carriers[carrier_name]
 
                 if carrier is None:
@@ -87,13 +83,12 @@ class BatchTrackerData(serializers.Serializer):
                     )
 
                 _tracker = (
-                    models.Tracking.access_by(context)
-                    .filter(tracking_number=tracker_data["tracking_number"])
-                    .first()
+                    models.Tracking.access_by(context).filter(tracking_number=tracker_data["tracking_number"]).first()
                 )
                 _exists = getattr(_tracker, "carrier_name", None) == carrier_name
                 tracker = (
-                    _tracker if _exists
+                    _tracker
+                    if _exists
                     else models.Tracking(
                         meta=meta,
                         status="unknown",
@@ -101,7 +96,7 @@ class BatchTrackerData(serializers.Serializer):
                         created_by_id=context.user.id,
                         carrier=utils.create_carrier_snapshot(carrier),
                         tracking_number=tracker_data["tracking_number"],
-                        events = base.default_tracking_event(
+                        events=base.default_tracking_event(
                             description="Awaiting update from carrier...",
                             code="UNKNOWN",
                         ),
@@ -111,18 +106,21 @@ class BatchTrackerData(serializers.Serializer):
                 if _exists is False:
                     trackers.append(tracker)
 
-                resources.append(dict(
-                    id=tracker.id,
-                    status=(base.ResourceStatus.processed.value
-                        if _exists else base.ResourceStatus.queued.value)
-                ))
+                resources.append(
+                    dict(
+                        id=tracker.id,
+                        status=(base.ResourceStatus.processed.value if _exists else base.ResourceStatus.queued.value),
+                    )
+                )
             except Exception as e:
-                setattr(e, "index", index)
-                resources.append(dict(
-                    id=index,
-                    status=base.ResourceStatus.has_errors.value,
-                    errors=(lib.to_dict(e) if format_errors else e),
-                ))
+                e.index = index
+                resources.append(
+                    dict(
+                        id=index,
+                        status=base.ResourceStatus.has_errors.value,
+                        errors=(lib.to_dict(e) if format_errors else e),
+                    )
+                )
 
         if any(trackers):
             models.Tracking.objects.bulk_create(trackers)

@@ -50,7 +50,7 @@ class AddressType:
     ContactPerson: typing.Optional[str] = None
     FixedLinePhonenumber: typing.Optional[str] = None
     MobilePhoneNumber: typing.Optional[str] = None
-    Email: typing.Optional[str] = None
+    eMail: typing.Optional[str] = None
     ZIPCode: typing.Optional[str] = None
 
 
@@ -89,14 +89,7 @@ class ExchangeType:
     ServiceName: typing.Optional[str] = None
     Address: typing.Optional[AddressType] = jstruct.JStruct[AddressType]
     ExpectedWeight: typing.Optional[float] = None
-
-
-@attr.s(auto_attribs=True)
-class IntercompanyType:
-    ServiceName: typing.Optional[str] = None
-    Address: typing.Optional[AddressType] = jstruct.JStruct[AddressType]
     NumberOfLabels: typing.Optional[int] = None
-    ExpectedWeight: typing.Optional[float] = None
 
 
 @attr.s(auto_attribs=True)
@@ -116,7 +109,7 @@ class IdentType:
 @attr.s(auto_attribs=True)
 class IdentPinType:
     ServiceName: typing.Optional[str] = None
-    Pin: typing.Optional[str] = None
+    PIN: typing.Optional[str] = None
     Birthdate: typing.Optional[str] = None
 
 
@@ -124,9 +117,6 @@ class IdentPinType:
 class PickAndType:
     ServiceName: typing.Optional[str] = None
     PickupDate: typing.Optional[str] = None
-    SendEMailToShipper: typing.Optional[bool] = None
-    SendEMailToConsignee: typing.Optional[bool] = None
-    SendSMSToShipper: typing.Optional[bool] = None
 
 
 @attr.s(auto_attribs=True)
@@ -144,6 +134,7 @@ class ShopDeliveryType:
 class ShopReturnType:
     ServiceName: typing.Optional[str] = None
     NumberOfLabels: typing.Optional[int] = None
+    ReturnQR: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
@@ -151,7 +142,7 @@ class ShipmentServiceType:
     Service: typing.Optional[ServiceType] = jstruct.JStruct[ServiceType]
     ShopDelivery: typing.Optional[ShopDeliveryType] = jstruct.JStruct[ShopDeliveryType]
     ShopReturn: typing.Optional[ShopReturnType] = jstruct.JStruct[ShopReturnType]
-    Intercompany: typing.Optional[IntercompanyType] = jstruct.JStruct[IntercompanyType]
+    Intercompany: typing.Optional[ExchangeType] = jstruct.JStruct[ExchangeType]
     Exchange: typing.Optional[ExchangeType] = jstruct.JStruct[ExchangeType]
     DeliveryAtWork: typing.Optional[DeliveryAtWorkType] = jstruct.JStruct[DeliveryAtWorkType]
     Deposit: typing.Optional[DepositType] = jstruct.JStruct[DepositType]
@@ -162,25 +153,18 @@ class ShipmentServiceType:
 
 
 @attr.s(auto_attribs=True)
-class CashType:
-    ServiceName: typing.Optional[str] = None
-    Reason: typing.Optional[str] = None
-    Amount: typing.Optional[float] = None
-    Currency: typing.Optional[str] = None
-
-
-@attr.s(auto_attribs=True)
 class AddonLiabilityType:
     ServiceName: typing.Optional[str] = None
     Amount: typing.Optional[float] = None
     Currency: typing.Optional[str] = None
     ParcelContent: typing.Optional[str] = None
+    Reason: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
 class HazardousGoodType:
     Weight: typing.Optional[float] = None
-    GlshazNo: typing.Optional[str] = None
+    GLSHazNo: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
@@ -197,20 +181,11 @@ class LimitedQuantitiesType:
 
 @attr.s(auto_attribs=True)
 class ShipmentUnitServiceType:
-    Cash: typing.Optional[CashType] = jstruct.JStruct[CashType]
+    Cash: typing.Optional[AddonLiabilityType] = jstruct.JStruct[AddonLiabilityType]
     AddonLiability: typing.Optional[AddonLiabilityType] = jstruct.JStruct[AddonLiabilityType]
     HazardousGoods: typing.Optional[HazardousGoodsType] = jstruct.JStruct[HazardousGoodsType]
     ExWorks: typing.Optional[ServiceType] = jstruct.JStruct[ServiceType]
     LimitedQuantities: typing.Optional[LimitedQuantitiesType] = jstruct.JStruct[LimitedQuantitiesType]
-
-
-@attr.s(auto_attribs=True)
-class VolumeType:
-    Width: typing.Optional[str] = None
-    Height: typing.Optional[str] = None
-    Length: typing.Optional[str] = None
-    ScannerStation: typing.Optional[str] = None
-    VolumetricType: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
@@ -224,7 +199,6 @@ class ShipmentUnitType:
     TrackID: typing.Optional[str] = None
     Injected: typing.Optional[bool] = None
     ParcelNumber: typing.Optional[str] = None
-    Volume: typing.Optional[VolumeType] = jstruct.JStruct[VolumeType]
     FralphaParcelReference: typing.Optional[str] = None
 
 
@@ -259,4 +233,3 @@ class ShipmentRequestType:
     PrintingOptions: typing.Optional[PrintingOptionsType] = jstruct.JStruct[PrintingOptionsType]
     CustomContent: typing.Optional[CustomContentType] = jstruct.JStruct[CustomContentType]
     ReturnOptions: typing.Optional[ReturnOptionsType] = jstruct.JStruct[ReturnOptionsType]
-    PartnerReference: typing.Optional[str] = None

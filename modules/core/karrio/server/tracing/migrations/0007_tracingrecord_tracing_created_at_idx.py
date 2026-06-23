@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("tracing", "0006_alter_tracingrecord_options_and_more"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),

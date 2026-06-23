@@ -1,0 +1,58 @@
+{
+  "PrintingOptions": {
+    "ReturnLabels": {
+      "LabelFormat": "PDF",
+      "TemplateSet": "NONE"
+    }
+  },
+  "Shipment": {
+    "Consignee": {
+      "Address": {
+        "City": "Munich",
+        "ContactPerson": "Klara Huber",
+        "CountryCode": "DE",
+        "FixedLinePhonenumber": "+49 89 12345678",
+        "Name1": "UrbanStyle KG",
+        "Name2": "Klara Huber",
+        "Street": "Leopoldstrasse 250",
+        "StreetNumber": "250",
+        "ZIPCode": "80807"
+      }
+    },
+    "Product": "PARCEL",
+    "Service": [
+      {
+        "PickAndReturn": {
+          "PickupDate": "2026-05-29",
+          "ServiceName": "service_pickandreturn"
+        }
+      }
+    ],
+    "ShipmentReference": [
+      "RET-PickAndReturn"
+    ],
+    "ShipmentUnit": [
+      {
+        "ShipmentUnitReference": [
+          "RET-PickAndReturn"
+        ],
+        "Weight": 2.5
+      }
+    ],
+    "Shipper": {
+      "AlternativeShipperAddress": {
+        "City": "Berlin",
+        "ContactPerson": "Martin Schreiber",
+        "CountryCode": "DE",
+        "FixedLinePhonenumber": "+49 30 1234560",
+        "Name1": "TechZone GmbH",
+        "Name2": "Martin Schreiber",
+        "Street": "Friedrichstrasse 45",
+        "StreetNumber": "45",
+        "ZIPCode": "10117"
+      },
+      "ContactID": "276a45e7ZY"
+    },
+    "ShippingDate": "2026-05-29"
+  }
+}

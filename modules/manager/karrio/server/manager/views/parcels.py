@@ -1,23 +1,22 @@
 import logging
 
+import karrio.server.manager.models as models
+import karrio.server.openapi as openapi
 from django.urls import path
-from rest_framework import status
-from rest_framework.request import Request
-from rest_framework.response import Response
-from rest_framework.pagination import LimitOffsetPagination
-
+from karrio.server.core.views.api import APIView, GenericAPIView
 from karrio.server.manager.router import router
-from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.manager.serializers import (
-    PaginatedResult,
     ErrorResponse,
-    ParcelData,
+    PaginatedResult,
     Parcel,
+    ParcelData,
     ParcelSerializer,
     can_mutate_parcel,
 )
-import karrio.server.manager.models as models
-import karrio.server.openapi as openapi
+from rest_framework import status
+from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.request import Request
+from rest_framework.response import Response
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
@@ -26,9 +25,7 @@ Parcels = PaginatedResult("ParcelList", Parcel)
 
 class ParcelList(GenericAPIView):
     queryset = models.Parcel.objects
-    pagination_class = type(
-        "CustomPagination", (LimitOffsetPagination,), dict(default_limit=20)
-    )
+    pagination_class = type("CustomPagination", (LimitOffsetPagination,), dict(default_limit=20))
     serializer_class = Parcels
 
     @openapi.extend_schema(
@@ -55,11 +52,7 @@ class ParcelList(GenericAPIView):
         Retrieve all stored parcels.
         """
         queryset = models.Parcel.access_by(request).filter(
-            **{
-                f"{prop}__isnull": True
-                for prop in models.Parcel.HIDDEN_PROPS
-                if prop != "org"
-            }
+            **{f"{prop}__isnull": True for prop in models.Parcel.HIDDEN_PROPS if prop != "org"}
         )
 
         # Apply query parameter filters
@@ -97,14 +90,11 @@ class ParcelList(GenericAPIView):
         """
         Create a new parcel.
         """
-        parcel = (
-            ParcelSerializer.map(data=request.data, context=request).save().instance
-        )
+        parcel = ParcelSerializer.map(data=request.data, context=request).save().instance
         return Response(Parcel(parcel).data, status=status.HTTP_201_CREATED)
 
 
 class ParcelDetail(APIView):
-
     @openapi.extend_schema(
         tags=["Parcels"],
         operation_id=f"{ENDPOINT_ID}retrieve",
@@ -173,6 +163,4 @@ class ParcelDetail(APIView):
 
 
 router.urls.append(path("parcels", ParcelList.as_view(), name="parcel-list"))
-router.urls.append(
-    path("parcels/<str:pk>", ParcelDetail.as_view(), name="parcel-details")
-)
+router.urls.append(path("parcels/<str:pk>", ParcelDetail.as_view(), name="parcel-details"))

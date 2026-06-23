@@ -1,0 +1,6 @@
+service_code,service_name,zone_label,country_codes,min_weight,max_weight,max_length,max_width,max_height,rate,currency,transit_days,domicile,international
+ECI,DHL Freight Eurapid,EU-Zone,"AT,BE,BG,CZ,DE,DK,EE,ES,FI,FR,GR,HR,HU,IE,IT,LT,LU,LV,NL,PL,PT,RO,SE,SI,SK",35,2500,240,120,220,0,EUR,3-5,false,true
+ECX,DHL Freight Euroconnect,EU-Zone,"AT,BE,BG,CZ,DE,DK,EE,ES,FI,FR,GR,HR,HU,IE,IT,LT,LU,LV,NL,PL,PT,RO,SE,SI,SK",35,2500,240,120,220,0,EUR,4-7,false,true
+ECP,DHL Freight Euroconnect Plus,EU-Zone,"AT,BE,BG,CZ,DE,DK,EE,ES,FI,FR,GR,HR,HU,IE,IT,LT,LU,LV,NL,PL,PT,RO,SE,SI,SK",35,2500,240,120,220,0,EUR,3-5,false,true
+DOM,DHL Freight Domestic,Domestic,DE,35,2500,240,120,220,0,EUR,1-2,true,false
+FTL,DHL Freight Full Truck Load,EU-Zone,"AT,BE,BG,CZ,DE,DK,EE,ES,FI,FR,GR,HR,HU,IE,IT,LT,LU,LV,NL,PL,PT,RO,SE,SI,SK",2500,24000,1360,250,260,0,EUR,2-4,false,true

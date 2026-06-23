@@ -1,14 +1,14 @@
 import datetime
-import django.utils.timezone as timezone
 
+import django.utils.timezone as timezone
 import karrio.server.conf as conf
-import karrio.server.core.utils as utils
-from karrio.server.core.logging import logger
 import karrio.server.core.models as core
+import karrio.server.core.utils as utils
 import karrio.server.events.models as events
+import karrio.server.manager.models as manager
 import karrio.server.orders.models as orders
 import karrio.server.tracing.models as tracing
-import karrio.server.manager.models as manager
+from karrio.server.core.logging import logger
 
 # Delete in bounded batches so a large first-run backlog cannot load every id
 # into memory and OOM the worker in a single unbounded transaction (GH #1125).
@@ -45,12 +45,8 @@ def run_data_archiving(*args, **kwargs):
     now = timezone.now()
     log_retention = now - datetime.timedelta(days=conf.settings.API_LOGS_DATA_RETENTION)
     order_retention = now - datetime.timedelta(days=conf.settings.ORDER_DATA_RETENTION)
-    shipment_retention = now - datetime.timedelta(
-        days=conf.settings.SHIPMENT_DATA_RETENTION
-    )
-    tracker_retention = now - datetime.timedelta(
-        days=conf.settings.TRACKER_DATA_RETENTION
-    )
+    shipment_retention = now - datetime.timedelta(days=conf.settings.SHIPMENT_DATA_RETENTION)
+    tracker_retention = now - datetime.timedelta(days=conf.settings.TRACKER_DATA_RETENTION)
 
     # Prepare querysets once and rely on delete helpers to determine if work was done.
     tracing_data = tracing.TracingRecord.objects.filter(created_at__lt=log_retention)
@@ -215,4 +211,3 @@ def _bulk_delete_order_data(order_queryset):
         link_model = None
 
     return _batched_delete_with_links(order_queryset, link_model)
-

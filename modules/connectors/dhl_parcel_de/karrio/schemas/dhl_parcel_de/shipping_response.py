@@ -35,6 +35,7 @@ class ItemType:
     sstatus: typing.Optional[StatusType] = jstruct.JStruct[StatusType]
     shipmentRefNo: typing.Optional[str] = None
     routingCode: typing.Optional[str] = None
+    returnRoutingCode: typing.Optional[str] = None
     label: typing.Optional[CodLabelType] = jstruct.JStruct[CodLabelType]
     returnLabel: typing.Optional[CodLabelType] = jstruct.JStruct[CodLabelType]
     customsDoc: typing.Optional[CodLabelType] = jstruct.JStruct[CodLabelType]

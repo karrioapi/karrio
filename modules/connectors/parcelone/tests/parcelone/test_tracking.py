@@ -2,11 +2,12 @@
 
 import unittest
 from unittest.mock import patch
-from .fixture import gateway
 
-import karrio.sdk as karrio
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 
 class TestParcelOneTracking(unittest.TestCase):
@@ -24,31 +25,36 @@ class TestParcelOneTracking(unittest.TestCase):
             mock.return_value = "{}"
             karrio.Tracking.fetch(self.TrackingRequest).from_(gateway)
 
-            # Verify tracking URL format
-            self.assertIn(
-                f"{gateway.settings.tracking_url}/tracking/",
+            self.assertEqual(
                 mock.call_args[1]["url"],
+                f"{gateway.settings.server_url}/tracklmc/shipment/4050100151016",
             )
 
     def test_parse_tracking_response(self):
         with patch("karrio.mappers.parcelone.proxy.lib.request") as mock:
             mock.return_value = TrackingResponseJSON
-            parsed_response = (
-                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedTrackingResponse)
 
     def test_parse_tracking_no_events_response(self):
         with patch("karrio.mappers.parcelone.proxy.lib.request") as mock:
             mock.return_value = TrackingNoEventsResponseJSON
-            parsed_response = (
-                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
 
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedTrackingNoEventsResponse
-            )
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedTrackingNoEventsResponse)
+
+    def test_parse_tracking_code100_maps_to_pending(self):
+        """Vendor code '100' (info received) must map to 'pending', not fall through to in_transit."""
+        with patch("karrio.mappers.parcelone.proxy.lib.request") as mock:
+            mock.return_value = TrackingCode100ResponseJSON
+            parsed_response = karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+
+            result = lib.to_dict(parsed_response)
+            tracker = result[0][0]
+            self.assertEqual(tracker["status"], "pending")
+            self.assertEqual(tracker["events"][0]["code"], "100")
+            self.assertEqual(tracker["events"][0]["status"], "pending")
 
 
 if __name__ == "__main__":
@@ -56,17 +62,11 @@ if __name__ == "__main__":
 
 
 TrackingPayload = {
-    "tracking_numbers": ["123456789012"],
-    "options": {
-        "carrier_id": "PA1",
-    },
+    "tracking_numbers": ["4050100151016"],
 }
 
 TrackingRequestJSON = [
-    {
-        "tracking_id": "123456789012",
-        "carrier_id": "PA1",
-    }
+    {"tracking_number": "4050100151016"},
 ]
 
 ParsedTrackingResponse = [
@@ -74,64 +74,55 @@ ParsedTrackingResponse = [
         {
             "carrier_id": "parcelone",
             "carrier_name": "parcelone",
-            "delivered": True,
+            "delivered": False,
             "events": [
                 {
-                    "code": "DELIVERED",
-                    "date": "2024-01-15",
-                    "description": "Package delivered",
-                    "location": "Munich, Germany",
-                    "status": "delivered",
-                    "time": "14:30 PM",
-                    "timestamp": "2024-01-15T14:30:00.000Z",
-                },
-                {
-                    "code": "OUT_FOR_DELIVERY",
-                    "date": "2024-01-15",
-                    "description": "Out for delivery",
-                    "location": "Munich, Germany",
-                    "status": "out_for_delivery",
-                    "time": "08:00 AM",
-                    "timestamp": "2024-01-15T08:00:00.000Z",
-                },
-                {
-                    "code": "ARRIVED",
-                    "date": "2024-01-14",
-                    "description": "Arrived at destination facility",
-                    "location": "Munich Hub",
+                    "code": "394",
+                    "date": "2021-10-20",
+                    "description": "The shipment has left the P1 HUB.",
+                    "location": "DE Pohlheim",
                     "status": "in_transit",
-                    "time": "22:00 PM",
-                    "timestamp": "2024-01-14T22:00:00.000Z",
+                    "time": "14:15 PM",
+                    "timestamp": "2021-10-20T14:15:00.000Z",
                 },
                 {
-                    "code": "IN_TRANSIT",
-                    "date": "2024-01-14",
-                    "description": "Shipment in transit",
-                    "location": "Berlin Hub",
+                    "code": "300",
+                    "date": "2021-10-20",
+                    "description": "The shipment arrived the P1 HUB.",
+                    "location": "DE Pohlheim",
                     "status": "in_transit",
-                    "time": "10:00 AM",
-                    "timestamp": "2024-01-14T10:00:00.000Z",
+                    "time": "07:01 AM",
+                    "timestamp": "2021-10-20T07:01:00.000Z",
                 },
                 {
-                    "code": "REGISTERED",
-                    "date": "2024-01-13",
-                    "description": "Shipment picked up",
-                    "location": "Berlin",
+                    "code": "P101",
+                    "date": "2021-10-18",
+                    "description": "Handed over to a carrier.",
+                    "location": "DE Fuessen",
+                    "status": "in_transit",
+                    "time": "07:43 AM",
+                    "timestamp": "2021-10-18T07:43:18.000Z",
+                },
+                {
+                    "code": "P100",
+                    "date": "2021-10-18",
+                    "description": "Prepared for transportation.",
+                    "location": "DE Fuessen",
                     "status": "pending",
-                    "time": "16:00 PM",
-                    "timestamp": "2024-01-13T16:00:00.000Z",
+                    "time": "06:26 AM",
+                    "timestamp": "2021-10-18T06:26:05.000Z",
                 },
             ],
             "info": {
-                "carrier_tracking_link": "https://tracking.parcel.one/?trackingNumber=123456789012",
-                "signed_by": "John Doe",
+                "carrier_tracking_link": "https://tools.usps.com/go/TrackConfirmAction?tLabels=LX035843846BE",
             },
             "meta": {
-                "carrier_tracking_id": "DHL123456",
-                "last_mile_carrier": "DHL",
+                "last_mile_carrier": "USPS",
+                "last_mile_carrier_slug": "correos-de-mexico",
+                "last_mile_tracking_number": "LX035843846BE",
             },
-            "status": "delivered",
-            "tracking_number": "123456789012",
+            "status": "in_transit",
+            "tracking_number": "4050100151016",
         }
     ],
     [],
@@ -141,51 +132,68 @@ ParsedTrackingNoEventsResponse = [[], []]
 
 
 TrackingResponseJSON = """{
-    "success": 1,
-    "results": {
-        "StatusCode": "DELIVERED",
-        "CarrierTrackingID": "DHL123456",
-        "CarrierIDLMC": "DHL",
-        "SignedBy": "John Doe",
-        "Events": [
-            {
-                "DateTime": "2024-01-15T14:30:00",
-                "Location": "Munich, Germany",
-                "Description": "Package delivered",
-                "StatusCode": "DELIVERED"
-            },
-            {
-                "DateTime": "2024-01-15T08:00:00",
-                "Location": "Munich, Germany",
-                "Description": "Out for delivery",
-                "StatusCode": "OUT_FOR_DELIVERY"
-            },
-            {
-                "DateTime": "2024-01-14T22:00:00",
-                "Location": "Munich Hub",
-                "Description": "Arrived at destination facility",
-                "StatusCode": "ARRIVED"
-            },
-            {
-                "DateTime": "2024-01-14T10:00:00",
-                "Location": "Berlin Hub",
-                "Description": "Shipment in transit",
-                "StatusCode": "IN_TRANSIT"
-            },
-            {
-                "DateTime": "2024-01-13T16:00:00",
-                "Location": "Berlin",
-                "Description": "Shipment picked up",
-                "StatusCode": "REGISTERED"
-            }
-        ]
-    }
+    "P1Trackno": "4050100151016",
+    "TrackingEvents": [
+        {
+            "EventdateCET": "2021-10-18T08:26:05+02:00",
+            "EventdateUTC": "2021-10-18T06:26:05+00:00",
+            "Statuscode": "P100",
+            "Status": "Prepared for transportation.",
+            "Location": "DE Fuessen",
+            "DeliveryStatus": "InfoReceived_001"
+        },
+        {
+            "EventdateCET": "2021-10-18T09:43:18+02:00",
+            "EventdateUTC": "2021-10-18T07:43:18+00:00",
+            "Statuscode": "P101",
+            "Status": "Handed over to a carrier.",
+            "Location": "DE Fuessen",
+            "DeliveryStatus": "Pending_001"
+        },
+        {
+            "EventdateCET": "2021-10-20T09:01:00+02:00",
+            "EventdateUTC": "2021-10-20T07:01:00+00:00",
+            "Statuscode": "300",
+            "Status": "The shipment arrived the P1 HUB.",
+            "Location": "DE Pohlheim",
+            "DeliveryStatus": "InTransit_003"
+        },
+        {
+            "EventdateCET": "2021-10-20T16:15:00+02:00",
+            "EventdateUTC": "2021-10-20T14:15:00+00:00",
+            "Statuscode": "394",
+            "Status": "The shipment has left the P1 HUB.",
+            "Location": "DE Pohlheim",
+            "DeliveryStatus": "InTransit_001",
+            "CarrierTrackno": "LX035843846BE",
+            "Carrier": "USPS",
+            "CarrierSlug": "correos-de-mexico",
+            "CarrierTrackURL": "https://tools.usps.com/go/TrackConfirmAction?tLabels=LX035843846BE",
+            "TrackingEventsStatus": "P1TrackingEndsHere,RequestLMCCarrierTracking"
+        }
+    ],
+    "lang": "en",
+    "platform": "",
+    "requestor": ""
 }"""
 
 TrackingNoEventsResponseJSON = """{
-    "success": 1,
-    "results": {
-        "StatusCode": "UNKNOWN",
-        "Events": []
-    }
+    "Error": "No shipment data found yet, try again later!"
+}"""
+
+TrackingCode100ResponseJSON = """{
+    "P1Trackno": "4050100151016",
+    "TrackingEvents": [
+        {
+            "EventdateCET": "2026-05-13T10:00:00+02:00",
+            "EventdateUTC": "2026-05-13T08:00:00+00:00",
+            "Statuscode": "100",
+            "Status": "The shipment has been prepared for transportation by the sender.",
+            "Location": "DE Berlin",
+            "DeliveryStatus": "InfoReceived_001"
+        }
+    ],
+    "lang": "en",
+    "platform": "",
+    "requestor": ""
 }"""

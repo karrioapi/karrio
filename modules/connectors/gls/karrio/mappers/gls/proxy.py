@@ -1,9 +1,9 @@
 """Karrio GLS Group client proxy."""
 
-import karrio.lib as lib
 import karrio.api.proxy as proxy
-import karrio.providers.gls.utils as provider_utils
+import karrio.lib as lib
 import karrio.mappers.gls.settings as provider_settings
+import karrio.providers.gls.utils as provider_utils
 import karrio.universal.mappers.rating_proxy as rating_proxy
 
 
@@ -46,12 +46,28 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
 
         return lib.Deserializable(response, lib.to_dict)
 
+    def get_locations(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        """Look up GLS ParcelShops. URL/method/body are resolved by
+        ``location_request`` and packed into ``request.ctx``."""
+        ctx = request.ctx or {}
+        response = lib.request(
+            url=ctx["url"],
+            method=ctx.get("method", "GET"),
+            data=lib.to_json(request.serialize()) if ctx.get("has_body") else None,
+            trace=self.trace_as("json"),
+            headers={
+                "Content-Type": "application/glsVersion1+json",
+                "Accept": "application/glsVersion1+json",
+                "Authorization": f"Bearer {self.settings.access_token}",
+            },
+            on_error=provider_utils.parse_error_response,
+        )
+
+        return lib.Deserializable(response, lib.to_dict)
+
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
         """Track parcels using the GLS Track and Trace API."""
         tracking_numbers = request.serialize()
-
-        # The GLS T&T API accepts up to 10 tracking numbers in a single request
-        # Join them with commas for batch tracking
         tracking_ids = ",".join(tracking_numbers)
 
         response = lib.request(
@@ -89,3 +105,19 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
 
     def create_return_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         return self.create_shipment(request)
+
+    def upload_document(self, request: lib.Serializable) -> lib.Deserializable:
+        """GLS paperless post_upload chain — see SPECS.md › Paperless trade document upload."""
+        envelopes = request.serialize()
+        ctx = request.ctx or {}
+        files = ctx.get("files") or []
+        responses: list[dict] = [
+            provider_utils.upload_one_document(self.settings, envelope, document)
+            for envelope, document in zip(envelopes, files, strict=False)
+        ]
+
+        customs_response = provider_utils.post_customs_consignment(self.settings, responses, ctx)
+        if customs_response is not None:
+            responses = [*responses, customs_response]
+
+        return lib.Deserializable(responses, lambda r: r)

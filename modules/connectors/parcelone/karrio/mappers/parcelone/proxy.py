@@ -1,84 +1,97 @@
 """Karrio ParcelOne REST API client proxy."""
 
-import karrio.lib as lib
 import karrio.api.proxy as proxy
+import karrio.lib as lib
 import karrio.mappers.parcelone.settings as provider_settings
+import karrio.universal.mappers.rating_proxy as rating_proxy
 
 
-class Proxy(proxy.Proxy):
+class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
     settings: provider_settings.Settings
 
-    def get_rates(self, request: lib.Serializable) -> lib.Deserializable[dict]:
-        """Get shipping rates - not directly supported by ParcelOne API.
+    def get_rates(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        return super().get_rates(request)
 
-        ParcelOne returns charges after shipment creation.
-        This method creates a shipment with ReturnCharges=1 to get rates.
-        """
-        response = lib.request(
-            url=f"{self.settings.server_url}/shipment",
-            data=lib.to_json(request.serialize()),
-            trace=self.trace_as("json"),
-            method="POST",
-            headers={
-                "Content-Type": "application/json",
-                "Authorization": self.settings.authorization,
-            },
+    def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[list]:
+        """Create one vendor shipment per parcel in parallel (Pattern B fan-out)."""
+        responses = lib.run_asynchronously(
+            lambda payload: lib.request(
+                url=f"{self.settings.server_url}/shippingapi/v1/shipment",
+                data=lib.to_json(payload),
+                trace=self.trace_as("json"),
+                method="POST",
+                headers={
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                    "Authorization": self.settings.authorization,
+                    "Apikey": self.settings.api_key,
+                },
+            ),
+            request.serialize(),
         )
 
-        return lib.Deserializable(response, lib.to_dict, request.ctx)
-
-    def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[dict]:
-        """Create a shipment and get label."""
-        response = lib.request(
-            url=f"{self.settings.server_url}/shipment",
-            data=lib.to_json(request.serialize()),
-            trace=self.trace_as("json"),
-            method="POST",
-            headers={
-                "Content-Type": "application/json",
-                "Authorization": self.settings.authorization,
-            },
+        return lib.Deserializable(
+            responses,
+            lambda items: [lib.to_dict(r) for r in items],
+            request.ctx,
         )
 
-        return lib.Deserializable(response, lib.to_dict, request.ctx)
+    def create_return_shipment(self, request: lib.Serializable) -> lib.Deserializable[list]:
+        return self.create_shipment(request)
 
     def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[dict]:
-        """Cancel a shipment."""
+        """Cancel a shipment via DELETE /shipment/{ref_field}/{ref_value}."""
         data = request.serialize()
-        ref_field = data.get("ref_field", "ShipmentID")
-        ref_value = data.get("ref_value")
-
         response = lib.request(
-            url=f"{self.settings.server_url}/shipment/{ref_field}/{ref_value}",
+            url=f"{self.settings.server_url}/shippingapi/v1/shipment/{data['ref_field']}/{data['ref_value']}",
             trace=self.trace_as("json"),
             method="DELETE",
             headers={
+                "Accept": "application/json",
                 "Authorization": self.settings.authorization,
+                "Apikey": self.settings.api_key,
+            },
+        )
+
+        return lib.Deserializable(response, lib.to_dict)
+
+    def get_profile(self) -> lib.Deserializable[dict]:
+        """Fetch the mandator profile (per-customer CEP / Product / Service portfolio)."""
+        response = lib.request(
+            url=f"{self.settings.server_url}/shippingapi/v1/profile",
+            trace=self.trace_as("json"),
+            method="GET",
+            headers={
+                "Accept": "application/json",
+                "Authorization": self.settings.authorization,
+                "Apikey": self.settings.api_key,
             },
         )
 
         return lib.Deserializable(response, lib.to_dict)
 
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[list]:
-        """Get tracking information for multiple tracking numbers."""
-        tracking_requests = request.serialize()
+        """Fetch TrackLMC events for each tracking number.
 
-        # Make individual requests for each tracking number
+        GET {tracklmc_url}/shipment/{trackno} per the TrackLMC OpenAPI spec.
+        """
         responses = [
             (
-                req["tracking_id"],
+                req["tracking_number"],
                 lib.to_dict(
                     lib.request(
-                        url=f"{self.settings.tracking_url}/tracking/{req['carrier_id']}/{req['tracking_id']}",
+                        url=f"{self.settings.server_url}/tracklmc/shipment/{req['tracking_number']}",
                         trace=self.trace_as("json"),
                         method="GET",
                         headers={
+                            "Accept": "application/json",
                             "Authorization": self.settings.authorization,
+                            "Apikey": self.settings.api_key,
                         },
                     )
                 ),
             )
-            for req in tracking_requests
+            for req in request.serialize()
         ]
 
         return lib.Deserializable(responses, lambda x: x)

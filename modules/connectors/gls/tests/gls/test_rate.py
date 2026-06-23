@@ -1,8 +1,10 @@
 import unittest
+
 import karrio.sdk as karrio
-from karrio.core.utils import DP
 from karrio.core.models import RateRequest
+from karrio.core.utils import DP
 from karrio.providers.gls import units
+
 from .fixture import gateway
 
 
@@ -27,48 +29,28 @@ class TestGLSGroupServiceFiltering(unittest.TestCase):
         self.services = units.DEFAULT_SERVICES
 
     def test_default_services_loaded(self):
-        """Test that default services are loaded."""
-        self.assertGreater(len(self.services), 0, "Services should be loaded")
+        """Test that default services are loaded.
 
-        # Check that we have both domestic and international services
+        GLS confirmed the wire product catalogue is just PARCEL and EXPRESS;
+        the actual delivery network is selected from the recipient address,
+        so a single ``gls_parcel`` service carries both domestic and EU
+        cross-border zones in the service sheet.
+        """
+        self.assertGreater(len(self.services), 0, "Services should be loaded")
         service_codes = [s.service_code for s in self.services]
         self.assertIn("gls_parcel", service_codes)
         self.assertIn("gls_express", service_codes)
-        self.assertIn("gls_euro_business_parcel", service_codes)
 
-    def test_domestic_service_marked_correctly(self):
-        """Test that domestic service has domicile=True."""
-        domestic_service = next(
-            (s for s in self.services if s.service_code == "gls_parcel"), None
-        )
+    def test_gls_parcel_covers_domestic_and_international(self):
+        """gls_parcel exposes a domestic (DE, domicile=True) zone and an
+        EU cross-border (international=True) zone — the single PARCEL
+        product handling both."""
+        parcel = next((s for s in self.services if s.service_code == "gls_parcel"), None)
+        self.assertIsNotNone(parcel)
+        self.assertTrue(parcel.domicile, "gls_parcel should carry a domestic zone")
+        self.assertTrue(parcel.international, "gls_parcel should also carry an international zone")
 
-        self.assertIsNotNone(domestic_service)
-        self.assertTrue(
-            domestic_service.domicile, "Domestic service should have domicile=True"
-        )
-        self.assertIsNone(
-            domestic_service.international,
-            "Domestic service should not have international flag set",
-        )
-
-    def test_international_service_marked_correctly(self):
-        """Test that international service has international=True and domicile=False."""
-        international_service = next(
-            (s for s in self.services if s.service_code == "gls_euro_business_parcel"),
-            None,
-        )
-
-        self.assertIsNotNone(international_service)
-        self.assertTrue(
-            international_service.international,
-            "International service should have international=True",
-        )
-        self.assertFalse(
-            international_service.domicile,
-            "International service should have domicile=False",
-        )
-
-    def test_domestic_request_returns_only_domestic_services(self):
+    def test_domestic_request_returns_gls_parcel(self):
         """Test that domestic request only returns domestic services."""
         # Simulate domestic request (DE to DE)
         domestic_request = RateRequest(
@@ -99,18 +81,12 @@ class TestGLSGroupServiceFiltering(unittest.TestCase):
         parsed_response = karrio.Rating.fetch(domestic_request).from_(gateway).parse()
         rates = parsed_response[0]
 
-        # All returned services should be domestic
         service_codes = [rate.service for rate in rates]
         self.assertIn("gls_parcel", service_codes)
-        self.assertNotIn(
-            "gls_euro_business_parcel",
-            service_codes,
-            "International services should not be returned for domestic requests",
-        )
 
-    def test_international_request_returns_only_international_services(self):
-        """Test that international request only returns international services."""
-        # Simulate international request (DE to FR)
+    def test_international_request_returns_gls_parcel(self):
+        """DE → FR should still surface ``gls_parcel`` — the single
+        PARCEL product covers EU cross-border via its international zone."""
         international_request = RateRequest(
             **{
                 "shipper": {
@@ -136,25 +112,15 @@ class TestGLSGroupServiceFiltering(unittest.TestCase):
             }
         )
 
-        parsed_response = (
-            karrio.Rating.fetch(international_request).from_(gateway).parse()
-        )
+        parsed_response = karrio.Rating.fetch(international_request).from_(gateway).parse()
         rates = parsed_response[0]
 
-        # All returned services should be international
         service_codes = [rate.service for rate in rates]
-        self.assertIn("gls_euro_business_parcel", service_codes)
-        self.assertNotIn(
-            "gls_parcel",
-            service_codes,
-            "Domestic services should not be returned for international requests",
-        )
+        self.assertIn("gls_parcel", service_codes)
 
     def test_weight_limits_respected(self):
         """Test that weight limits are properly checked."""
-        domestic_service = next(
-            (s for s in self.services if s.service_code == "gls_parcel"), None
-        )
+        domestic_service = next((s for s in self.services if s.service_code == "gls_parcel"), None)
 
         self.assertIsNotNone(domestic_service)
         self.assertEqual(domestic_service.min_weight, 0.01)
@@ -208,18 +174,18 @@ ParsedRateResponse = [
             "currency": "EUR",
             "extra_charges": [
                 {
-                    "amount": 6.99,
+                    "amount": 0.0,
                     "currency": "EUR",
                     "name": "Base Charge",
                 }
             ],
             "meta": {
                 "service_name": "GLS Parcel",
-                "shipping_charges": 6.99,
+                "shipping_charges": 0.0,
                 "shipping_currency": "EUR",
             },
             "service": "gls_parcel",
-            "total_charge": 6.99,
+            "total_charge": 0.0,
             "transit_days": 1,
         },
         {
@@ -228,58 +194,18 @@ ParsedRateResponse = [
             "currency": "EUR",
             "extra_charges": [
                 {
-                    "amount": 6.49,
-                    "currency": "EUR",
-                    "name": "Base Charge",
-                }
-            ],
-            "meta": {
-                "service_name": "GLS Business Parcel",
-                "shipping_charges": 6.49,
-                "shipping_currency": "EUR",
-            },
-            "service": "gls_business_parcel",
-            "total_charge": 6.49,
-            "transit_days": 2,
-        },
-        {
-            "carrier_id": "gls",
-            "carrier_name": "gls",
-            "currency": "EUR",
-            "extra_charges": [
-                {
-                    "amount": 17.99,
+                    "amount": 0.0,
                     "currency": "EUR",
                     "name": "Base Charge",
                 }
             ],
             "meta": {
                 "service_name": "GLS Express",
-                "shipping_charges": 17.99,
+                "shipping_charges": 0.0,
                 "shipping_currency": "EUR",
             },
             "service": "gls_express",
-            "total_charge": 17.99,
-            "transit_days": 1,
-        },
-        {
-            "carrier_id": "gls",
-            "carrier_name": "gls",
-            "currency": "EUR",
-            "extra_charges": [
-                {
-                    "amount": 14.99,
-                    "currency": "EUR",
-                    "name": "Base Charge",
-                }
-            ],
-            "meta": {
-                "service_name": "GLS Guaranteed24",
-                "shipping_charges": 14.99,
-                "shipping_currency": "EUR",
-            },
-            "service": "gls_guaranteed24",
-            "total_charge": 14.99,
+            "total_charge": 0.0,
             "transit_days": 1,
         },
     ],

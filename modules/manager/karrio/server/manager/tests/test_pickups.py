@@ -1,11 +1,17 @@
 import json
-from unittest.mock import patch, ANY
-from django.urls import reverse
-from rest_framework import status
-from karrio.core.models import PickupDetails, ConfirmationDetails, ChargeDetails
-from karrio.server.manager.tests.test_shipments import TestShipmentFixture
-from karrio.server.core.utils import create_carrier_snapshot
+from unittest.mock import ANY, patch
+
 import karrio.server.manager.models as models
+import karrio.server.providers.models as providers
+from django.contrib.auth import get_user_model
+from django.urls import reverse
+from karrio.core.models import ChargeDetails, ConfirmationDetails, PickupDetails
+from karrio.server.core.middleware import CreatorAccess
+from karrio.server.core.utils import create_carrier_snapshot
+from karrio.server.manager.tests.test_shipments import TestShipmentFixture
+from karrio.server.user.models import Token
+from rest_framework import status
+
 
 class TestFixture(TestShipmentFixture):
     def setUp(self) -> None:
@@ -40,6 +46,7 @@ class TestFixture(TestShipmentFixture):
         }
         self.shipment.carrier = create_carrier_snapshot(self.carrier)
         self.shipment.save()
+
 
 class TestPickupSchedule(TestFixture):
     def test_schedule_pickup(self):
@@ -160,6 +167,7 @@ class TestPickupSchedule(TestFixture):
             self.assertEqual(response_data["recurrence"]["frequency"], "weekly")
             self.assertIn("monday", response_data["recurrence"]["days_of_week"])
 
+
 class TestPickupDetails(TestFixture):
     def setUp(self) -> None:
         super().setUp()
@@ -205,6 +213,7 @@ class TestPickupDetails(TestFixture):
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertDictEqual(response_data, PICKUP_CANCEL_RESPONSE)
+
 
 class TestPickupStatusLifecycle(TestFixture):
     """Tests for pickup status lifecycle transitions."""
@@ -282,6 +291,7 @@ class TestPickupStatusLifecycle(TestFixture):
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertEqual(response_data["status"], "scheduled")
 
+
 class TestPickupStatusFilter(TestFixture):
     """Tests for pickup status filtering."""
 
@@ -356,6 +366,7 @@ class TestPickupStatusFilter(TestFixture):
         self.assertIn("SCH001", confirmation_numbers)
         self.assertIn("CLO001", confirmation_numbers)
         self.assertNotIn("CAN001", confirmation_numbers)
+
 
 class TestPickupGuardrails(TestFixture):
     """Tests for pickup status guardrails preventing invalid mutations."""
@@ -480,6 +491,7 @@ class TestPickupGuardrails(TestFixture):
             # Metadata-only updates bypass the guard
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+
 class TestPickupScheduleNewAPI(TestFixture):
     """Tests for the new POST /v1/pickups endpoint with carrier_code in body."""
 
@@ -540,6 +552,7 @@ class TestPickupScheduleNewAPI(TestFixture):
         response_data = json.loads(response.content)
         self.assertIn("errors", response_data)
 
+
 class TestLegacyEndpointDeprecation(TestFixture):
     """Tests for the legacy endpoint deprecation headers."""
 
@@ -572,6 +585,7 @@ class TestLegacyEndpointDeprecation(TestFixture):
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertEqual(response_data["confirmation_number"], "27241")
             self.assertEqual(response_data["carrier_name"], "canadapost")
+
 
 PICKUP_DATA = {
     "pickup_date": "2020-10-25",
@@ -1054,3 +1068,204 @@ PICKUP_DATA_NEW_API_STANDALONE = {
     },
     "parcels_count": 3,
 }
+
+
+class TestPickupCrossTenant(TestFixture):
+    """Regression tests for IDOR in POST /v1/pickups — cross-tenant scope checks."""
+
+    def setUp(self) -> None:
+        super().setUp()
+
+        self.attacker = get_user_model().objects.create_user("attacker@example.com", "test")
+        self.attacker_token = Token.objects.create(user=self.attacker, test_mode=True)
+
+        self.attacker_carrier = providers.CarrierConnection.objects.create(
+            carrier_code="canadapost",
+            carrier_id="canadapost_attacker",
+            test_mode=True,
+            active=True,
+            created_by=self.attacker,
+            credentials=dict(
+                username="6e93d53968881714",
+                customer_number="2004381",
+                contract_id="42708517",
+                password="0bfa9fcb9853d1f51ee57a",
+            ),
+        )
+
+        self.foreign_shipment = models.Shipment.objects.create(
+            shipper={
+                "id": "adr_foreign111",
+                "postal_code": "M5V3A8",
+                "city": "Toronto",
+                "country_code": "CA",
+                "person_name": "Victim Person",
+                "company_name": "Victim Corp.",
+                "address_line1": "999 Foreign St",
+                "state_code": "ON",
+                "phone_number": "416 000 0000",
+                "federal_tax_id": None,
+                "state_tax_id": None,
+                "email": None,
+                "street_number": None,
+                "residential": False,
+                "address_line2": None,
+                "validate_location": False,
+                "validation": None,
+            },
+            recipient={
+                "id": "adr_foreign222",
+                "postal_code": "V6M2V9",
+                "city": "Vancouver",
+                "country_code": "CA",
+                "person_name": "Foreign Recipient",
+                "address_line1": "1 Victim Ave",
+                "state_code": "BC",
+                "phone_number": "604 000 0000",
+                "federal_tax_id": None,
+                "state_tax_id": None,
+                "company_name": None,
+                "email": None,
+                "street_number": None,
+                "residential": False,
+                "address_line2": None,
+                "validate_location": False,
+                "validation": None,
+            },
+            parcels=[
+                {
+                    "id": "pcl_foreign111",
+                    "weight": 1.0,
+                    "weight_unit": "KG",
+                    "width": None,
+                    "height": None,
+                    "length": None,
+                    "dimension_unit": None,
+                    "packaging_type": None,
+                    "package_preset": "canadapost_corrugated_small_box",
+                    "description": None,
+                    "content": None,
+                    "is_document": False,
+                    "freight_class": None,
+                    "reference_number": None,
+                    "items": [],
+                    "options": {},
+                    "meta": {},
+                }
+            ],
+            tracking_number="999000111222",
+            created_by=self.attacker,
+            test_mode=True,
+            payment={"currency": "CAD", "paid_by": "sender"},
+        )
+
+        self.foreign_address = models.Address.objects.create(
+            created_by=self.attacker,
+            address_line1="999 Foreign St",
+            person_name="Victim",
+            city="Toronto",
+            country_code="CA",
+            postal_code="M5V3A8",
+        )
+        self.foreign_address_id = self.foreign_address.pk
+
+    @patch("karrio.server.core.models.base.get_access_filter", new=CreatorAccess())
+    def test_cross_tenant_tracking_number_rejected_on_post_pickups(self):
+        url = reverse("karrio.server.manager:shipment-pickup-list")
+        payload = {**PICKUP_DATA, "tracking_numbers": ["999000111222"]}
+
+        pickups_before = models.Pickup.objects.count()
+        foreign_shipment_pickups_before = self.foreign_shipment.shipment_pickup.count()
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock_identity:
+            response = self.client.post(url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response_data = json.loads(response.content)
+        errors_str = json.dumps(response_data)
+        self.assertIn("tracking_numbers", errors_str)
+        self.assertIn("not found", errors_str)
+        self.assertEqual(models.Pickup.objects.count(), pickups_before)
+        self.foreign_shipment.refresh_from_db()
+        self.assertEqual(self.foreign_shipment.shipment_pickup.count(), foreign_shipment_pickups_before)
+        mock_identity.assert_not_called()
+
+    @patch("karrio.server.core.models.base.get_access_filter", new=CreatorAccess())
+    def test_cross_tenant_tracking_number_rejected_on_deprecated_endpoint(self):
+        url = reverse(
+            "karrio.server.manager:shipment-pickup-request",
+            kwargs=dict(carrier_name="canadapost"),
+        )
+        payload = {**PICKUP_DATA, "tracking_numbers": ["999000111222"]}
+
+        pickups_before = models.Pickup.objects.count()
+        foreign_shipment_pickups_before = self.foreign_shipment.shipment_pickup.count()
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock_identity:
+            response = self.client.post(url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response_data = json.loads(response.content)
+        errors_str = json.dumps(response_data)
+        self.assertIn("tracking_numbers", errors_str)
+        self.assertIn("not found", errors_str)
+        self.assertEqual(models.Pickup.objects.count(), pickups_before)
+        self.foreign_shipment.refresh_from_db()
+        self.assertEqual(self.foreign_shipment.shipment_pickup.count(), foreign_shipment_pickups_before)
+        mock_identity.assert_not_called()
+
+    @patch("karrio.server.core.models.base.get_access_filter", new=CreatorAccess())
+    def test_cross_tenant_address_id_rejected(self):
+        url = reverse("karrio.server.manager:shipment-pickup-list")
+        payload = {
+            "pickup_date": "2020-10-25",
+            "ready_time": "13:00",
+            "closing_time": "17:00",
+            "address": self.foreign_address_id,
+            "parcels_count": 1,
+        }
+
+        pickups_before = models.Pickup.objects.count()
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock_identity:
+            response = self.client.post(url, payload)
+
+        self.assertGreaterEqual(response.status_code, 400)
+        self.assertEqual(models.Pickup.objects.count(), pickups_before)
+        mock_identity.assert_not_called()
+
+    @patch("karrio.server.core.models.base.get_access_filter", new=CreatorAccess())
+    def test_cross_tenant_update_rejected(self):
+        # Step A: schedule a legitimate pickup as user A
+        url_list = reverse("karrio.server.manager:shipment-pickup-list")
+
+        with patch("karrio.server.core.gateway.utils.identity") as schedule_mock:
+            schedule_mock.return_value = SCHEDULE_RETURNED_VALUE
+            schedule_response = self.client.post(url_list, PICKUP_DATA)
+
+        self.assertEqual(schedule_response.status_code, status.HTTP_201_CREATED)
+        pickup_id = json.loads(schedule_response.content)["id"]
+
+        # Step B: attempt update with a foreign tracking number
+        url_update = reverse(
+            "karrio.server.manager:shipment-pickup-details",
+            kwargs=dict(pk=pickup_id),
+        )
+        update_payload = {
+            "confirmation_number": "27241",
+            "tracking_numbers": ["999000111222"],
+        }
+
+        foreign_pickups_before = self.foreign_shipment.shipment_pickup.count()
+
+        with patch("karrio.server.core.gateway.utils.identity") as update_mock:
+            update_response = self.client.post(url_update, update_payload)
+
+        self.assertEqual(update_response.status_code, status.HTTP_400_BAD_REQUEST)
+        response_data = json.loads(update_response.content)
+        errors_str = json.dumps(response_data)
+        self.assertIn("tracking_numbers", errors_str)
+        self.assertIn("not found", errors_str)
+        self.foreign_shipment.refresh_from_db()
+        self.assertEqual(self.foreign_shipment.shipment_pickup.count(), foreign_pickups_before)
+        update_mock.assert_not_called()

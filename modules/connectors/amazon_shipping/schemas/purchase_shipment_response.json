@@ -1,0 +1,36 @@
+{
+  "payload": {
+    "shipmentId": "87852211788104",
+    "packageDocumentDetails": [
+      {
+        "packageClientReferenceId": "PKG001",
+        "packageDocuments": [
+          {
+            "type": "LABEL",
+            "format": "PNG",
+            "contents": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+          }
+        ],
+        "trackingId": "1578648261977"
+      }
+    ],
+    "promise": {
+      "deliveryWindow": {
+        "start": "2024-01-17T08:00:00Z",
+        "end": "2024-01-17T20:00:00Z"
+      },
+      "pickupWindow": {
+        "start": "2024-01-15T08:00:00Z",
+        "end": "2024-01-15T20:00:00Z"
+      }
+    },
+    "benefits": {
+      "includedBenefits": ["CLAIMS_PROTECTED"],
+      "excludedBenefits": []
+    },
+    "totalCharge": {
+      "value": 7.99,
+      "unit": "USD"
+    }
+  }
+}

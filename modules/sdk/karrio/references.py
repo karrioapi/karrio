@@ -4,39 +4,40 @@ This module provides references to carrier integrations, LSP plugins,
 and other plugin-related functionality in the Karrio system.
 """
 
+import functools
 import os
-import attr
+import pkgutil
 import pydoc
 import typing
-import pkgutil
-import functools
+from contextlib import suppress
 
-import karrio.lib as lib
-import karrio.core.units as units
-import karrio.core.plugins as plugins
+import attr
+
 import karrio.core.metadata as metadata
+import karrio.core.plugins as plugins
+import karrio.core.units as units
+import karrio.lib as lib
 from karrio.core.utils.logger import logger
 from karrio.core.utils.transformer import transform_to_shared_zones_format
 
 # Configure logger with a higher default level to reduce noise
-ENABLE_ALL_PLUGINS_BY_DEFAULT = bool(
-    os.environ.get("ENABLE_ALL_PLUGINS_BY_DEFAULT", True)
-)
+ENABLE_ALL_PLUGINS_BY_DEFAULT = bool(os.environ.get("ENABLE_ALL_PLUGINS_BY_DEFAULT", True))
 
 # Global references
-PROVIDERS: typing.Dict[str, metadata.PluginMetadata] = {}  # Shipping carriers only
-LSP_PLUGINS: typing.Dict[str, metadata.PluginMetadata] = (
-    {}
-)  # Logistics Service Providers
-MAPPERS: typing.Dict[str, typing.Any] = {}
-HOOKS: typing.Dict[str, typing.Any] = {}
-SCHEMAS: typing.Dict[str, typing.Any] = {}
-FAILED_IMPORTS: typing.Dict[str, typing.Any] = {}
-PLUGIN_METADATA: typing.Dict[str, metadata.PluginMetadata] = {}
-REFERENCES: typing.Dict[str, typing.Any] = {}
-SYSTEM_CONFIGS: typing.Dict[str, typing.Tuple[typing.Any, str, type]] = (
-    {}
-)  # Plugin system configs
+PROVIDERS: dict[str, metadata.PluginMetadata] = {}  # Shipping carriers only
+LSP_PLUGINS: dict[str, metadata.PluginMetadata] = {}  # Logistics Service Providers
+MAPPERS: dict[str, typing.Any] = {}
+HOOKS: dict[str, typing.Any] = {}
+SCHEMAS: dict[str, typing.Any] = {}
+FAILED_IMPORTS: dict[str, typing.Any] = {}
+PLUGIN_METADATA: dict[str, metadata.PluginMetadata] = {}
+REFERENCES: dict[str, typing.Any] = {}
+SYSTEM_CONFIGS: dict[str, tuple[typing.Any, str, type]] = {}  # Plugin system configs
+
+
+def format_reference_label(name: str) -> str:
+    """Convert a snake_case reference key into a human-readable English label."""
+    return name.replace("_", " ").title()
 
 
 def import_extensions() -> None:
@@ -75,9 +76,7 @@ def import_extensions() -> None:
     # STEP 1: Load from entrypoints (highest priority - most explicit)
     # =========================================================================
     entrypoint_plugins = plugins.discover_entrypoint_plugins()
-    entrypoint_metadata, entrypoint_failed = plugins.collect_plugin_metadata(
-        entrypoint_plugins
-    )
+    entrypoint_metadata, entrypoint_failed = plugins.collect_plugin_metadata(entrypoint_plugins)
     PLUGIN_METADATA.update(entrypoint_metadata)
 
     # Only record failures for plugins not already loaded
@@ -92,7 +91,7 @@ def import_extensions() -> None:
     try:
         import karrio.plugins as karrio_plugins_module
 
-        for _, name, ispkg in pkgutil.iter_modules(karrio_plugins_module.__path__):
+        for _, name, _ispkg in pkgutil.iter_modules(karrio_plugins_module.__path__):
             if name.startswith("_"):
                 continue
             # Skip if already loaded from entrypoints
@@ -120,7 +119,7 @@ def import_extensions() -> None:
     try:
         import karrio.mappers as karrio_mappers_module
 
-        for _, name, ispkg in pkgutil.iter_modules(karrio_mappers_module.__path__):
+        for _, name, _ispkg in pkgutil.iter_modules(karrio_mappers_module.__path__):
             if name.startswith("_"):
                 continue
             # Skip if already loaded from higher priority sources
@@ -267,7 +266,7 @@ def _register_lsp(metadata_obj: metadata.PluginMetadata, plugin_name: str) -> No
 
 
 @functools.lru_cache(maxsize=1)
-def get_providers() -> typing.Dict[str, metadata.PluginMetadata]:
+def get_providers() -> dict[str, metadata.PluginMetadata]:
     """
     Get all available carrier provider metadata.
 
@@ -278,7 +277,7 @@ def get_providers() -> typing.Dict[str, metadata.PluginMetadata]:
 
 
 @functools.lru_cache(maxsize=1)
-def get_lsp_plugins() -> typing.Dict[str, metadata.PluginMetadata]:
+def get_lsp_plugins() -> dict[str, metadata.PluginMetadata]:
     """
     Get all available LSP (Logistics Service Provider) plugin metadata.
 
@@ -289,7 +288,7 @@ def get_lsp_plugins() -> typing.Dict[str, metadata.PluginMetadata]:
 
 
 @functools.lru_cache(maxsize=1)
-def get_mappers() -> typing.Dict[str, typing.Any]:
+def get_mappers() -> dict[str, typing.Any]:
     """
     Get all available mappers (both carriers and LSP plugins).
 
@@ -300,7 +299,7 @@ def get_mappers() -> typing.Dict[str, typing.Any]:
 
 
 @functools.lru_cache(maxsize=1)
-def get_hooks() -> typing.Dict[str, typing.Any]:
+def get_hooks() -> dict[str, typing.Any]:
     """
     Get all available hooks handlers.
 
@@ -311,7 +310,7 @@ def get_hooks() -> typing.Dict[str, typing.Any]:
 
 
 @functools.lru_cache(maxsize=1)
-def get_schemas() -> typing.Dict[str, typing.Any]:
+def get_schemas() -> dict[str, typing.Any]:
     """
     Get all available settings schemas.
 
@@ -322,7 +321,7 @@ def get_schemas() -> typing.Dict[str, typing.Any]:
 
 
 @functools.lru_cache(maxsize=1)
-def get_failed_imports() -> typing.Dict[str, typing.Any]:
+def get_failed_imports() -> dict[str, typing.Any]:
     """
     Get information about import failures.
 
@@ -332,7 +331,7 @@ def get_failed_imports() -> typing.Dict[str, typing.Any]:
     return FAILED_IMPORTS
 
 
-def get_plugin_metadata() -> typing.Dict[str, metadata.PluginMetadata]:
+def get_plugin_metadata() -> dict[str, metadata.PluginMetadata]:
     """
     Get metadata for all discovered plugins.
 
@@ -342,7 +341,7 @@ def get_plugin_metadata() -> typing.Dict[str, metadata.PluginMetadata]:
     return PLUGIN_METADATA
 
 
-def collect_plugins_data() -> typing.Dict[str, dict]:
+def collect_plugins_data() -> dict[str, dict]:
     """
     Collect metadata for all plugins.
 
@@ -352,13 +351,10 @@ def collect_plugins_data() -> typing.Dict[str, dict]:
     if not PLUGIN_METADATA:
         import_extensions()
 
-    return {
-        plugin_name: attr.asdict(plugin_metadata)
-        for plugin_name, plugin_metadata in PLUGIN_METADATA.items()
-    }
+    return {plugin_name: attr.asdict(plugin_metadata) for plugin_name, plugin_metadata in PLUGIN_METADATA.items()}
 
 
-def collect_failed_plugins_data() -> typing.Dict[str, dict]:
+def collect_failed_plugins_data() -> dict[str, dict]:
     """
     Collect information about plugins that failed to load.
 
@@ -371,7 +367,7 @@ def collect_failed_plugins_data() -> typing.Dict[str, dict]:
     return FAILED_IMPORTS
 
 
-def collect_providers_data() -> typing.Dict[str, metadata.PluginMetadata]:
+def collect_providers_data() -> dict[str, metadata.PluginMetadata]:
     """
     Collect metadata for carrier integration plugins.
 
@@ -381,12 +377,10 @@ def collect_providers_data() -> typing.Dict[str, metadata.PluginMetadata]:
     if not PROVIDERS:
         import_extensions()
 
-    return {
-        carrier_name: metadata_obj for carrier_name, metadata_obj in PROVIDERS.items()
-    }
+    return {carrier_name: metadata_obj for carrier_name, metadata_obj in PROVIDERS.items()}
 
 
-def collect_lsp_plugins_data() -> typing.Dict[str, dict]:
+def collect_lsp_plugins_data() -> dict[str, dict]:
     """
     Collect LSP plugin metadata from loaded plugins.
 
@@ -396,35 +390,43 @@ def collect_lsp_plugins_data() -> typing.Dict[str, dict]:
     if not LSP_PLUGINS:
         import_extensions()
 
-    return {
-        plugin_name: attr.asdict(metadata_obj)
-        for plugin_name, metadata_obj in LSP_PLUGINS.items()
-    }
+    return {plugin_name: attr.asdict(metadata_obj) for plugin_name, metadata_obj in LSP_PLUGINS.items()}
 
 
 def detect_capabilities(
-    proxy_methods: typing.List[str],
-    hooks_methods: typing.List[str] = None,
-) -> typing.List[str]:
-    """
-    Map proxy methods and hooks methods to carrier capabilities.
+    proxy_methods: list[str],
+    hooks_methods: list[str] = None,
+    options_cls: type | None = None,
+) -> list[str]:
+    """Map proxy methods + ShippingOption metadata to carrier capabilities.
 
-    Args:
-        proxy_methods: List of method names from a Proxy class
-        hooks_methods: Optional list of method names from a Hooks class
-
-    Returns:
-        List of capability identifiers
+    Capabilities mostly come from proxy method names. ``paperless`` is the
+    exception: it's declared on the connector's ``ShippingOption`` enum via a
+    ``paperless_trade`` member whose ``meta["category"] == "PAPERLESS"``. This
+    replaces the legacy heuristic that inferred ``paperless`` from any
+    ``"document"`` method name (which produced false positives for carriers
+    whose only document method is for retrieval, not ETD).
     """
     all_methods = proxy_methods + (hooks_methods or [])
-    capabilities = [
-        units.CarrierCapabilities.map_capability(prop) for prop in all_methods
-    ]
-    # Filter out None values from unmapped methods
-    return list(set(cap for cap in capabilities if cap is not None))
+    capabilities = {units.CarrierCapabilities.map_capability(prop) for prop in all_methods}
+    if options_cls is not None and _options_declares_paperless(options_cls):
+        capabilities.add("paperless")
+    return list(cap for cap in capabilities if cap is not None)
 
 
-def detect_proxy_methods(proxy_type: object) -> typing.List[str]:
+def _options_declares_paperless(options_cls: type) -> bool:
+    """True when the carrier's ShippingOption enum has any member with PAPERLESS category."""
+    try:
+        for member in options_cls:
+            meta = getattr(member.value, "meta", None) or {}
+            if meta.get("category") == "PAPERLESS":
+                return True
+    except TypeError:
+        return False
+    return False
+
+
+def detect_proxy_methods(proxy_type: object) -> list[str]:
     """
     Extract all public methods from a proxy type.
 
@@ -434,14 +436,10 @@ def detect_proxy_methods(proxy_type: object) -> typing.List[str]:
     Returns:
         List of method names
     """
-    return [
-        prop
-        for prop in proxy_type.__dict__.keys()
-        if "_" not in prop[0] and prop != "settings"
-    ]
+    return [prop for prop in proxy_type.__dict__ if "_" not in prop[0] and prop != "settings"]
 
 
-def detect_hooks_methods(hooks_type: object) -> typing.List[str]:
+def detect_hooks_methods(hooks_type: object) -> list[str]:
     """
     Extract all public methods from a hooks type that are actually implemented.
 
@@ -451,18 +449,14 @@ def detect_hooks_methods(hooks_type: object) -> typing.List[str]:
     Returns:
         List of method names that are implemented (not just inherited from base)
     """
-    return [
-        prop
-        for prop in hooks_type.__dict__.keys()
-        if "_" not in prop[0] and prop != "settings"
-    ]
+    return [prop for prop in hooks_type.__dict__ if "_" not in prop[0] and prop != "settings"]
 
 
 # Fields to exclude when collecting connection fields
 COMMON_FIELDS = ["id", "carrier_id", "test_mode", "carrier_name", "services"]
 
 
-def _normalize_option_meta(meta: typing.Optional[dict]) -> typing.Optional[dict]:
+def _normalize_option_meta(meta: dict | None) -> dict | None:
     """
     Normalize option meta to ensure configurable defaults to True.
 
@@ -479,7 +473,40 @@ def _normalize_option_meta(meta: typing.Optional[dict]) -> typing.Optional[dict]
     return normalized
 
 
-def extract_nested_fields(_type: type) -> typing.Optional[typing.Dict[str, typing.Any]]:
+def _serialize_option(option) -> dict:
+    """Serialize an OptionEnum member into the reference metadata shape."""
+    return lib.to_dict(
+        dict(
+            code=option.value.code,
+            type=parse_type(option.value.type),
+            default=option.value.default,
+            help=option.value.help,
+            meta=_normalize_option_meta(option.value.meta),
+            enum=lib.identity(
+                None if "enum" not in str(option.value.type).lower() else [e.name for e in option.value.type]
+            ),
+            fields=extract_nested_fields(option.value.type),
+        )
+    )
+
+
+def _universal_options() -> dict:
+    """Core options flagged ``meta.universal`` — surfaced on every carrier (issue #788)."""
+    return {
+        option.name: _serialize_option(option)
+        for option in units.ShippingOption  # type: ignore
+        if (option.value.meta or {}).get("universal")
+    }
+
+
+def _aliased_options(mapper) -> set:
+    """Universal option names a carrier already covers via a native option (``meta.aliases``)."""
+    return {
+        alias for option in (mapper.get("options") or []) for alias in ((option.value.meta or {}).get("aliases") or [])
+    }
+
+
+def extract_nested_fields(_type: type) -> dict[str, typing.Any] | None:
     """
     Extract nested field definitions from an attrs class type.
 
@@ -500,10 +527,9 @@ def extract_nested_fields(_type: type) -> typing.Optional[typing.Dict[str, typin
         actual_type = field_type
 
         # Extract the inner type from Optional[X] or typing.Optional[X]
-        if "Optional" in field_type_str:
+        if "Optional" in field_type_str and hasattr(field_type, "__args__") and field_type.__args__:
             # Try to get the actual type from __args__
-            if hasattr(field_type, "__args__") and field_type.__args__:
-                actual_type = field_type.__args__[0]
+            actual_type = field_type.__args__[0]
 
         # Check for nested object types recursively
         nested_fields = None
@@ -513,10 +539,8 @@ def extract_nested_fields(_type: type) -> typing.Optional[typing.Dict[str, typin
         # Extract enum values if the type is an enum
         enum_values = None
         if "enum" in str(actual_type).lower():
-            try:
+            with suppress(Exception):
                 enum_values = [e.name for e in actual_type]
-            except Exception:
-                pass
 
         field_def = lib.to_dict(
             dict(
@@ -524,9 +548,7 @@ def extract_nested_fields(_type: type) -> typing.Optional[typing.Dict[str, typin
                 type=parse_type(actual_type),
                 required="NOTHING" in str(attr_field.default),
                 default=lib.identity(
-                    lib.to_dict(lib.to_json(attr_field.default))
-                    if "NOTHING" not in str(attr_field.default)
-                    else None
+                    lib.to_dict(lib.to_json(attr_field.default)) if "NOTHING" not in str(attr_field.default) else None
                 ),
                 enum=enum_values,
                 fields=nested_fields,
@@ -537,7 +559,7 @@ def extract_nested_fields(_type: type) -> typing.Optional[typing.Dict[str, typin
     return fields if fields else None
 
 
-def extract_list_item_type(_type: type) -> typing.Optional[str]:
+def extract_list_item_type(_type: type) -> str | None:
     """
     Extract the item type name from a List type.
 
@@ -562,7 +584,7 @@ def extract_list_item_type(_type: type) -> typing.Optional[str]:
     return None
 
 
-def extract_list_item_fields(_type: type) -> typing.Optional[typing.Dict[str, typing.Any]]:
+def extract_list_item_fields(_type: type) -> dict[str, typing.Any] | None:
     """
     Extract nested field definitions from the item type of a List.
 
@@ -587,83 +609,111 @@ def extract_list_item_fields(_type: type) -> typing.Optional[typing.Dict[str, ty
     return None
 
 
+# Per-carrier reference keys pruned to the enabled set for the tenant-facing view.
+CARRIER_SCOPED_REFERENCE_KEYS = (
+    "services",
+    "options",
+    "connection_configs",
+    "connection_fields",
+    "carriers",
+    "carrier_hubs",
+    "carrier_capabilities",
+    "packaging_types",
+    "package_presets",
+    "ratesheets",
+    "integration_status",
+    "option_names",
+    "service_names",
+)
+
+
+def get_enabled_carriers(plugin_registry: dict = None) -> set:
+    """Enabled carrier ids, read live in a single batched query (``generic`` always in)."""
+    global PROVIDERS
+    if not PROVIDERS:
+        import_extensions()
+
+    registry = Registry(plugin_registry)
+    keys = {f"{carrier_id.upper()}_ENABLED": carrier_id for carrier_id in PROVIDERS}
+    values = registry.mget([*keys.keys(), "ENABLE_ALL_PLUGINS_BY_DEFAULT"])
+    default_enabled = values.get("ENABLE_ALL_PLUGINS_BY_DEFAULT", ENABLE_ALL_PLUGINS_BY_DEFAULT)
+    enabled = {carrier_id for key, carrier_id in keys.items() if values.get(key, default_enabled)}
+    enabled.add("generic")
+    return enabled
+
+
+def get_enabled_lsp(plugin_registry: dict = None) -> set:
+    """Enabled LSP plugin ids, read live in a single batched query."""
+    global LSP_PLUGINS
+    if not PROVIDERS:
+        import_extensions()
+
+    registry = Registry(plugin_registry)
+    keys = {f"{plugin_id.upper()}_ENABLED": plugin_id for plugin_id in LSP_PLUGINS}
+    values = registry.mget([*keys.keys(), "ENABLE_ALL_PLUGINS_BY_DEFAULT"])
+    default_enabled = values.get("ENABLE_ALL_PLUGINS_BY_DEFAULT", ENABLE_ALL_PLUGINS_BY_DEFAULT)
+    return {plugin_id for key, plugin_id in keys.items() if values.get(key, default_enabled)}
+
+
+def filter_references_to_enabled(
+    references: dict,
+    enabled_carrier_ids: set,
+    enabled_lsp_ids: set = None,
+) -> dict:
+    """Copy of ``references`` with only the per-carrier/LSP maps pruned; static data untouched."""
+    filtered = dict(references)
+    for key in CARRIER_SCOPED_REFERENCE_KEYS:
+        value = filtered.get(key)
+        if isinstance(value, dict):
+            filtered[key] = {cid: v for cid, v in value.items() if cid in enabled_carrier_ids}
+    if enabled_lsp_ids is not None and isinstance(filtered.get("lsp_capabilities"), dict):
+        filtered["lsp_capabilities"] = {
+            pid: v for pid, v in filtered["lsp_capabilities"].items() if pid in enabled_lsp_ids
+        }
+    return filtered
+
+
 def collect_references(
     plugin_registry: dict = None,
+    include_disabled: bool = False,
 ) -> dict:
-    """
-    Collect all references from carriers, LSP plugins, and other plugins.
-
-    This function builds a comprehensive dictionary of all available
-    references in the system, including services, options, countries,
-    currencies, carriers, LSP plugins, etc.
-
-    Returns:
-        Dictionary containing all reference data
-    """
+    """Collect all references. The full installed catalog is cached; the enabled
+    filter is applied live (skipped when ``include_disabled``), so admin toggles
+    take effect without a redeploy."""
     global REFERENCES, PROVIDERS, LSP_PLUGINS
     if not PROVIDERS:
         import_extensions()
 
-    # If references have already been computed, return them
-    if REFERENCES and not plugin_registry:
+    if not REFERENCES:
+        REFERENCES = _build_references()
+
+    if include_disabled:
         return REFERENCES
 
-    registry = Registry(plugin_registry)
-
-    # Determine the default plugin enable flag.
-    # Fall back to the module-level constant (which reads ENABLE_ALL_PLUGINS_BY_DEFAULT
-    # env var and defaults to True) so that carriers are available during Django app
-    # initialisation before constance can reach the database.
-    _default_enabled = registry.get(
-        "ENABLE_ALL_PLUGINS_BY_DEFAULT", ENABLE_ALL_PLUGINS_BY_DEFAULT
+    return filter_references_to_enabled(
+        REFERENCES,
+        get_enabled_carriers(plugin_registry),
+        get_enabled_lsp(plugin_registry),
     )
 
-    # Determine enabled carriers
-    enabled_carrier_ids = set(
-        carrier_id
-        for carrier_id in PROVIDERS.keys()
-        if registry.get(
-            f"{carrier_id.upper()}_ENABLED",
-            _default_enabled,
-        )
-    )
 
-    # Determine enabled LSP plugins
-    enabled_lsp_ids = set(
-        plugin_id
-        for plugin_id in LSP_PLUGINS.keys()
-        if registry.get(
-            f"{plugin_id.upper()}_ENABLED",
-            _default_enabled,
-        )
-    )
-
+def _build_references() -> dict:
+    """Build the full installed-carrier reference catalog (no enabled filter)."""
     services = {
         key: {c.name: c.value for c in list(mapper.get("services", []))}
         for key, mapper in PROVIDERS.items()
-        if key in enabled_carrier_ids and mapper.get("services") is not None
+        if mapper.get("services") is not None
     }
+    universal_options = _universal_options()
     options = {
         key: {
-            c.name: lib.to_dict(
-                dict(
-                    code=c.value.code,
-                    type=parse_type(c.value.type),
-                    default=c.value.default,
-                    help=c.value.help,
-                    meta=_normalize_option_meta(c.value.meta),
-                    enum=lib.identity(
-                        None
-                        if "enum" not in str(c.value.type).lower()
-                        else [e.name for e in c.value.type]
-                    ),
-                    fields=extract_nested_fields(c.value.type),
-                )
-            )
-            for c in list(mapper.get("options", []))
+            # Universal options, minus any a carrier already covers via a native
+            # option (its native option then overrides at request time).
+            **{name: meta for name, meta in universal_options.items() if name not in _aliased_options(mapper)},
+            **{c.name: _serialize_option(c) for c in list(mapper.get("options", []))},
         }
         for key, mapper in PROVIDERS.items()
-        if key in enabled_carrier_ids and mapper.get("options") is not None
+        if mapper.get("options") is not None
     }
     connection_configs = {
         key: {
@@ -674,10 +724,10 @@ def collect_references(
                     required=False,
                     type=parse_type(c.value.type),
                     default=c.value.default,
+                    help=c.value.help,
+                    meta=_normalize_option_meta(c.value.meta),
                     enum=lib.identity(
-                        None
-                        if "enum" not in str(c.value.type).lower()
-                        else [c.name for c in c.value.type]
+                        None if "enum" not in str(c.value.type).lower() else [c.name for c in c.value.type]
                     ),
                     # Extract item schema for list types (e.g., List[ServiceBillingNumberType])
                     item_type=extract_list_item_type(c.value.type),
@@ -687,7 +737,7 @@ def collect_references(
             for c in list(mapper.get("connection_configs", []))
         }
         for key, mapper in PROVIDERS.items()
-        if key in enabled_carrier_ids and mapper.get("connection_configs") is not None
+        if mapper.get("connection_configs") is not None
     }
 
     # Build connection_fields with proper attrs class checking
@@ -700,63 +750,76 @@ def collect_references(
                         type=parse_type(_.type),
                         required="NOTHING" in str(_.default),
                         default=lib.identity(
-                            lib.to_dict(lib.to_json(_.default))
-                            if ("NOTHING" not in str(_.default))
-                            else None
+                            lib.to_dict(lib.to_json(_.default)) if ("NOTHING" not in str(_.default)) else None
                         ),
-                        enum=lib.identity(
-                            None
-                            if "enum" not in str(_.type).lower()
-                            else [c.name for c in _.type]
-                        ),
+                        enum=lib.identity(None if "enum" not in str(_.type).lower() else [c.name for c in _.type]),
                         sensitive=lib.identity(
-                            _.metadata.get("sensitive", False)
-                            if hasattr(_, "metadata") and _.metadata
-                            else False
+                            _.metadata.get("sensitive", False) if hasattr(_, "metadata") and _.metadata else False
                         ),
                     )
                 )
                 for _ in getattr(mapper.get("Settings"), "__attrs_attrs__", [])
                 if (_.name not in COMMON_FIELDS)
-                or (
-                    mapper.get("has_intl_accounts") and _.name == "account_country_code"
-                )
+                or (mapper.get("has_intl_accounts") and _.name == "account_country_code")
             }
-            if mapper.get("Settings") is not None
-            and hasattr(mapper.get("Settings"), "__attrs_attrs__")
+            if mapper.get("Settings") is not None and hasattr(mapper.get("Settings"), "__attrs_attrs__")
             else {}
         )
         for key, mapper in PROVIDERS.items()
-        if key in enabled_carrier_ids
     }
 
-    REFERENCES = {
+    references = {
         "countries": {c.name: c.value for c in list(units.Country)},  # type: ignore
         "currencies": {c.name: c.value for c in list(units.Currency)},  # type: ignore
         "weight_units": {c.name: c.value for c in list(units.WeightUnit)},  # type: ignore
         "dimension_units": {c.name: c.value for c in list(units.DimensionUnit)},  # type: ignore
+        "shipment_statuses": {
+            # Shipment/pickup status enums do not exist in the SDK yet, so these
+            # frontend-facing labels stay explicit here for now. Track a follow-up
+            # to derive them from SDK enums once those are introduced.
+            key: format_reference_label(key)
+            for key in (
+                "draft",
+                "created",
+                "cancelled",
+                "shipped",
+                "in_transit",
+                "delivered",
+                "needs_attention",
+                "out_for_delivery",
+                "delivery_failed",
+            )
+        },
+        "pickup_statuses": {
+            key: format_reference_label(key) for key in ("scheduled", "picked_up", "cancelled", "closed")
+        },
+        "tracking_statuses": {
+            # Tracking statuses and reasons already have SDK enums, so these stay
+            # derived from the shared SDK surface instead of being maintained as
+            # hand-written lists in the shipping app.
+            c.name: format_reference_label(c.name)
+            for c in list(units.TrackingStatus)  # type: ignore
+        },
+        "tracking_reasons": {
+            c.name: format_reference_label(c.name)
+            for c in list(units.TrackingIncidentReason)  # type: ignore
+        },
         "states": {
             c.name: {s.name: s.value for s in list(c.value)}  # type: ignore
             for c in list(units.CountryState)  # type: ignore
         },
         "payment_types": {c.name: c.value for c in list(units.PaymentType)},  # type: ignore
         "customs_content_type": {
-            c.name: c.value for c in list(units.CustomsContentType)  # type: ignore
+            c.name: c.value
+            for c in list(units.CustomsContentType)  # type: ignore
         },
         "incoterms": {c.name: c.value for c in list(units.Incoterm)},  # type: ignore
-        "carriers": {
-            carrier_id: metadata_obj.label
-            for carrier_id, metadata_obj in PROVIDERS.items()
-            if carrier_id in enabled_carrier_ids
-        },
+        "carriers": {carrier_id: metadata_obj.label for carrier_id, metadata_obj in PROVIDERS.items()},
         "carrier_hubs": {
-            carrier_id: metadata_obj.label
-            for carrier_id, metadata_obj in PROVIDERS.items()
-            if carrier_id in enabled_carrier_ids and metadata_obj.is_hub
+            carrier_id: metadata_obj.label for carrier_id, metadata_obj in PROVIDERS.items() if metadata_obj.is_hub
         },
         "lsp_plugins": {
-            plugin_id: metadata_obj.get("label", "")
-            for plugin_id, metadata_obj in collect_lsp_plugins_data().items()
+            plugin_id: metadata_obj.get("label", "") for plugin_id, metadata_obj in collect_lsp_plugins_data().items()
         },
         "services": services,
         "options": options,
@@ -764,56 +827,61 @@ def collect_references(
         "connection_configs": connection_configs,
         "carrier_capabilities": {
             key: detect_capabilities(
-                (
-                    detect_proxy_methods(mapper.get("Proxy"))
-                    if mapper.get("Proxy")
-                    else []
-                ),
-                (
-                    detect_hooks_methods(mapper.get("Hooks"))
-                    if mapper.get("Hooks")
-                    else []
-                ),
+                (detect_proxy_methods(mapper.get("Proxy")) if mapper.get("Proxy") else []),
+                (detect_hooks_methods(mapper.get("Hooks")) if mapper.get("Hooks") else []),
+                mapper.get("options"),
             )
             for key, mapper in PROVIDERS.items()
-            if key in enabled_carrier_ids and mapper.get("Proxy") is not None
+            if mapper.get("Proxy") is not None
         },
         "lsp_capabilities": {
             key: detect_capabilities(
-                (
-                    detect_proxy_methods(mapper.get("Proxy"))
-                    if mapper.get("Proxy")
-                    else []
-                ),
-                (
-                    detect_hooks_methods(mapper.get("Hooks"))
-                    if mapper.get("Hooks")
-                    else []
-                ),
+                (detect_proxy_methods(mapper.get("Proxy")) if mapper.get("Proxy") else []),
+                (detect_hooks_methods(mapper.get("Hooks")) if mapper.get("Hooks") else []),
+                mapper.get("options"),
             )
             for key, mapper in LSP_PLUGINS.items()
-            if key in enabled_lsp_ids and mapper.get("Proxy") is not None
+            if mapper.get("Proxy") is not None
         },
         "packaging_types": {
             key: {c.name: c.value for c in list(mapper.get("packaging_types", []))}
             for key, mapper in PROVIDERS.items()
-            if key in enabled_carrier_ids and mapper.get("packaging_types") is not None
+            if mapper.get("packaging_types") is not None
         },
         "package_presets": {
-            key: {
-                c.name: lib.to_dict(c.value)
-                for c in list(mapper.get("package_presets", []))
-            }
+            key: {c.name: lib.to_dict(c.value) for c in list(mapper.get("package_presets", []))}
             for key, mapper in PROVIDERS.items()
-            if key in enabled_carrier_ids and mapper.get("package_presets") is not None
+            if mapper.get("package_presets") is not None
         },
         "option_names": {
-            name: {key: key.upper().replace("_", " ") for key, _ in value.items()}
-            for name, value in options.items()
+            name: {key: key.upper().replace("_", " ") for key, _ in value.items()} for name, value in options.items()
         },
         "service_names": {
-            name: {key: key.upper().replace("_", " ") for key, _ in value.items()}
-            for name, value in services.items()
+            name: {key: key.upper().replace("_", " ") for key, _ in value.items()} for name, value in services.items()
+        },
+        "rate_charge_labels": {
+            "base_charge": format_reference_label("base_charge"),
+            "fuel_surcharge": format_reference_label("fuel_surcharge"),
+            "residential_surcharge": format_reference_label("residential_surcharge"),
+            "remote_area_surcharge": format_reference_label("remote_area_surcharge"),
+            "handling": format_reference_label("handling"),
+            "oversize": format_reference_label("oversize"),
+        },
+        "rate_first_mile": {
+            "dropoff": format_reference_label("drop_off"),
+            "pickup": format_reference_label("pick_up"),
+            "pickup_dropoff": format_reference_label("pick_up_and_drop_off"),
+        },
+        "rate_last_mile": {
+            "home_delivery": format_reference_label("home_delivery"),
+            "service_point": format_reference_label("service_point"),
+            "mailbox": format_reference_label("mailbox"),
+            "po_box": format_reference_label("po_box"),
+        },
+        "rate_form_factor": {
+            "envelope": format_reference_label("envelope"),
+            "parcel": format_reference_label("parcel"),
+            "pallet": format_reference_label("pallet"),
         },
         # ratesheets - carrier default rate sheet configurations
         # Contains shared zones, services with zone_ids, and service_rates mappings
@@ -821,13 +889,8 @@ def collect_references(
         "ratesheets": {
             key: transform_to_shared_zones_format(mapper.get("service_levels") or [])
             for key, mapper in PROVIDERS.items()
-            if key in enabled_carrier_ids
         },
-        "integration_status": {
-            carrier_id: metadata_obj.status
-            for carrier_id, metadata_obj in PROVIDERS.items()
-            if carrier_id in enabled_carrier_ids
-        },
+        "integration_status": {carrier_id: metadata_obj.status for carrier_id, metadata_obj in PROVIDERS.items()},
         "lsp_plugin_details": {
             plugin_id: {
                 "id": plugin_id,
@@ -861,10 +924,10 @@ def collect_references(
     }
 
     logger.info("Karrio references loaded", plugin_count=len(PLUGIN_METADATA.keys()))
-    return REFERENCES
+    return references
 
 
-def get_carrier_capabilities(carrier_name) -> typing.List[str]:
+def get_carrier_capabilities(carrier_name) -> list[str]:
     """
     Get the capabilities of a specific carrier.
 
@@ -876,9 +939,10 @@ def get_carrier_capabilities(carrier_name) -> typing.List[str]:
     """
     proxy_class = pydoc.locate(f"karrio.mappers.{carrier_name}.Proxy")
     hooks_class = pydoc.locate(f"karrio.mappers.{carrier_name}.Hooks")
+    options_cls = pydoc.locate(f"karrio.providers.{carrier_name}.units.ShippingOption")
     proxy_methods = detect_proxy_methods(proxy_class) if proxy_class else []
     hooks_methods = detect_hooks_methods(hooks_class) if hooks_class else []
-    return detect_capabilities(proxy_methods, hooks_methods)
+    return detect_capabilities(proxy_methods, hooks_methods, options_cls)
 
 
 def parse_type(_type: type) -> str:
@@ -1015,6 +1079,19 @@ class Registry(dict):
                 return getattr(self.registry, key, os.environ.get(key, default))
         except Exception:
             return os.environ.get(key, default)
+
+    def mget(self, keys) -> dict:
+        """Batch-read ``keys`` in one query (constance backend mget); only stored keys returned."""
+        self._ensure_config_loaded()
+        try:
+            if isinstance(self.registry, dict):
+                return {k: self.registry[k] for k in keys if k in self.registry}
+            backend = getattr(self.registry, "_backend", None)
+            if backend is not None and hasattr(backend, "mget"):
+                return dict(backend.mget(list(keys)))
+            return {k: getattr(self.registry, k) for k in keys if hasattr(self.registry, k)}
+        except Exception:
+            return {}
 
     def __setitem__(self, key: str, value: typing.Any):
         try:

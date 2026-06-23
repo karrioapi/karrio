@@ -1,0 +1,1705 @@
+openapi: 3.0.1
+info:
+  title: Asendia Sync API
+  description: API documentation
+  termsOfService: https://www.asendia.de/allgemeine-geschaeftsbedingungen
+  contact:
+    name: ''
+    url: ''
+    email: ''
+  license:
+    name: ''
+    url: ''
+  version: 1.0.0
+servers:
+- url: https://www.asendia-sync.com
+  description: Generated server url
+tags:
+- name: user-jwt-controller
+  description: the user-jwt-controller API
+- name: pudo
+  description: the pudo API
+- name: invoice
+  description: Everything about your invoices
+- name: parcels
+  description: Everything about your parcels
+- name: customers
+  description: Everything about your customers
+- name: documents
+  description: Everything about your documents
+- name: manifests
+  description: Everything about your manifests
+paths:
+  /api/parcels/{parcelId}:
+    get:
+      tags:
+      - parcels
+      summary: Returns parcel details
+      description: Returns parcel details
+      operationId: getParcelDetails
+      parameters:
+      - name: parcelId
+        in: path
+        description: ID of parcel
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParcelResponse'
+        '400':
+          description: Invalid IDs supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParcelResponse'
+        '404':
+          description: Parcel not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParcelResponse'
+    put:
+      tags:
+      - parcels
+      summary: Update a parcel
+      description: Update a parcel
+      operationId: updateParcel
+      parameters:
+      - name: parcelId
+        in: path
+        description: ID of parcel
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParcelRequest'
+        required: true
+      responses:
+        '202':
+          description: Successfully accepted the request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParcelResponse'
+    delete:
+      tags:
+      - parcels
+      summary: Delete a parcel
+      operationId: deleteParcel
+      parameters:
+      - name: parcelId
+        in: path
+        description: ID of parcel
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '204':
+          description: Parcel deletion successful, no content returned.
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Parcel not found
+  /api/manifests/{manifestId}:
+    get:
+      tags:
+      - manifests
+      summary: Get manifest by ID
+      description: Get manifest by ID
+      operationId: getManifestDetail
+      parameters:
+      - name: manifestId
+        in: path
+        description: ID of manifest
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManifestResponse'
+        '400':
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManifestResponse'
+        '404':
+          description: Manifest not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManifestResponse'
+    put:
+      tags:
+      - manifests
+      summary: Recreate the manifest
+      description: Recreate the manifest
+      operationId: recreateManifest
+      parameters:
+      - name: manifestId
+        in: path
+        description: ID of manifest
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '202':
+          description: Successfully accepted request to recreate the manifest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManifestResponse'
+        '400':
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManifestResponse'
+        '404':
+          description: Manifest not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManifestResponse'
+  /api/pudo/points-by-country/{countryCode}:
+    post:
+      tags:
+      - pudo
+      summary: Get PUDO points by country
+      operationId: pudoPointsByCountryCountryCodePost
+      parameters:
+      - name: countryCode
+        in: path
+        description: 2-letter ISO country code
+        required: true
+        schema:
+          maxLength: 2
+          minLength: 2
+          type: string
+      - name: pageSize
+        in: query
+        description: Number of results per page
+        required: false
+        schema:
+          minimum: 1
+          type: integer
+          format: int32
+          default: 5
+      - name: pageNumber
+        in: query
+        description: Page number to retrieve
+        required: false
+        schema:
+          minimum: 1
+          type: integer
+          format: int32
+          default: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PudoPointsByCountryCountryCodePostRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful response with list of PUDO points
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PudoPointsResponse'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PudoPointsResponse'
+        '404':
+          description: Country not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PudoPointsResponse'
+  /api/pudo/points-by-address:
+    post:
+      tags:
+      - pudo
+      summary: Get PUDO points by address
+      operationId: pudoPointsByAddressPost
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PudoPointsByAddressPostRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful response with list of PUDO points
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PudoPointsResponse'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PudoPointsResponse'
+        '404':
+          description: No PUDO points found for the given address
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PudoPointsResponse'
+  /api/parcels:
+    post:
+      tags:
+      - parcels
+      summary: Create a new parcel
+      description: Create a new parcel
+      operationId: addParcel
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParcelRequest'
+        required: true
+      responses:
+        '202':
+          description: Successfully accepted the request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParcelResponse'
+  /api/manifests:
+    post:
+      tags:
+      - manifests
+      summary: Create a manifest
+      description: Create a manifest
+      operationId: createManifest
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+                format: uuid
+        required: true
+      responses:
+        '202':
+          description: Successfully accepted request to create a manifest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManifestResponse'
+  /api/customs-documents:
+    post:
+      tags:
+      - documents
+      summary: Upload customs document for a customer
+      description: Uploads a customs document for a customer identified by CRMID.
+      operationId: uploadCustomsDocument
+      parameters:
+      - name: crmId
+        in: query
+        description: CRMID of the customer
+        required: false
+        schema:
+          type: string
+      - name: filename
+        in: query
+        description: Short display name for the file
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  description: The PDF file
+                  format: binary
+      responses:
+        '201':
+          description: Successfully uploaded
+        '400':
+          description: Invalid request
+        '403':
+          description: Forbidden
+        '404':
+          description: Customer not found
+  /api/customers/{customerId}/tracking:
+    post:
+      tags:
+      - customers
+      - tracking
+      summary: Get tracking information for multiple tracking numbers
+      description: Retrieve tracking information for multiple tracking numbers associated
+        with a customer.
+      operationId: getCustomerMultipleTrackingInformation
+      parameters:
+      - name: customerId
+        in: path
+        description: ID of the customer
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              description: List of tracking numbers for which to retrieve information
+              items:
+                type: string
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrackingResponse'
+        '400':
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrackingResponse'
+        '404':
+          description: One or more tracking numbers not found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrackingResponse'
+  /api/commercial-invoice:
+    post:
+      tags:
+      - invoice
+      summary: Create a commercial invoice
+      description: Create a commercial invoice based on the provided InvoiceRest object
+      operationId: createCommercialInvoice
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommercialInvoiceRequest'
+        required: true
+      responses:
+        '200':
+          description: successful
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: byte
+  /api/authenticate:
+    post:
+      tags:
+      - user-jwt-controller
+      operationId: authorize
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginVM'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JWTToken'
+  /api/parcels/{parcelId}/return-label:
+    get:
+      tags:
+      - documents
+      - parcels
+      summary: Get a parcel return label by ID
+      description: Returns a parcel return label
+      operationId: getParcelReturnLabel
+      parameters:
+      - name: parcelId
+        in: path
+        description: ID of parcel
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: successful
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: byte
+            image/*:
+              schema:
+                type: string
+                format: byte
+            text/plain:
+              schema:
+                type: string
+                format: byte
+  /api/parcels/{parcelId}/label:
+    get:
+      tags:
+      - documents
+      - parcels
+      summary: Get a parcel label by ID
+      description: Returns a parcel label
+      operationId: getParcelLabel
+      parameters:
+      - name: parcelId
+        in: path
+        description: ID of parcel
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: successful
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: byte
+            image/*:
+              schema:
+                type: string
+                format: byte
+            text/plain:
+              schema:
+                type: string
+                format: byte
+  /api/parcels/{parcelId}/customs-document:
+    get:
+      tags:
+      - documents
+      - parcels
+      summary: Get a parcel customs document by ID
+      description: Returns a parcel customs document
+      operationId: getParcelCustomsDocument
+      parameters:
+      - name: parcelId
+        in: path
+        description: ID of parcel
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: successful
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: byte
+  /api/parcels/{parcelId}/commercial-invoice-document:
+    get:
+      tags:
+      - documents
+      - parcels
+      summary: Get a parcel commercial invoice document by ID
+      description: Returns a parcel commercial invoice document
+      operationId: getParcelCommercialInvoiceDocument
+      parameters:
+      - name: parcelId
+        in: path
+        description: ID of parcel
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: successful
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: byte
+  /api/manifests/{manifestId}/parcels:
+    get:
+      tags:
+      - manifests
+      summary: Returns list of parcels
+      description: Returns list of parcels
+      operationId: getManifestParcels
+      parameters:
+      - name: manifestId
+        in: path
+        description: ID of manifest
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: pageable
+        in: query
+        required: true
+        schema:
+          $ref: '#/components/schemas/ApiPageable'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ParcelResponse'
+        '400':
+          description: Invalid IDs supplied
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ParcelResponse'
+        '404':
+          description: Manifest not found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ParcelResponse'
+  /api/manifests/{manifestId}/document:
+    get:
+      tags:
+      - manifests
+      summary: Get a manifest document by ID
+      description: Get a manifest document by ID
+      operationId: getManifestDocument
+      parameters:
+      - name: manifestId
+        in: path
+        description: ID of manifest
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: successful
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: byte
+        '400':
+          description: Invalid ID supplied
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: byte
+        '404':
+          description: Manifest not found
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: byte
+  /api/customers:
+    get:
+      tags:
+      - customers
+      operationId: getAllCustomers
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Customer'
+  /api/customers/{customerId}/tracking/{trackingNumber}:
+    get:
+      tags:
+      - customers
+      - tracking
+      summary: Get tracking information by tracking number
+      description: Get tracking information by tracking number
+      operationId: getCustomerTrackingInformation
+      parameters:
+      - name: customerId
+        in: path
+        description: ID of customer
+        required: true
+        schema:
+          type: string
+      - name: trackingNumber
+        in: path
+        description: Tracking number
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrackingEvent'
+        '400':
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrackingEvent'
+        '404':
+          description: Tracking not found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrackingEvent'
+  /api/customers/{customerId}/parcels:
+    get:
+      tags:
+      - customers
+      summary: Returns a list of parcels
+      description: Returns a list of parcels for a customer
+      operationId: getCustomerParcels
+      parameters:
+      - name: customerId
+        in: path
+        description: ID of customer
+        required: true
+        schema:
+          type: string
+      - name: showManifested
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: pageable
+        in: query
+        required: true
+        schema:
+          $ref: '#/components/schemas/ApiPageable'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ParcelResponse'
+  /api/customers/{customerId}/manifests:
+    get:
+      tags:
+      - customers
+      summary: Returns a list of manifests
+      description: Returns a list of manifest for a customer
+      operationId: getCustomerManifests
+      parameters:
+      - name: customerId
+        in: path
+        description: ID of customer
+        required: true
+        schema:
+          type: string
+      - name: pageable
+        in: query
+        required: true
+        schema:
+          $ref: '#/components/schemas/ApiPageable'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ManifestResponse'
+components:
+  schemas:
+    ParcelError:
+      type: object
+      properties:
+        field:
+          type: string
+        message:
+          type: string
+    ParcelResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        trackingNumber:
+          type: string
+        returnTrackingNumber:
+          type: string
+        errorMessages:
+          type: array
+          items:
+            $ref: '#/components/schemas/ParcelError'
+        errorMessage:
+          type: string
+          deprecated: true
+        labelLocation:
+          type: string
+          example: /parcels/4711/label
+        returnLabelLocation:
+          type: string
+          example: /parcels/4711/return-label
+        customsDocumentLocation:
+          type: string
+          example: /parcels/4711/customs-document
+        manifestLocation:
+          type: string
+          example: /parcels/4711/manifest
+        commercialInvoiceLocation:
+          type: string
+          example: /parcels/4711/commercial-invoice-document
+    Address:
+      required:
+      - address1
+      - city
+      - country
+      - name
+      type: object
+      properties:
+        name:
+          maxLength: 50
+          minLength: 0
+          type: string
+          description: Name and Surname
+          example: Peter Baer
+        company:
+          maxLength: 50
+          minLength: 0
+          type: string
+          description: Company name
+          example: ACME GmbH
+        address1:
+          maxLength: 50
+          minLength: 0
+          type: string
+          description: Street address including house number
+          example: High Street 1
+        address2:
+          maxLength: 50
+          minLength: 0
+          type: string
+          description: 'Optional: address line 2'
+          example: Apt. B1
+        address3:
+          maxLength: 50
+          minLength: 0
+          type: string
+          description: 'Optional: address line 3'
+          example: 2nd Floor
+        postalCode:
+          maxLength: 20
+          minLength: 0
+          type: string
+          description: Enter the postal code (zipcode) in the format of the destination
+            country
+          example: '3030'
+        city:
+          maxLength: 30
+          minLength: 0
+          type: string
+          description: Name of city
+          example: Bern
+        province:
+          maxLength: 50
+          minLength: 0
+          type: string
+          description: State code or name of province
+        country:
+          maxLength: 2
+          minLength: 0
+          type: string
+          description: Country code of shipping country in ISO 3166-1 alpha-2 Code
+            format
+          example: CH
+        email:
+          maxLength: 70
+          minLength: 0
+          type: string
+          description: Contact email address
+          example: pbaer@acme.ch
+        mobile:
+          maxLength: 25
+          minLength: 0
+          type: string
+          description: Contact mobile number
+          example: '+41123456789'
+        phone:
+          maxLength: 25
+          minLength: 0
+          type: string
+          description: Contact phone number
+          example: '+41123456789'
+    Addresses:
+      required:
+      - receiver
+      type: object
+      properties:
+        sender:
+          $ref: '#/components/schemas/Address'
+        receiver:
+          $ref: '#/components/schemas/Address'
+        importer:
+          $ref: '#/components/schemas/Address'
+        seller:
+          $ref: '#/components/schemas/Address'
+        pudoAddress:
+          $ref: '#/components/schemas/PudoAddress'
+    AsendiaService:
+      required:
+      - format
+      - product
+      - service
+      type: object
+      properties:
+        format:
+          maxLength: 3
+          minLength: 0
+          type: string
+          description: <p>Parcel format code. The available formats depend on the
+            product/service/country combination.</p> <p><strong>Allowed values:</strong></p>
+            <ul>   <li><code>B</code> - Boxable</li>   <li><code>N</code> - Non boxable</li>   <li><code>L</code>
+            - Large</li>   <li><code>XL</code> - Extra Large</li> </ul> <p><strong>Note:</strong>
+            For e-PAQ Select (<code>EPAQSCT</code>) and e-PAQ Elite (<code>EPAQELT</code>),
+            format may be omitted unless instructed otherwise.</p>
+          example: B
+        product:
+          maxLength: 50
+          minLength: 0
+          type: string
+          description: <p>Product code identifying the shipping product.</p> <p><strong>Allowed
+            values:</strong></p> <ul>   <li><code>EPAQSTD</code> - e-PAQ Standard</li>   <li><code>EPAQPLS</code>
+            - e-PAQ Plus</li>   <li><code>EPAQSCT</code> - e-PAQ Select</li>   <li><code>EPAQELT</code>
+            - e-PAQ Elite</li>   <li><code>EPAQGO</code> - e-PAQ GO</li> </ul> <p><strong>Return-specific
+            products (used only with return label functionality):</strong></p> <ul>   <li><code>EPAQRETDOM</code>
+            - e-PAQ Domestic Returns</li>   <li><code>EPAQRETINT</code> - e-PAQ International
+            Returns</li>   <li><code>RETDOM</code> - Domestic Returns (deprecated)</li>   <li><code>RETINT</code>
+            - International Returns (deprecated)</li> </ul>
+          example: EPAQSTD
+        service:
+          maxLength: 50
+          minLength: 0
+          type: string
+          description: <p>Service code defining the service level for the shipment.</p>
+            <p><strong>Allowed values:</strong></p> <ul>   <li><code>CUP</code> -
+            Customs unpaid / Customs paid at destination</li>   <li><code>CPPR</code>
+            - Customs prepaid by retailer</li>   <li><code>CPPS</code> - Customs prepaid
+            by shopper</li> </ul> <p><strong>Return-specific services (used only with
+            return shipments):</strong></p> <ul>   <li><code>RETPP</code> - Prepaid
+            return</li>   <li><code>RETPAP</code> - Partially paid return</li> </ul>
+          example: CUP
+        options:
+          type: array
+          description: <p>List of additional option codes for the shipment. Multiple
+            options can be combined.</p> <p><strong>Allowed values:</strong></p> <ul>   <li><code>PM</code>
+            - Printed Matter</li>   <li><code>ECO</code> - Economy</li>   <li><code>POX</code>
+            - Post office box</li>   <li><code>PD</code> - Personal Delivery</li>   <li><code>SIG</code>
+            - Signature</li>   <li><code>PUDO</code> - Pick-up / Drop-off</li>   <li><code>MBX</code>
+            - Mailbox Plus</li>   <li><code>DG</code> - Dangerous Goods</li>   <li><code>SAT</code>
+            - Saturday Delivery</li>   <li><code>DA</code> - Direct Access</li>   <li><code>SGF</code>
+            - Smartgate Flex</li>   <li><code>SGD</code> - Smartgate Direct</li>   <li><code>OPT1</code>
+            - Option1</li>   <li><code>OPT2</code> - Option2</li> </ul>
+          items:
+            type: string
+            description: <p>List of additional option codes for the shipment. Multiple
+              options can be combined.</p> <p><strong>Allowed values:</strong></p>
+              <ul>   <li><code>PM</code> - Printed Matter</li>   <li><code>ECO</code>
+              - Economy</li>   <li><code>POX</code> - Post office box</li>   <li><code>PD</code>
+              - Personal Delivery</li>   <li><code>SIG</code> - Signature</li>   <li><code>PUDO</code>
+              - Pick-up / Drop-off</li>   <li><code>MBX</code> - Mailbox Plus</li>   <li><code>DG</code>
+              - Dangerous Goods</li>   <li><code>SAT</code> - Saturday Delivery</li>   <li><code>DA</code>
+              - Direct Access</li>   <li><code>SGF</code> - Smartgate Flex</li>   <li><code>SGD</code>
+              - Smartgate Direct</li>   <li><code>OPT1</code> - Option1</li>   <li><code>OPT2</code>
+              - Option2</li> </ul>
+        insurance:
+          maxLength: 255
+          minLength: 0
+          type: string
+          description: <p>Insurance code specifying the coverage level for the shipment.</p>
+            <p><strong>Allowed values:</strong></p> <ul>   <li><code>EL45</code> -
+            Enhanced liability up to 45 EUR</li>   <li><code>EL150</code> - Enhanced
+            liability up to 150 EUR</li>   <li><code>EL500</code> - Enhanced liability
+            up to 500 EUR</li> </ul> <p><strong>Note:</strong> For product <code>EPAQPLS</code>
+            (e-PAQ Plus), only <code>EL45</code> and <code>EL150</code> are available.
+            For all other products, <code>EL45</code>, <code>EL150</code>, and <code>EL500</code>
+            are available.</p>
+          example: EL150
+        returnLabelOption:
+          $ref: '#/components/schemas/ReturnLabelOption'
+    CustomsInfo:
+      type: object
+      properties:
+        currency:
+          maxLength: 3
+          minLength: 0
+          type: string
+          description: The currency (ISO 3 characters) of Value
+          example: EUR
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomsInfoItem'
+    CustomsInfoItem:
+      type: object
+      properties:
+        articleDescription:
+          maxLength: 150
+          minLength: 0
+          type: string
+          description: Description of article. If alcohol, please add liters and the
+            percentage of alcohol in the description.
+          example: Blue Watch
+        articleUrl:
+          maxLength: 50
+          minLength: 0
+          type: string
+          description: Additional description of article.
+          example: Blue Watch
+        articleNumber:
+          type: string
+          description: Article number
+          example: ACBLWATCH001
+        articleComposition:
+          maxLength: 200
+          minLength: 0
+          type: string
+          description: Article composition
+          example: 50% cotton 50% polyester
+        unitValue:
+          type: number
+          description: Value of article to be declared to customs
+          example: 1000
+        currency:
+          maxLength: 3
+          minLength: 0
+          type: string
+          description: The currency (ISO 3 characters) of Value
+          example: EUR
+        harmonizationCode:
+          maxLength: 20
+          minLength: 0
+          type: string
+          description: Harmonised European Tarif code of article used to declare to
+            customs
+          example: '910310'
+        originCountry:
+          maxLength: 2
+          minLength: 0
+          type: string
+          description: Country of Origin of  article used to declare to customs (ISO-2)
+          example: CN
+        unitWeight:
+          type: number
+          description: Weight of article used to declare customs
+          example: 1
+        quantity:
+          type: number
+          description: Quantity of items being shipped
+          example: 1
+        volatileOrganicCompoundInGrams:
+          minimum: 0
+          type: integer
+          description: Weight in grams of Volatile Organic Components (VOC) in the
+            item. Optional field.
+          format: int32
+          example: 150
+        destinationTariffCode:
+          maxLength: 20
+          minLength: 0
+          type: string
+          description: Destination tariff code used for import clearance purposes.
+            VAT codes for VAT exemptions or reduced VAT can be filled here.
+          example: 6VTF
+    ParcelRequest:
+      required:
+      - addresses
+      - asendiaService
+      - customsInfo
+      - labelType
+      - referencenumber
+      - weight
+      type: object
+      properties:
+        customerId:
+          maxLength: 255
+          minLength: 0
+          type: string
+          description: The customer ID is a unique identifier assigned to each customer.
+            The first 2 characters of the customer ID are the country code of the
+            customer.
+          example: DE12345678
+        labelType:
+          maxLength: 10
+          minLength: 0
+          type: string
+          description: 'Supported LabelType: Zebra, PDF, PNG'
+          example: PDF
+        labelRotation:
+          type: string
+          description: Label orientation for labels. If not provided, the customer
+            profile setting is used.
+          example: PORTRAIT
+          enum:
+          - PORTRAIT
+          - LANDSCAPE_90
+          - PORTRAIT_180
+          - LANDSCAPE_270
+        referencenumber:
+          maxLength: 50
+          minLength: 0
+          type: string
+          description: Reference number
+          example: '1234'
+        sequencenumber:
+          maxLength: 15
+          minLength: 0
+          type: string
+          description: This field is only used by customers with their own tracking
+            number range. If there is no own tracking number range, do not fill in.
+            Must be unique.
+          example: '1234567'
+        senderEORI:
+          maxLength: 19
+          minLength: 0
+          type: string
+          description: Identifies the party dispatching or sending the goods. (EORI
+            = Economic Operators Registration and Identification number)
+        sellerEORI:
+          maxLength: 19
+          minLength: 0
+          type: string
+          description: Identifies the party that owns or sells the goods being dispatched
+            or shipped. (EORI = Economic Operators Registration and Identification
+            number)
+        euDDSReferenceNumber:
+          maxLength: 19
+          minLength: 0
+          type: string
+          description: Identifies the party that owns or sells the goods being dispatched
+            or shipped. (EORI = Economic Operators Registration and Identification
+            number)
+        senderTaxId:
+          type: string
+          description: Import One Stop Shop (IOSS) reference or VAT number of the
+            sender in parcel destination country.
+        receiverTaxId:
+          type: string
+          description: Import One Stop Shop (IOSS) reference or VAT number of the
+            receiver in parcel destination country.
+        weight:
+          type: number
+          description: Total weight (in kg) of the orderline/position including pro-rata
+            packaging. Maximum weight depends on product/service/country combination.
+          example: 1
+        shippingCost:
+          type: number
+          description: Total shipping cost
+        asendiaService:
+          $ref: '#/components/schemas/AsendiaService'
+        addresses:
+          $ref: '#/components/schemas/Addresses'
+        customsInfo:
+          $ref: '#/components/schemas/CustomsInfo'
+    PudoAddress:
+      type: object
+      properties:
+        address1:
+          type: string
+          description: First line of the street address
+          example: 123 Main St
+        address2:
+          type: string
+          description: Second line of the street address (apartment, suite, etc.)
+          example: Apt 4B
+        address3:
+          type: string
+          description: Third line of the address (optional)
+          example: Building C
+        city:
+          type: string
+          description: City name
+          example: New York
+        state:
+          type: string
+          description: State, province, or region
+          example: NY
+        zipCode:
+          type: string
+          description: Postal or ZIP code
+          example: '10001'
+        countryCode:
+          type: string
+          description: Two-letter ISO country code
+          example: US
+        pudoId:
+          maxLength: 20
+          minLength: 0
+          type: string
+          description: Unique identifier for the PUDO (Pick-Up Drop-Off) location
+          example: PUDO12345
+    ReturnLabelOption:
+      required:
+      - enabled
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          description: Whether a return label should be generated for this shipment.
+        type:
+          type: string
+          description: <p>Return label product type defining the return shipping product.</p>
+            <p><strong>Allowed values:</strong></p> <ul>   <li><code>EPAQRETDOM</code>
+            - e-PAQ Domestic Returns</li>   <li><code>EPAQRETINT</code> - e-PAQ International
+            Returns</li>   <li><code>RETDOM</code> - Domestic Returns (deprecated)</li>   <li><code>RETINT</code>
+            - International Returns (deprecated)</li> </ul>
+          example: EPAQRETDOM
+        payment:
+          type: string
+          description: <p>Payment method for the return label, defining who bears
+            the return shipping cost.</p> <p><strong>Allowed values:</strong></p>
+            <ul>   <li><code>RETPP</code> - Prepaid return (seller/retailer pays the
+            return shipping cost)</li>   <li><code>RETPAP</code> - Partially paid
+            return (receiver/buyer pays the return shipping cost)</li> </ul>
+          example: RETPP
+      description: Configuration for generating a return label alongside the outbound
+        shipment.
+    ManifestResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        errorMessage:
+          type: string
+        errorParcelIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+        status:
+          type: string
+        manifestDocumentLocation:
+          type: string
+          example: /manifests/4711/document
+        parcelsLocation:
+          type: string
+          example: /manifests/4711/parcels
+        manifestLocation:
+          type: string
+          example: /manifests/4711
+    PudoPointsResponse:
+      type: object
+      properties:
+        requestedLocation:
+          $ref: '#/components/schemas/PudoPointsResponseRequestedLocation'
+        pudoPoints:
+          type: array
+          items:
+            $ref: '#/components/schemas/PudoPointsResponsePudoPointsInner'
+        status:
+          type: string
+          example: Success
+        code:
+          type: integer
+          format: int32
+          example: 200
+        transactionKey:
+          type: string
+          example: TKVKGKJQPKLD6GU93
+        additionalData:
+          type: object
+          additionalProperties:
+            type: object
+    PudoPointsResponsePudoPointsInner:
+      type: object
+      properties:
+        asendiaPudoPointId:
+          type: string
+        supplierId:
+          type: string
+        title:
+          type: string
+        pudoType:
+          type: string
+        mappedType:
+          type: string
+        pudoId:
+          type: string
+        addressDetail:
+          $ref: '#/components/schemas/PudoPointsResponsePudoPointsInnerAddressDetail'
+        workHours:
+          $ref: '#/components/schemas/PudoPointsResponsePudoPointsInnerWorkHours'
+        distance:
+          type: number
+    PudoPointsResponsePudoPointsInnerAddressDetail:
+      type: object
+      properties:
+        countryCode:
+          type: string
+        state:
+          type: string
+        zipCode:
+          type: string
+        city:
+          type: string
+        address1:
+          type: string
+        address2:
+          type: string
+        address3:
+          type: string
+        suburb:
+          type: string
+        streetNumber:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        radius:
+          type: integer
+          format: int32
+    PudoPointsResponsePudoPointsInnerWorkHours:
+      type: object
+      properties:
+        mo:
+          type: array
+          items:
+            type: string
+        tu:
+          type: array
+          items:
+            type: string
+        we:
+          type: array
+          items:
+            type: string
+        th:
+          type: array
+          items:
+            type: string
+        fr:
+          type: array
+          items:
+            type: string
+        sa:
+          type: array
+          items:
+            type: string
+        su:
+          type: array
+          items:
+            type: string
+    PudoPointsResponseRequestedLocation:
+      type: object
+      properties:
+        countryCode:
+          type: string
+        zipCode:
+          type: string
+        city:
+          type: string
+        address1:
+          type: string
+        address2:
+          type: string
+        address3:
+          type: string
+        streetNumber:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        radius:
+          type: integer
+          format: int32
+    PudoPointsByCountryCountryCodePostRequest:
+      type: object
+      properties:
+        servicesList:
+          type: array
+          items:
+            $ref: '#/components/schemas/PudoPointsByCountryCountryCodePostRequestServicesListInner'
+    PudoPointsByCountryCountryCodePostRequestServicesListInner:
+      required:
+      - supplierId
+      type: object
+      properties:
+        serviceCode:
+          type: string
+          description: Optional service code
+          example: SS0000944
+        supplierId:
+          type: string
+          description: Supplier ID
+          example: SUP00138
+    JsonNullableBigDecimal:
+      type: object
+      properties:
+        present:
+          type: boolean
+      description: Longitude coordinates of the address
+      example: 53.46305
+    PudoPointsByAddressPostRequest:
+      type: object
+      properties:
+        address:
+          $ref: '#/components/schemas/PudoPointsByAddressPostRequestAddress'
+        servicesList:
+          type: array
+          items:
+            $ref: '#/components/schemas/PudoPointsByCountryCountryCodePostRequestServicesListInner'
+    PudoPointsByAddressPostRequestAddress:
+      required:
+      - city
+      - countryCode
+      - radius
+      - street
+      - streetNumber
+      - zipCode
+      type: object
+      properties:
+        countryCode:
+          type: string
+          example: FR
+        state:
+          type: string
+          example: Paris
+        zipCode:
+          type: string
+          example: '75007'
+        city:
+          type: string
+          example: Paris
+        street:
+          type: string
+          example: Av. de la Bourdonnais
+        address2:
+          type: string
+        address3:
+          type: string
+        suburb:
+          type: string
+        streetNumber:
+          type: string
+          example: '14'
+        latitude:
+          $ref: '#/components/schemas/JsonNullableBigDecimal'
+        longitude:
+          $ref: '#/components/schemas/JsonNullableBigDecimal'
+        radius:
+          type: integer
+          format: int32
+          example: 5
+    TrackingEvent:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        code:
+          type: string
+        time:
+          type: string
+          format: date-time
+        locationName:
+          type: string
+        carrierEventDescription:
+          type: string
+        locationCountry:
+          type: string
+    TrackingResponse:
+      type: object
+      properties:
+        trackingNumber:
+          type: string
+          description: Tracking number of the parcel
+        trackingEvents:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrackingEvent'
+    CommercialInvoiceAddress:
+      required:
+      - address1
+      - city
+      - country
+      - name
+      type: object
+      properties:
+        name:
+          maxLength: 50
+          minLength: 0
+          type: string
+          description: Name and Surname
+          example: Peter Baer
+        address1:
+          maxLength: 50
+          minLength: 0
+          type: string
+          description: Street address including house number
+          example: High Street 1
+        address2:
+          maxLength: 50
+          minLength: 0
+          type: string
+          description: 'Optional: address line 2'
+          example: Apt. B1
+        address3:
+          maxLength: 50
+          minLength: 0
+          type: string
+          description: 'Optional: address line 3'
+          example: 2nd Floor
+        postalCode:
+          maxLength: 20
+          minLength: 0
+          type: string
+          description: Enter the postal code (zipcode) in the format of the destination
+            country
+          example: '3030'
+        city:
+          maxLength: 30
+          minLength: 0
+          type: string
+          description: Name of city
+          example: Bern
+        province:
+          maxLength: 255
+          minLength: 0
+          type: string
+          description: State code or name of province
+        country:
+          maxLength: 2
+          minLength: 0
+          type: string
+          description: Country code of shipping country in ISO 3166-1 alpha-2 Code
+            format
+          example: CH
+        email:
+          maxLength: 70
+          minLength: 0
+          type: string
+          description: Contact email address
+          example: pbaer@acme.ch
+        phone:
+          maxLength: 25
+          minLength: 0
+          type: string
+          description: Contact phone number
+          example: '+41123456789'
+    CommercialInvoiceBulkDetails:
+      required:
+      - importer
+      - receiver
+      - seller
+      - sender
+      type: object
+      properties:
+        senderTaxId:
+          type: string
+          description: Import One Stop Shop (IOSS) reference or VAT number of the
+            sender in parcel destination country.
+        zazAccountNumber:
+          type: string
+          description: ZAZ account number
+        uidChTaxNumber:
+          type: string
+          description: UID CH Tax number
+        sender:
+          $ref: '#/components/schemas/CommercialInvoiceAddress'
+        receiver:
+          $ref: '#/components/schemas/CommercialInvoiceAddress'
+        seller:
+          $ref: '#/components/schemas/CommercialInvoiceAddress'
+        importer:
+          $ref: '#/components/schemas/CommercialInvoiceAddress'
+    CommercialInvoiceRequest:
+      required:
+      - incoterm
+      - invoiceNumber
+      - parcelIds
+      - reasonOfExport
+      - sellerEORI
+      type: object
+      properties:
+        proformaInvoice:
+          type: boolean
+          description: If true, the invoice will be created as a proforma invoice.
+            If false, the invoice will be created as a commercial invoice.
+        invoiceNumber:
+          maxLength: 50
+          minLength: 0
+          type: string
+          description: Invoice number has to be unique
+          example: A-1234
+        sellerEORI:
+          maxLength: 19
+          minLength: 0
+          type: string
+          description: Identifies the party that owns or sells the goods being dispatched
+            or shipped.  (EORI = Economic Operators Registration and Identification
+            number)
+          example: CH12345678901234567
+        poNumber:
+          maxLength: 50
+          minLength: 0
+          type: string
+          example: PO-1234
+        incoterm:
+          type: string
+          enum:
+          - DAP
+          - DDP
+          - DTP
+        reasonOfExport:
+          type: string
+          enum:
+          - DOCS
+          - SALE_OF_GOODS_PERMANENT
+          - RETURNED_GOODS
+          - SAMPLES
+          - GIFT_PERMANENT
+          - OTHERS
+        discountRebate:
+          type: number
+          description: Discount or rebate on the invoice. Values are recognized as
+            amounts, not as percentages.
+          format: double
+        freightPostage:
+          type: number
+          description: Freight or postage on the invoice. Values are recognized as
+            amounts, not as percentages.
+          format: double
+        additionalComments:
+          type: string
+          description: Additional comments on the invoice
+        declarationStatement:
+          type: string
+          description: Declaration statement on the invoice
+        vat:
+          type: number
+          description: Value added tax on the invoice.  If incoterm is DAP, field
+            is not needed. Values are recognized as amounts, not as percentages.
+          format: double
+        tobaccoTax:
+          type: number
+          description: Tobacco tax on the invoice.  If incoterm is DAP, field is not
+            needed. Values are recognized as amounts, not as percentages.
+          format: double
+        duty:
+          type: number
+          description: Duty on the invoice.  If incoterm is DAP, field is not needed.
+            Values are recognized as amounts, not as percentages.
+          format: double
+        bulk:
+          type: boolean
+          description: If true, the invoice will be created for multiple parcels and
+            bulk addresses will be used for the invoice. If false, the invoice will
+            be created and grouped by receiver address.
+          example: false
+        bulkDetails:
+          $ref: '#/components/schemas/CommercialInvoiceBulkDetails'
+        parcelIds:
+          type: array
+          description: List of parcel ids. The parcels have to be manifested before
+            creating an invoice.
+          items:
+            type: string
+            description: List of parcel ids. The parcels have to be manifested before
+              creating an invoice.
+            format: uuid
+    JWTToken:
+      type: object
+      properties:
+        id_token:
+          type: string
+    LoginVM:
+      required:
+      - password
+      - username
+      type: object
+      properties:
+        username:
+          maxLength: 50
+          minLength: 1
+          type: string
+        password:
+          maxLength: 100
+          minLength: 4
+          type: string
+    ApiPageable:
+      type: object
+      properties:
+        page:
+          type: integer
+          format: int32
+        size:
+          maximum: 500
+          minimum: 1
+          type: integer
+          format: int32
+          example: 10
+      description: Pageable object
+    Customer:
+      type: object
+      properties:
+        id:
+          maxLength: 255
+          minLength: 0
+          type: string
+          example: DE12345678
+        name:
+          maxLength: 255
+          minLength: 0
+          type: string
+          example: ACME GmbH

@@ -14,30 +14,25 @@ carrier.  Each sub-task (`process_carrier_trackers`) fetches tracking info
 in batches of 10 with a flat inter-batch delay — O(n) total wall-clock.
 """
 
-import time
-import typing
 import datetime
 import functools
+import time
 from itertools import groupby
 
+import karrio.lib as lib
+import karrio.sdk as karrio
+import karrio.server.core.datatypes as datatypes
+import karrio.server.core.utils as utils
+import karrio.server.manager.models as models
+import karrio.server.manager.serializers as serializers
+import karrio.server.tracing.utils as tracing
 from django.conf import settings
 from django.utils import timezone
-
-import karrio.sdk as karrio
-import karrio.lib as lib
 from karrio.api.gateway import Gateway
-
-import karrio.server.core.utils as utils
 from karrio.server.core.logging import logger
 from karrio.server.core.utils import resolve_carrier
-import karrio.server.manager.models as models
-import karrio.server.tracing.utils as tracing
-import karrio.server.core.datatypes as datatypes
-import karrio.server.manager.serializers as serializers
 
-DEFAULT_TRACKERS_UPDATE_INTERVAL = getattr(
-    settings, "DEFAULT_TRACKERS_UPDATE_INTERVAL", 7200
-)
+DEFAULT_TRACKERS_UPDATE_INTERVAL = getattr(settings, "DEFAULT_TRACKERS_UPDATE_INTERVAL", 7200)
 TRACKER_BATCH_SIZE = 10
 TRACKER_BATCH_DELAY = int(getattr(settings, "TRACKER_BATCH_DELAY", 3))
 TRACKER_MAX_ACTIVE_DAYS = int(getattr(settings, "TRACKER_MAX_ACTIVE_DAYS", 90))
@@ -75,10 +70,8 @@ def _retire_aged_out_trackers(max_age_cutoff: datetime.datetime) -> int:
 
 
 def update_trackers(
-    delta: datetime.timedelta = datetime.timedelta(
-        seconds=DEFAULT_TRACKERS_UPDATE_INTERVAL
-    ),
-    tracker_ids: typing.Optional[typing.List[str]] = None,
+    delta: datetime.timedelta = datetime.timedelta(seconds=DEFAULT_TRACKERS_UPDATE_INTERVAL),
+    tracker_ids: list[str] | None = None,
     schema: str = None,
 ):
     """Group stale trackers by carrier and enqueue one sub-task per carrier."""
@@ -112,18 +105,18 @@ def update_trackers(
             created_at__gt=max_age_cutoff,
         )
     )
-    active_tracker_data = list(qs.values_list("id", "carrier"))
+    # Stream the rows and keep only (id, carrier_id) — NOT the full carrier JSON
+    # snapshot per row — so a large stale backlog doesn't spike memory here (#641).
+    active = [(tid, _carrier_id(carrier)) for tid, carrier in qs.values_list("id", "carrier").iterator(chunk_size=2000)]
 
-    if not active_tracker_data:
+    if not active:
         logger.info("No active trackers found needing update")
         return
 
-    sorted_data = sorted(active_tracker_data, key=lambda item: _carrier_id(item[1]))
+    active.sort(key=lambda item: item[1])
     carrier_groups = 0
 
-    for carrier_key, group in groupby(
-        sorted_data, key=lambda item: _carrier_id(item[1])
-    ):
+    for carrier_key, group in groupby(active, key=lambda item: item[1]):
         ids_for_carrier = [tid for tid, _ in group]
         carrier_groups += 1
         logger.info(
@@ -142,7 +135,7 @@ def update_trackers(
 
     logger.info(
         "Tracker update dispatcher complete",
-        total_trackers=len(active_tracker_data),
+        total_trackers=len(active),
         carrier_groups=carrier_groups,
     )
 
@@ -152,46 +145,61 @@ def update_trackers(
 # ─────────────────────────────────────────────────────────────────
 
 
-def process_carrier_trackers(tracker_ids: typing.List[str], **kwargs):
-    """Fetch tracking info for one carrier's trackers in batches of 10."""
-    trackers = list(models.Tracking.objects.filter(id__in=tracker_ids))
+def process_carrier_trackers(tracker_ids: list[str], **kwargs):
+    """Fetch tracking info for one carrier's trackers in batches of 10.
 
-    if not trackers:
-        logger.info("No trackers found for given IDs", count=len(tracker_ids))
-        return
+    Trackers are loaded ONE batch at a time (not all up-front) so a large
+    per-carrier backlog can't spike the worker's memory — full Tracking rows
+    carry events/messages JSON, so materialising tens of thousands of them at
+    once OOM-killed the worker (#641). Only ``tracker_ids`` (lightweight) and the
+    current ≤10-row batch are ever resident. All ids in one dispatch belong to
+    the same carrier (the dispatcher groups by carrier), so the gateway is
+    resolved once from the first batch and reused.
+    """
+    total = len(tracker_ids)
+    total_batches = (total + TRACKER_BATCH_SIZE - 1) // TRACKER_BATCH_SIZE
+    gateway: Gateway | None = None
+    carrier_id = None
+    processed = 0
+    batch_num = 0
 
-    carrier = resolve_carrier(trackers[0].carrier or {}, context=None)
+    for i in range(0, total, TRACKER_BATCH_SIZE):
+        batch = list(models.Tracking.objects.filter(id__in=tracker_ids[i : i + TRACKER_BATCH_SIZE]))
+        if not batch:
+            continue
 
-    if not carrier:
-        logger.warning(
-            "Could not resolve carrier for tracking batch",
-            carrier_snapshot=trackers[0].carrier,
-        )
-        return
+        if gateway is None:
+            carrier = resolve_carrier(batch[0].carrier or {}, context=None)
+            if not carrier:
+                logger.warning(
+                    "Could not resolve carrier for tracking batch",
+                    carrier_snapshot=batch[0].carrier,
+                )
+                return
+            gateway = carrier.gateway
+            carrier_id = batch[0].carrier_id
+            logger.info(
+                "Starting carrier tracking batch processing",
+                carrier_id=carrier_id,
+                total_trackers=total,
+                total_batches=total_batches,
+            )
 
-    gateway: Gateway = carrier.gateway
-    total_batches = (len(trackers) + TRACKER_BATCH_SIZE - 1) // TRACKER_BATCH_SIZE
-
-    logger.info(
-        "Starting carrier tracking batch processing",
-        carrier_id=trackers[0].carrier_id,
-        total_trackers=len(trackers),
-        total_batches=total_batches,
-    )
-
-    for i in range(0, len(trackers), TRACKER_BATCH_SIZE):
-        batch = trackers[i : i + TRACKER_BATCH_SIZE]
-        batch_num = (i // TRACKER_BATCH_SIZE) + 1
-
+        batch_num += 1
         _process_batch(gateway, batch, batch_num, total_batches)
+        processed += len(batch)
 
-        if i + TRACKER_BATCH_SIZE < len(trackers):
+        if i + TRACKER_BATCH_SIZE < total:
             time.sleep(TRACKER_BATCH_DELAY)
+
+    if gateway is None:
+        logger.info("No trackers found for given IDs", count=total)
+        return
 
     logger.info(
         "Carrier tracking batch complete",
-        carrier_id=trackers[0].carrier_id,
-        total_processed=len(trackers),
+        carrier_id=carrier_id,
+        total_processed=processed,
     )
 
 
@@ -200,7 +208,7 @@ def process_carrier_trackers(tracker_ids: typing.List[str], **kwargs):
 # ─────────────────────────────────────────────────────────────────
 
 
-def _carrier_id(carrier_snapshot: typing.Optional[dict]) -> str:
+def _carrier_id(carrier_snapshot: dict | None) -> str:
     if carrier_snapshot is None:
         return ""
     return carrier_snapshot.get("carrier_id") or ""
@@ -208,22 +216,16 @@ def _carrier_id(carrier_snapshot: typing.Optional[dict]) -> str:
 
 def _process_batch(
     gateway: Gateway,
-    batch: typing.List[models.Tracking],
+    batch: list[models.Tracking],
     batch_num: int,
     total_batches: int,
 ):
     """Fetch + save a single batch of up to 10 trackers."""
     try:
         tracking_numbers = [t.tracking_number for t in batch]
-        options: dict = functools.reduce(
-            lambda acc, t: {**acc, **(t.options or {})}, batch, {}
-        )
+        options: dict = functools.reduce(lambda acc, t: {**acc, **(t.options or {})}, batch, {})
 
-        request = karrio.Tracking.fetch(
-            datatypes.TrackingRequest(
-                tracking_numbers=tracking_numbers, options=options
-            )
-        )
+        request = karrio.Tracking.fetch(datatypes.TrackingRequest(tracking_numbers=tracking_numbers, options=options))
         response = request.from_(gateway).parse()
 
         _save_tracing(gateway, batch)
@@ -244,7 +246,7 @@ def _process_batch(
         logger.exception("Tracking batch error")
 
 
-def _save_results(response, batch: typing.List[models.Tracking]):
+def _save_results(response, batch: list[models.Tracking]):
     """Persist tracking details for a single batch using bulk operations.
 
     Applies change detection in memory for each tracker, then saves all
@@ -310,7 +312,7 @@ def _save_results(response, batch: typing.List[models.Tracking]):
                 )
 
 
-def _save_tracing(gateway: Gateway, batch: typing.List[models.Tracking]):
+def _save_tracing(gateway: Gateway, batch: list[models.Tracking]):
     """Persist API tracing records for a single batch."""
     try:
         context = serializers.get_object_context(batch[0])

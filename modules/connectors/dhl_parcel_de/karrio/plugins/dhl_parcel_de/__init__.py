@@ -2,7 +2,6 @@ import karrio.core.metadata as metadata
 import karrio.mappers.dhl_parcel_de as mappers
 import karrio.providers.dhl_parcel_de.units as units
 
-
 METADATA = metadata.PluginMetadata(
     status="beta",
     id="dhl_parcel_de",

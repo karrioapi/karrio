@@ -114,7 +114,9 @@ touch "${LIB_MODULES}/__init__.py"
 
 generateDS --no-namespace-defs -o "${LIB_MODULES}/error.py" $SCHEMAS/error_response.xsd{% if "address" in features %}
 generateDS --no-namespace-defs -o "${LIB_MODULES}/address_validation_request.py" $SCHEMAS/address_validation_request.xsd
-generateDS --no-namespace-defs -o "${LIB_MODULES}/address_validation_response.py" $SCHEMAS/address_validation_response.xsd{% endif %}{% if "rating" in features %}
+generateDS --no-namespace-defs -o "${LIB_MODULES}/address_validation_response.py" $SCHEMAS/address_validation_response.xsd{% endif %}{% if "location" in features %}
+generateDS --no-namespace-defs -o "${LIB_MODULES}/location_request.py" $SCHEMAS/location_request.xsd
+generateDS --no-namespace-defs -o "${LIB_MODULES}/location_response.py" $SCHEMAS/location_response.xsd{% endif %}{% if "rating" in features %}
 generateDS --no-namespace-defs -o "${LIB_MODULES}/rate_request.py" $SCHEMAS/rate_request.xsd
 generateDS --no-namespace-defs -o "${LIB_MODULES}/rate_response.py" $SCHEMAS/rate_response.xsd{% endif %}{% if "pickup" in features %}
 generateDS --no-namespace-defs -o "${LIB_MODULES}/pickup_create_request.py" $SCHEMAS/pickup_create_request.xsd
@@ -147,7 +149,9 @@ touch "${LIB_MODULES}/__init__.py"
 
 kcli codegen generate "${SCHEMAS}/error_response.json" "${LIB_MODULES}/error_response.py"{% if "address" in features %}
 kcli codegen generate "${SCHEMAS}/address_validation_request.json" "${LIB_MODULES}/address_validation_request.py"
-kcli codegen generate "${SCHEMAS}/address_validation_response.json" "${LIB_MODULES}/address_validation_response.py"{% endif %}{% if "rating" in features %}
+kcli codegen generate "${SCHEMAS}/address_validation_response.json" "${LIB_MODULES}/address_validation_response.py"{% endif %}{% if "location" in features %}
+kcli codegen generate "${SCHEMAS}/location_request.json" "${LIB_MODULES}/location_request.py"
+kcli codegen generate "${SCHEMAS}/location_response.json" "${LIB_MODULES}/location_response.py"{% endif %}{% if "rating" in features %}
 kcli codegen generate "${SCHEMAS}/rate_request.json" "${LIB_MODULES}/rate_request.py"
 kcli codegen generate "${SCHEMAS}/rate_response.json" "${LIB_MODULES}/rate_response.py"{% endif %}{% if "pickup" in features %}
 kcli codegen generate "${SCHEMAS}/pickup_create_request.json" "${LIB_MODULES}/pickup_create_request.py"
@@ -278,6 +282,11 @@ class Mapper(mapper.Mapper):
         self, payload: models.AddressValidationRequest
     ) -> lib.Serializable:
         return provider.address_validation_request(payload, self.settings)
+    {% endif %}{% if "location" in features %}
+    def create_location_request(
+        self, payload: models.LocationRequest
+    ) -> lib.Serializable:
+        return provider.location_request(payload, self.settings)
     {% endif %}{% if "manifest" in features %}
     def create_manifest_request(
         self, payload: models.ManifestRequest
@@ -339,6 +348,11 @@ class Mapper(mapper.Mapper):
         self, response: lib.Deserializable[str]
     ) -> typing.Tuple[typing.List[models.AddressValidationDetails], typing.List[models.Message]]:
         return provider.parse_address_validation_response(response, self.settings)
+    {% endif %}{% if "location" in features %}
+    def parse_location_response(
+        self, response: lib.Deserializable[str]
+    ) -> typing.Tuple[typing.List[models.LocationDetails], typing.List[models.Message]]:
+        return provider.parse_location_response(response, self.settings)
     {% endif %}{% if "webhook" in features %}
     def create_webhook_registration_request(
         self, payload: models.WebhookRegistrationRequest
@@ -558,6 +572,26 @@ class Proxy(proxy.Proxy):
         # Example implementation:
         # response = lib.request(
         #     url=f"{self.settings.server_url}/address/validate",
+        #     data={% if is_xml_api %}request.serialize(){% else %}lib.to_json(request.serialize()){% endif %},
+        #     trace=self.trace_as({% if is_xml_api %}"xml"{% else %}"json"{% endif %}),
+        #     method="POST",
+        #     headers={
+        #         "Content-Type": {% if is_xml_api %}"application/xml"{% else %}"application/json"{% endif %},
+        #         {% if is_xml_api %}"Authorization": f"Basic {self.settings.authorization}"{% else %}"Authorization": f"Bearer {self.settings.api_key}"{% endif %}
+        #     },
+        # )
+
+        # During development, use stub response from schema examples
+        {% if is_xml_api %}response = '<r></r>'{% else %}response = lib.to_json({}){% endif %}
+
+        return lib.Deserializable(response, {% if is_xml_api %}lib.to_element{% else %}lib.to_dict{% endif %})
+    {% endif %}{% if "location" in features %}
+    def get_locations(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        # REPLACE THIS WITH YOUR ACTUAL API CALL IMPLEMENTATION
+        # ---------------------------------------------------------
+        # Example implementation:
+        # response = lib.request(
+        #     url=f"{self.settings.server_url}/locations",
         #     data={% if is_xml_api %}request.serialize(){% else %}lib.to_json(request.serialize()){% endif %},
         #     trace=self.trace_as({% if is_xml_api %}"xml"{% else %}"json"{% endif %}),
         #     method="POST",
@@ -793,6 +827,10 @@ from karrio.providers.{{id}}.tracking import (
 from karrio.providers.{{id}}.address import (
     parse_address_validation_response,
     address_validation_request,
+){% endif %}{% if "location" in features %}
+from karrio.providers.{{id}}.location import (
+    parse_location_response,
+    location_request,
 ){% endif %}{% if "document" in features %}
 from karrio.providers.{{id}}.document import (
     parse_document_upload_response,

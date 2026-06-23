@@ -7,7 +7,7 @@ import typing
 class ErrorType:
     ErrorNo: typing.Optional[str] = None
     Message: typing.Optional[str] = None
-    StatusCode: typing.Optional[int] = None
+    StatusCode: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)

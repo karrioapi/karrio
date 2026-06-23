@@ -1,23 +1,20 @@
 import unittest
-from unittest.mock import patch, ANY
-from .fixture import gateway
+from unittest.mock import ANY, patch
 
-import karrio.sdk as karrio
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 
 class TestFedExTracking(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        self.DocumentUploadRequest = models.DocumentUploadRequest(
-            **DocumentUploadPayload
-        )
+        self.DocumentUploadRequest = models.DocumentUploadRequest(**DocumentUploadPayload)
 
     def test_create_tracking_request(self):
-        request = gateway.mapper.create_document_upload_request(
-            self.DocumentUploadRequest
-        )
+        request = gateway.mapper.create_document_upload_request(self.DocumentUploadRequest)
 
         self.assertEqual(request.serialize(), DocumentUploadRequest)
 
@@ -28,21 +25,15 @@ class TestFedExTracking(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"https://documentapi.prod.fedex.com/documents/v1/etds/upload",
+                "https://documentapi.prod.fedex.com/documents/v1/etds/upload",
             )
 
     def test_parse_document_upload_response(self):
         with patch("karrio.mappers.fedex.proxy.lib.request") as mock:
             mock.return_value = DocumentUploadResponse
-            parsed_response = (
-                karrio.Document.upload(self.DocumentUploadRequest)
-                .from_(gateway)
-                .parse()
-            )
+            parsed_response = karrio.Document.upload(self.DocumentUploadRequest).from_(gateway).parse()
 
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedDocumentUploadResponse
-            )
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedDocumentUploadResponse)
 
 
 if __name__ == "__main__":

@@ -1,32 +1,30 @@
-import karrio.lib as lib
-from typing import cast, Tuple, List
 from functools import partial
-from karrio.core.utils import Job, Pipeline, Serializable, Element
+from typing import cast
+
+import karrio.lib as lib
 from karrio.core.models import (
+    Message,
+    PickupDetails,
     PickupRequest,
     PickupUpdateRequest,
-    PickupDetails,
-    Message,
 )
-
-from karrio.providers.canadapost.utils import Settings
+from karrio.core.utils import Element, Job, Pipeline, Serializable
 from karrio.providers.canadapost.pickup.create import (
-    parse_pickup_response,
     _create_pickup_request,
     _get_pickup,
+    parse_pickup_response,
 )
+from karrio.providers.canadapost.utils import Settings
 
 
 def parse_pickup_update_response(
     _response: lib.Deserializable[Element], settings: Settings
-) -> Tuple[PickupDetails, List[Message]]:
+) -> tuple[PickupDetails, list[Message]]:
     response = _response.deserialize()
     return parse_pickup_response(response, settings)
 
 
-def pickup_update_request(
-    payload: PickupUpdateRequest, settings: Settings
-) -> Serializable:
+def pickup_update_request(payload: PickupUpdateRequest, settings: Settings) -> Serializable:
     request: Pipeline = Pipeline(
         update_pickup=lambda *_: _update_pickup(payload, settings),
         get_pickup=partial(_get_pickup, payload=payload, settings=settings),
@@ -38,9 +36,7 @@ def _update_pickup(payload: PickupUpdateRequest, settings: Settings) -> Job:
     data = Serializable(
         dict(
             confirmation_number=payload.confirmation_number,
-            data=_create_pickup_request(
-                cast(PickupRequest, payload), settings, update=True
-            ),
+            data=_create_pickup_request(cast(PickupRequest, payload), settings, update=True),
         ),
         _update_request_serializer,
     )

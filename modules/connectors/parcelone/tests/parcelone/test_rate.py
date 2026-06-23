@@ -1,64 +1,86 @@
-"""ParcelOne rate tests."""
+"""ParcelOne rate tests.
+
+Rating is CSV-driven (RatingMixinProxy + services.csv).
+Rates are 0.0 placeholder pending an authoritative rate card from ParcelOne.
+No mock needed — universal_provider reads the local CSV directly.
+"""
 
 import unittest
-from unittest.mock import patch
-from .fixture import gateway
 
-import karrio.sdk as karrio
 import karrio.lib as lib
-import karrio.core.models as models
+import karrio.sdk as karrio
+from karrio.core.models import RateRequest
+from karrio.providers.parcelone import units
+
+from .fixture import gateway
 
 
 class TestParcelOneRating(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        self.RateRequest = models.RateRequest(**RatePayload)
-
-    def test_create_rate_request(self):
-        request = gateway.mapper.create_rate_request(self.RateRequest)
-        serialized = request.serialize()
-
-        self.assertDictEqual(serialized, RateRequestJSON)
-
-    def test_get_rate(self):
-        with patch("karrio.mappers.parcelone.proxy.lib.request") as mock:
-            mock.return_value = "{}"
-            karrio.Rating.fetch(self.RateRequest).from_(gateway)
-
-            self.assertEqual(
-                mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/shipment",
-            )
+        self.RateRequest = RateRequest(**rate_request_data)
 
     def test_parse_rate_response(self):
-        with patch("karrio.mappers.parcelone.proxy.lib.request") as mock:
-            mock.return_value = RateResponseJSON
-            parsed_response = (
-                karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
+        parsed_response = karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
+
+        self.assertListEqual(lib.to_dict(parsed_response), ParsedRateResponse)
+
+
+class TestParcelOneDefaultServices(unittest.TestCase):
+    def setUp(self):
+        self.maxDiff = None
+        self.services = units.DEFAULT_SERVICES
+
+    def test_default_services_loaded(self):
+        self.assertGreater(len(self.services), 0)
+        service_codes = [s.service_code for s in self.services]
+        self.assertIn("parcelone_pa1_basic", service_codes)
+        self.assertIn("parcelone_pa1_basicL", service_codes)
+        self.assertIn("parcelone_pa1_eco", service_codes)
+        self.assertIn("parcelone_pa1_ecoL", service_codes)
+        self.assertIn("parcelone_dhl_101", service_codes)
+        self.assertIn("parcelone_dhl_5302", service_codes)
+        self.assertIn("parcelone_ups_11", service_codes)
+        self.assertIn("parcelone_ups_07", service_codes)
+        self.assertIn("parcelone_ups_65", service_codes)
+
+    def test_all_services_have_zones(self):
+        for service in self.services:
+            self.assertGreater(
+                len(service.zones),
+                0,
+                f"Service {service.service_code} should have zones",
             )
+            for zone in service.zones:
+                self.assertIsNotNone(zone.rate)
+                self.assertGreaterEqual(zone.rate, 0)
 
-            self.assertListEqual(lib.to_dict(parsed_response), ParsedRateResponse)
+    def test_domestic_pa1_basic_structure(self):
+        pa1_basic = next((s for s in self.services if s.service_code == "parcelone_pa1_basic"), None)
+        self.assertIsNotNone(pa1_basic)
+        self.assertTrue(pa1_basic.domicile)
+        self.assertEqual(pa1_basic.currency, "EUR")
 
-    def test_parse_rate_error_response(self):
-        with patch("karrio.mappers.parcelone.proxy.lib.request") as mock:
-            mock.return_value = RateErrorResponseJSON
-            parsed_response = (
-                karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
-            )
-
-            self.assertListEqual(lib.to_dict(parsed_response), ParsedRateErrorResponse)
+    def test_pa1_basic_germany_zone_rate(self):
+        pa1_basic = next((s for s in self.services if s.service_code == "parcelone_pa1_basic"), None)
+        de_zone = next(
+            (z for z in pa1_basic.zones if z.country_codes and "DE" in z.country_codes),
+            None,
+        )
+        self.assertIsNotNone(de_zone)
+        self.assertEqual(de_zone.rate, 0.0)
 
 
 if __name__ == "__main__":
     unittest.main()
 
 
-RatePayload = {
+rate_request_data = {
     "shipper": {
-        "company_name": "Test Shipper",
+        "person_name": "Test Shipper",
         "address_line1": "Teststrasse 123",
         "city": "Berlin",
-        "postal_code": "10115",
+        "postal_code": "12345",
         "country_code": "DE",
     },
     "recipient": {
@@ -70,7 +92,7 @@ RatePayload = {
     },
     "parcels": [
         {
-            "weight": 5.0,
+            "weight": 1.5,
             "weight_unit": "KG",
             "length": 30.0,
             "width": 20.0,
@@ -78,125 +100,36 @@ RatePayload = {
             "dimension_unit": "CM",
         }
     ],
-    "services": ["parcelone_dhl_paket"],
 }
 
-RateRequestJSON = {
-    "ShippingData": {
-        "CEPID": "DHL",
-        "ConsignerID": "TEST_CONSIGNER",
-        "MandatorID": "TEST_MANDATOR",
-        "Packages": [
-            {
-                "PackageDimensions": {
-                    "Height": "15.0",
-                    "Length": "30.0",
-                    "Width": "20.0",
-                },
-                "PackageRef": "1",
-                "PackageWeight": {
-                    "Unit": "kg",
-                    "Value": "5.0",
-                },
-            }
-        ],
-        "PrintLabel": 0,
-        "ProductID": "PAKET",
-        "ReturnCharges": 1,
-        "ShipFromData": {
-            "Name1": "Test Shipper",
-            "ShipmentAddress": {
-                "City": "Berlin",
-                "Country": "DE",
-                "PostalCode": "10115",
-                "Street": "123 Teststrasse",
-            },
-        },
-        "ShipToData": {
-            "Name1": "Test Recipient",
-            "PrivateAddressIndicator": 0,
-            "ShipmentAddress": {
-                "City": "Munich",
-                "Country": "DE",
-                "PostalCode": "80331",
-                "Street": "456 Empfangerweg",
-            },
-        },
-        "Software": "Karrio",
+
+def _rate(service, service_name, transit_days):
+    return {
+        "carrier_id": "parcelone",
+        "carrier_name": "parcelone",
+        "currency": "EUR",
+        "extra_charges": [{"amount": 0.0, "currency": "EUR", "name": "Base Charge"}],
+        "meta": {"service_name": service_name, "shipping_charges": 0.0, "shipping_currency": "EUR"},
+        "service": service,
+        "total_charge": 0.0,
+        "transit_days": transit_days,
     }
-}
+
 
 ParsedRateResponse = [
     [
-        {
-            "carrier_id": "parcelone",
-            "carrier_name": "parcelone",
-            "currency": "EUR",
-            "extra_charges": [
-                {"amount": 4.99, "currency": "EUR", "name": "Base shipping"},
-                {"amount": 1.0, "currency": "EUR", "name": "Fuel surcharge"},
-            ],
-            "meta": {"service_name": "parcelone_dhl_paket"},
-            "service": "parcelone_dhl_paket",
-            "total_charge": 5.99,
-        }
+        _rate("parcelone_pa1_basic", "Parcel.One Basic", 2),
+        _rate("parcelone_pa1_basicL", "Letter Basic", 2),
+        _rate("parcelone_pa1_eco", "Parcel.One Eco", 3),
+        _rate("parcelone_pa1_ecoL", "Letter Eco", 3),
+        _rate("parcelone_pa1_plus", "Parcel Plus", 1),
+        _rate("parcelone_pa1_plusL", "Parcel Plus L", 1),
+        _rate("parcelone_pa1_plusZ", "Parcel Plus Z", 1),
+        _rate("parcelone_dhl_101", "DHL National", 1),
+        _rate("parcelone_dhl_5301", "DHL Weltpaket Premium", 1),
+        _rate("parcelone_ups_11", "UPS Standard", 1),
+        _rate("parcelone_ups_07", "UPS Express", 1),
+        _rate("parcelone_ups_65", "UPS Express Saver", 1),
     ],
     [],
 ]
-
-ParsedRateErrorResponse = [
-    [],
-    [
-        {
-            "carrier_id": "parcelone",
-            "carrier_name": "parcelone",
-            "code": "E002",
-            "details": {
-                "shipment_id": "SHIP001",
-            },
-            "message": "Route not available",
-        }
-    ],
-]
-
-
-RateResponseJSON = """{
-    "success": 1,
-    "results": {
-        "ActionResult": {
-            "Success": 1
-        },
-        "TotalCharges": {
-            "Value": "5.99",
-            "Currency": "EUR"
-        },
-        "Charges": [
-            {
-                "Value": "4.99",
-                "Currency": "EUR",
-                "Description": "Base shipping"
-            },
-            {
-                "Value": "1.00",
-                "Currency": "EUR",
-                "Description": "Fuel surcharge"
-            }
-        ]
-    }
-}"""
-
-RateErrorResponseJSON = """{
-    "success": 1,
-    "results": {
-        "ActionResult": {
-            "Success": 0,
-            "ShipmentID": "SHIP001",
-            "Errors": [
-                {
-                    "ErrorNo": "E002",
-                    "Message": "Route not available"
-                }
-            ]
-        }
-    }
-}"""

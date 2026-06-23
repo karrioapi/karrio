@@ -8,7 +8,6 @@ import { errorToMessages } from "@karrio/lib";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
 import { useSystemConnections } from "@karrio/hooks/system-connection";
 import { usePickupMutation } from "@karrio/hooks/pickup";
-import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useShipments } from "@karrio/hooks/shipment";
 import { useAddresses } from "@karrio/hooks/address";
 import { AddressType, CountryCodeEnum } from "@karrio/types";
@@ -147,7 +146,6 @@ export function SchedulePickupDialog({
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const { toast } = useToast();
-  const { references } = useAPIMetadata();
   const mutation = usePickupMutation();
   const { user_connections } = useCarrierConnections();
   const { system_connections } = useSystemConnections();
@@ -162,12 +160,8 @@ export function SchedulePickupDialog({
     return [
       ...(user_connections || []),
       ...(system_connections || []),
-    ].filter((conn) => {
-      const capabilities =
-        references?.carrier_capabilities?.[conn.carrier_name] || [];
-      return capabilities.includes("pickup");
-    });
-  }, [user_connections, system_connections, references]);
+    ].filter((conn) => conn.active && (conn.capabilities || []).includes("pickup"));
+  }, [user_connections, system_connections]);
 
   const savedAddresses = React.useMemo(() => {
     return addresses?.edges?.map(({ node }) => node) || [];

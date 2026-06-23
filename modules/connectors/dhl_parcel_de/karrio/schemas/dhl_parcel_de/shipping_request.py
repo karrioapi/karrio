@@ -81,13 +81,17 @@ class DetailsType:
 
 
 @attr.s(auto_attribs=True)
-class CashOnDeliveryType:
-    currency: typing.Optional[str] = None
-    value: typing.Optional[float] = None
+class BankAccountType:
     accountHolder: typing.Optional[str] = None
     bankName: typing.Optional[str] = None
     iban: typing.Optional[str] = None
     bic: typing.Optional[str] = None
+
+
+@attr.s(auto_attribs=True)
+class CashOnDeliveryType:
+    amount: typing.Optional[PostalChargesType] = jstruct.JStruct[PostalChargesType]
+    bankAccount: typing.Optional[BankAccountType] = jstruct.JStruct[BankAccountType]
     accountReference: typing.Optional[str] = None
     transferNote1: typing.Optional[str] = None
     transferNote2: typing.Optional[str] = None

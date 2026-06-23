@@ -1,14 +1,13 @@
 import json
 from unittest.mock import ANY, patch
-from requests import Response
 
 from django.urls import reverse
-from rest_framework import status
-
 from karrio.server.core.tests import APITestCase
 from karrio.server.core.utils import create_carrier_snapshot
 from karrio.server.events.models import Webhook
 from karrio.server.manager import models
+from requests import Response
+from rest_framework import status
 
 
 class TestBatchWebhookResend(APITestCase):
@@ -54,9 +53,7 @@ class TestBatchWebhookResend(APITestCase):
         url = reverse("karrio.server.events:batch-webhook-resend")
         data = BATCH_RESEND_TARGETED_DATA(self)
 
-        with patch(
-            "karrio.server.events.task_definitions.base.webhook.identity"
-        ) as mock_notify:
+        with patch("karrio.server.events.task_definitions.base.webhook.identity") as mock_notify:
             mock_response = Response()
             mock_response.status_code = 200
             mock_notify.return_value = mock_response

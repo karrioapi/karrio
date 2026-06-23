@@ -9,7 +9,6 @@ import karrio.server.core.models.base
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -18,23 +17,55 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='TracingRecord',
+            name="TracingRecord",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('id', models.CharField(default=functools.partial(karrio.server.core.models.base.uuid, *(), **{'prefix': 'trace_'}), editable=False, max_length=50, primary_key=True, serialize=False)),
-                ('key', models.CharField(max_length=50)),
-                ('record', models.JSONField(default=functools.partial(karrio.core.utils.helpers.identity, *(), **{'value': {}}), help_text='Record data')),
-                ('timestamp', models.FloatField()),
-                ('meta', models.JSONField(blank=True, default=functools.partial(karrio.core.utils.helpers.identity, *(), **{'value': {}}), help_text='Readonly Context metadata use for filtering and premission check', null=True)),
-                ('test_mode', models.BooleanField()),
-                ('created_by', models.ForeignKey(blank=True, editable=False, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "id",
+                    models.CharField(
+                        default=functools.partial(karrio.server.core.models.base.uuid, *(), **{"prefix": "trace_"}),
+                        editable=False,
+                        max_length=50,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("key", models.CharField(max_length=50)),
+                (
+                    "record",
+                    models.JSONField(
+                        default=functools.partial(karrio.core.utils.helpers.identity, *(), **{"value": {}}),
+                        help_text="Record data",
+                    ),
+                ),
+                ("timestamp", models.FloatField()),
+                (
+                    "meta",
+                    models.JSONField(
+                        blank=True,
+                        default=functools.partial(karrio.core.utils.helpers.identity, *(), **{"value": {}}),
+                        help_text="Readonly Context metadata use for filtering and premission check",
+                        null=True,
+                    ),
+                ),
+                ("test_mode", models.BooleanField()),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        blank=True,
+                        editable=False,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Tracing Record',
-                'verbose_name_plural': 'Tracing Records',
-                'db_table': 'tracing-record',
-                'ordering': ['-created_at'],
+                "verbose_name": "Tracing Record",
+                "verbose_name_plural": "Tracing Records",
+                "db_table": "tracing-record",
+                "ordering": ["-created_at"],
             },
             bases=(karrio.server.core.models.base.ControlledAccessModel, models.Model),
         ),

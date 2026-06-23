@@ -1,0 +1,927 @@
+{
+    "info": {
+        "_postman_id": "953497f6-4b88-4873-9267-1edd1d77a1e5",
+        "name": "Amazon Shipping APIs",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "_exporter_id": "30249867"
+    },
+    "item": [
+        {
+            "name": "Label Purchase Via Get Rates and Purchase Shipment APIs",
+            "item": [
+                {
+                    "name": "1. Get Access Token",
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "name": "Content-Type",
+                                "value": "application/x-www-form-urlencoded",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "urlencoded",
+                            "urlencoded": [
+                                {
+                                    "key": "grant_type",
+                                    "value": "refresh_token",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "refresh_token",
+                                    "value": "YOURREFRESHTOKENHERE",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "client_id",
+                                    "value": "YOURCLIENTIDHERE",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "client_secret",
+                                    "value": "YOURCLIENTSECRETHERE",
+                                    "type": "text"
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{token-host}}/auth/o2/token",
+                            "host": [
+                                "{{token-host}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "o2",
+                                "token"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "2. Get Shipping Rates - OFF-Amazon",
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-amz-access-token",
+                                "value": "{{x-amz-access-token}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-amzn-shipping-business-id",
+                                "value": "BUSINESSIDHERE",
+                                "type": "text",
+                                "description": "Please Refer https://developer-docs.amazon.com/amazon-shipping/docs/shipping-api-v2-reference#x-amzn-shipping-business-id"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"shipTo\": {\n    \"name\": \"A3\",\n    \"addressLine1\": \"SWA Test Account\",\n    \"addressLine2\": \"SWA Test Account\",\n    \"addressLine3\": \"SWA Test Account\",\n    \"stateOrRegion\": \"\",\n    \"postalCode\": \"DN1 1QZ\",\n    \"city\": \"Doncaster\",\n    \"countryCode\": \"GB\",\n    \"email\": \"test+test@amazon.com\",\n    \"phoneNumber\": \"444-444-4444\"\n  },\n  \"shipFrom\": {\n    \"name\": \"A1\",\n    \"addressLine1\": \"4 Neal Street\",\n    \"stateOrRegion\": \"\",\n    \"postalCode\": \"WC2H 9QL\",\n    \"city\": \"London\",\n    \"countryCode\": \"GB\",\n    \"email\": \"test+test@amazon.com\",\n    \"phoneNumber\": \"444-444-4444\"\n  },\n  \"packages\": [\n    {\n      \"dimensions\": {\n        \"length\": 3.14,\n        \"width\": 3.14,\n        \"height\": 3.14,\n        \"unit\": \"INCH\"\n      },\n      \"weight\": {\n        \"unit\": \"KILOGRAM\",\n        \"value\": 3.14159\n      },\n      \"items\": [\n        {\n          \"quantity\": 1,\n          \"itemIdentifier\": \"V-02\",\n          \"description\": \"Sundries\",\n          \"isHazmat\": false,\n          \"weight\": {\n            \"unit\": \"KILOGRAM\",\n            \"value\": 1.14159\n          }\n        },\n        {\n          \"quantity\": 1,\n          \"itemIdentifier\": \"V-01\",\n          \"description\": \"Sundries\",\n          \"isHazmat\": false,\n          \"weight\": {\n            \"unit\": \"KILOGRAM\",\n            \"value\": 1.14159\n          }\n        }\n      ],\n      \"insuredValue\": {\n        \"unit\": \"GBP\",\n        \"value\": 29.98\n      },\n      \"packageClientReferenceId\": \"abcd\",\n      \"sellerDisplayName\": \"A TEST Seller\"\n    }\n  ],\n \"channelDetails\": {\n    \"channelType\": \"EXTERNAL\"\n  }\n}\n"
+                        },
+                        "url": {
+                            "raw": "{{api-host}}/shipping/v2/shipments/rates",
+                            "host": [
+                                "{{api-host}}"
+                            ],
+                            "path": [
+                                "shipping",
+                                "v2",
+                                "shipments",
+                                "rates"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "2. Get Shipping Rates - ON-Amazon",
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-amz-access-token",
+                                "value": "{{x-amz-access-token}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-amzn-shipping-business-id",
+                                "value": "BUSINESSIDHERE",
+                                "type": "text",
+                                "description": "Please Refer https://developer-docs.amazon.com/amazon-shipping/docs/shipping-api-v2-reference#x-amzn-shipping-business-id"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"shipTo\": {\n    \"name\": \"A3\",\n    \"addressLine1\": \"SWA Test Account\",\n    \"addressLine2\": \"SWA Test Account\",\n    \"addressLine3\": \"SWA Test Account\",\n    \"stateOrRegion\": \"\",\n    \"postalCode\": \"DN1 1QZ\",\n    \"city\": \"Doncaster\",\n    \"countryCode\": \"GB\",\n    \"email\": \"test+test@amazon.com\",\n    \"phoneNumber\": \"444-444-4444\"\n  },\n  \"shipFrom\": {\n    \"name\": \"A1\",\n    \"addressLine1\": \"4 Neal Street\",\n    \"stateOrRegion\": \"\",\n    \"postalCode\": \"WC2H 9QL\",\n    \"city\": \"London\",\n    \"countryCode\": \"GB\",\n    \"email\": \"test+test@amazon.com\",\n    \"phoneNumber\": \"444-444-4444\"\n  },\n  \"packages\": [\n    {\n      \"dimensions\": {\n        \"length\": 3.14,\n        \"width\": 3.14,\n        \"height\": 3.14,\n        \"unit\": \"INCH\"\n      },\n      \"weight\": {\n        \"unit\": \"KILOGRAM\",\n        \"value\": 3.14159\n      },\n      \"items\": [\n        {\n          \"quantity\": 1,\n          \"itemIdentifier\": \"V-02\",\n          \"description\": \"Sundries\",\n          \"isHazmat\": false,\n          \"weight\": {\n            \"unit\": \"KILOGRAM\",\n            \"value\": 1.14159\n          }\n        },\n        {\n          \"quantity\": 1,\n          \"itemIdentifier\": \"V-01\",\n          \"description\": \"Sundries\",\n          \"isHazmat\": false,\n          \"weight\": {\n            \"unit\": \"KILOGRAM\",\n            \"value\": 1.14159\n          }\n        }\n      ],\n      \"insuredValue\": {\n        \"unit\": \"GBP\",\n        \"value\": 29.98\n      },\n      \"packageClientReferenceId\": \"abcd\"\n    }\n  ],\n \"channelDetails\": {\n    \"channelType\": \"AMAZON\",\n    \"amazonOrderDetails\": {\n      \"orderId\": \"113-3080243-4028244\"\n    }\n  }\n}\n"
+                        },
+                        "url": {
+                            "raw": "{{api-host}}/shipping/v2/shipments/rates",
+                            "host": [
+                                "{{api-host}}"
+                            ],
+                            "path": [
+                                "shipping",
+                                "v2",
+                                "shipments",
+                                "rates"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "3. Purchase Shipment",
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "name": "Content-Type",
+                                "type": "text",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "x-amz-access-token",
+                                "type": "text",
+                                "value": "{{x-amz-access-token}}"
+                            },
+                            {
+                                "key": "x-amzn-shipping-business-id",
+                                "type": "text",
+                                "value": "BUSINESSIDHERE",
+                                "description": "Please Refer https://developer-docs.amazon.com/amazon-shipping/docs/shipping-api-v2-reference#x-amzn-shipping-business-id"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n\t\"requestToken\": \"REQUEST TOKEN VALUE FROM GETRATES\",\n\t\"rateId\": \"RATEID VALUE FROM GETRATES\",\n\t\"requestedDocumentSpecification\": {\n\t\t\"format\": \"PNG\",\n\t\t\"size\": {\n\t\t\t\"width\": 4,\n\t\t\t\"length\": 6,\n\t\t\t\"unit\": \"INCH\"\n\t\t},\n\t\t\"dpi\": 300,\n\t\t\"pageLayout\": \"DEFAULT\",\n\t\t\"needFileJoining\": false,\n\t\t\"requestedDocumentTypes\": [\n\t\t\t\"LABEL\"\n\t\t]\n\t}\n}"
+                        },
+                        "url": {
+                            "raw": "{{api-host}}/shipping/v2/shipments",
+                            "host": [
+                                "{{api-host}}"
+                            ],
+                            "path": [
+                                "shipping",
+                                "v2",
+                                "shipments"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Label Purchase With Deliver To Counter Via Get Rates and Purchase Shipment APIs",
+            "item": [
+                {
+                    "name": "1. Get Access Token",
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "name": "Content-Type",
+                                "value": "application/x-www-form-urlencoded",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "urlencoded",
+                            "urlencoded": [
+                                {
+                                    "key": "grant_type",
+                                    "value": "refresh_token",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "refresh_token",
+                                    "value": "YOURREFRESHTOKENHERE",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "client_id",
+                                    "value": "YOURCLIENTIDHERE",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "client_secret",
+                                    "value": "YOURCLIENTSECRETHERE",
+                                    "type": "text"
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{token-host}}/auth/o2/token",
+                            "host": [
+                                "{{token-host}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "o2",
+                                "token"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "2. Access Points API",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    },
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "x-amz-access-token",
+                                "value": "{{x-amz-access-token}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-amzn-shipping-business-id",
+                                "value": "AmazonShipping_UK",
+                                "type": "text",
+                                "description": "Works only with UK Market for now"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": ""
+                        },
+                        "url": {
+                            "raw": "{{api-host}}/shipping/v2/accessPoints?accessPointTypes=HELIX&countryCode=GB&postalCode=DESTINATIONPOSTCODEHERE",
+                            "host": [
+                                "{{api-host}}"
+                            ],
+                            "path": [
+                                "shipping",
+                                "v2",
+                                "accessPoints"
+                            ],
+                            "query": [
+                                {
+                                    "key": "accessPointTypes",
+                                    "value": "HELIX"
+                                },
+                                {
+                                    "key": "countryCode",
+                                    "value": "GB",
+                                    "description": "Works only with GB Market for now"
+                                },
+                                {
+                                    "key": "postalCode",
+                                    "value": "DESTINATIONPOSTCODEHERE"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "3. Get Shipping Rates - OFF-Amazon With AccessPointId",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "name": "Content-Type",
+                                "type": "text",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "x-amz-access-token",
+                                "type": "text",
+                                "value": "{{x-amz-access-token}}"
+                            },
+                            {
+                                "key": "x-amzn-shipping-business-id",
+                                "type": "text",
+                                "value": "BUSINESSIDHERE",
+                                "description": "Please Refer https://developer-docs.amazon.com/amazon-shipping/docs/shipping-api-v2-reference#x-amzn-shipping-business-id"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"shipTo\": {\n        \"name\": \"A3\",\n        \"addressLine1\": \"SWA Test Account\",\n        \"addressLine2\": \"SWA Test Account\",\n        \"addressLine3\": \"SWA Test Account\",\n        \"stateOrRegion\": \"\",\n        \"postalCode\": \"DN1 1QZ\",\n        \"city\": \"Doncaster\",\n        \"countryCode\": \"GB\",\n        \"email\": \"test+test@amazon.com\",\n        \"phoneNumber\": \"444-444-4444\"\n    },\n    \"shipFrom\": {\n        \"name\": \"A1\",\n        \"addressLine1\": \"4 Neal Street\",\n        \"stateOrRegion\": \"\",\n        \"postalCode\": \"WC2H 9QL\",\n        \"city\": \"London\",\n        \"countryCode\": \"GB\",\n        \"email\": \"test+test@amazon.com\",\n        \"phoneNumber\": \"444-444-4444\"\n    },\n    \"packages\": [\n        {\n            \"dimensions\": {\n                \"length\": 3.14,\n                \"width\": 3.14,\n                \"height\": 3.14,\n                \"unit\": \"INCH\"\n            },\n            \"weight\": {\n                \"unit\": \"KILOGRAM\",\n                \"value\": 3.14159\n            },\n            \"items\": [\n                {\n                    \"quantity\": 1,\n                    \"itemIdentifier\": \"V-02\",\n                    \"description\": \"Sundries\",\n                    \"isHazmat\": false,\n                    \"weight\": {\n                        \"unit\": \"KILOGRAM\",\n                        \"value\": 1.14159\n                    }\n                },\n                {\n                    \"quantity\": 1,\n                    \"itemIdentifier\": \"V-01\",\n                    \"description\": \"Sundries\",\n                    \"isHazmat\": false,\n                    \"weight\": {\n                        \"unit\": \"KILOGRAM\",\n                        \"value\": 1.14159\n                    }\n                }\n            ],\n            \"insuredValue\": {\n                \"unit\": \"GBP\",\n                \"value\": 29.98\n            },\n            \"packageClientReferenceId\": \"abcd\",\n            \"sellerDisplayName\": \"A TEST Seller\"\n        }\n    ],\n    \"channelDetails\": {\n        \"channelType\": \"EXTERNAL\"\n    },\n    \"destinationAccessPointDetails\": {\n        \"accessPointId\": \"30df9f2a-5da6-4719-9393-491db2082f77\"\n    }\n}"
+                        },
+                        "url": {
+                            "raw": "{{api-host}}/shipping/v2/shipments/rates",
+                            "host": [
+                                "{{api-host}}"
+                            ],
+                            "path": [
+                                "shipping",
+                                "v2",
+                                "shipments",
+                                "rates"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "4. Purchase Shipment",
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "name": "Content-Type",
+                                "type": "text",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "x-amz-access-token",
+                                "type": "text",
+                                "value": "{{x-amz-access-token}}"
+                            },
+                            {
+                                "key": "x-amzn-shipping-business-id",
+                                "type": "text",
+                                "value": "BUSINESSIDHERE",
+                                "description": "Please Refer https://developer-docs.amazon.com/amazon-shipping/docs/shipping-api-v2-reference#x-amzn-shipping-business-id"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n\t\"requestToken\": \"REQUEST TOKEN VALUE FROM GETRATES\",\n\t\"rateId\": \"RATEID VALUE FROM GETRATES\",\n\t\"requestedDocumentSpecification\": {\n\t\t\"format\": \"PNG\",\n\t\t\"size\": {\n\t\t\t\"width\": 4,\n\t\t\t\"length\": 6,\n\t\t\t\"unit\": \"INCH\"\n\t\t},\n\t\t\"dpi\": 300,\n\t\t\"pageLayout\": \"DEFAULT\",\n\t\t\"needFileJoining\": false,\n\t\t\"requestedDocumentTypes\": [\n\t\t\t\"LABEL\"\n\t\t]\n\t}\n}"
+                        },
+                        "url": {
+                            "raw": "{{api-host}}/shipping/v2/shipments",
+                            "host": [
+                                "{{api-host}}"
+                            ],
+                            "path": [
+                                "shipping",
+                                "v2",
+                                "shipments"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Label Purchase Via Smart Purchase API",
+            "item": [
+                {
+                    "name": "1. Get Access Token",
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "name": "Content-Type",
+                                "value": "application/x-www-form-urlencoded",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "urlencoded",
+                            "urlencoded": [
+                                {
+                                    "key": "grant_type",
+                                    "value": "refresh_token",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "refresh_token",
+                                    "value": "YOURREFRESHTOKENHERE",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "client_id",
+                                    "value": "YOURCLIENTIDHERE",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "client_secret",
+                                    "value": "YOURCLIENTSECRETHERE",
+                                    "type": "text"
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{token-host}}/auth/o2/token",
+                            "host": [
+                                "{{token-host}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "o2",
+                                "token"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "2. Smart Purchase Shipment - OFF-Amazon",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-amz-access-token",
+                                "value": "{{x-amz-access-token}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-amzn-shipping-business-id",
+                                "value": "BUSINESSIDHERE",
+                                "type": "text",
+                                "description": "Please Refer https://developer-docs.amazon.com/amazon-shipping/docs/shipping-api-v2-reference#x-amzn-shipping-business-id"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"channelDetails\": {\r\n        \"channelType\": \"EXTERNAL\"\r\n    },\r\n    \"labelSpecifications\": {\r\n        \"dpi\": 300,\r\n        \"format\": \"PNG\",\r\n        \"needFileJoining\": false,\r\n        \"pageLayout\": \"DEFAULT\",\r\n        \"requestedDocumentTypes\": [\r\n            \"LABEL\"\r\n        ],\r\n        \"size\": {\r\n            \"length\": 6.0,\r\n            \"unit\": \"INCH\",\r\n            \"width\": 4.0\r\n        }\r\n    },\r\n    \"packages\": [\r\n        {\r\n            \"dimensions\": {\r\n                \"length\": 15,\r\n                \"width\": 10,\r\n                \"height\": 10,\r\n                \"unit\": \"CENTIMETER\"\r\n            },\r\n            \"insuredValue\": {\r\n                \"value\": 0.01,\r\n                \"unit\": \"GBP\"\r\n            },\r\n            \"isHazmat\": false,\r\n            \"items\": [\r\n                {\r\n                    \"itemValue\": {\r\n                        \"value\": 0.01,\r\n                        \"unit\": \"GBP\"\r\n                    },\r\n                    \"description\": \"Item\",\r\n                    \"itemIdentifier\": \"20231003140431o0tyegwsn3o\",\r\n                    \"quantity\": 1,\r\n                    \"weight\": {\r\n                        \"unit\": \"GRAM\",\r\n                        \"value\": 1900\r\n                    },\r\n                    \"isHazmat\": false\r\n                }\r\n            ],\r\n            \"packageClientReferenceId\": \"20231003140431gkuelozg2ys\",\r\n            \"weight\": {\r\n                \"unit\": \"GRAM\",\r\n                \"value\": 1900\r\n            }\r\n        }\r\n    ],\r\n    \"serviceSelection\": {\r\n        \"serviceId\": [\r\n            \"SWA-UK-2D\"\r\n        ]\r\n    },\r\n    \"shipTo\": {\r\n        \"name\": \"A3\",\r\n        \"addressLine1\": \"SWA Test Account\",\r\n        \"addressLine2\": \"SWA Test Account\",\r\n        \"addressLine3\": \"SWA Test Account\",\r\n        \"stateOrRegion\": \"\",\r\n        \"postalCode\": \"DN1 1QZ\",\r\n        \"city\": \"Doncaster\",\r\n        \"countryCode\": \"GB\",\r\n        \"email\": \"test+test@amazon.com\",\r\n        \"phoneNumber\": \"444-444-4444\"\r\n    },\r\n    \"shipFrom\": {\r\n        \"name\": \"A1\",\r\n        \"addressLine1\": \"4 Neal Street\",\r\n        \"stateOrRegion\": \"\",\r\n        \"postalCode\": \"WC2H 9QL\",\r\n        \"city\": \"London\",\r\n        \"countryCode\": \"GB\",\r\n        \"email\": \"test+test@amazon.com\",\r\n        \"phoneNumber\": \"444-444-4444\"\r\n    }\r\n}"
+                        },
+                        "url": {
+                            "raw": "{{api-host}}/shipping/v2/oneClickShipment",
+                            "host": [
+                                "{{api-host}}"
+                            ],
+                            "path": [
+                                "shipping",
+                                "v2",
+                                "oneClickShipment"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "2. Smart Purchase Shipment - ON-Amazon",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-amz-access-token",
+                                "value": "{{x-amz-access-token}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-amzn-shipping-business-id",
+                                "value": "BUSINESSIDHERE",
+                                "type": "text",
+                                "description": "Please Refer https://developer-docs.amazon.com/amazon-shipping/docs/shipping-api-v2-reference#x-amzn-shipping-business-id"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"channelDetails\": {\r\n        \"channelType\": \"AMAZON\",\r\n        \"amazonOrderDetails\": {\r\n            \"orderId\": \"113-3080243-4028244\"\r\n        }\r\n    },\r\n    \"labelSpecifications\": {\r\n        \"dpi\": 300,\r\n        \"format\": \"PNG\",\r\n        \"needFileJoining\": false,\r\n        \"pageLayout\": \"DEFAULT\",\r\n        \"requestedDocumentTypes\": [\r\n            \"LABEL\"\r\n        ],\r\n        \"size\": {\r\n            \"length\": 6.0,\r\n            \"unit\": \"INCH\",\r\n            \"width\": 4.0\r\n        }\r\n    },\r\n    \"packages\": [\r\n        {\r\n            \"dimensions\": {\r\n                \"length\": 15,\r\n                \"width\": 10,\r\n                \"height\": 10,\r\n                \"unit\": \"CENTIMETER\"\r\n            },\r\n            \"insuredValue\": {\r\n                \"value\": 0.01,\r\n                \"unit\": \"GBP\"\r\n            },\r\n            \"isHazmat\": false,\r\n            \"items\": [\r\n                {\r\n                    \"itemValue\": {\r\n                        \"value\": 0.01,\r\n                        \"unit\": \"GBP\"\r\n                    },\r\n                    \"description\": \"Item\",\r\n                    \"itemIdentifier\": \"20231003140431o0tyegwsn3o\",\r\n                    \"quantity\": 1,\r\n                    \"weight\": {\r\n                        \"unit\": \"GRAM\",\r\n                        \"value\": 1900\r\n                    },\r\n                    \"isHazmat\": false\r\n                }\r\n            ],\r\n            \"packageClientReferenceId\": \"20231003140431gkuelozg2ys\",\r\n            \"weight\": {\r\n                \"unit\": \"GRAM\",\r\n                \"value\": 1900\r\n            }\r\n        }\r\n    ],\r\n    \"serviceSelection\": {\r\n        \"serviceId\": [\r\n            \"SWA-UK-2D\"\r\n        ]\r\n    },\r\n    \"shipTo\": {\r\n        \"name\": \"A3\",\r\n        \"addressLine1\": \"SWA Test Account\",\r\n        \"addressLine2\": \"SWA Test Account\",\r\n        \"addressLine3\": \"SWA Test Account\",\r\n        \"stateOrRegion\": \"\",\r\n        \"postalCode\": \"DN1 1QZ\",\r\n        \"city\": \"Doncaster\",\r\n        \"countryCode\": \"GB\",\r\n        \"email\": \"test+test@amazon.com\",\r\n        \"phoneNumber\": \"444-444-4444\"\r\n    },\r\n    \"shipFrom\": {\r\n        \"name\": \"A1\",\r\n        \"addressLine1\": \"4 Neal Street\",\r\n        \"stateOrRegion\": \"\",\r\n        \"postalCode\": \"WC2H 9QL\",\r\n        \"city\": \"London\",\r\n        \"countryCode\": \"GB\",\r\n        \"email\": \"test+test@amazon.com\",\r\n        \"phoneNumber\": \"444-444-4444\"\r\n    }\r\n}"
+                        },
+                        "url": {
+                            "raw": "{{api-host}}/shipping/v2/oneClickShipment",
+                            "host": [
+                                "{{api-host}}"
+                            ],
+                            "path": [
+                                "shipping",
+                                "v2",
+                                "oneClickShipment"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Label Purchase With Deliver To Counter Via Smart Purchase API",
+            "item": [
+                {
+                    "name": "1. Get Access Token",
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "name": "Content-Type",
+                                "value": "application/x-www-form-urlencoded",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "urlencoded",
+                            "urlencoded": [
+                                {
+                                    "key": "grant_type",
+                                    "value": "refresh_token",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "refresh_token",
+                                    "value": "YOURREFRESHTOKENHERE",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "client_id",
+                                    "value": "YOURCLIENTIDHERE",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "client_secret",
+                                    "value": "YOURCLIENTSECRETHERE",
+                                    "type": "text"
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{token-host}}/auth/o2/token",
+                            "host": [
+                                "{{token-host}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "o2",
+                                "token"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "2. Access Points API",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    },
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "x-amz-access-token",
+                                "value": "{{x-amz-access-token}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-amzn-shipping-business-id",
+                                "value": "AmazonShipping_UK",
+                                "type": "text",
+                                "description": "Works only with UK Market for now"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": ""
+                        },
+                        "url": {
+                            "raw": "{{api-host}}/shipping/v2/accessPoints?accessPointTypes=HELIX&countryCode=GB&postalCode=DESTINATIONPOSTCODEHERE",
+                            "host": [
+                                "{{api-host}}"
+                            ],
+                            "path": [
+                                "shipping",
+                                "v2",
+                                "accessPoints"
+                            ],
+                            "query": [
+                                {
+                                    "key": "accessPointTypes",
+                                    "value": "HELIX"
+                                },
+                                {
+                                    "key": "countryCode",
+                                    "value": "GB",
+                                    "description": "Works only with GB Market for now"
+                                },
+                                {
+                                    "key": "postalCode",
+                                    "value": "DESTINATIONPOSTCODEHERE"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "2. Smart Purchase Shipment - OFF-Amazon",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-amz-access-token",
+                                "value": "{{x-amz-access-token}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-amzn-shipping-business-id",
+                                "value": "AmazonShipping_UK",
+                                "type": "text",
+                                "description": "Please Refer https://developer-docs.amazon.com/amazon-shipping/docs/shipping-api-v2-reference#x-amzn-shipping-business-id"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"channelDetails\": {\r\n        \"channelType\": \"EXTERNAL\"\r\n    },\r\n    \"labelSpecifications\": {\r\n        \"dpi\": 300,\r\n        \"format\": \"PNG\",\r\n        \"needFileJoining\": false,\r\n        \"pageLayout\": \"DEFAULT\",\r\n        \"requestedDocumentTypes\": [\r\n            \"LABEL\"\r\n        ],\r\n        \"size\": {\r\n            \"length\": 6.0,\r\n            \"unit\": \"INCH\",\r\n            \"width\": 4.0\r\n        }\r\n    },\r\n    \"packages\": [\r\n        {\r\n            \"dimensions\": {\r\n                \"length\": 15,\r\n                \"width\": 10,\r\n                \"height\": 10,\r\n                \"unit\": \"CENTIMETER\"\r\n            },\r\n            \"insuredValue\": {\r\n                \"value\": 0.01,\r\n                \"unit\": \"GBP\"\r\n            },\r\n            \"isHazmat\": false,\r\n            \"items\": [\r\n                {\r\n                    \"itemValue\": {\r\n                        \"value\": 0.01,\r\n                        \"unit\": \"GBP\"\r\n                    },\r\n                    \"description\": \"Item\",\r\n                    \"itemIdentifier\": \"20231003140431o0tyegwsn3o\",\r\n                    \"quantity\": 1,\r\n                    \"weight\": {\r\n                        \"unit\": \"GRAM\",\r\n                        \"value\": 1900\r\n                    },\r\n                    \"isHazmat\": false\r\n                }\r\n            ],\r\n            \"packageClientReferenceId\": \"20231003140431gkuelozg2ys\",\r\n            \"weight\": {\r\n                \"unit\": \"GRAM\",\r\n                \"value\": 1900\r\n            }\r\n        }\r\n    ],\r\n    \"serviceSelection\": {\r\n        \"serviceId\": [\r\n            \"SWA-UK-2D\"\r\n        ]\r\n    },\r\n    \"shipTo\": {\r\n        \"name\": \"A3\",\r\n        \"addressLine1\": \"SWA Test Account\",\r\n        \"addressLine2\": \"SWA Test Account\",\r\n        \"addressLine3\": \"SWA Test Account\",\r\n        \"stateOrRegion\": \"\",\r\n        \"postalCode\": \"DN1 1QZ\",\r\n        \"city\": \"Doncaster\",\r\n        \"countryCode\": \"GB\",\r\n        \"email\": \"test+test@amazon.com\",\r\n        \"phoneNumber\": \"444-444-4444\"\r\n    },\r\n    \"shipFrom\": {\r\n        \"name\": \"A1\",\r\n        \"addressLine1\": \"4 Neal Street\",\r\n        \"stateOrRegion\": \"\",\r\n        \"postalCode\": \"WC2H 9QL\",\r\n        \"city\": \"London\",\r\n        \"countryCode\": \"GB\",\r\n        \"email\": \"test+test@amazon.com\",\r\n        \"phoneNumber\": \"444-444-4444\"\r\n    },\r\n    \"destinationAccessPointDetails\": {\r\n        \"accessPointId\": \"30df9f2a-5da6-4719-9393-491db2082f77\"\r\n    }\r\n}"
+                        },
+                        "url": {
+                            "raw": "{{api-host}}/shipping/v2/oneClickShipment",
+                            "host": [
+                                "{{api-host}}"
+                            ],
+                            "path": [
+                                "shipping",
+                                "v2",
+                                "oneClickShipment"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Other Important APIs",
+            "item": [
+                {
+                    "name": "Get Shipment Tracking",
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    },
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "x-amz-access-token",
+                                "type": "text",
+                                "value": "{{x-amz-access-token}}"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": ""
+                        },
+                        "url": {
+                            "raw": "{{api-host}}/shipping/v2/tracking?carrierId=CARRIERIDHERE&trackingId=TRACKINGIDHERE",
+                            "host": [
+                                "{{api-host}}"
+                            ],
+                            "path": [
+                                "shipping",
+                                "v2",
+                                "tracking"
+                            ],
+                            "query": [
+                                {
+                                    "key": "carrierId",
+                                    "value": "CARRIERIDHERE"
+                                },
+                                {
+                                    "key": "trackingId",
+                                    "value": "TRACKINGIDHERE"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Shipment Documents",
+                    "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                    },
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "x-amz-access-token",
+                                "value": "{{x-amz-access-token}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-amzn-shipping-business-id",
+                                "value": "BUSINESSIDHERE",
+                                "type": "text",
+                                "description": "Please Refer https://developer-docs.amazon.com/amazon-shipping/docs/shipping-api-v2-reference#x-amzn-shipping-business-id"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": ""
+                        },
+                        "url": {
+                            "raw": "{{api-host}}/shipping/v2/shipments/SHIPMENTID/documents?packageClientReferenceId=CLIENTREFID&format=DOCFORMAT",
+                            "host": [
+                                "{{api-host}}"
+                            ],
+                            "path": [
+                                "shipping",
+                                "v2",
+                                "shipments",
+                                "SHIPMENTID",
+                                "documents"
+                            ],
+                            "query": [
+                                {
+                                    "key": "packageClientReferenceId",
+                                    "value": "CLIENTREFID"
+                                },
+                                {
+                                    "key": "format",
+                                    "value": "DOCFORMAT"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Cancel Shipment",
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-amz-access-token",
+                                "value": "{{x-amz-access-token}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-amzn-shipping-business-id",
+                                "value": "BUSINESSIDHERE",
+                                "type": "text",
+                                "description": "Please Refer https://developer-docs.amazon.com/amazon-shipping/docs/shipping-api-v2-reference#x-amzn-shipping-business-id"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": ""
+                        },
+                        "url": {
+                            "raw": "{{api-host}}/shipping/v2/shipments/SHIPMENTIDHERE/cancel",
+                            "host": [
+                                "{{api-host}}"
+                            ],
+                            "path": [
+                                "shipping",
+                                "v2",
+                                "shipments",
+                                "SHIPMENTIDHERE",
+                                "cancel"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        }
+    ]
+}

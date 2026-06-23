@@ -1,0 +1,31 @@
+service_code,service_name,zone_label,country_codes,min_weight,max_weight,max_length,max_width,max_height,rate,currency,transit_days,domicile,international
+dpd_france_classic,DPD Classic,France,FR,0.01,5.0,,,,0.0,EUR,1,true,true
+dpd_france_classic,DPD Classic,France,FR,5.0,10.0,,,,0.0,EUR,1,true,true
+dpd_france_classic,DPD Classic,France,FR,10.0,20.0,,,,0.0,EUR,1,true,true
+dpd_france_classic,DPD Classic,France,FR,20.0,30.0,,,,0.0,EUR,1,true,true
+dpd_france_classic,DPD Classic,EU,"BE,DE,ES,IT,LU,NL,PT,AT,IE",0.01,5.0,,,,0.0,EUR,2,false,true
+dpd_france_classic,DPD Classic,EU,"BE,DE,ES,IT,LU,NL,PT,AT,IE",5.0,10.0,,,,0.0,EUR,2,false,true
+dpd_france_classic,DPD Classic,EU,"BE,DE,ES,IT,LU,NL,PT,AT,IE",10.0,20.0,,,,0.0,EUR,3,false,true
+dpd_france_classic,DPD Classic,EU,"BE,DE,ES,IT,LU,NL,PT,AT,IE",20.0,30.0,,,,0.0,EUR,4,false,true
+dpd_france_predict,DPD Predict,France,FR,0.01,5.0,,,,0.0,EUR,1,true,true
+dpd_france_predict,DPD Predict,France,FR,5.0,10.0,,,,0.0,EUR,1,true,true
+dpd_france_predict,DPD Predict,France,FR,10.0,20.0,,,,0.0,EUR,1,true,true
+dpd_france_predict,DPD Predict,France,FR,20.0,30.0,,,,0.0,EUR,1,true,true
+dpd_france_predict,DPD Predict,EU,"BE,DE,ES,IT,LU,NL,PT,AT,IE",0.01,5.0,,,,0.0,EUR,2,false,true
+dpd_france_predict,DPD Predict,EU,"BE,DE,ES,IT,LU,NL,PT,AT,IE",5.0,10.0,,,,0.0,EUR,2,false,true
+dpd_france_predict,DPD Predict,EU,"BE,DE,ES,IT,LU,NL,PT,AT,IE",10.0,20.0,,,,0.0,EUR,3,false,true
+dpd_france_predict,DPD Predict,EU,"BE,DE,ES,IT,LU,NL,PT,AT,IE",20.0,30.0,,,,0.0,EUR,4,false,true
+dpd_france_medical,DPD Medical,France,FR,0.01,5.0,,,,0.0,EUR,1,true,false
+dpd_france_medical,DPD Medical,France,FR,5.0,10.0,,,,0.0,EUR,1,true,false
+dpd_france_medical,DPD Medical,France,FR,10.0,20.0,,,,0.0,EUR,1,true,false
+dpd_france_medical,DPD Medical,France,FR,20.0,30.0,,,,0.0,EUR,1,true,false
+dpd_france_relais_pickup_consigne,DPD Relais Pickup & Consigne,France,FR,0.01,5.0,,,,0.0,EUR,2,true,false
+dpd_france_relais_pickup_consigne,DPD Relais Pickup & Consigne,France,FR,5.0,10.0,,,,0.0,EUR,2,true,false
+dpd_france_relais_pickup_consigne,DPD Relais Pickup & Consigne,France,FR,10.0,20.0,,,,0.0,EUR,2,true,false
+dpd_france_reverse_pickup,DPD Reverse at Pickup shop,France,FR,0.01,5.0,,,,0.0,EUR,2,true,false
+dpd_france_reverse_pickup,DPD Reverse at Pickup shop,France,FR,5.0,10.0,,,,0.0,EUR,2,true,false
+dpd_france_reverse_pickup,DPD Reverse at Pickup shop,France,FR,10.0,20.0,,,,0.0,EUR,2,true,false
+dpd_france_secure,DPD Secure,France,FR,0.01,5.0,,,,0.0,EUR,1,true,false
+dpd_france_secure,DPD Secure,France,FR,5.0,10.0,,,,0.0,EUR,1,true,false
+dpd_france_secure,DPD Secure,France,FR,10.0,20.0,,,,0.0,EUR,1,true,false
+dpd_france_secure,DPD Secure,France,FR,20.0,30.0,,,,0.0,EUR,1,true,false

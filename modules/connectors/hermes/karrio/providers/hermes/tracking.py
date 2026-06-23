@@ -1,15 +1,13 @@
 """Karrio Hermes tracking API implementation."""
 
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
-import karrio.providers.hermes.error as error
-import karrio.providers.hermes.utils as provider_utils
+import karrio.lib as lib
 import karrio.providers.hermes.units as provider_units
+import karrio.providers.hermes.utils as provider_utils
 import karrio.schemas.hermes.tracking_response as hermes_res
 
 
-def _match_status(code: str) -> typing.Optional[str]:
+def _match_status(code: str) -> str | None:
     """Match Hermes event code against TrackingStatus enum values."""
     if not code:
         return None
@@ -19,47 +17,35 @@ def _match_status(code: str) -> typing.Optional[str]:
     return None
 
 
-def _match_reason(code: str) -> typing.Optional[str]:
-    """Match Hermes event code against incident reasons.
-
-    Hermes uses numeric codes that map to statuses, not specific incident reasons.
-    Returns None as Hermes does not provide granular incident reason codes.
-    """
+def _match_reason(code: str) -> str | None:
+    """Hermes has no granular incident-reason codes. See SPECS.md (Tracking)."""
     return None
 
 
 def parse_tracking_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+) -> tuple[list[models.TrackingDetails], list[models.Message]]:
     """Parse tracking response from Hermes Shipment Info API."""
     response = _response.deserialize()
-
-    # Parse the response using generated schema
     tracking_response = lib.to_object(hermes_res.TrackingResponseType, response)
 
-    # Collect error messages
-    messages: typing.List[models.Message] = []
-
-    # Extract tracking details for each shipment
-    tracking_details: typing.List[models.TrackingDetails] = []
+    messages: list[models.Message] = []
+    tracking_details: list[models.TrackingDetails] = []
 
     for shipment_info in tracking_response.shipmentinfo or []:
-        # Check for errors in individual shipment result
-        if shipment_info.result and shipment_info.result.code:
-            if shipment_info.result.code.startswith("e"):
-                messages.append(
-                    models.Message(
-                        carrier_id=settings.carrier_id,
-                        carrier_name=settings.carrier_name,
-                        code=shipment_info.result.code,
-                        message=shipment_info.result.message or "",
-                        details=dict(shipment_id=shipment_info.shipmentID),
-                    )
+        if shipment_info.result and shipment_info.result.code and shipment_info.result.code.startswith("e"):
+            messages.append(
+                models.Message(
+                    carrier_id=settings.carrier_id,
+                    carrier_name=settings.carrier_name,
+                    code=shipment_info.result.code,
+                    message=shipment_info.result.message or "",
+                    details=dict(shipment_id=shipment_info.shipmentID),
                 )
-                continue
+            )
+            continue
 
-        # Extract tracking details
         details = _extract_details(shipment_info, settings)
         if details:
             tracking_details.append(details)
@@ -70,20 +56,16 @@ def parse_tracking_response(
 def _extract_details(
     shipment_info: hermes_res.ShipmentinfoType,
     settings: provider_utils.Settings,
-) -> typing.Optional[models.TrackingDetails]:
+) -> models.TrackingDetails | None:
     """Extract tracking details from Hermes shipment info."""
     if not shipment_info.shipmentID:
         return None
 
-    # Get status events (already in chronological order, most recent last in API)
-    # Reverse to have most recent first for Karrio convention
     status_list = list(reversed(shipment_info.status or []))
 
-    # Get latest event code for overall status
     latest_code = status_list[0].code if status_list else None
     overall_status = _match_status(latest_code) or provider_units.TrackingStatus.in_transit.name
 
-    # Build tracking events with all required fields per CARRIER_INTEGRATION_GUIDE.md
     events = [
         models.TrackingEvent(
             date=lib.fdate(event.timestamp, "%Y-%m-%dT%H:%M:%S%z"),
@@ -96,17 +78,13 @@ def _extract_details(
                 join=True,
                 separator=", ",
             ),
-            # REQUIRED: timestamp in ISO 8601 format (already provided by Hermes)
             timestamp=event.timestamp,
-            # REQUIRED: normalized status at event level
             status=_match_status(event.code),
-            # Incident reason for exception events
             reason=_match_reason(event.code),
         )
         for event in status_list
     ]
 
-    # Build delivery forecast info if available
     estimated_delivery = None
     if shipment_info.deliveryForecast and shipment_info.deliveryForecast.date:
         estimated_delivery = shipment_info.deliveryForecast.date
@@ -123,9 +101,7 @@ def _extract_details(
             carrier_tracking_link=shipment_info.trackingLink,
             customer_name=None,
             shipment_destination_country=(
-                shipment_info.receiverAddress.countryCode
-                if shipment_info.receiverAddress
-                else None
+                shipment_info.receiverAddress.countryCode if shipment_info.receiverAddress else None
             ),
             shipment_destination_postal_code=(
                 str(shipment_info.receiverAddress.zipCode)

@@ -2,7 +2,6 @@
 
 import karrio.sdk as karrio
 
-
 gateway = karrio.gateway["hermes"].create(
     dict(
         id="hermes_test",
@@ -12,5 +11,6 @@ gateway = karrio.gateway["hermes"].create(
         password="test_password",
         client_id="test_client_id",
         client_secret="test_client_secret",
+        config=dict(psf_api_key="test-psf-key"),
     )
 )

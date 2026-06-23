@@ -2,7 +2,7 @@
     "openapi": "3.0.0",
     "info": {
         "title": "Parcel.One Shipping REST API",
-        "description": "ParcelOne [https://parcel.one](https://parcel.one) provides you with a REST API for implementing an interface to ParcelOne shipping services into your own shop/warehouse or, respectively, into the shops/warehouses of your customers.\r\n ___\r\n This documentation was created adhering to the OpenAPI 3.0 standard. We use Swagger.IO tool for display. If you prefer to use another OpenAPI-Tool or want to implement this into your own environment, you may download the underlying OpenAPI-Document from here:\r\n * [JSON-Format](https://doc.parcelone.io/ParcelOneShippingRESTApiV1.json)\r\n * [YAML-Format](https://doc.parcelone.io/ParcelOneShippingRESTApiV1.yaml)\r\n ___\r\n## Basic Implementation Principles\r\n###  Sandbox and Production-Modes\r\nIn order to be able to test your implementation without interfering production environment, we provide a SandBox-Mode as well as a Production-Mode. The URLs:\r\n* Sandbox: https://sandbox.parcelone.io/shippingapi/v1\r\n* Production: https://production.parcelone.io/shippingapi/v1\r\n\r\nPlease, use the Sandbox mode to test your client application thoroughly before switching to Production mode. In Sandbox mode all data will be saved to a separate database.\r\n\r\n###  Dynamic Approach\r\nDifferenty from other carriers, Parcel.one provides a products and services structure that may vary for different customers. Therefore, we strongly recommend not to use hardcoded products and services identifiers, but to use a dynamic approach using the profile-functions to get the products and services hierarchy and show it dynamically in your client UI! Also there may be several mandators and for each mandator several consigner/sender-addresses. Every mandator can have a different portfolio of products/services. So, please, strongly consider a dynamic approach!\r\n\r\nTo get acquainted with the dynamic mandator, consigner, Carriers and Products/Services setup, please, start with the customer- and profile-path-functions.\r\n\r\n ___\r\n## Verification and Validation process\r\nAfter we took a careful look to your shipments in our sandbox environment to validate your integration, you will be provided with access to our production environment.\r\nFor the validation of your implementation, we will look for the following items, which you should consider carefully while developing your software:\r\n>    Provision of an own string in the data field 'Software' (including a version number) to make your implementation identifiable\r\n\r\n>    Creation of shipping labels\r\n> >      to various recipients\r\n> >        including a phone and/or mobile phone number of the recipient\r\n> >        including an eMail address of the recipient\r\n> >      with different recipient addresses\r\n> >      in different destination countries\r\n> >      EU and non-EU shipments\r\n> >       using various PARCEL.ONE products\r\n> >       with various combinations of optional services, that can be applied\r\n> >       with different weights for shipments\r\n> >       providing the dimensions of the shipment, even if you intend to skip providing them or to provide default values in production use\r\n> >       providing full customs information for all shipments to non EU countries, even if you currently do not intend to ship to such countries\r\n>    Cancellation of shipping labels\r\n\r\nWe are listing these points in such detail as we want to see in advance, that your implementation is capable to provide all parameters for creating shipments and that you have understood our API and the products PARCEL.ONE provides. This will save both of us a lot of trouble in the future, when production mode is going on.\r\nPlease contact us as soon as you have completed your creation of your test shipments that we may start immediately with our evaluation.\r\n___\r\n## Authentification\r\nAuthentification is provided by Basic Authentification secured over SSL.\r\nFurther authentification is done via an API-Key to authenificate the provider of the software accessing the API. If you are a platform provider for Parcel.One clients, please, keep in mind, that the ApiKey is only as an identification for you and should not be provided to or even be edited in the UI by the users of your platform.\r\n\r\nYou may also make use of a JWT Access Token to speed up authentification on subsequent requests: Just specify a Header named 'Getaccesstoken' with any value, e.g. value of 'true' along with any of your requests. This will return the JWT access token being valid for the next 12 hours. Your subsequent requests may now be authentificated with this bearer JWT token instead of using Basic Authentification and the ApiKey.\r\n\r\nPlease, contact us if you would like to receive an API-Key and Sandbox Login data for your development. For a simple test of valid Authentification data we recommend using the 'datetime' or 'customer' path functions.\r\n___\r\n ",
+        "description": "ParcelOne [https://parcel.one](https://parcel.one) provides you with a REST API for implementing an interface to ParcelOne shipping services into your own shop/warehouse or, respectively, into the shops/warehouses of your customers.\n ___\n This documentation was created adhering to the OpenAPI 3.0 standard. We use Swagger.IO tool for display. If you prefer to use another OpenAPI-Tool or want to implement this into your own environment, you may download the underlying OpenAPI-Document from here:\n * [JSON-Format](https://doc.parcelone.io/ParcelOneShippingRESTApiV1.json)\n * [YAML-Format](https://doc.parcelone.io/ParcelOneShippingRESTApiV1.yaml)\n ___\n## Basic Implementation Principles\n###  Sandbox and Production-Modes\nIn order to be able to test your implementation without interfering production environment, we provide a SandBox-Mode as well as a Production-Mode. The URLs:\n* Sandbox: https://sandbox.parcelone.io/shippingapi/v1\n* Production: https://production.parcelone.io/shippingapi/v1\n\nPlease, use the Sandbox mode to test your client application thoroughly before switching to Production mode. In Sandbox mode all data will be saved to a separate database.\n\n###  Dynamic Approach\nDifferenty from other carriers, Parcel.one provides a products and services structure that may vary for different customers. Therefore, we strongly recommend not to use hardcoded products and services identifiers, but to use a dynamic approach using the profile-functions to get the products and services hierarchy and show it dynamically in your client UI! Also there may be several mandators and for each mandator several consigner/sender-addresses. Every mandator can have a different portfolio of products/services. So, please, strongly consider a dynamic approach!\n\nTo get acquainted with the dynamic mandator, consigner, Carriers and Products/Services setup, please, start with the customer- and profile-path-functions.\n\n ___\n## Verification and Validation process\nAfter we took a careful look to your shipments in our sandbox environment to validate your integration, you will be provided with access to our production environment.\nFor the validation of your implementation, we will look for the following items, which you should consider carefully while developing your software:\n>    Provision of an own string in the data field 'Software' (including a version number) to make your implementation identifiable\n\n>    Creation of shipping labels\n> >      to various recipients\n> >        including a phone and/or mobile phone number of the recipient\n> >        including an eMail address of the recipient\n> >      with different recipient addresses\n> >      in different destination countries\n> >      EU and non-EU shipments\n> >       using various PARCEL.ONE products\n> >       with various combinations of optional services, that can be applied\n> >       with different weights for shipments\n> >       providing the dimensions of the shipment, even if you intend to skip providing them or to provide default values in production use\n> >       providing full customs information for all shipments to non EU countries, even if you currently do not intend to ship to such countries\n>    Cancellation of shipping labels\n\nWe are listing these points in such detail as we want to see in advance, that your implementation is capable to provide all parameters for creating shipments and that you have understood our API and the products PARCEL.ONE provides. This will save both of us a lot of trouble in the future, when production mode is going on.\nPlease contact us as soon as you have completed your creation of your test shipments that we may start immediately with our evaluation.\n___\n## Authentification\nAuthentification is provided by Basic Authentification secured over SSL.\nFurther authentification is done via an API-Key to authenificate the provider of the software accessing the API. If you are a platform provider for Parcel.One clients, please, keep in mind, that the ApiKey is only as an identification for you and should not be provided to or even be edited in the UI by the users of your platform.\n\nYou may also make use of a JWT Access Token to speed up authentification on subsequent requests: Just specify a Header named 'Getaccesstoken' with any value, e.g. value of 'true' along with any of your requests. This will return the JWT access token being valid for the next 12 hours. Your subsequent requests may now be authentificated with this bearer JWT token instead of using Basic Authentification and the ApiKey.\n\nPlease, contact us if you would like to receive an API-Key and Sandbox Login data for your development. For a simple test of valid Authentification data we recommend using the 'datetime' or 'customer' path functions.\n___\n ",
         "termsOfService": "https://parcel.one/en/data-security",
         "contact": {
             "name": "Contact our support",
@@ -102,6 +102,9 @@
                                 "schema": {
                                     "allOf": [
                                         {
+                                            "$ref": "#/components/schemas/ResultSuccess"
+                                        },
+                                        {
                                             "properties": {
                                                 "results": {
                                                     "type": "array",
@@ -111,9 +114,6 @@
                                                 }
                                             },
                                             "type": "object"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/ResultSuccess"
                                         }
                                     ]
                                 },
@@ -139,8 +139,7 @@
                                                     },
                                                     "Document": "U2hpc... CSV-List as Base64-document ..."
                                                 }
-                                            ],
-                                            "UniqId": "6499698a6f6e1"
+                                            ]
                                         }
                                     }
                                 }
@@ -240,6 +239,9 @@
                                 "schema": {
                                     "allOf": [
                                         {
+                                            "$ref": "#/components/schemas/ResultSuccess"
+                                        },
+                                        {
                                             "properties": {
                                                 "results": {
                                                     "type": "array",
@@ -249,9 +251,6 @@
                                                 }
                                             },
                                             "type": "object"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/ResultSuccess"
                                         }
                                     ]
                                 },
@@ -269,8 +268,7 @@
                                                 "20210217152939PA1",
                                                 "20211210112408PA1",
                                                 "20211210112408UPS"
-                                            ],
-                                            "UniqId": "6499698a6f6e1"
+                                            ]
                                         }
                                     }
                                 }
@@ -337,15 +335,15 @@
                                 "schema": {
                                     "allOf": [
                                         {
+                                            "$ref": "#/components/schemas/ResultSuccess"
+                                        },
+                                        {
                                             "properties": {
                                                 "results": {
                                                     "$ref": "#/components/schemas/Document"
                                                 }
                                             },
                                             "type": "object"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/ResultSuccess"
                                         }
                                     ]
                                 },
@@ -373,8 +371,7 @@
                                                     },
                                                     "Document": "JVBERi0xLjcKJe... - ClosedReport as Base64-PDF..."
                                                 }
-                                            },
-                                            "UniqId": "6499698a6f6e1"
+                                            }
                                         }
                                     }
                                 }
@@ -413,8 +410,7 @@
                                                     "Message": "This ClosedStamp could not be found.",
                                                     "StatusCode": "Invalid parameters have been provided."
                                                 }
-                                            ],
-                                            "UniqId": "6499698a6f6e1"
+                                            ]
                                         }
                                     }
                                 }
@@ -443,8 +439,7 @@
                                                     "Message": "Missing parameter: ClosedStamp",
                                                     "StatusCode": "Invalid parameters have been provided."
                                                 }
-                                            ],
-                                            "UniqId": "6499698a6f6e1"
+                                            ]
                                         }
                                     }
                                 }
@@ -526,6 +521,9 @@
                                 "schema": {
                                     "allOf": [
                                         {
+                                            "$ref": "#/components/schemas/ResultSuccess"
+                                        },
+                                        {
                                             "properties": {
                                                 "results": {
                                                     "type": "array",
@@ -535,9 +533,6 @@
                                                 }
                                             },
                                             "type": "object"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/ResultSuccess"
                                         }
                                     ]
                                 },
@@ -583,8 +578,7 @@
                                                         "Document": "JVBERi0xLjcKJe... - ClosedReport as Base64-PDF..."
                                                     }
                                                 }
-                                            ],
-                                            "UniqId": "6499698a6f6e1"
+                                            ]
                                         }
                                     }
                                 }
@@ -628,15 +622,15 @@
                                 "schema": {
                                     "allOf": [
                                         {
+                                            "$ref": "#/components/schemas/ResultSuccess"
+                                        },
+                                        {
                                             "properties": {
                                                 "results": {
                                                     "$ref": "#/components/schemas/Customer"
                                                 }
                                             },
                                             "type": "object"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/ResultSuccess"
                                         }
                                     ]
                                 },
@@ -670,8 +664,7 @@
                                                         }
                                                     ]
                                                 }
-                                            },
-                                            "UniqId": "6499698a6f6e1"
+                                            }
                                         }
                                     }
                                 }
@@ -738,6 +731,9 @@
                                 "schema": {
                                     "allOf": [
                                         {
+                                            "$ref": "#/components/schemas/ResultSuccess"
+                                        },
+                                        {
                                             "properties": {
                                                 "results": {
                                                     "type": "array",
@@ -747,9 +743,6 @@
                                                 }
                                             },
                                             "type": "object"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/ResultSuccess"
                                         }
                                     ]
                                 },
@@ -782,8 +775,7 @@
                                                     "PackageTrackingID": null,
                                                     "ActionResult": null
                                                 }
-                                            ],
-                                            "UniqId": "6499698a6f6e1"
+                                            ]
                                         }
                                     }
                                 }
@@ -812,8 +804,7 @@
                                                     "Message": "This Shipment could not be uniquely identified.",
                                                     "StatusCode": "Invalid parameters have been provided."
                                                 }
-                                            ],
-                                            "UniqId": "6499698a6f6e1"
+                                            ]
                                         }
                                     }
                                 }
@@ -886,6 +877,9 @@
                                 "schema": {
                                     "allOf": [
                                         {
+                                            "$ref": "#/components/schemas/ResultSuccess"
+                                        },
+                                        {
                                             "properties": {
                                                 "results": {
                                                     "type": "array",
@@ -895,9 +889,6 @@
                                                 }
                                             },
                                             "type": "object"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/ResultSuccess"
                                         }
                                     ]
                                 },
@@ -930,8 +921,7 @@
                                                     "PackageTrackingID": null,
                                                     "ActionResult": null
                                                 }
-                                            ],
-                                            "UniqId": "6499698a6f6e1"
+                                            ]
                                         }
                                     }
                                 }
@@ -960,8 +950,7 @@
                                                     "Message": "This Shipment could not be uniquely identified.",
                                                     "StatusCode": "Invalid parameters have been provided."
                                                 }
-                                            ],
-                                            "UniqId": "6499698a6f6e1"
+                                            ]
                                         }
                                     }
                                 }
@@ -1016,6 +1005,9 @@
                                 "schema": {
                                     "allOf": [
                                         {
+                                            "$ref": "#/components/schemas/ResultSuccess"
+                                        },
+                                        {
                                             "properties": {
                                                 "results": {
                                                     "type": "array",
@@ -1025,9 +1017,6 @@
                                                 }
                                             },
                                             "type": "object"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/ResultSuccess"
                                         }
                                     ]
                                 },
@@ -1060,8 +1049,7 @@
                                                     "PackageTrackingID": null,
                                                     "ActionResult": null
                                                 }
-                                            ],
-                                            "UniqId": "6499698a6f6e1"
+                                            ]
                                         }
                                     }
                                 }
@@ -1090,8 +1078,7 @@
                                                     "Message": "This Shipment could not be uniquely identified.",
                                                     "StatusCode": "Invalid parameters have been provided."
                                                 }
-                                            ],
-                                            "UniqId": "6499698a6f6e1"
+                                            ]
                                         }
                                     }
                                 }
@@ -1120,8 +1107,7 @@
                                                     "Message": "The following fields exceed the allowed maximal fieldlength or value:...",
                                                     "StatusCode": "Invalid parameters have been provided."
                                                 }
-                                            ],
-                                            "UniqId": "6499698a6f6e1"
+                                            ]
                                         }
                                     }
                                 }
@@ -1165,6 +1151,9 @@
                                 "schema": {
                                     "allOf": [
                                         {
+                                            "$ref": "#/components/schemas/ResultSuccess"
+                                        },
+                                        {
                                             "properties": {
                                                 "results": {
                                                     "type": "array",
@@ -1174,9 +1163,6 @@
                                                 }
                                             },
                                             "type": "object"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/ResultSuccess"
                                         }
                                     ]
                                 },
@@ -1192,8 +1178,7 @@
                                             "results": {
                                                 "DateTimeUTC": "2022-01-04T11:09:40+00:00",
                                                 "DateTimeCET": "2022-01-04T12:09:40+01:00"
-                                            },
-                                            "UniqId": "6499698a6f6e1"
+                                            }
                                         }
                                     }
                                 }
@@ -1237,15 +1222,15 @@
                                 "schema": {
                                     "allOf": [
                                         {
+                                            "$ref": "#/components/schemas/ResultSuccess"
+                                        },
+                                        {
                                             "properties": {
                                                 "results": {
                                                     "$ref": "#/components/schemas/Customer"
                                                 }
                                             },
                                             "type": "object"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/ResultSuccess"
                                         }
                                     ]
                                 },
@@ -1279,7 +1264,161 @@
                                                         }
                                                     ]
                                                 }
-                                            ],
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Authentification failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResultError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/mobilereturn/{SearchCriteria}/{SearchValue}": {
+            "get": {
+                "tags": [
+                    "mobilereturn"
+                ],
+                "summary": "get Mobile Return status by MobileCode, P1Trackno, ActivatedAfter DateTime period, UsedAfter DateTime period or UpdatedAfter DateTime period when activated return was used.",
+                "description": "Get Mobile Return Status and Last Mile Carrier Info<br />This path-function may help to follow up on the last-mile-carrier info for Parcel.One mobile returns. It will make most sense to invoke it once a day in the evening after daily closings by Parcel.One has taken place.",
+                "operationId": "getMobileReturnStatus",
+                "parameters": [
+                    {
+                        "name": "SearchCriteria",
+                        "in": "path",
+                        "description": "Search Criteria - available are mobilecode, p1trackno, activatedafter, usedafter and updatedafter ",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": "updatedafter",
+                            "enum": [
+                                "mobilecode",
+                                "p1trackno",
+                                "activatedafter",
+                                "usedafter",
+                                "updatedafter"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "SearchValue",
+                        "in": "path",
+                        "description": "Search Value (string) - depending on the SearchCriteria either a string denoting the mobilecode or p1trackno or a datetime string in one of the formats - yyyy-MM-ddThh:mm:ss, yyyy-MM-dd hh:mm:ss, optionally expanded by the ZT-definition like +01:00",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "SearchValue2",
+                        "in": "path",
+                        "description": "2nd Search Value (string) - only for SearchCriteria with DateTime strings, denoting the end of the time period searched for, in one of the formats - yyyy-MM-ddThh:mm:ss, yyyy-MM-dd hh:mm:ss, optionally expanded by the ZT-definition like +01:00",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "maximum of returned mobilereturns data rows (overall count is returned with every response)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 0
+                        }
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "description": "offset of returned mobilereturns data rows (overall count is returned with every response)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 0
+                        }
+                    },
+                    {
+                        "$ref": "#/components/parameters/Lang"
+                    },
+                    {
+                        "$ref": "#/components/parameters/Getaccesstoken"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ResultSuccess"
+                                        },
+                                        {
+                                            "properties": {
+                                                "results": {
+                                                    "$ref": "#/components/schemas/MobileReturnsResult"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                },
+                                "examples": {
+                                    "ResultSuccess": {
+                                        "summary": "ResultSuccess",
+                                        "value": {
+                                            "status": 200,
+                                            "success": 1,
+                                            "message": "OK",
+                                            "type": "success",
+                                            "instance": "/mobilereturns/{SearchCriteria}/{SearchValue}/{SearchValue2}?limit=200&offset=0",
+                                            "results": {
+                                                "Count": 2,
+                                                "MobileReturnsData": [
+                                                    {
+                                                        "P1Trackno": "9999900012334",
+                                                        "ReturnCarrier": "Inpost",
+                                                        "Country": "PL",
+                                                        "MobilCode": "9142375579",
+                                                        "ActivatedCET": "2024-03-05 05:04:19",
+                                                        "ActivatedUTC": "2024-03-05 04:04:19",
+                                                        "ExpirationDateCET": "2024-04-05 15:04:19",
+                                                        "ExpirationDateUTC": "2024-04-05 13:04:19",
+                                                        "ReturnCarrierno": null,
+                                                        "ReturnUsedCET": null,
+                                                        "ReturnUsedUTC": null,
+                                                        "ReturnUsedUpdatedCET": null,
+                                                        "ReturnUsedUpdatedUTC": null
+                                                    },
+                                                    {
+                                                        "P1Trackno": "9999900012345",
+                                                        "ReturnCarrier": "Inpost",
+                                                        "Country": "PL",
+                                                        "MobilCode": "9142375578",
+                                                        "ActivatedCET": "2024-03-05 05:04:19",
+                                                        "ActivatedUTC": "2024-03-05 04:04:19",
+                                                        "ExpirationDateCET": "2024-04-05 15:04:19",
+                                                        "ExpirationDateUTC": "2024-04-05 13:04:19",
+                                                        "ReturnCarrierno": "600000627283000026230130",
+                                                        "ReturnUsedCET": "2024-03-06 10:06:34",
+                                                        "ReturnUsedUTC": "2024-03-06 09:06:34",
+                                                        "ReturnUsedUpdatedCET": "2024-03-06 12:06:46",
+                                                        "ReturnUsedUpdatedUTC": "2024-03-06 11:06:46"
+                                                    }
+                                                ]
+                                            },
                                             "UniqId": "6499698a6f6e1"
                                         }
                                     }
@@ -1293,6 +1432,36 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/ResultError"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResultError"
+                                },
+                                "examples": {
+                                    "ResultError": {
+                                        "summary": "ResultError",
+                                        "value": {
+                                            "status": 404,
+                                            "success": -1,
+                                            "message": "Not found",
+                                            "type": "error",
+                                            "instance": "/mobilereturns/{SearchCriteria}/{SearchValue}/{SearchValue2}?limit=200&offset=0",
+                                            "errors": [
+                                                {
+                                                    "ErrorNo": "1803",
+                                                    "Message": "No data found for defined parameters.",
+                                                    "StatusCode": "No data found."
+                                                }
+                                            ],
+                                            "UniqId": "6499698a6f6e1"
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -1406,6 +1575,9 @@
                                 "schema": {
                                     "allOf": [
                                         {
+                                            "$ref": "#/components/schemas/ResultSuccess"
+                                        },
+                                        {
                                             "properties": {
                                                 "results": {
                                                     "type": "array",
@@ -1415,9 +1587,6 @@
                                                 }
                                             },
                                             "type": "object"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/ResultSuccess"
                                         }
                                     ]
                                 },
@@ -1777,6 +1946,9 @@
                                 "schema": {
                                     "allOf": [
                                         {
+                                            "$ref": "#/components/schemas/ResultSuccess"
+                                        },
+                                        {
                                             "properties": {
                                                 "results": {
                                                     "type": "array",
@@ -1786,9 +1958,6 @@
                                                 }
                                             },
                                             "type": "object"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/ResultSuccess"
                                         }
                                     ]
                                 },
@@ -2022,6 +2191,9 @@
                                 "schema": {
                                     "allOf": [
                                         {
+                                            "$ref": "#/components/schemas/ResultSuccess"
+                                        },
+                                        {
                                             "properties": {
                                                 "results": {
                                                     "type": "array",
@@ -2031,9 +2203,6 @@
                                                 }
                                             },
                                             "type": "object"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/ResultSuccess"
                                         }
                                     ]
                                 },
@@ -2363,6 +2532,7 @@
                 ],
                 "summary": "get Services for a mandator and cep and product specified",
                 "description": "get Services for a mandator and cep and product specified.<br />The profile path-functions help you to realize a dynamic approach of the mandator, consigners, CEPS, Products and Services hierarchy in your UI. Profiles of available products can be returned for a specified list of countries, e.g. if you are working with shipping zones.",
+                "operationId": "343e985dafc9d4d7a8ae749db6bab367",
                 "parameters": [
                     {
                         "name": "mandator",
@@ -2459,6 +2629,9 @@
                                 "schema": {
                                     "allOf": [
                                         {
+                                            "$ref": "#/components/schemas/ResultSuccess"
+                                        },
+                                        {
                                             "properties": {
                                                 "results": {
                                                     "type": "array",
@@ -2468,9 +2641,6 @@
                                                 }
                                             },
                                             "type": "object"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/ResultSuccess"
                                         }
                                     ]
                                 },
@@ -2563,15 +2733,15 @@
                                 "schema": {
                                     "allOf": [
                                         {
+                                            "$ref": "#/components/schemas/ResultSuccess"
+                                        },
+                                        {
                                             "properties": {
                                                 "results": {
                                                     "$ref": "#/components/schemas/ShipmentStatusResult"
                                                 }
                                             },
                                             "type": "object"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/ResultSuccess"
                                         }
                                     ]
                                 },
@@ -2676,15 +2846,15 @@
                                 "schema": {
                                     "allOf": [
                                         {
+                                            "$ref": "#/components/schemas/ResultSuccess"
+                                        },
+                                        {
                                             "properties": {
                                                 "results": {
                                                     "$ref": "#/components/schemas/ShipmentActionResult"
                                                 }
                                             },
                                             "type": "object"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/ResultSuccess"
                                         }
                                     ]
                                 },
@@ -2829,6 +2999,9 @@
                                 "schema": {
                                     "allOf": [
                                         {
+                                            "$ref": "#/components/schemas/ResultSuccess"
+                                        },
+                                        {
                                             "properties": {
                                                 "results": {
                                                     "type": "array",
@@ -2838,9 +3011,6 @@
                                                 }
                                             },
                                             "type": "object"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/ResultSuccess"
                                         }
                                     ]
                                 },
@@ -2968,6 +3138,9 @@
                                 "schema": {
                                     "allOf": [
                                         {
+                                            "$ref": "#/components/schemas/ResultSuccess"
+                                        },
+                                        {
                                             "properties": {
                                                 "results": {
                                                     "type": "array",
@@ -2977,9 +3150,6 @@
                                                 }
                                             },
                                             "type": "object"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/ResultSuccess"
                                         }
                                     ]
                                 },
@@ -3163,8 +3333,7 @@
                                                     "Remarks": "goods"
                                                 }
                                             ]
-                                        },
-                                        "UniqId": "6499698a6f6e1"
+                                        }
                                     }
                                 },
                                 "Request - Parcel.One non-EU shipment with Customs data": {
@@ -3264,8 +3433,7 @@
                                                     "Remarks": "goods"
                                                 }
                                             ]
-                                        },
-                                        "UniqId": "6499698a6f6e1"
+                                        }
                                     }
                                 }
                             }
@@ -3280,15 +3448,15 @@
                                 "schema": {
                                     "allOf": [
                                         {
+                                            "$ref": "#/components/schemas/ResultSuccess"
+                                        },
+                                        {
                                             "properties": {
                                                 "results": {
                                                     "$ref": "#/components/schemas/ShipmentResult"
                                                 }
                                             },
                                             "type": "object"
-                                        },
-                                        {
-                                            "$ref": "#/components/schemas/ResultSuccess"
                                         }
                                     ]
                                 },
@@ -4190,6 +4358,106 @@
                     }
                 },
                 "type": "object"
+            },
+            "MobileReturn": {
+                "description": "MobileReturns Response Data",
+                "properties": {
+                    "P1Trackno": {
+                        "description": "- MaxLen 50",
+                        "type": "string",
+                        "example": "9999900012345"
+                    },
+                    "ReturnCarrier": {
+                        "description": "- MaxLen 40",
+                        "type": "string",
+                        "example": "Inpost"
+                    },
+                    "MobileCode": {
+                        "description": "- Maxlen 500",
+                        "type": "string"
+                    },
+                    "ActivatedCET": {
+                        "description": "- Activated Date CET Format YYYYY-MM-DD hh:mm:ss",
+                        "type": "string",
+                        "example": "2022-01-11 13:44:01"
+                    },
+                    "ActivatedUTC": {
+                        "description": "- Activated Date UTC Format YYYYY-MM-DD hh:mm:ss",
+                        "type": "string",
+                        "example": "2022-01-11 12:44:01"
+                    },
+                    "ExpirationDateCET": {
+                        "description": "- Expiration Date CET Format YYYYY-MM-DD hh:mm:ss",
+                        "type": "string",
+                        "example": "2022-01-11 13:44:01"
+                    },
+                    "ExpirationDateUTC": {
+                        "description": "- Expiration Date UTC Format YYYYY-MM-DD hh:mm:ss",
+                        "type": "string",
+                        "example": "2022-01-11 12:44:01"
+                    },
+                    "ReturnCarrierno": {
+                        "description": "- MaxLen 50",
+                        "type": "string",
+                        "example": "600000627283000026230130"
+                    },
+                    "ReturnUsedCET": {
+                        "description": "- Used Date CET Format YYYYY-MM-DD hh:mm:ss",
+                        "type": "string",
+                        "example": "2022-01-11 13:44:01"
+                    },
+                    "ReturnUsedUTC": {
+                        "description": "- Used Date UTC Format YYYYY-MM-DD hh:mm:ss",
+                        "type": "string",
+                        "example": "2022-01-11 12:44:01"
+                    },
+                    "ReturnUsedUpdatedCET": {
+                        "description": "- Used Event Updated Date CET Format YYYYY-MM-DD hh:mm:ss",
+                        "type": "string",
+                        "example": "2022-01-11 13:44:01"
+                    },
+                    "ReturnUsedUPdatedUTC": {
+                        "description": "- Used Event UPdated Date UTC Format YYYYY-MM-DD hh:mm:ss",
+                        "type": "string",
+                        "example": "2022-01-11 12:44:01"
+                    }
+                },
+                "type": "object"
+            },
+            "MobileReturnsResult": {
+                "properties": {
+                    "Count": {
+                        "description": "- bool",
+                        "type": "integer",
+                        "example": "1254"
+                    },
+                    "MobileReturnsData": {
+                        "description": "- Detailed Mobile Returns Array",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/MobileReturn"
+                        },
+                        "example": [
+                            {
+                                "P1Trackno": "9999900012345",
+                                "ReturnCarrier": "Inpost",
+                                "Country": "PL",
+                                "MobilCode": "9142375578",
+                                "ActivatedCET": "2024-03-05 05:04:19",
+                                "ActivatedUTC": "2024-03-05 04:04:19",
+                                "ExpirationDateCET": "2024-04-05 15:04:19",
+                                "ExpirationDateUTC": "2024-04-05 13:04:19",
+                                "ReturnCarrierno": "600000627283000026230130",
+                                "ReturnUsedCET": "2024-03-06 10:06:34",
+                                "ReturnUsedUTC": "2024-03-06 09:06:34",
+                                "ReturnUsedUpdatedCET": "2024-03-06 12:06:46",
+                                "ReturnUsedUpdatedUTC": "2024-03-06 11:06:46"
+                            }
+                        ]
+                    }
+                },
+                "type": "object",
+                "xml": {}
             },
             "Product": {
                 "description": "Product Information",
@@ -5183,11 +5451,43 @@
         },
         {
             "name": "Errors",
-            "description": "You may find a list of current Error-Messages used here. Every request is assigned a unique RequestID, therefore, if you like to report some misbehavior of the API, please, provide us with the UniqId returned in every response. This way we can refer to our logfiles easier. Thank you!",
+            "description": "You may find a list of current Error-Messages used here.",
             "externalDocs": {
                 "description": "Doc",
                 "url": "https://doc.parcelone.io/shippingapiv1-Errors.pdf"
             }
+        },
+        {
+            "name": "closing",
+            "description": "closing"
+        },
+        {
+            "name": "customer",
+            "description": "customer"
+        },
+        {
+            "name": "customs",
+            "description": "customs"
+        },
+        {
+            "name": "datetime",
+            "description": "datetime"
+        },
+        {
+            "name": "mandator",
+            "description": "mandator"
+        },
+        {
+            "name": "mobilereturn",
+            "description": "mobilereturn"
+        },
+        {
+            "name": "profile",
+            "description": "profile"
+        },
+        {
+            "name": "shipment",
+            "description": "shipment"
         }
     ],
     "externalDocs": {

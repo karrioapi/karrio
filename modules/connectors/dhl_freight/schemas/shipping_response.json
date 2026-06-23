@@ -1,0 +1,9 @@
+{
+  "shipmentId": "DHLF-2026-000001",
+  "transportInstructionId": "TI-000001",
+  "status": "BOOKED",
+  "licensePlates": [
+    { "licensePlate": "00370000000000000001", "sscc": "00370000000000000001", "pieceId": "P1" },
+    { "licensePlate": "00370000000000000002", "sscc": "00370000000000000002", "pieceId": "P2" }
+  ]
+}

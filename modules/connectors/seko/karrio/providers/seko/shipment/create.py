@@ -1,28 +1,23 @@
 """Karrio SEKO Logistics shipment API implementation."""
 
+import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
+import karrio.providers.seko.error as error
+import karrio.providers.seko.units as provider_units
+import karrio.providers.seko.utils as provider_utils
 import karrio.schemas.seko.shipping_request as seko
 import karrio.schemas.seko.shipping_response as shipping
-
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
-import karrio.core.models as models
-import karrio.providers.seko.error as error
-import karrio.providers.seko.utils as provider_utils
-import karrio.providers.seko.units as provider_units
 
 
 def parse_shipment_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+) -> tuple[list[models.RateDetails], list[models.Message]]:
     response = _response.deserialize()
-    print(_response.ctx)
     messages = error.parse_error_response(response, settings)
     shipment = lib.identity(
-        _extract_details(response, settings, ctx=_response.ctx)
-        if any(response.get("Consignments", []))
-        else None
+        _extract_details(response, settings, ctx=_response.ctx) if any(response.get("Consignments", [])) else None
     )
 
     return shipment, messages
@@ -51,9 +46,7 @@ def _extract_details(
             carrier_id=settings.carrier_id,
             carrier_name=settings.carrier_name,
             service=service.name_or_key,
-            total_charge=lib.to_money(
-                lib.failsafe(lambda: details.Consignments[0].Cost)
-            ),
+            total_charge=lib.to_money(lib.failsafe(lambda: details.Consignments[0].Cost)),
             currency=settings.connection_config.currency.state or "USD",
             meta=dict(
                 service_name=service.value_or_key,
@@ -65,8 +58,7 @@ def _extract_details(
                 IsFreightForward=details.IsFreightForward,
             ),
         )
-        if any(details.Consignments or [])
-        and lib.failsafe(lambda: details.Consignments[0].Cost) is not None
+        if any(details.Consignments or []) and lib.failsafe(lambda: details.Consignments[0].Cost) is not None
         else None
     )
 
@@ -114,12 +106,9 @@ def shipment_request(
         weight_unit=units.WeightUnit.KG.name,
         option_type=provider_units.CustomsOption,
     )
-    commodities: units.Products = lib.identity(
-        customs.commodities if payload.customs else packages.items
-    )
+    commodities: units.Products = lib.identity(customs.commodities if payload.customs else packages.items)
     [label_format, label_type] = lib.identity(
-        provider_units.LabelType.map(payload.label_type).value
-        or provider_units.LabelType.PDF.value
+        provider_units.LabelType.map(payload.label_type).value or provider_units.LabelType.PDF.value
     )
     commercial_invoice = lib.identity(
         options.seko_invoice_data.state
@@ -127,8 +116,7 @@ def shipment_request(
             (
                 _["doc_file"]
                 for _ in options.doc_files.state or []
-                if _["doc_type"] == "commercial_invoice"
-                and _.get("doc_format", "PDF").lower() == "pdf"
+                if _["doc_type"] == "commercial_invoice" and _.get("doc_format", "PDF").lower() == "pdf"
             ),
             None,
         )
@@ -161,9 +149,7 @@ def shipment_request(
         ),
         Destination=seko.DestinationType(
             Id=options.seko_destination_id.state,
-            Name=lib.identity(
-                recipient.company_name or recipient.contact or "Recipient"
-            ),
+            Name=lib.identity(recipient.company_name or recipient.contact or "Recipient"),
             Address=seko.AddressType(
                 BuildingName=None,
                 StreetAddress=recipient.street,
@@ -185,10 +171,7 @@ def shipment_request(
         Commodities=[
             seko.CommodityType(
                 Description=lib.identity(
-                    lib.text(
-                        commodity.title, commodity.description, separator=" - ", max=200
-                    )
-                    or "item"
+                    lib.text(commodity.title, commodity.description, separator=" - ", max=200) or "item"
                 ),
                 HarmonizedCode=commodity.hs_code or "0000.00.00",
                 Units=commodity.quantity,
@@ -212,9 +195,7 @@ def shipment_request(
                 Width=package.width.CM,
                 Kg=package.weight.KG,
                 Name=lib.text(package.description, max=50),
-                Type=lib.identity(
-                    provider_units.PackagingType.map(package.packaging_type).value
-                ),
+                Type=lib.identity(provider_units.PackagingType.map(package.packaging_type).value),
                 OverLabelBarcode=package.reference_number,
                 Id=package.options.seko_package_id.state,
                 PackageCode=package.reference_number,
@@ -222,15 +203,11 @@ def shipment_request(
             for package in packages
         ],
         issignaturerequired=options.seko_is_signature_required.state,
-        DutiesAndTaxesByReceiver=lib.identity(
-            customs.duty.paid_by == "recipient" if payload.customs else None
-        ),
+        DutiesAndTaxesByReceiver=lib.identity(customs.duty.paid_by == "recipient" if payload.customs else None),
         ProductCategory=options.seko_product_category.state,
         ShipType=options.seko_ship_type.state,
         PrintToPrinter=lib.identity(
-            options.seko_print_to_printer.state
-            if options.seko_print_to_printer.state is not None
-            else True
+            options.seko_print_to_printer.state if options.seko_print_to_printer.state is not None else True
         ),
         IncludeLineDetails=True,
         Carrier=options.seko_carrier.state,
@@ -238,9 +215,7 @@ def shipment_request(
         CostCentreName=settings.connection_config.cost_center.state,
         CodValue=options.cash_on_delivery.state,
         TaxCollected=lib.identity(
-            options.seko_tax_collected.state
-            if options.seko_tax_collected.state is not None
-            else True
+            options.seko_tax_collected.state if options.seko_tax_collected.state is not None else True
         ),
         AmountCollected=lib.to_money(options.seko_amount_collected.state),
         CIFValue=options.seko_cif_value.state,

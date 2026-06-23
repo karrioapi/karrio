@@ -1,9 +1,8 @@
 """Karrio Chronopost client settings."""
 
 import karrio.lib as lib
-from karrio.schemas.chronopost.shippingservice import headerValue
 from karrio.core.settings import Settings as BaseSettings
-
+from karrio.schemas.chronopost.shippingservice import headerValue
 
 LanguageEnum = lib.units.create_enum("LanguageEnum", ["en_GB", "fr_FR"])
 

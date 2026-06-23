@@ -1,23 +1,18 @@
-from rest_framework import status
+import karrio.server.events.tasks as tasks
+import karrio.server.manager.models as manager
+import karrio.server.orders.models as models
+import karrio.server.orders.serializers as serializers
 from django.db.models import signals
-
-from karrio.server.core import utils
 from karrio.server.conf import settings
+from karrio.server.core import utils
+from karrio.server.core.logging import logger
 from karrio.server.core.utils import failsafe
 from karrio.server.events.serializers import EventTypes
 from karrio.server.orders.serializers.order import compute_order_status
-from karrio.server.core.logging import logger
-import karrio.server.orders.serializers as serializers
-import karrio.server.manager.models as manager
-import karrio.server.orders.models as models
-import karrio.server.events.tasks as tasks
-import karrio.server.core.exceptions as exceptions
 
 
 def register_signals():
-    signals.m2m_changed.connect(
-        shipments_updated, sender=models.Order.shipments.through
-    )
+    signals.m2m_changed.connect(shipments_updated, sender=models.Order.shipments.through)
     signals.post_delete.connect(commodity_mutated, sender=manager.Commodity)
     signals.post_save.connect(commodity_mutated, sender=manager.Commodity)
     signals.post_save.connect(shipment_updated, sender=manager.Shipment)
@@ -94,9 +89,7 @@ def _update_order_line_items_fulfillment(order, shipment_instance):
             if isinstance(item, dict) and item.get("parent_id"):
                 parent_id = item["parent_id"]
                 quantity = item.get("quantity") or 1
-                fulfilled_quantities[parent_id] = (
-                    fulfilled_quantities.get(parent_id, 0) + quantity
-                )
+                fulfilled_quantities[parent_id] = fulfilled_quantities.get(parent_id, 0) + quantity
 
     if not fulfilled_quantities:
         return
@@ -123,9 +116,7 @@ def _update_order_line_items_fulfillment(order, shipment_instance):
 
 
 @utils.disable_for_loaddata
-def shipment_updated(
-    sender, instance, created, raw, using, update_fields, *args, **kwargs
-):
+def shipment_updated(sender, instance, created, raw, using, update_fields, *args, **kwargs):
     """Shipment related events:
     - shipment purchased (label purchased)
     - shipment fulfilled (shipped)
@@ -157,18 +148,18 @@ def shipment_updated(
         manager.Shipment.objects.filter(id=instance.id).update(**updates)
 
     for order in related_orders:
-        if order.shipments.filter(id=instance.id).exists() == False:
+        if not order.shipments.filter(id=instance.id).exists():
             order.shipments.add(instance)
 
         # Update line_items fulfillment tracking
         _update_order_line_items_fulfillment(order, instance)
 
         if instance.status != serializers.ShipmentStatus.draft.value:
-            status = compute_order_status(order)
-            if order.status != "cancelled" and status != order.status:
-                order.status = status
+            new_status = compute_order_status(order)
+            if order.status != "cancelled" and new_status != order.status:
+                order.status = new_status
                 order.save(update_fields=["status"])
-                logger.info("Order status updated from shipment", order_id=order.id, new_status=status)
+                logger.info("Order status updated from shipment", order_id=order.id, new_status=new_status)
 
 
 @utils.disable_for_loaddata
@@ -208,9 +199,7 @@ def order_updated(sender, instance, *args, **kwargs):
     context = dict(
         user_id=failsafe(lambda: instance.created_by.id),
         test_mode=instance.test_mode,
-        org_id=failsafe(
-            lambda: instance.org.first().id if hasattr(instance, "org") else None
-        ),
+        org_id=failsafe(lambda: instance.org.first().id if hasattr(instance, "org") else None),
     )
 
     if settings.MULTI_ORGANIZATIONS and context["org_id"] is None:
@@ -220,9 +209,7 @@ def order_updated(sender, instance, *args, **kwargs):
 
 
 @utils.disable_for_loaddata
-def shipments_updated(
-    sender, instance, action, reverse, model, pk_set, *args, **kwargs
-):
+def shipments_updated(sender, instance, action, reverse, model, pk_set, *args, **kwargs):
     """Order shipments updated"""
 
     status = compute_order_status(instance)

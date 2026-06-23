@@ -2,7 +2,6 @@ import karrio.core.metadata as metadata
 import karrio.mappers.fedex as mappers
 import karrio.providers.fedex.units as units
 
-
 METADATA = metadata.PluginMetadata(
     status="production-ready",
     id="fedex",

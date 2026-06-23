@@ -4,34 +4,24 @@ import typing
 
 
 @attr.s(auto_attribs=True)
-class EventType:
-    DateTime: typing.Optional[str] = None
+class TrackingEventType:
+    EventdateCET: typing.Optional[str] = None
+    EventdateUTC: typing.Optional[str] = None
+    Statuscode: typing.Optional[str] = None
+    Status: typing.Optional[str] = None
     Location: typing.Optional[str] = None
-    Status: typing.Optional[str] = None
-    StatusCode: typing.Optional[str] = None
-    Description: typing.Optional[str] = None
+    DeliveryStatus: typing.Optional[str] = None
+    CarrierTrackno: typing.Optional[str] = None
     Carrier: typing.Optional[str] = None
-
-
-@attr.s(auto_attribs=True)
-class ResultsType:
-    TrackingID: typing.Optional[str] = None
-    CarrierIDLMC: typing.Optional[str] = None
-    CarrierTrackingID: typing.Optional[str] = None
-    Status: typing.Optional[str] = None
-    StatusCode: typing.Optional[str] = None
-    DeliveryDate: typing.Optional[str] = None
-    EstimatedDelivery: typing.Optional[str] = None
-    SignedBy: typing.Optional[str] = None
-    Events: typing.Optional[typing.List[EventType]] = jstruct.JList[EventType]
+    CarrierSlug: typing.Optional[str] = None
+    CarrierTrackURL: typing.Optional[str] = None
+    TrackingEventsStatus: typing.Optional[str] = None
 
 
 @attr.s(auto_attribs=True)
 class TrackingResponseType:
-    status: typing.Optional[int] = None
-    success: typing.Optional[int] = None
-    message: typing.Optional[str] = None
-    type: typing.Optional[str] = None
-    instance: typing.Optional[str] = None
-    UniqId: typing.Optional[str] = None
-    results: typing.Optional[ResultsType] = jstruct.JStruct[ResultsType]
+    P1Trackno: typing.Optional[str] = None
+    TrackingEvents: typing.Optional[typing.List[TrackingEventType]] = jstruct.JList[TrackingEventType]
+    lang: typing.Optional[str] = None
+    platform: typing.Optional[str] = None
+    requestor: typing.Optional[str] = None

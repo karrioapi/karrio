@@ -1,8 +1,9 @@
 """Test fixtures for GLS Group integration."""
 
-import karrio.sdk as karrio
-import karrio.lib as lib
 import datetime
+
+import karrio.lib as lib
+import karrio.sdk as karrio
 from karrio.core.models import Address
 
 # Pre-populate OAuth cache to avoid real API calls during tests
@@ -25,6 +26,30 @@ gateway = karrio.gateway["gls"].create(
         "client_secret": client_secret,
         "contact_id": "TEST_CONTACT_ID",
         "test_mode": True,
+        # `app_identifier` is the optional source-software marker GLS shows in
+        # their logs (sent as `Shipment.Identifier` on the wire). Billing
+        # attribution rides on the fixed `Shipment.Middleware="JTLviaGLS"`,
+        # not on any per-connection value.
+        "config": {
+            "app_identifier": "KARRIO",
+        },
+    },
+    cache=lib.Cache(**cached_auth),
+)
+
+# Gateway with the Customs Consignment v3 surface explicitly enabled. ShipIT
+# carries customs intent via IncotermCode on the createParcels payload, so the
+# v3 second leg is opt-in per connection.
+gateway_with_customs = karrio.gateway["gls"].create(
+    {
+        "client_id": client_id,
+        "client_secret": client_secret,
+        "contact_id": "TEST_CONTACT_ID",
+        "test_mode": True,
+        "config": {
+            "app_identifier": "KARRIO",
+            "submit_customs_consignment": True,
+        },
     },
     cache=lib.Cache(**cached_auth),
 )

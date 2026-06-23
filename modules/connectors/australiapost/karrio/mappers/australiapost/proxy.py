@@ -1,7 +1,7 @@
 """Karrio Australia Post client proxy."""
 
-import karrio.lib as lib
 import karrio.api.proxy as proxy
+import karrio.lib as lib
 import karrio.mappers.australiapost.settings as provider_settings
 
 
@@ -42,18 +42,14 @@ class Proxy(proxy.Proxy):
             )
         )
 
-        shipment_id = (lib.to_dict(responses[0]).get("shipments") or [{}])[0].get(
-            "shipment_id"
-        )
+        shipment_id = (lib.to_dict(responses[0]).get("shipments") or [{}])[0].get("shipment_id")
 
         if shipment_id is not None:
             responses.append(
                 lib.request(
                     url=f"{self.settings.server_url}/shipping/v1/labels",
                     trace=self.trace_as("json"),
-                    data=lib.to_json(payload["label"]).replace(
-                        "[SHIPMENT_ID]", shipment_id
-                    ),
+                    data=lib.to_json(payload["label"]).replace("[SHIPMENT_ID]", shipment_id),
                     method="POST",
                     headers={
                         "Accept": "application/json",
@@ -71,6 +67,7 @@ class Proxy(proxy.Proxy):
                     lib.request(
                         decoder=lib.encode_base64,
                         url=label_url,
+                        trace=self.trace_as("json"),
                         method="GET",
                     )
                 )
@@ -144,6 +141,7 @@ class Proxy(proxy.Proxy):
                 manifest=lib.request(
                     url=f"{self.settings.server_url}/shipping/v1/accounts/{self.settings.account_number}/orders/{order_id}/summary",
                     decoder=lib.encode_base64,
+                    trace=self.trace_as("json"),
                     method="GET",
                 )
             )

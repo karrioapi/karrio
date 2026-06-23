@@ -1,13 +1,9 @@
 """Karrio MyDHL document upload API implementation."""
 
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.mydhl.error as error
 import karrio.providers.mydhl.utils as provider_utils
-import karrio.providers.mydhl.units as provider_units
-
 
 # Document type mapping for MyDHL upload-image
 DOCUMENT_TYPE_MAP = {
@@ -24,17 +20,13 @@ DOCUMENT_TYPE_MAP = {
 def parse_document_upload_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.DocumentUploadDetails, typing.List[models.Message]]:
+) -> tuple[models.DocumentUploadDetails, list[models.Message]]:
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
     ctx = _response.ctx or {}
 
     # Check for success - MyDHL returns empty response or status on success
-    details = lib.identity(
-        _extract_details(response, settings, ctx)
-        if response.get("status") is None
-        else None
-    )
+    details = lib.identity(_extract_details(response, settings, ctx) if response.get("status") is None else None)
 
     return details, messages
 
@@ -91,9 +83,7 @@ def document_upload_request(
     request = dict(
         shipmentTrackingNumber=payload.tracking_number,
         originalPlannedShippingDate=planned_ship_date,
-        accounts=[
-            dict(typeCode="shipper", number=settings.account_number)
-        ],
+        accounts=[dict(typeCode="shipper", number=settings.account_number)],
         productCode=product_code,
         documentImages=document_images,
     )
@@ -103,9 +93,6 @@ def document_upload_request(
         lib.to_dict,
         dict(
             tracking_number=payload.tracking_number,
-            documents=[
-                dict(doc_name=doc.doc_name, doc_type=doc.doc_type)
-                for doc in document_files
-            ],
+            documents=[dict(doc_name=doc.doc_name, doc_type=doc.doc_type) for doc in document_files],
         ),
     )

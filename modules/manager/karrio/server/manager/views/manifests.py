@@ -1,24 +1,24 @@
-import io
 import base64
-import django_downloadview
-import django.urls as urls
-import django.core.files.base as base
-import rest_framework.status as status
-import rest_framework.request as request
-import rest_framework.response as response
-import rest_framework.pagination as pagination
-import rest_framework.throttling as throttling
-import django_filters.rest_framework as django_filters
+import io
 
-from karrio.server.core.utils import validate_resource_token
-from karrio.server.core.authentication import AccessMixin
-import karrio.server.openapi as openapi
-import karrio.server.core.views.api as api
+import django.core.files.base as base
+import django.urls as urls
+import django_downloadview
+import django_filters.rest_framework as django_filters
 import karrio.server.core.filters as filters
+import karrio.server.core.views.api as api
 import karrio.server.manager.models as models
 import karrio.server.manager.router as router
 import karrio.server.manager.serializers as serializers
+import karrio.server.openapi as openapi
+import rest_framework.pagination as pagination
+import rest_framework.request as request
+import rest_framework.response as response
+import rest_framework.status as status
+import rest_framework.throttling as throttling
+from karrio.server.core.authentication import AccessMixin
 from karrio.server.core.serializers import ShippingDocument
+from karrio.server.core.utils import validate_resource_token
 
 ENDPOINT_ID = "$$$$&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 Manifests = serializers.PaginatedResult("ManifestList", serializers.Manifest)
@@ -26,9 +26,7 @@ Manifests = serializers.PaginatedResult("ManifestList", serializers.Manifest)
 
 class ManifestList(api.GenericAPIView):
     throttle_scope = "carrier_request"
-    pagination_class = type(
-        "CustomPagination", (pagination.LimitOffsetPagination,), dict(default_limit=20)
-    )
+    pagination_class = type("CustomPagination", (pagination.LimitOffsetPagination,), dict(default_limit=20))
     filter_backends = (django_filters.DjangoFilterBackend,)
     filterset_class = filters.ManifestFilters
     serializer_class = Manifests
@@ -56,9 +54,7 @@ class ManifestList(api.GenericAPIView):
         Retrieve all manifests.
         """
         manifests = self.filter_queryset(self.get_queryset())
-        response = self.paginate_queryset(
-            serializers.Manifest(manifests, many=True).data
-        )
+        response = self.paginate_queryset(serializers.Manifest(manifests, many=True).data)
         return self.get_paginated_response(response)
 
     @openapi.extend_schema(
@@ -77,19 +73,12 @@ class ManifestList(api.GenericAPIView):
     def post(self, request: request.HttpRequest):
         """Create a manifest for one or many shipments with labels already purchased."""
 
-        manifest = (
-            serializers.ManifestSerializer.map(data=request.data, context=request)
-            .save()
-            .instance
-        )
+        manifest = serializers.ManifestSerializer.map(data=request.data, context=request).save().instance
 
-        return response.Response(
-            serializers.Manifest(manifest).data, status=status.HTTP_201_CREATED
-        )
+        return response.Response(serializers.Manifest(manifest).data, status=status.HTTP_201_CREATED)
 
 
 class ManifestDetails(api.APIView):
-
     @openapi.extend_schema(
         tags=["Manifests"],
         operation_id=f"{ENDPOINT_ID}retrieve",
@@ -131,7 +120,7 @@ class ManifestDoc(AccessMixin, django_downloadview.VirtualDownloadView):
         self.preview = "preview" in query_params
         self.attachment = "download" in query_params
 
-        resp = super(ManifestDoc, self).get(req, pk, doc, format, **kwargs)
+        resp = super().get(req, pk, doc, format, **kwargs)
         resp["X-Frame-Options"] = "ALLOWALL"
         return resp
 
@@ -144,7 +133,6 @@ class ManifestDoc(AccessMixin, django_downloadview.VirtualDownloadView):
 
 
 class ManifestDocumentDownload(api.APIView):
-
     @openapi.extend_schema(
         tags=["Manifests"],
         operation_id=f"{ENDPOINT_ID}document",

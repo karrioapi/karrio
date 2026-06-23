@@ -1,7 +1,6 @@
 """Spring carrier tests fixtures."""
 
 import karrio.sdk as karrio
-import karrio.lib as lib
 
 gateway = karrio.gateway["spring"].create(
     dict(

@@ -5,15 +5,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('providers', '0024_alter_genericsettings_custom_carrier_name'),
+        ("providers", "0024_alter_genericsettings_custom_carrier_name"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='servicelevel',
-            name='service_code',
-            field=models.CharField(max_length=50, validators=[django.core.validators.RegexValidator('^[a-z0-9_]+$')]),
+            model_name="servicelevel",
+            name="service_code",
+            field=models.CharField(max_length=50, validators=[django.core.validators.RegexValidator("^[a-z0-9_]+$")]),
         ),
     ]

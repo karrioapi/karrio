@@ -1,9 +1,10 @@
 import unittest
-from karrio.core.utils import DP, Serializable
+
 from karrio.core.models import RateRequest
+from karrio.core.utils import DP, Serializable
 from karrio.universal.mappers.rating_proxy import (
-    RatingMixinSettings,
     RatingMixinProxy,
+    RatingMixinSettings,
 )
 from karrio.universal.providers.rating.rate import parse_rate_response
 
@@ -231,9 +232,7 @@ class TestUniversalRating(unittest.TestCase):
 
     def test_zone_specificity_city_over_country(self):
         """Test that city-specific zone is preferred over country-only zone."""
-        settings_with_specific_zones = RatingMixinSettings(
-            **zone_specificity_settings_data
-        )
+        settings_with_specific_zones = RatingMixinSettings(**zone_specificity_settings_data)
         proxy = RatingMixinProxy(settings_with_specific_zones)
 
         CitySpecificRequest = Serializable(
@@ -366,9 +365,7 @@ class TestUniversalRating(unittest.TestCase):
         settings_no_surcharges = RatingMixinSettings(**settings_data)
         proxy = RatingMixinProxy(settings_no_surcharges)
 
-        request = Serializable(
-            RateRequest(**{**rate_request_data, "services": ["carrier_standard"]})
-        )
+        request = Serializable(RateRequest(**{**rate_request_data, "services": ["carrier_standard"]}))
         response_data = proxy.get_rates(request)
         rates = parse_rate_response(response_data, settings_no_surcharges)
 
@@ -390,6 +387,96 @@ class TestUniversalRating(unittest.TestCase):
         self.assertListEqual(
             DP.to_dict(rates),
             ParsedRateResponseMultipleServicesSurcharges,
+        )
+
+    def test_destination_error_suppressed_by_sibling_service_code(self):
+        """When the rate sheet has multiple entries sharing a service_code and
+        one of them covers the destination, the stricter sibling's
+        `destination_not_supported` error must not surface."""
+        settings_shared_code = RatingMixinSettings(**settings_shared_service_code)
+        proxy = RatingMixinProxy(settings_shared_code)
+
+        # Shipper DE → recipient AT (international) selecting the shared
+        # `carrier_standard` code. One entry has domicile=True/international=False
+        # (would emit destination_not_supported), the other has both None
+        # (covers the route and produces a rate).
+        request = Serializable(
+            RateRequest(
+                shipper={"postal_code": "41836", "country_code": "DE"},
+                recipient={"postal_code": "8813", "country_code": "AT"},
+                parcels=[{"weight": 0.5, "weight_unit": "KG"}],
+                services=["carrier_standard"],
+            )
+        )
+        response_data = proxy.get_rates(request)
+        rates, messages = parse_rate_response(response_data, settings_shared_code)
+
+        self.assertEqual(len(rates), 1)
+        self.assertEqual(rates[0].service, "carrier_standard")
+        self.assertListEqual(DP.to_dict(messages), [])
+
+    def test_explicit_zone_match_overrides_international_flag(self):
+        """A ServiceLevel mis-flagged `international=False` must still rate an
+        international destination when one of its zones explicitly enumerates
+        that country.
+
+        Witness: UPS DE "UPS Standard to Door" carried `international=False`
+        but had explicit AT rate cells. The boolean wrongly suppressed it,
+        leaving only the `... - Saturday` sibling, so every DE->AT shipment
+        quoted the Saturday rate. The explicit AT zone match is authoritative
+        and must override the stale flag.
+        """
+        settings = RatingMixinSettings(**settings_intl_flag_contradiction)
+        proxy = RatingMixinProxy(settings)
+
+        request = Serializable(
+            RateRequest(
+                shipper={"postal_code": "41836", "country_code": "DE"},
+                recipient={"postal_code": "8813", "country_code": "AT"},
+                parcels=[{"weight": 0.5, "weight_unit": "KG"}],
+                services=["carrier_standard"],
+            )
+        )
+        response_data = proxy.get_rates(request)
+        rates, messages = parse_rate_response(response_data, settings)
+
+        # BOTH siblings must be quoted — the mis-flagged "to Door" entry
+        # (8.00, explicit AT zone) and the "to Door - Saturday" entry (12.00).
+        # Before the fix only the Saturday entry survived.
+        self.assertEqual(len(rates), 2)
+        self.assertEqual({r.service for r in rates}, {"carrier_standard"})
+        self.assertEqual(
+            sorted(r.total_charge for r in rates),
+            [8.00, 12.00],
+        )
+        self.assertListEqual(DP.to_dict(messages), [])
+
+    def test_wildcard_zone_does_not_override_international_flag(self):
+        """The override is for EXPLICIT zone matches only. A domestic-only
+        service whose zone has no location restrictions (a wildcard) must
+        still be suppressed for an international destination — otherwise the
+        domicile/international flags would become meaningless.
+        """
+        settings = RatingMixinSettings(**settings_domestic_wildcard_zone)
+        proxy = RatingMixinProxy(settings)
+
+        request = Serializable(
+            RateRequest(
+                shipper={"postal_code": "41836", "country_code": "DE"},
+                recipient={"postal_code": "8813", "country_code": "AT"},
+                parcels=[{"weight": 0.5, "weight_unit": "KG"}],
+                services=["carrier_domestic"],
+            )
+        )
+        response_data = proxy.get_rates(request)
+        rates, messages = parse_rate_response(response_data, settings)
+
+        # No explicit AT zone → wildcard zone doesn't override international=False
+        # → the service stays suppressed for the international destination.
+        self.assertEqual(len(rates), 0)
+        self.assertEqual(
+            [m.code for m in messages],
+            ["destination_not_supported"],
         )
 
 
@@ -462,9 +549,7 @@ ParsedRateResponseWithoutSelection = [
             },
             "service": "carrier_standard",
             "total_charge": 10.0,
-            "extra_charges": [
-                {"amount": 10.0, "currency": "USD", "name": "Base Charge"}
-            ],
+            "extra_charges": [{"amount": 10.0, "currency": "USD", "name": "Base Charge"}],
         },
         {
             "carrier_id": "universal",
@@ -476,9 +561,7 @@ ParsedRateResponseWithoutSelection = [
             },
             "service": "carrier_premium",
             "total_charge": 15.0,
-            "extra_charges": [
-                {"amount": 15.0, "currency": "USD", "name": "Base Charge"}
-            ],
+            "extra_charges": [{"amount": 15.0, "currency": "USD", "name": "Base Charge"}],
         },
     ],
     [],
@@ -496,9 +579,7 @@ ParsedRateResponseStandardService = [
             },
             "service": "carrier_standard",
             "total_charge": 10.0,
-            "extra_charges": [
-                {"amount": 10.0, "currency": "USD", "name": "Base Charge"}
-            ],
+            "extra_charges": [{"amount": 10.0, "currency": "USD", "name": "Base Charge"}],
         }
     ],
     [],
@@ -516,9 +597,7 @@ ParsedRateResponseHighWeightService = [
             },
             "service": "carrier_premium",
             "total_charge": 15.0,
-            "extra_charges": [
-                {"amount": 15.0, "currency": "USD", "name": "Base Charge"}
-            ],
+            "extra_charges": [{"amount": 15.0, "currency": "USD", "name": "Base Charge"}],
         }
     ],
     [
@@ -542,9 +621,7 @@ ParsedInternationalRateResponseService = [
             },
             "service": "carrier_interational_parcel",
             "total_charge": 25.0,
-            "extra_charges": [
-                {"amount": 25.0, "currency": "USD", "name": "Base Charge"}
-            ],
+            "extra_charges": [{"amount": 25.0, "currency": "USD", "name": "Base Charge"}],
         }
     ],
     [],
@@ -566,9 +643,7 @@ ParsedMultiPieceRateResponse = [
         {
             "carrier_id": "universal",
             "currency": "USD",
-            "extra_charges": [
-                {"amount": 20.0, "currency": "USD", "name": "Base Charge"}
-            ],
+            "extra_charges": [{"amount": 20.0, "currency": "USD", "name": "Base Charge"}],
             "meta": {
                 "service_name": "Standard",
                 "shipping_charges": 10.0,
@@ -580,9 +655,7 @@ ParsedMultiPieceRateResponse = [
         {
             "carrier_id": "universal",
             "currency": "USD",
-            "extra_charges": [
-                {"amount": 30.0, "currency": "USD", "name": "Base Charge"}
-            ],
+            "extra_charges": [{"amount": 30.0, "currency": "USD", "name": "Base Charge"}],
             "meta": {
                 "service_name": "Premium",
                 "shipping_charges": 15.0,
@@ -645,9 +718,7 @@ ParsedWeightTierLightPackage = [
             },
             "service": "carrier_weight_tiered",
             "total_charge": 5.0,  # Tier 1: 0-0.5kg
-            "extra_charges": [
-                {"amount": 5.0, "currency": "USD", "name": "Base Charge"}
-            ],
+            "extra_charges": [{"amount": 5.0, "currency": "USD", "name": "Base Charge"}],
         }
     ],
     [],
@@ -665,9 +736,7 @@ ParsedWeightTierMediumPackage = [
             },
             "service": "carrier_weight_tiered",
             "total_charge": 8.0,  # Tier 2: 0.5-1.0kg
-            "extra_charges": [
-                {"amount": 8.0, "currency": "USD", "name": "Base Charge"}
-            ],
+            "extra_charges": [{"amount": 8.0, "currency": "USD", "name": "Base Charge"}],
         }
     ],
     [],
@@ -685,9 +754,7 @@ ParsedWeightTierHeavyPackage = [
             },
             "service": "carrier_weight_tiered",
             "total_charge": 12.0,  # Tier 3: 1.0-2.0kg
-            "extra_charges": [
-                {"amount": 12.0, "currency": "USD", "name": "Base Charge"}
-            ],
+            "extra_charges": [{"amount": 12.0, "currency": "USD", "name": "Base Charge"}],
         }
     ],
     [],
@@ -705,9 +772,7 @@ ParsedWeightTierBoundaryPackage = [
             },
             "service": "carrier_weight_tiered",
             "total_charge": 8.0,  # Tier 2: 0.5-1.0kg (0.5 is inclusive min of tier 2)
-            "extra_charges": [
-                {"amount": 8.0, "currency": "USD", "name": "Base Charge"}
-            ],
+            "extra_charges": [{"amount": 8.0, "currency": "USD", "name": "Base Charge"}],
         }
     ],
     [],
@@ -758,9 +823,7 @@ ParsedZoneSpecificityCityMatch = [
             },
             "service": "carrier_zone_specific",
             "total_charge": 12.0,  # City-specific rate, not country rate
-            "extra_charges": [
-                {"amount": 12.0, "currency": "USD", "name": "Base Charge"}
-            ],
+            "extra_charges": [{"amount": 12.0, "currency": "USD", "name": "Base Charge"}],
         }
     ],
     [],
@@ -799,9 +862,7 @@ ParsedRateResponseWeightOnly = [
             },
             "service": "carrier_dimensional",
             "total_charge": 18.0,
-            "extra_charges": [
-                {"amount": 18.0, "currency": "USD", "name": "Base Charge"}
-            ],
+            "extra_charges": [{"amount": 18.0, "currency": "USD", "name": "Base Charge"}],
         }
     ],
     [],
@@ -1020,3 +1081,87 @@ ParsedRateResponseMultipleServicesSurcharges = [
     ],
     [],
 ]
+
+
+# Two entries share `carrier_standard`. The first is domicile-only (would
+# emit destination_not_supported for an AT recipient from DE shipper); the
+# second covers any destination (zones cover both DE and AT). Mirrors the
+# JTL UPS rate sheet shape that surfaced the false-positive bug.
+settings_shared_service_code = {
+    "carrier_id": "universal",
+    "services": [
+        {
+            "service_name": "Standard (domestic)",
+            "service_code": "carrier_standard",
+            "currency": "EUR",
+            "weight_unit": "KG",
+            "domicile": True,
+            "international": False,
+            "zones": [{"rate": 5.00, "country_codes": ["DE"]}],
+        },
+        {
+            "service_name": "Standard (multi-region)",
+            "service_code": "carrier_standard",
+            "currency": "EUR",
+            "weight_unit": "KG",
+            "domicile": None,
+            "international": None,
+            "zones": [
+                {"rate": 5.00, "country_codes": ["DE"]},
+                {"rate": 12.00, "country_codes": ["AT"]},
+            ],
+        },
+    ],
+}
+
+# Mirrors the prod UPS Germany rate sheet: "Standard to Door" is mis-flagged
+# international=False yet carries an explicit AT zone; its "- Saturday"
+# sibling has domicile/international both None (covers all). Pre-fix, only
+# the Saturday entry survived a DE->AT quote.
+settings_intl_flag_contradiction = {
+    "carrier_id": "universal",
+    "services": [
+        {
+            "service_name": "Standard to Door",
+            "service_code": "carrier_standard",
+            "currency": "EUR",
+            "weight_unit": "KG",
+            "domicile": True,
+            "international": False,
+            "zones": [
+                {"rate": 8.00, "country_codes": ["DE"]},
+                {"rate": 8.00, "country_codes": ["AT"]},
+            ],
+        },
+        {
+            "service_name": "Standard to Door - Saturday",
+            "service_code": "carrier_standard",
+            "currency": "EUR",
+            "weight_unit": "KG",
+            "domicile": None,
+            "international": None,
+            "zones": [
+                {"rate": 12.00, "country_codes": ["DE"]},
+                {"rate": 12.00, "country_codes": ["AT"]},
+            ],
+        },
+    ],
+}
+
+# A genuinely domestic-only service: international=False AND its single zone
+# has no location restrictions (wildcard). The override must NOT fire here —
+# a wildcard zone is not explicit proof of international coverage.
+settings_domestic_wildcard_zone = {
+    "carrier_id": "universal",
+    "services": [
+        {
+            "service_name": "Domestic Only",
+            "service_code": "carrier_domestic",
+            "currency": "EUR",
+            "weight_unit": "KG",
+            "domicile": True,
+            "international": False,
+            "zones": [{"rate": 6.00}],
+        },
+    ],
+}

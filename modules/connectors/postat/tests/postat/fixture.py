@@ -2,7 +2,6 @@
 
 import karrio.sdk as karrio
 
-
 gateway = karrio.gateway["postat"].create(
     dict(
         id="carrier_id",

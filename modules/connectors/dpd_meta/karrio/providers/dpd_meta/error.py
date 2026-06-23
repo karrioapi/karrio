@@ -1,17 +1,18 @@
-"""Karrio DPD Global error parser."""
+"""Karrio DPD Meta error parser."""
 
 import typing
-import karrio.lib as lib
+
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.dpd_meta.utils as provider_utils
 import karrio.schemas.dpd_meta.error_response as dpd_error
 
 
 def parse_error_response(
-    response: typing.Union[dict, list, typing.Any],
+    response: dict | list | typing.Any,
     settings: provider_utils.Settings,
     **kwargs,
-) -> typing.List[models.Message]:
+) -> list[models.Message]:
     """Parse DPD META-API error response.
 
     Handles dict, list, and unexpected response formats.
@@ -48,11 +49,7 @@ def parse_error_response(
 
             error_code = error.errorCode or "ERROR"
             error_message = error.errorMessage or "Unknown error"
-            display_message = (
-                f"Error Code {error_code}: {error_message}"
-                if error.errorCode
-                else error_message
-            )
+            display_message = f"Error Code {error_code}: {error_message}" if error.errorCode else error_message
 
             errors.append(
                 models.Message(
@@ -81,11 +78,7 @@ def parse_error_response(
         elif result.get("errors") or result.get("message"):
             msg = result.get("message") or result.get("errors") or str(result)
             error_code = result.get("code") or "VALIDATION_ERROR"
-            display_message = (
-                f"Error Code {error_code}: {msg}"
-                if result.get("code")
-                else str(msg)
-            )
+            display_message = f"Error Code {error_code}: {msg}" if result.get("code") else str(msg)
 
             errors.append(
                 models.Message(
@@ -98,3 +91,43 @@ def parse_error_response(
             )
 
     return errors
+
+
+WS_AUTH_EXPIRED_CODES = ("LOGIN_5", "LOGIN_6")
+
+
+def is_ws_auth_expired(messages: list[models.Message]) -> bool:
+    """LOGIN_5 (authtoken invalid) / LOGIN_6 (session expired) → the cached
+    public-WS authToken is dead and DPD mandates a fresh login."""
+    return any(message.code in WS_AUTH_EXPIRED_CODES for message in messages)
+
+
+def parse_soap_faults(
+    response: lib.Element,
+    settings: provider_utils.Settings,
+) -> list[models.Message]:
+    """Parse DPD public-WS SOAP faults into karrio Messages.
+
+    Mirrors the dpd (classic) connector's fault handling: the `<detail>`
+    carries the specific fault (`authenticationFault` / `dataFault` /
+    `systemFault`) with `errorCode` + `errorMessage`; the generic
+    `<soap:Fault>` `faultcode` / `faultstring` is the fallback when no
+    `<detail>` is present.
+    """
+    faults: list[lib.Element] = lib.find_element("Fault", response)
+    details: list[lib.Element] = sum(([*node] for node in lib.find_element("detail", response)), start=[])
+
+    if details:
+        errors = [(node.findtext("errorCode"), node.findtext("errorMessage")) for node in details]
+    else:
+        errors = [(node.findtext("faultcode"), node.findtext("faultstring")) for node in faults]
+
+    return [
+        models.Message(
+            carrier_id=settings.carrier_id,
+            carrier_name=settings.carrier_name,
+            code=code or "SOAP_FAULT",
+            message=message or "DPD SOAP fault",
+        )
+        for code, message in errors
+    ]

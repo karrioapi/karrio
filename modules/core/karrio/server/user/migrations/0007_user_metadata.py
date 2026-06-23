@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("user", "0006_workspaceconfig"),
     ]
@@ -16,9 +15,7 @@ class Migration(migrations.Migration):
             model_name="user",
             name="metadata",
             field=models.JSONField(
-                default=functools.partial(
-                    karrio.server.core.models._identity, *(), **{"value": {}}
-                ),
+                default=functools.partial(karrio.server.core.models._identity, *(), **{"value": {}}),
                 help_text="User defined metadata",
             ),
         ),

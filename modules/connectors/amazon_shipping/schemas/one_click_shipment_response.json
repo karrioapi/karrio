@@ -1,0 +1,60 @@
+{
+  "payload": {
+    "shipmentId": "87852211788104",
+    "packageDocumentDetails": [
+      {
+        "packageClientReferenceId": "PKG001",
+        "packageDocuments": [
+          {
+            "type": "LABEL",
+            "format": "PNG",
+            "contents": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+          }
+        ],
+        "trackingId": "1578648261977"
+      }
+    ],
+    "promise": {
+      "deliveryWindow": {
+        "start": "2024-01-17T08:00:00Z",
+        "end": "2024-01-17T20:00:00Z"
+      },
+      "pickupWindow": {
+        "start": "2024-01-15T08:00:00Z",
+        "end": "2024-01-15T20:00:00Z"
+      }
+    },
+    "carrier": {
+      "id": "AMZN_US",
+      "name": "Amazon Shipping"
+    },
+    "service": {
+      "id": "AMZN_US_STD",
+      "name": "Amazon Shipping Standard"
+    },
+    "totalCharge": {
+      "value": 7.99,
+      "unit": "USD"
+    },
+    "rateItems": [
+      {
+        "rateItemCharge": {
+          "unit": "USD",
+          "value": 6.99
+        },
+        "rateItemID": "BASE_RATE",
+        "rateItemNameLocalization": "Base Rate",
+        "rateItemType": "MANDATORY"
+      },
+      {
+        "rateItemCharge": {
+          "unit": "USD",
+          "value": 1.00
+        },
+        "rateItemID": "FUEL_SURCHARGE",
+        "rateItemNameLocalization": "Fuel Surcharge",
+        "rateItemType": "INCLUDED"
+      }
+    ]
+  }
+}

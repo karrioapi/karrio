@@ -1,28 +1,24 @@
 """Karrio GLS Group tracking implementation."""
 
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
-import karrio.providers.gls.error as error
-import karrio.providers.gls.utils as provider_utils
+import karrio.lib as lib
 import karrio.providers.gls.units as provider_units
+import karrio.providers.gls.utils as provider_utils
 import karrio.schemas.gls.tracking_response as gls_tracking
 
 
 def parse_tracking_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+) -> tuple[list[models.TrackingDetails], list[models.Message]]:
     """Parse GLS Track and Trace API response."""
     response = _response.deserialize()
-    messages: typing.List[models.Message] = []
-    tracking_details: typing.List[models.TrackingDetails] = []
+    messages: list[models.Message] = []
+    tracking_details: list[models.TrackingDetails] = []
 
-    # Parse the T&T API response (ParcelsResponseDTO)
     parcels_response = lib.to_object(gls_tracking.TrackingResponseType, response)
 
     for parcel in parcels_response.parcels or []:
-        # Check for parcel-level errors
         if parcel.errorCode:
             messages.append(
                 models.Message(
@@ -35,7 +31,6 @@ def parse_tracking_response(
             )
             continue
 
-        # Extract tracking details for this parcel
         tracking_details.append(_extract_details(parcel, settings))
 
     return tracking_details, messages
@@ -46,34 +41,27 @@ def _extract_details(
     settings: provider_utils.Settings,
 ) -> models.TrackingDetails:
     """Extract tracking details from a GLS parcel."""
-    # Extract events (sorted by datetime, newest first)
     events = [
         models.TrackingEvent(
             date=lib.fdate(event.eventDateTime, "%Y-%m-%dT%H:%M:%S%z") if event.eventDateTime else None,
             description=event.description or "",
-            location=", ".join(
-                filter(None, [event.city, event.postalCode, event.country])
-            ),
+            location=", ".join(filter(None, [event.city, event.postalCode, event.country])),
             code=event.code,
             time=lib.ftime(event.eventDateTime, "%Y-%m-%dT%H:%M:%S%z") if event.eventDateTime else None,
         )
         for event in (parcel.events or [])
     ]
 
-    # Map GLS status codes to Karrio standard statuses
     status = next(
-        (
-            status.name
-            for status in list(provider_units.TrackingStatus)
-            if parcel.status in status.value
-        ),
+        (status.name for status in list(provider_units.TrackingStatus) if parcel.status in status.value),
         provider_units.TrackingStatus.in_transit.name,
     )
 
     return models.TrackingDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        tracking_number=parcel.unitno or parcel.requested,
+        # key by `requested`, not `unitno` — see SPECS.md § Tracking
+        tracking_number=parcel.requested or parcel.unitno,
         status=status,
         events=events,
         meta=dict(

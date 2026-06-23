@@ -1,17 +1,17 @@
-import typing
-import requests
 from datetime import datetime
-from django.conf import settings
-from django.db.models import Q
-from django.contrib.auth import get_user_model
 
-from karrio.core import utils
-from karrio.server.core.utils import identity
-from karrio.server.core.logging import logger
-from karrio.server.serializers import Context
-from karrio.server.events import models
 import karrio.server.events.serializers.event as serializers
-NotificationResponse = typing.Tuple[str, requests.Response]
+import requests
+from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.db.models import Q
+from karrio.core import utils
+from karrio.server.core.logging import logger
+from karrio.server.core.utils import identity
+from karrio.server.events import models
+from karrio.server.serializers import Context
+
+NotificationResponse = tuple[str, requests.Response]
 User = get_user_model()
 
 
@@ -42,9 +42,7 @@ def notify_webhook_subscribers(
 
     if any(webhooks):
         payload = dict(event=event, data=data)
-        responses: typing.List[NotificationResponse] = notify_subscribers(
-            webhooks, payload
-        )
+        responses: list[NotificationResponse] = notify_subscribers(webhooks, payload)
         update_notified_webhooks(webhooks, responses, event_at)
     else:
         logger.info("No webhook subscribers found", event=event)
@@ -52,12 +50,13 @@ def notify_webhook_subscribers(
     logger.info("Finished webhook subscribers notification", event=event)
 
 
-def notify_subscribers(webhooks: typing.List[models.Webhook], payload: dict):
+def notify_subscribers(webhooks: list[models.Webhook], payload: dict):
     def notify_subscriber(webhook: models.Webhook):
         response = identity(
             lambda: requests.post(
                 webhook.url,
                 json=payload,
+                timeout=30,
                 headers={
                     "Content-type": "application/json",
                     "X-Event-Id": webhook.secret,
@@ -71,8 +70,8 @@ def notify_subscribers(webhooks: typing.List[models.Webhook], payload: dict):
 
 
 def update_notified_webhooks(
-    webhooks: typing.List[models.Webhook],
-    responses: typing.List[NotificationResponse],
+    webhooks: list[models.Webhook],
+    responses: list[NotificationResponse],
     event_at: datetime,
 ):
     logger.info("Saving updated webhooks")
@@ -81,7 +80,7 @@ def update_notified_webhooks(
         try:
             logger.debug("Updating webhook", webhook_id=webhook_id)
 
-            webhook = next((w for w in webhooks if w.id == webhook_id))
+            webhook = next(w for w in webhooks if w.id == webhook_id)
             if response.ok:
                 webhook.last_event_at = event_at
                 webhook.failure_streak_count = 0

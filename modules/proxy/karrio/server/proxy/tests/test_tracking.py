@@ -1,9 +1,10 @@
 import json
-from unittest.mock import patch, ANY
+from unittest.mock import ANY, patch
+
 from django.urls import reverse
-from rest_framework import status
 from karrio.core.models import TrackingDetails, TrackingEvent
 from karrio.server.core.tests import APITestCase
+from rest_framework import status
 
 
 class TestTracking(APITestCase):

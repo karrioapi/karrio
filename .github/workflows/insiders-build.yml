@@ -95,6 +95,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: "npm"
 
       - id: get_tag
         run: |
@@ -112,14 +113,14 @@ jobs:
             --additional-properties=useSingleRequestParameter=true
 
           cd packages/karriojs
-          npm install
+          npm ci
           npx gulp build --output "${GITHUB_WORKSPACE}/apps/api/karrio/server/static/karrio/js/karrio.js"
           cd -
 
       - name: Build embeddable elements
         run: |
           cd packages/elements
-          npm install
+          npm ci
           npm run build
 
           ELEMENTS_STATIC="${GITHUB_WORKSPACE}/apps/api/karrio/server/static/karrio/elements"
@@ -156,14 +157,27 @@ jobs:
           submodules: recursive
           token: ${{ secrets.GH_PAT }}
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - id: get_tag
         run: |
           cat ./apps/api/karrio/server/VERSION
           echo "tag=$(cat ./apps/api/karrio/server/VERSION)" >> "$GITHUB_ENV"
 
+      - name: Login to GHCR
+        run: echo ${{ secrets.GH_PAT }} | docker login ghcr.io -u USERNAME --password-stdin
+
       - name: Build insider dashboard image
-        run: |
-          echo 'Build and push karrio-insiders dashboard:${{ env.tag }}...'
-          echo ${{ secrets.GH_PAT }} | docker login ghcr.io -u USERNAME --password-stdin
-          KARRIO_IMAGE=ghcr.io/karrioapi/dashboard SOURCE=https://github.com/karrioapi/karrio-insiders ./bin/build-dashboard-image ${{ env.tag }} &&
-          docker push ghcr.io/karrioapi/dashboard:${{ env.tag }} || exit 1
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./docker/dashboard/Dockerfile
+          push: true
+          tags: ghcr.io/karrioapi/dashboard:${{ env.tag }}
+          build-args: |
+            VERSION=${{ env.tag }}
+            NEXT_PUBLIC_DASHBOARD_VERSION=${{ env.tag }}
+            SOURCE=https://github.com/karrioapi/karrio-insiders
+          cache-from: type=gha,scope=insiders-dashboard
+          cache-to: type=gha,mode=max,scope=insiders-dashboard

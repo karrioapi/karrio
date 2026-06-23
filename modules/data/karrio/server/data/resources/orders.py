@@ -3,13 +3,13 @@
 With JSON-based line_items storage, exports now iterate over Orders
 and denormalize line items into rows.
 """
-from django.db.models import Q
-from import_export import resources
 
 import karrio.lib as lib
-from karrio.server.orders.serializers.order import OrderSerializer
-from karrio.server.orders.filters import OrderFilters
+from django.db.models import Q
+from import_export import resources
 from karrio.server.orders import models
+from karrio.server.orders.filters import OrderFilters
+from karrio.server.orders.serializers.order import OrderSerializer
 
 DEFAULT_HEADERS = {
     # Order details
@@ -99,7 +99,7 @@ def order_export_resource(query_params: dict, context, **kwargs):
                 "status",
             )
             exclude = _exclude
-            export_order = [k for k in DEFAULT_HEADERS.keys() if k not in _exclude]
+            export_order = [k for k in DEFAULT_HEADERS if k not in _exclude]
 
         def get_queryset(self):
             return OrderFilters(query_params, base_qs).qs
@@ -141,10 +141,7 @@ def order_export_resource(query_params: dict, context, **kwargs):
 
             def dehydrate_order_total(self, row):
                 return sum(
-                    [
-                        lib.to_decimal(li.get("value_amount")) or 0.0
-                        for li in (row.line_items or [])
-                    ],
+                    [lib.to_decimal(li.get("value_amount")) or 0.0 for li in (row.line_items or [])],
                     0.0,
                 )
 
@@ -384,13 +381,7 @@ def order_export_resource(query_params: dict, context, **kwargs):
     return Resource()
 
 
-def order_import_resource(
-    query_params: dict,
-    context,
-    data_fields: dict = None,
-    batch_id: str = None,
-    **kwargs
-):
+def order_import_resource(query_params: dict, context, data_fields: dict = None, batch_id: str = None, **kwargs):
     queryset = models.Order.access_by(context)
     field_headers = data_fields if data_fields is not None else DEFAULT_HEADERS
     _exclude = query_params.get("exclude", "").split(",")
@@ -441,11 +432,7 @@ def order_import_resource(
     _Base = type(
         "ResourceFields",
         (resources.ModelResource,),
-        {
-            k: resources.Field(readonly=(k not in models.Order.__dict__))
-            for k in field_headers.keys()
-            if k not in _exclude
-        },
+        {k: resources.Field(readonly=(k not in models.Order.__dict__)) for k in field_headers if k not in _exclude},
     )
 
     class Resource(_Base, resources.ModelResource):
@@ -453,7 +440,7 @@ def order_import_resource(
             model = models.Order
             fields = _fields
             exclude = _exclude
-            export_order = [k for k in field_headers.keys() if k not in _exclude]
+            export_order = [k for k in field_headers if k not in _exclude]
             force_init_instance = True
 
         def get_queryset(self):
@@ -467,9 +454,7 @@ def order_import_resource(
             order_id = row.get(field_headers["order_id"])
             source = row.get(field_headers["order_source"])
             meta = {} if batch_id is None else dict(meta=dict(batch_ids=[batch_id]))
-            queryset = models.Order.access_by(context).filter(
-                order_id=order_id, source=source
-            )
+            queryset = models.Order.access_by(context).filter(order_id=order_id, source=source)
 
             if queryset.exists():
                 _order = queryset.first()
@@ -497,21 +482,13 @@ def order_import_resource(
                         shipping_to=dict(
                             person_name=row.get(field_headers["shipping_to_name"]),
                             company_name=row.get(field_headers["shipping_to_company"]),
-                            address_line1=row.get(
-                                field_headers["shipping_to_address1"]
-                            ),
-                            address_line2=row.get(
-                                field_headers["shipping_to_address2"]
-                            ),
+                            address_line1=row.get(field_headers["shipping_to_address1"]),
+                            address_line2=row.get(field_headers["shipping_to_address2"]),
                             city=row.get(field_headers["shipping_to_city"]),
                             state_code=row.get(field_headers["shipping_to_state"]),
-                            postal_code=row.get(
-                                field_headers["shipping_to_postal_code"]
-                            ),
+                            postal_code=row.get(field_headers["shipping_to_postal_code"]),
                             country_code=row.get(field_headers["shipping_to_country"]),
-                            residential=row.get(
-                                field_headers["shipping_to_residential"]
-                            ),
+                            residential=row.get(field_headers["shipping_to_residential"]),
                         ),
                         line_items=[
                             dict(
@@ -527,62 +504,38 @@ def order_import_resource(
                         ],
                         shipping_from=(
                             dict(
-                                person_name=row.get(
-                                    field_headers["shipping_from_name"]
-                                ),
-                                company_name=row.get(
-                                    field_headers["shipping_from_company"]
-                                ),
-                                address_line1=row.get(
-                                    field_headers["shipping_from_address1"]
-                                ),
-                                address_line2=row.get(
-                                    field_headers["shipping_from_address2"]
-                                ),
+                                person_name=row.get(field_headers["shipping_from_name"]),
+                                company_name=row.get(field_headers["shipping_from_company"]),
+                                address_line1=row.get(field_headers["shipping_from_address1"]),
+                                address_line2=row.get(field_headers["shipping_from_address2"]),
                                 city=row.get(field_headers["shipping_from_city"]),
-                                state_code=row.get(
-                                    field_headers["shipping_from_state"]
-                                ),
-                                postal_code=row.get(
-                                    field_headers["shipping_from_postal_code"]
-                                ),
-                                country_code=row.get(
-                                    field_headers["shipping_from_country"]
-                                ),
-                                residential=row.get(
-                                    field_headers["shipping_from_residential"]
-                                ),
+                                state_code=row.get(field_headers["shipping_from_state"]),
+                                postal_code=row.get(field_headers["shipping_from_postal_code"]),
+                                country_code=row.get(field_headers["shipping_from_country"]),
+                                residential=row.get(field_headers["shipping_from_residential"]),
                             )
-                            if any(["From" in key for key in row.keys()])
+                            if any("From" in key for key in row)
                             else None
                         ),
                         billing_address=(
                             dict(
                                 person_name=row.get(field_headers["billing_name"]),
                                 company_name=row.get(field_headers["billing_company"]),
-                                address_line1=row.get(
-                                    field_headers["billing_address1"]
-                                ),
-                                address_line2=row.get(
-                                    field_headers["billing_address2"]
-                                ),
+                                address_line1=row.get(field_headers["billing_address1"]),
+                                address_line2=row.get(field_headers["billing_address2"]),
                                 city=row.get(field_headers["billing_city"]),
                                 state_code=row.get(field_headers["billing_state"]),
-                                postal_code=row.get(
-                                    field_headers["billing_postal_code"]
-                                ),
+                                postal_code=row.get(field_headers["billing_postal_code"]),
                                 country_code=row.get(field_headers["billing_country"]),
                             )
-                            if any(["Billing" in key for key in row.keys()])
+                            if any("Billing" in key for key in row)
                             else None
                         ),
                         **meta,
                     )
                 )
 
-                instance = (
-                    OrderSerializer.map(data=_data, context=context).save().instance
-                )
+                instance = OrderSerializer.map(data=_data, context=context).save().instance
 
             return instance
 

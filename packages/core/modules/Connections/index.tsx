@@ -28,7 +28,7 @@ import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import { CarrierConnectionDialog } from "@karrio/ui/components/carrier-connection-dialog";
 import { ConfirmationDialog } from "@karrio/ui/components/confirmation-dialog";
 import { useCarrierConnections, useCarrierConnectionMutation, useCarrierConnectionForm } from "@karrio/hooks/user-connection";
-import { useSystemConnections } from "@karrio/hooks/system-connection";
+import { useSystemConnections, useSystemConnectionMutation } from "@karrio/hooks/system-connection";
 import { StatusBadge } from "@karrio/ui/components/status-badge";
 import { Button } from "@karrio/ui/components/ui/button";
 import { Input } from "@karrio/ui/components/ui/input";
@@ -62,6 +62,7 @@ export default function ConnectionsPage() {
   const { query: systemQuery, system_connections } = useSystemConnections();
   const { query: rateSheetsQuery, rate_sheets } = useRateSheets();
   const mutation = useCarrierConnectionMutation();
+  const { updateSystemConnection } = useSystemConnectionMutation();
   const rateSheetMutation = useRateSheetMutation();
   const { handleSubmit: submitCarrierConnection } = useCarrierConnectionForm();
   const { references } = useAPIMetadata();
@@ -143,23 +144,31 @@ export default function ConnectionsPage() {
   };
 
   const handleToggleConnection = (connection: any, active: boolean) => {
-    mutation.updateCarrierConnection.mutate({
-      id: connection.id,
-      active
-    }, {
-      onSuccess: () => {
-        toast({
-          title: `Connection ${active ? 'enabled' : 'disabled'} successfully`
-        });
-      },
-      onError: (error: any) => {
-        toast({
-          title: "Error updating connection",
-          description: error.message || "An error occurred",
-          variant: "destructive",
-        });
-      }
-    });
+    const onSuccess = () => {
+      toast({
+        title: `Connection ${active ? 'enabled' : 'disabled'} successfully`
+      });
+    };
+    const onError = (error: any) => {
+      toast({
+        title: "Error updating connection",
+        description: error.message || "An error occurred",
+        variant: "destructive",
+      });
+    };
+
+    if (connection.connection_type === "system") {
+      updateSystemConnection.mutate(
+        { id: connection.id, enable: active },
+        { onSuccess, onError },
+      );
+      return;
+    }
+
+    mutation.updateCarrierConnection.mutate(
+      { id: connection.id, active },
+      { onSuccess, onError },
+    );
   };
 
   const handleOpenRateSheet = async (connection: any) => {

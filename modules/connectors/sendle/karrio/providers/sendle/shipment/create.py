@@ -1,38 +1,30 @@
+import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
+import karrio.providers.sendle.error as provider_error
+import karrio.providers.sendle.units as provider_units
+import karrio.providers.sendle.utils as provider_utils
 import karrio.schemas.sendle.order_request as sendle
 import karrio.schemas.sendle.order_response as shipping
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
-import karrio.core.models as models
-import karrio.providers.sendle.error as provider_error
-import karrio.providers.sendle.utils as provider_utils
-import karrio.providers.sendle.units as provider_units
 
 
 def parse_shipment_response(
-    _responses: lib.Deserializable[typing.List[typing.Tuple[dict, dict]]],
+    _responses: lib.Deserializable[list[tuple[dict, dict]]],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+) -> tuple[list[models.RateDetails], list[models.Message]]:
     responses = _responses.deserialize()
 
     shipment = lib.to_multi_piece_shipment(
         [
             (
                 f"{_}",
-                (
-                    _extract_details(response, settings)
-                    if response[0].get("error") is None
-                    else None
-                ),
+                (_extract_details(response, settings) if response[0].get("error") is None else None),
             )
             for _, response in enumerate(responses, start=1)
         ]
     )
-    messages: typing.List[models.Message] = sum(
-        [
-            provider_error.parse_error_response(list(response), settings)
-            for response in responses
-        ],
+    messages: list[models.Message] = sum(
+        [provider_error.parse_error_response(list(response), settings) for response in responses],
         start=[],
     )
 
@@ -40,13 +32,11 @@ def parse_shipment_response(
 
 
 def _extract_details(
-    data: typing.Tuple[dict, dict],
+    data: tuple[dict, dict],
     settings: provider_utils.Settings,
 ) -> models.ShipmentDetails:
     details, label = data
-    order: shipping.OrderResponseType = lib.to_object(
-        shipping.OrderResponseType, details
-    )
+    order: shipping.OrderResponseType = lib.to_object(shipping.OrderResponseType, details)
 
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
@@ -110,9 +100,7 @@ def shipment_request(
                     company=shipper.company_name,
                 ),
                 instructions=package.options.instructions.state,
-                tax_ids=(
-                    sendle.TaxIDSType(ioss=shipper.tax_id) if shipper.tax_id else None
-                ),
+                tax_ids=(sendle.TaxIDSType(ioss=shipper.tax_id) if shipper.tax_id else None),
             ),
             receiver=sendle.ReceiverType(
                 address=sendle.AddressType(
@@ -130,11 +118,7 @@ def shipment_request(
                     company=recipient.company_name,
                 ),
                 instructions=None,
-                tax_ids=(
-                    sendle.TaxIDSType(ioss=recipient.tax_id)
-                    if recipient.tax_id
-                    else None
-                ),
+                tax_ids=(sendle.TaxIDSType(ioss=recipient.tax_id) if recipient.tax_id else None),
             ),
             description=package.parcel.description,
             customer_reference=payload.reference,
@@ -167,9 +151,7 @@ def shipment_request(
                         country_of_origin=(item.origin_country or shipper.country_code),
                         hs_code=(item.hs_code or item.sku),
                     )
-                    for item in (
-                        package.items if any(package.items) else customs.commodities
-                    )
+                    for item in (package.items if any(package.items) else customs.commodities)
                 ]
                 if is_international
                 else []

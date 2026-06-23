@@ -1,19 +1,19 @@
 {
-  "status": 400,
-  "success": 0,
-  "message": "Bad Request",
+  "status": 422,
+  "success": -1,
+  "message": "Validation Error",
   "type": "error",
   "instance": "/shipment",
   "errors": [
     {
       "ErrorNo": "E001",
       "Message": "Invalid shipment data provided",
-      "StatusCode": "400"
+      "StatusCode": "Invalid parameters have been provided."
     },
     {
       "ErrorNo": "E002",
       "Message": "Missing required field: PostalCode",
-      "StatusCode": "400"
+      "StatusCode": "Invalid parameters have been provided."
     }
   ],
   "UniqId": "649969a6f6e1"

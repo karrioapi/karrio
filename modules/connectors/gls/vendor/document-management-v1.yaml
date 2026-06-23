@@ -1,7 +1,7 @@
 ---
 openapi: "3.0.0"
 info:
-  title: "Customs Document Management API"
+  title: "Customs Document Management API v1"
   description: "This API allows the maintenance of Documents related to specific use\
     \ cases in GLS, such as commercial invoices for Customs Consignments (have a look\
     \ at our <a href=\"/docs/customs-consignments-v3/1/overview\">Customs API</a>\

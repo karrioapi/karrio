@@ -1,9 +1,9 @@
 """Karrio Settings abstract class definition"""
 
 import abc
-import attr
-import typing
 import functools
+
+import attr
 
 
 @attr.s(auto_attribs=True)
@@ -21,15 +21,15 @@ class Settings(abc.ABC):
     system_config = None  # Will be set during Gateway initialization
 
     @property
-    def carrier_name(self) -> typing.Optional[str]:
+    def carrier_name(self) -> str | None:
         return None
 
     @property
-    def server_url(self) -> typing.Optional[str]:
+    def server_url(self) -> str | None:
         return None
 
     @property
-    def tracking_url(self) -> typing.Optional[str]:
+    def tracking_url(self) -> str | None:
         return None
 
     @property
@@ -64,6 +64,16 @@ class Settings(abc.ABC):
 
             self.tracer = lib.Tracer()
 
+        # Make carrier_name reachable from _urlopen_with_span via tracer.context
+        # (mirrors how middleware propagates request_id). One Settings instance ==
+        # one carrier connection, so this is stable across the proxy's lifetime.
+        self.tracer.add_context(
+            {
+                "carrier_name": self.carrier_name,
+                "carrier_id": self.carrier_id,
+            }
+        )
+
         return self.tracer.with_metadata(
             dict(
                 connection=dict(
@@ -81,12 +91,20 @@ class Settings(abc.ABC):
 
             self.tracer = lib.Tracer()
 
+        # Same carrier_name context push as Settings.trace above.
+        self.tracer.add_context(
+            {
+                "carrier_name": self.carrier_name,
+                "carrier_id": self.carrier_id,
+            }
+        )
+
         _partial = functools.partial(self.trace, format=format)
         _partial._tracer = self.tracer  # type: ignore[attr-defined]  # Preserve tracer reference for request_id propagation
         return _partial
 
     @classmethod
-    def as_stub(cls, settings: typing.Optional[dict] = None) -> "Settings":
+    def as_stub(cls, settings: dict | None = None) -> "Settings":
         """
         Create a stub instance of the Settings class with placeholder values
         for any required fields that are not provided.

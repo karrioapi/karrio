@@ -1,29 +1,25 @@
-import karrio.schemas.canadapost.manifest as canadapost
-import typing
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.canadapost.error as error
 import karrio.providers.canadapost.utils as provider_utils
-import karrio.providers.canadapost.units as provider_units
+import karrio.schemas.canadapost.manifest as canadapost
 
 
 def parse_manifest_response(
     _response: lib.Deserializable[lib.Element],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.ManifestDetails, typing.List[models.Message]]:
+) -> tuple[models.ManifestDetails, list[models.Message]]:
     response = _response.deserialize()
     links = lib.find_element("link", response)
 
     messages = error.parse_error_response(response, settings)
-    details = (
-        _extract_details(links, settings, _response.ctx) if len(links) > 0 else None
-    )
+    details = _extract_details(links, settings, _response.ctx) if len(links) > 0 else None
 
     return details, messages
 
 
 def _extract_details(
-    links: typing.List[lib.Element],
+    links: list[lib.Element],
     settings: provider_utils.Settings,
     ctx: dict = None,
 ) -> models.ManifestDetails:
@@ -65,11 +61,9 @@ def manifest_request(
         options.group_ids.state
         or [
             *set(
-                (
-                    _.get("meta", {}).get("group_id")
-                    for _ in (options.shipments.state or [])
-                    if lib.text(_.get("meta", {}).get("group_id")) is not None
-                )
+                _.get("meta", {}).get("group_id")
+                for _ in (options.shipments.state or [])
+                if lib.text(_.get("meta", {}).get("group_id")) is not None
             )
         ]
     )
@@ -84,9 +78,7 @@ def manifest_request(
         ),
         shipping_point_id=options.shipping_point_id.state,
         detailed_manifests=lib.identity(
-            True
-            if options.detailed_manifests.state is not False
-            else options.detailed_manifests.state
+            True if options.detailed_manifests.state is not False else options.detailed_manifests.state
         ),
         method_of_payment=(options.method_of_payment.state or "Account"),
         manifest_address=canadapost.ManifestAddressType(
@@ -104,9 +96,7 @@ def manifest_request(
         ),
         customer_reference=lib.text(payload.reference, max=12),
         excluded_shipments=lib.identity(
-            canadapost.ExcludedShipmentsType(
-                shipment_id=options.excluded_shipments.state.slit(",")
-            )
+            canadapost.ExcludedShipmentsType(shipment_id=options.excluded_shipments.state.slit(","))
             if options.excluded_shipments.state
             else None
         ),

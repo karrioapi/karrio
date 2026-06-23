@@ -14,26 +14,29 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
+from contextlib import suppress
+
+from constance.admin import Config
 from django.conf import settings
-from django.urls import include, path
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from constance.admin import Config
-
+from django.urls import include, path
+from two_factor.admin import AdminSiteOTPRequired
+from two_factor.urls import urlpatterns as two_factor_urlpatterns
 
 BASE_PATH = getattr(settings, "BASE_PATH", "")
+
+admin.site.__class__ = AdminSiteOTPRequired
 
 admin.site.site_header = "Administration"
 admin.site.index_title = "Administration"
 admin.site.site_url = f"/{BASE_PATH}"
 
-try:
+with suppress(Exception):
     if getattr(settings, "MULTI_TENANTS", False):
         admin.site.unregister([Config])
 
     admin.autodiscover()
-except:
-    pass
 
 urlpatterns = [
     path(
@@ -46,8 +49,10 @@ urlpatterns = [
                     for (subpath, urls, namespace) in settings.NAMESPACED_URLS
                 ],
                 path("", include("karrio.server.urls.jwt")),
+                path("", include("karrio.server.urls.mfa")),
                 path("", include("karrio.server.urls.tokens")),
                 path("", include("karrio.server.user.urls")),
+                path("", include(two_factor_urlpatterns)),
                 *[path("", include(urls)) for urls in settings.KARRIO_URLS],
                 path("admin/", admin.site.urls, name="app_admin"),
                 *staticfiles_urlpatterns(),

@@ -1,31 +1,23 @@
 import datetime
-from django.urls import reverse
-from django.contrib import admin
-from django.conf import settings
-from django.utils.safestring import mark_safe
-from django.utils.translation import gettext_lazy as _
-from rest_framework_tracking.admin import APIRequestLog
 
+from django.conf import settings
+from django.contrib import admin
+from django.urls import reverse
+from django.utils.safestring import mark_safe
 from karrio.server.tracing import models
+from rest_framework_tracking.admin import APIRequestLog
 
 
 class TracingRecordAdmin(admin.ModelAdmin):
     list_display = ("id", "log", "key", "test_mode", "request_timestamp", "created_at")
     search_fields = ("meta__request_log_id", "meta__carrier_name")
     list_filter = ("key", "test_mode")
-    readonly_fields = [
-        f.name
-        for f in models.TracingRecord._meta.get_fields()
-        if f.name not in ["org", "link"]
-    ]
+    readonly_fields = [f.name for f in models.TracingRecord._meta.get_fields() if f.name not in ["org", "link"]]
 
     def get_queryset(self, request):
         if settings.MULTI_ORGANIZATIONS:
             return (
-                models.TracingRecord.objects
-                .all()
-                .filter(link__org__users__id=request.user.id)
-                .order_by("-timestamp")
+                models.TracingRecord.objects.all().filter(link__org__users__id=request.user.id).order_by("-timestamp")
             )
 
         return super().get_queryset(request).order_by("-timestamp")

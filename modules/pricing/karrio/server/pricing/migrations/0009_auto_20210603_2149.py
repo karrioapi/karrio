@@ -6,7 +6,6 @@ import karrio.server.core.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("pricing", "0008_auto_20210418_0504"),
     ]

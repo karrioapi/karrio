@@ -21,8 +21,8 @@ info:
 
       Characters from other Unicode planes are not supported and will result in 400 Bad Request.
 
-      <sup>1</sup> except for [C0 control characters](https://en.wikipedia.org/wiki/C0_and_C1_control_codes#C0_controls) and
-      the **␡** character (0x004F).
+      <sup>1</sup> except for [C0 control characters](https://en.wikipedia.org/wiki/C0_and_C1_control_codes#C0_controls) 
+      and the **␡** character (0x004F).
 
       <sup>2</sup> except for [C1 control characters](https://en.wikipedia.org/wiki/C0_and_C1_control_codes#C1_controls) and
       any character from the [general category](https://en.wikipedia.org/wiki/Unicode_character_property#General_Category) Symbol.
@@ -37,7 +37,7 @@ info:
       your application that is making the API call. This makes troubleshooting more effectively and faster as we can identify your requests more easily.
 
     </details>
-  version: "2025-12-18"
+  version: "2026-05-07"
 servers:
   - url: "https://de-api-int.hermesworld.com/services/hsi"
 security:
@@ -48,8 +48,9 @@ paths:
       tags:
         - Shipment Order
       summary: Returns information about a shipment order
-      description: This operation enables you to query existing shipment orders directly
-        via the API and obtain additional information on these.
+      description: |-
+        This operation enables you to query existing shipment orders directly via the API and obtain additional 
+        information on these.
       operationId: getShipmentOrders
       parameters:
         - name: Accept-Language
@@ -82,8 +83,8 @@ paths:
               maxLength: 11
         - name: shipmentOrderState
           in: query
-          description: "Status of the shipment order Values: CREATED, DELETED, PLACED\
-          \ (label printed), ARCHIVED, FAILED"
+          description: |-
+            Status of the shipment order Values: CREATED, DELETED, PLACED (label printed), ARCHIVED, FAILED.
           required: false
           schema:
             type: string
@@ -163,10 +164,10 @@ paths:
       tags:
         - Shipment Order
       summary: Create a new shipment order
-      description: "You can use this REST operation to create a new shipment order\
-        \ via the API for sending parcels. You can also add various services to the\
-        \ order. As an API partner, you can place shipment orders for yourself as\
-        \ well as for any clients."
+      description: |-
+        You can use this REST operation to create a new shipment order via the API for sending parcels. You can also 
+        add various services to the order. As an API partner, you can place shipment orders for yourself as well as for 
+        any clients.
       operationId: createShipmentOrder
       parameters:
         - name: Accept-Language
@@ -342,13 +343,12 @@ paths:
       tags:
         - Shipment Order
       summary: Create a label for an existing shipment order
-      description: "You can use this REST operation to create a label or label data\
-        \ and generate a notification for the further logistics handling via an API.\
-        \ Labels and notification data are required for the national and international\
-        \ processing of parcels to ensure that your parcels are channelled into the\
-        \ logistics processes of Hermes Germany GmbH. It is always important that\
-        \ the extra services booked are also indicated on the label. To print a label,\
-        \ you must first create a shipment order. "
+      description: |-
+        You can use this REST operation to create a label or label data and generate a notification for the further 
+        logistics handling via an API. Labels and notification data are required for the national and international 
+        processing of parcels to ensure that your parcels are channelled into the logistics processes of 
+        Hermes Germany GmbH. It is always important that the extra services booked are also indicated on the label. 
+        To print a label, you must first create a shipment order.
       operationId: createLabelForShipmentOrder
       parameters:
         - name: Accept-Language
@@ -487,9 +487,9 @@ paths:
       tags:
         - Shipment Order
       summary: Create a shipment order and its label
-      description: You can use this REST operation to create a new a shipment order
-        and a label or label data via the API. Thereby the parcel can be channelled
-        into the logistics network of Hermes Germany.
+      description: |-
+        You can use this REST operation to create a new a shipment order and a label or label data via the API. Thereby 
+        the parcel can be channelled into the logistics network of Hermes Germany.
       operationId: createShipmentOrderAndLabel
       parameters:
         - name: Accept-Language
@@ -814,12 +814,17 @@ paths:
       tags:
         - Return Order
       summary: Create a new return order
-      description: "You can use this REST operation to create a new return order via\
-        \ the API for returning parcels that have been delivered to you. You can create\
-        \ return orders in two ways. You can create a return order for an existing\
-        \ shipment order. Alternatively, you can create a return order without any\
-        \ previous shipment order. As an API partner, you can place return orders\
-        \ for yourself as well as for any clients."
+      description: |
+        You can use this REST operation to create a new return order via the API for returning parcels that have been delivered to you. 
+        
+        You can create return orders in two ways:
+        - Create a return order for an existing shipment order
+        - Create a return order without any previous shipment order
+                
+        **Available Services:**
+        - flexReturnService: Enables flexible return service (requires parcel weight)
+        - bulkGoodService: For booking bulk goods service (QR code labels not supported)
+        - returnPickupService: Schedule a pickup for the return order (QR code labels not supported)
       operationId: createReturnOrder
       parameters:
         - name: Accept-Language
@@ -920,15 +925,14 @@ paths:
       tags:
         - Return Order
       summary: Create a label or QR code for an existing return order
-      description: "You can use this REST operation to create a label, label data\
-        \ or QR code for a return order via the API. Thereby the parcel can be channelled\
-        \ into the logistics network of Hermes Germany. You can create the label in\
-        \ three ways: You can request a conventional PDF label. Alternatively you\
-        \ can obtain the label as a QR code via the API. With this QR code, a label\
-        \ can be printed at a Hermes ParcelShop for shipping the returns. The label\
-        \ is then affixed to the parcel in the Hermes ParcelShop and the parcel channelled\
-        \ into the logistics network of Hermes Germany. Furthermore, you can request\
-        \ the label data to create the label on your own."
+      description: |
+        You can use this REST operation to create a label, label data or QR code for an existing return order via the API. Thereby the parcel can be channelled into the logistics network of Hermes Germany.
+        
+        **Label Formats:**
+        - Conventional PDF label
+        - QR code for printing at Hermes ParcelShop
+        - ZPL format for thermal printers
+        - Label data to create your own label
       operationId: createLabelForReturnOrder
       parameters:
         - name: Accept-Language
@@ -961,7 +965,9 @@ paths:
             | application/shippinglabel-zpl+json;dpi=300;reset=false | Label ZPL format in 300 dpi, without resetting the printer settings to a well known state |
             | application/shippinglabel-zpl+json;dpi=300;encoding=US-ASCII | Label ZPL format in 300 dpi, with US-ASCII encoding. Default encoding is UTF-8. |
 
-            **Please note:** label data is not allowed for international return orders.
+            **Please note:**
+            - Label data is not allowed for international return orders.
+            - QR codes are not available when using bulkGoodService or returnPickupService.
           required: false
           schema:
             type: string
@@ -1064,14 +1070,19 @@ paths:
       tags:
         - Return Order
       summary: Create a return order and its label
-      description: "You can use this REST operation to create a label, label data\
-        \ or QR code for a return order via the API. Thereby the parcel can be channelled\
-        \ into the logistics network of Hermes Germany. You can create the label in\
-        \ three ways. You can request a conventional PDF label. Alternatively you\
-        \ can obtain the label as a QR code via the API. With this QR code, a label\
-        \ can be printed at a Hermes ParcelShop for shipping the returns. The label\
-        \ is then affixed to the parcel in the Hermes ParcelShop and the parcel channelled\
-        \ into the logistics network of Hermes Germany."
+      description: |
+        You can use this REST operation to create a label, label data or QR code for a return order via the API. Thereby the parcel can be channelled into the logistics network of Hermes Germany. 
+        
+        **Label Formats:**
+        - Conventional PDF label
+        - QR code for printing at Hermes ParcelShop
+        - ZPL format for thermal printers
+        - Label data to create your own label
+        
+        **Available Services:**
+        - flexReturnService: Enables flexible return service (requires parcel weight)
+        - bulkGoodService: For booking bulk goods service (QR code labels not supported)
+        - returnPickupService: Schedule a pickup for the return order (QR code labels not supported)
       operationId: createReturnOrderAndLabel
       parameters:
         - name: Accept-Language
@@ -1104,7 +1115,9 @@ paths:
             | application/shippinglabel-zpl+json;dpi=300;reset=false | Label ZPL format in 300 dpi, without resetting the printer settings to a well known state |
             | application/shippinglabel-zpl+json;dpi=300;encoding=US-ASCII | Label ZPL format in 300 dpi, with US-ASCII encoding. Default encoding is UTF-8. |
 
-            **Please note:** label data is not allowed for international return orders.
+            **Please note:**
+            - Label data is not allowed for international return orders.
+            - QR codes are not available when using bulkGoodService or returnPickupService.
           required: false
           schema:
             type: string
@@ -1223,8 +1236,9 @@ paths:
       tags:
         - Pickup Order
       summary: Get Pickup Order Info
-      description: This operation enables you to query existing pickup orders directly
-        via the API and obtain additional information on these.
+      description: |-
+        This operation enables you to query existing pickup orders directly via the API and obtain additional 
+        information on these.
       operationId: getPickupOrders
       parameters:
         - name: Accept-Language
@@ -1283,14 +1297,12 @@ paths:
       tags:
         - Pickup Order
       summary: Create Pickup Order
-      description: You can use the following REST operation if you want to create
-        a pickup order via the API for collecting your parcels. This pickup order
-        is then executed once on the day specified by you. You can also specify the
-        number of parcels to be collected. This is done differently from the general
-        parcel classes. One-time pickup orders can only be created by registered business
-        customers/API partners or by their clients of the Digital Sales customer segment.
-        A corresponding error message is displayed to business customers or clients
-        of other segments.
+      description: |-
+        You can use the following REST operation if you want to create a pickup order via the API for collecting your 
+        parcels. This pickup order is then executed once on the day specified by you. You can also specify the number 
+        of parcels to be collected. This is done differently from the general parcel classes. One-time pickup orders 
+        can only be created by registered business customers/API partners or by their clients of the Digital Sales 
+        customer segment. A corresponding error message is displayed to business customers or clients of other segments.
       operationId: createPickupOrder
       parameters:
         - name: Accept-Language
@@ -1383,8 +1395,8 @@ paths:
       tags:
         - Return Order
       summary: Gets information of existing return order
-      description: This operation allows you to query information on existing return
-        orders directly via the API.
+      description: |-
+        This operation allows you to query information on existing return orders directly via the API.
       operationId: getReturnPickupOrders
       parameters:
         - name: Accept-Language
@@ -1455,8 +1467,8 @@ paths:
       tags:
         - Return Pickup Order
       summary: Delete Return Pickup Order
-      description: You can use the following REST operation if you want to cancel
-        a return pickup order via the API.
+      description: |-
+        You can use the following REST operation if you want to cancel a return pickup order via the API.
       operationId: cancelReturnPickupOrder
       parameters:
         - name: Accept-Language
@@ -1525,9 +1537,9 @@ paths:
       tags:
         - Pickup Order
       summary: Delete Pickup Order
-      description: You can use the following REST operation if you want to cancel
-        a pickup order via the API. A corresponding error message is displayed to
-        business customers or clients of other segments.
+      description: |-
+        You can use the following REST operation if you want to cancel a pickup order via the API. A corresponding 
+        error message is displayed to business customers or clients of other segments.
       operationId: cancelPickupOrder
       parameters:
         - name: Accept-Language
@@ -1595,7 +1607,9 @@ components:
   examples:
     BasicRequestRecommended:
       summary: Basic Request (Recommend)
-      description: This request will create a simple shipment order with recommended best practices including reference numbers and addressAddition.
+      description: |-
+        This request will create a simple shipment order with recommended best practices including reference numbers 
+        and addressAddition.
       value:
         clientReference: "01234567890123456789"
         clientReference2: "01234567890123456789"
@@ -1619,7 +1633,8 @@ components:
             notificationType: EMAIL_SMS
     BasicRequestMinimal:
       summary: Basic Request (Minimal)
-      description: This request will create a simple shipment order with minimal required fields.
+      description: |-
+        This request will create a simple shipment order with minimal required fields.
       value:
         receiverName:
           firstname: Max
@@ -1634,7 +1649,8 @@ components:
           parcelWeight: 5000
     BasicRequestDivergentSender:
       summary: Basic Request (Divergent Sender)
-      description: This request will create a simple shipment order with divergent sender address.
+      description: |-
+        This request will create a simple shipment order with divergent sender address.
       value:
         senderName:
           firstname: SendersFirstName
@@ -1659,7 +1675,9 @@ components:
           parcelWeight: 5000
     ServiceParcelshopDeliveryByID:
       summary: Service Parcelshop Delivery (ID)
-      description: This request will create a simple shipment order with the parcelshop delivery service using a specific parcelshop ID.
+      description: |-
+        This request will create a simple shipment order with the parcelshop delivery service using a specific 
+        parcelshop ID.
       value:
         receiverName:
           firstname: Max
@@ -1683,7 +1701,8 @@ components:
             psSelectionRule: SELECT_BY_ID
     ServiceParcelshopDeliveryAutoselect:
       summary: Service Parcelshop Delivery (Autoselect)
-      description: This request will create a simple shipment order with the parcelshop delivery autoselect service.
+      description: |-
+        This request will create a simple shipment order with the parcelshop delivery autoselect service.
       value:
         receiverName:
           firstname: Max
@@ -1706,7 +1725,8 @@ components:
             psSelectionRule: SELECT_BY_RECEIVER_ADDRESS
     ServiceParcelshopDeliveryNoAuth:
       summary: Service Parcelshop Delivery (ID + No Authorization)
-      description: This request will create a simple shipment order with parcelshop delivery and exclude parcelshop authorization.
+      description: |-
+        This request will create a simple shipment order with parcelshop delivery and exclude parcelshop authorization.
       value:
         receiverName:
           firstname: Max
@@ -1731,7 +1751,8 @@ components:
           excludeParcelShopAuthorization: true
     ServiceBulky:
       summary: Service Bulky
-      description: This request will create a simple shipment order with the bulky goods service.
+      description: |-
+        This request will create a simple shipment order with the bulky goods service.
       value:
         receiverName:
           firstname: Max
@@ -1748,7 +1769,8 @@ components:
           bulkGoodService: true
     ServiceCashOnDelivery:
       summary: Service Cash On Delivery
-      description: This request will create a simple shipment order with the cash on delivery service.
+      description: |-
+        This request will create a simple shipment order with the cash on delivery service.
       value:
         clientReference: "01234567890123456789"
         clientReference2: "01234567890123456789"
@@ -1776,7 +1798,8 @@ components:
             notificationType: EMAIL_SMS
     ServiceLimitedQuantities:
       summary: Service Limited Quantities
-      description: This request will create a simple shipment order with the limited quantities service.
+      description: |-
+        This request will create a simple shipment order with the limited quantities service.
       value:
         receiverName:
           firstname: Max
@@ -1793,7 +1816,8 @@ components:
           limitedQuantitiesService: true
     ServiceNoDeliveryToNeighbour:
       summary: Service No Delivery To Neighbour
-      description: This request will create a simple shipment order with the household signature service.
+      description: |-
+        This request will create a simple shipment order with the household signature service.
       value:
         receiverName:
           firstname: Max
@@ -1810,7 +1834,8 @@ components:
           householdSignatureService: true
     ServiceNoRedirection:
       summary: Service No Redirection
-      description: This request will create a simple shipment order with the redirection prohibited service.
+      description: |-
+        This request will create a simple shipment order with the redirection prohibited service.
       value:
         receiverName:
           firstname: Max
@@ -1827,7 +1852,8 @@ components:
           redirectionProhibitedService: true
     ServiceNextDayDelivery:
       summary: Service Next Day Delivery
-      description: This request will create a simple shipment order with the next day service.
+      description: |-
+        This request will create a simple shipment order with the next day service.
       value:
         receiverName:
           firstname: Max
@@ -1844,7 +1870,8 @@ components:
           nextDayService: true
     ServiceTAN:
       summary: Service TAN
-      description: This request will create a simple shipment order with the TAN service.
+      description: |-
+        This request will create a simple shipment order with the TAN service.
       value:
         receiverName:
           firstname: Max
@@ -1864,7 +1891,8 @@ components:
           tanService: true
     ServiceStatedDay:
       summary: Service Stated Day
-      description: This request will create a simple shipment order with the stated day service.
+      description: |-
+        This request will create a simple shipment order with the stated day service.
       value:
         receiverName:
           firstname: Max
@@ -1881,7 +1909,8 @@ components:
           statedDayService: "2025-09-25"
     ServiceIdentAge18:
       summary: Service Ident (Age Validation 18)
-      description: This request will create a simple shipment order with the ident service age 18.
+      description: |-
+        This request will create a simple shipment order with the ident service age 18.
       value:
         receiverName:
           firstname: Max
@@ -1899,7 +1928,8 @@ components:
             identVerifyFsk: "18"
     ServiceIdentPassport:
       summary: Service Ident (Passport)
-      description: This request will create a simple shipment order with the ident service passport validation.
+      description: |-
+        This request will create a simple shipment order with the ident service passport validation.
       value:
         receiverName:
           firstname: Max
@@ -1918,7 +1948,8 @@ components:
             identType: GERMAN_IDENTITY_CARD
     ServiceIdentPassportBirthday:
       summary: Service Ident (Passport + Birthday)
-      description: This request will create a simple shipment order with the ident service passport and birthday validation.
+      description: |-
+        This request will create a simple shipment order with the ident service passport and birthday validation.
       value:
         receiverName:
           firstname: Max
@@ -1938,7 +1969,8 @@ components:
             identVerifyBirthday: "2000-01-01"
     ServiceMultipartFirst:
       summary: Service Multipart (First Shipment Order)
-      description: This request will create a simple shipment order with the multipart service.
+      description: |-
+        This request will create a simple shipment order with the multipart service.
       value:
         receiverName:
           firstname: Max
@@ -1957,7 +1989,8 @@ components:
             numberOfParts: 3
     ServiceMultipartSecond:
       summary: Service Multipart (Second Shipment Order)
-      description: This request will create a simple shipment order with the multipart service.
+      description: |-
+        This request will create a simple shipment order with the multipart service.
       value:
         receiverName:
           firstname: Max
@@ -1977,7 +2010,8 @@ components:
             parentShipmentOrderID: <shipmentOrderID>
     InternationalServiceSignatureFR:
       summary: International Service Signature (FR)
-      description: This request will create an international shipment order to France with signature service.
+      description: |-
+        This request will create an international shipment order to France with signature service.
       value:
         clientReference: "01234567890123456789"
         clientReference2: "01234567890123456789"
@@ -2003,7 +2037,8 @@ components:
             notificationType: EMAIL_SMS
     InternationalServiceCustomsGB:
       summary: International Service Customs (GB)
-      description: This request will create an international shipment order to Great Britain with customs information.
+      description: |-
+        This request will create an international shipment order to Great Britain with customs information.
       value:
         clientReference: "01234567890123456789"
         clientReference2: "01234567890123456789"
@@ -2047,7 +2082,8 @@ components:
               description: Pants
               hsCode: "12345678910"
           invoiceReferences:
-            - Ref1, Ref2
+            - Ref1
+            - Ref2
           value: 6000
           exportCustomsClearance: true
           client:
@@ -2055,7 +2091,8 @@ components:
             eoriNumber: GB345678901234
     InternationalServiceCustomsCH:
       summary: International Service Customs (CH)
-      description: This request will create an international shipment order to Switzerland with customs information and ZAZ account.
+      description: |-
+        This request will create an international shipment order to Switzerland with customs information and ZAZ account.
       value:
         clientReference: "01234567890123456789"
         clientReference2: "01234567890123456789"
@@ -2099,7 +2136,8 @@ components:
               description: Pants
               hsCode: "12345678910"
           invoiceReferences:
-            - Ref1, Ref2
+            - Ref1
+            - Ref2
           value: 6000
           exportCustomsClearance: true
           client:
@@ -2113,7 +2151,9 @@ components:
               addressAddition: Second Floor
     InternationalServiceCustomsLI:
       summary: International Service Customs (LI)
-      description: This request will create an international shipment order to Liechtenstein with customs information and ZAZ account.
+      description: |-
+        This request will create an international shipment order to Liechtenstein with customs information and ZAZ 
+        account.
       value:
         clientReference: "01234567890123456789"
         clientReference2: "01234567890123456789"
@@ -2157,7 +2197,8 @@ components:
               description: Pants
               hsCode: "12345678910"
           invoiceReferences:
-            - Ref1, Ref2
+            - Ref1
+            - Ref2
           value: 6000
           exportCustomsClearance: true
           client:
@@ -2189,7 +2230,8 @@ components:
           lastname: Mustermann
     CreateReturnOrder:
       summary: Create a return order
-      description: This request will create a simple return order without any extra services.
+      description: |-
+        This request will create a simple return order without any extra services.
       value:
         senderAddress:
           street: Essener Str.
@@ -2203,7 +2245,8 @@ components:
           lastname: Mustermann
     ServiceFlexReturn:
       summary: Service Flex Return
-      description: This request will create a simple return order with the flex return service.
+      description: |-
+        This request will create a simple return order with the flex return service.
       value:
         senderAddress:
           street: Essener Str.
@@ -2220,6 +2263,8 @@ components:
           zipCode: "28844"
           town: Weyhe
           countryCode: DE
+        parcel:
+          parcelWeight: "5000"
         receiverName:
           lastname: Hermes Germany GmbH
         service:
@@ -2274,7 +2319,8 @@ components:
           example: EUR
         amount:
           type: number
-          description: Cash on delivery amount. Maximum 11 total digits with 2 decimal places.
+          description: |-
+            Cash on delivery amount. Maximum 11 total digits with 2 decimal places.
           example: 41.99
         bankTransferAmount:
           type: number
@@ -2315,14 +2361,15 @@ components:
         labelImage:
           type: string
           description: Base64 binary data The label is delivered as a PDF document.
-        commInvoiceImage:
-          type: string
         shipmentLabelData:
           $ref: "#/components/schemas/ShipmentLabelData"
         labelMediatype:
           type: string
-          description: "Indicates the media type of the created shipment label. Possible\
-            \ values are: application/pdf, application/json and text/zpl "
+          description: |-
+            Indicates the media type of the created shipment label. Possible values are: 
+            - application/pdf
+            - application/json
+            - text/zpl
     CreateReturnOrder:
       oneOf:
         - type: object
@@ -2356,8 +2403,7 @@ components:
               $ref: "#/components/schemas/DivergentReceiverAddress"
             receiverName:
               $ref: "#/components/schemas/DivergentReceiverName"
-          description: "Create a return order based on the given address data.\
-            \ (Cannot be used by Digital Sales)"
+          description: "Create a return order based on the given address data."
         - type: object
           required:
             - shipmentID
@@ -2366,10 +2412,10 @@ components:
               pattern: "[H]{1}[0-9]{19}|[0-9]{14}"
               type: string
               description: The shipment ID.
-          description: "Create a return order based on a shipment order by using the shipment ID.\
-            \ The sender of the shipment order becomes the receiver of the return order, and the\
-            \ receiver becomes the sender. Please note that a label must already have been created\
-            \ for the shipment order that belongs to the shipment ID."
+          description: |-
+            Create a return order based on a shipment order by using the shipment ID. The sender of the shipment order 
+            becomes the receiver of the return order, and the receiver becomes the sender. Please note that a label 
+            must already have been created for the shipment order that belongs to the shipment ID.
         - type: object
           required:
             - shipmentOrderID
@@ -2379,10 +2425,10 @@ components:
               type: string
               maxLength: 11
               description: The shipment order ID.
-          description: "Create a return order based on a shipment order by using the shipment order ID.\
-            \ The sender of the shipment order becomes the receiver of the return order, and the receiver\
-            \ becomes the sender. Please note that a label must already have been created for the shipment\
-            \ order that belongs to the shipment order ID."
+          description: |-
+            Create a return order based on a shipment order by using the shipment order ID. The sender of the shipment 
+            order becomes the receiver of the return order, and the receiver becomes the sender. Please note that a 
+            label must already have been created for the shipment order that belongs to the shipment order ID.
     CreateReturnOrderLabelResponse:
       type: object
       properties:
@@ -2399,16 +2445,19 @@ components:
           description: Return order ID
         shippinglabel:
           type: string
-          description: Base64 encoded binary data of the PDF document. Is filled when
-            labelMediatype is image/png
+          description: |-
+            Base64 encoded binary data of the PDF document. Is filled when labelMediatype is image/png.
         qrcode:
           type: string
-          description: Base64 encoded binary data of the mobile return QR code. Is
-            filled when labelMediatype is image/png”
+          description: |-
+            Base64 encoded binary data of the mobile return QR code. Is filled when labelMediatype is image/png.
         labelMediatype:
           type: string
-          description: "Indicates the media type of the created return label. Possible\
-            \ values are: application/pdf, application/json and image/png"
+          description: |-
+            Indicates the media type of the created return label. Possible values are:
+            - application/pdf
+            - application/json
+            - image/png
         shipmentLabelData:
           $ref: "#/components/schemas/ShipmentLabelData"
     CreateReturnOrderResponse:
@@ -2422,19 +2471,14 @@ components:
           type: string
           maxLength: 11
           description: Return order ID
-    CreateReturnPickupOrder:
-      type: object
+    BaseReturnPickupOrder:
       properties:
-        pickupAddress:
-          $ref: "#/components/schemas/ReturnPickupAddress"
-        pickupName:
-          $ref: "#/components/schemas/ReturnPickupName"
         pickupDate:
           type: string
           format: date
           pattern: "^((19|20)\\d\\d)-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])$"
-          description: Date on which the parcel is to be collected. YYYY-MM-DD (AN
-            (10))
+          description: |-
+            Date on which the parcel is to be collected. YYYY-MM-DD (AN (10))
         phone:
           type: string
           maxLength: 20
@@ -2442,28 +2486,56 @@ components:
           example: "+4940537550"
         parcel:
           $ref: "#/components/schemas/Parcel"
-        shipmentID:
-          pattern: "[H]{1}[0-9]{19}|[0-9]{14}"
-          type: string
-          description: "The shipment number. Can be used by Digital Sales customers\
-            \ only, if the return pickup order should be created from a shipment order.\
-            \ Is mandatory, if no pickupAddress and pickupName or shipmentOrderID\
-            \ is passed. Either 14 or 20 characters."
-        shipmentOrderID:
-          pattern: "[0-9]{11}"
-          type: string
-          description: "The shipment order ID. Can be used by Digital Sales customers\
-            \ only, if the return pickup order should be created from a shipment order.\
-            \ Is mandatory, if no pickupAddress and pickupName or shipmentID is passed.\
-            \ Maximum 11 characters."
-        service:
-          $ref: "#/components/schemas/ReturnPickupOrderServices"
         clientReference:
           maxLength: 20
           type: string
         clientReference2:
           maxLength: 20
           type: string
+    CreateReturnPickupOrder:
+      oneOf:
+        - allOf:
+          - type: object
+            required:
+              - pickupAddress
+              - pickupName
+            properties:
+              pickupAddress:
+                $ref: "#/components/schemas/ReturnPickupAddress"
+              pickupName:
+                $ref: "#/components/schemas/ReturnPickupName"
+              service:
+                $ref: "#/components/schemas/ReturnPickupOrderServices"
+          - $ref: "#/components/schemas/BaseReturnPickupOrder"
+          description: |-
+            Create a return order based on the given address data. (Cannot be used by Digital Sales)
+        - allOf:
+          - type: object
+            required:
+            - shipmentID
+            properties:
+              shipmentID:
+                pattern: "[H]{1}[0-9]{19}|[0-9]{14}"
+                type: string
+                description: |-
+                  The shipment number. Can be used by Digital Sales customers Either 14 or 20 characters.
+          - $ref: "#/components/schemas/BaseReturnPickupOrder"
+          description: |-
+            Create a return order based on a shipment order by using the shipment ID. (Can only be used by Digital Sales)
+        - allOf:
+          - type: object
+            required:
+              - shipmentOrderID
+            properties:
+              shipmentOrderID:
+                pattern: "[0-9]{11}"
+                type: string
+                description: |-
+                  The shipment order ID. Can be used by Digital Sales customers Maximum 11 characters.
+          - $ref: "#/components/schemas/BaseReturnPickupOrder"
+          description: |-
+            Create a return order based on a shipment order by using the shipmentOrder ID. 
+            (Can only be used by Digital Sales)
     CreateShipmentOrder:
       required:
         - receiverAddress
@@ -2513,7 +2585,8 @@ components:
       properties:
         notificationType:
           type: string
-          description: "Type of notification. Using EMAIL_SMS enables you to transmit an email address and/or a mobile number."
+          description: |-
+            Type of notification. Using EMAIL_SMS enables you to transmit an email address and/or a mobile number.
           enum:
             - "SMS"
             - "EMAIL"
@@ -2543,16 +2616,17 @@ components:
             type: string
             maxLength: 18
             description: Telephone number for the notification service.
-      description: You can use the service for every shipment. You have to use the
-        service for parcel shop and cash on delivery shipments.
+      description: |-
+        You can use the service for every shipment. You have to use the service for parcel shop and cash on delivery 
+        shipments.
     CustomsAndTaxes:
       type: object
       properties:
         currency:
           maxLength: 3
           type: string
-          description: Currency for the item values. According to ISO 4217 Currency
-            Code
+          description: |-
+            Currency for the item values. According to ISO 4217 Currency Code
         shipmentCost:
           type: integer
           description: |-
@@ -2572,7 +2646,8 @@ components:
           $ref: "#/components/schemas/ShipmentOriginAddress"
         value:
           type: integer
-          description: Total value of the parcel in minor currency units (e.g. cents, pence,...).
+          description: |-
+            Total value of the parcel in minor currency units (e.g. cents, pence,...).
           maximum: 9999999999
           format: int64
       description: Customs and taxes
@@ -2583,7 +2658,9 @@ components:
           properties:
             exportCustomsClearance:
               type: boolean
-              description: The exportCustomsClearance service includes the option to employ Hermes to handle customs clearance for the customer.
+              description: |-
+                The exportCustomsClearance service includes the option to employ Hermes to handle customs clearance for 
+                the customer.
             client:
               $ref: "#/components/schemas/ShipmentOrderCustomsAndTaxesClient"
     ShipmentOrderCustomsAndTaxesClient:
@@ -2609,8 +2686,9 @@ components:
             outboundReference:
               maxLength: 50
               type: string
-              description: Linking of delivery shipments to returns shipments using any barcode
-                or the orderId from the delivery. Must be a valid and unique reference when supplied.
+              description: |-
+                Linking of delivery shipments to returns shipments using any barcode or the orderId from the delivery. 
+                Must be a valid and unique reference when supplied.
             client:
               $ref: "#/components/schemas/ReturnOrderCustomsAndTaxesClient"
     ReturnOrderCustomsAndTaxesClient:
@@ -2640,8 +2718,8 @@ components:
         sku:
           maxLength: 50
           type: string
-          description: Stock keeping unit. Is the unit of measure in which the stocks
-            of a material are managed.
+          description: |-
+            Stock keeping unit. Is the unit of measure in which the stocks of a material are managed.
         category:
           maxLength: 50
           type: string
@@ -2676,7 +2754,8 @@ components:
         exportDescription:
           maxLength: 512
           type: string
-          description: Optional description of the item in the language of the exporting country.
+          description: |-
+            Optional description of the item in the language of the exporting country.
         exportHsCode:
           maxLength: 12
           type: string
@@ -2700,30 +2779,36 @@ components:
         street:
           type: string
           maxLength: 50
-          description: The street of the divergent address. It's highly recommended to split street and houseNumber on your own. If this is not possible, enter both information here. Required when divergent street is used. Maximum 50 characters combined with house number.
+          description: |-
+            The street of the divergent address. It's highly recommended to split street and houseNumber on your own. 
+            If this is not possible, enter both information here. Required when divergent street is used. Maximum 50 
+            characters combined with house number.
         houseNumber:
           type: string
           maxLength: 5
-          description: The house number of the divergent address. Required when divergent
-            house number is used.
+          description: |-
+            The house number of the divergent address. Required when divergent house number is used.
         zipCode:
           type: string
-          description: "The zip code of the divergent address.  Required when divergent\
-            \ zip code is used. (DE= AN (5), INTL = AN (8))"
+          description: |-
+            The zip code of the divergent address.  Required when divergent zip code is used. 
+            (DE= AN (5), INTL = AN (8))
         town:
           type: string
           maxLength: 30
-          description: The town of the divergent address. Required when divergent
-            town is used.
+          description: |-
+            The town of the divergent address. Required when divergent town is used.
         countryCode:
           type: string
-          description: The countryCode represents the country. According to ISO 3166-1
-            alpha-2 two letter country codes.
+          description: |-
+            The countryCode represents the country. According to ISO 3166-1 alpha-2 two letter country codes.
           example: DE
         addressAddition:
           type: string
           maxLength: 50
-          description: The optional address addition to the divergent address. Information like "Second Floor" or "Example Company" can be entered here.
+          description: |-
+            The optional address addition to the divergent address. Information like "Second Floor" or "Example Company"
+            can be entered here.
         addressAddition2:
           type: string
           maxLength: 20
@@ -2732,9 +2817,9 @@ components:
           type: string
           maxLength: 20
           description: The optional address addition to the divergent address.
-      description: If a divergent receiver address is included in the request those
-        data will be used to create the label instead of the data we saved as default
-        for your client
+      description: |-
+        If a divergent receiver address is included in the request those data will be used to create the label instead 
+        of the data we saved as default for your client.
     DivergentReceiverName:
       required:
         - lastname
@@ -2762,11 +2847,11 @@ components:
         lastname:
           type: string
           maxLength: 50
-          description: The surname of the divergent name. Required when divergent
-            sender is used.
-      description: If a divergent receiver name is included in the request those data
-        will be used to create the label instead of the data we saved as default for
-        your client
+          description: |-
+            The surname of the divergent name. Required when divergent sender is used.
+      description: |-
+        If a divergent receiver name is included in the request those data will be used to create the label instead of 
+        the data we saved as default for your client.
     DivergentSenderAddress:
       required:
         - countryCode
@@ -2777,31 +2862,34 @@ components:
       properties:
         street:
           type: string
-          description: The street of the divergent address. Required when divergent
-            street is used. Max. length together with house number (AN (50))
+          description: |-
+            The street of the divergent address. Required when divergent street is used. Max. length together with 
+            house number (AN (50))
         houseNumber:
           type: string
           maxLength: 5
-          description: The house number of the divergent address. Required when divergent
-            house number is used.
+          description: |-
+            The house number of the divergent address. Required when divergent house number is used.
         zipCode:
           type: string
-          description: "The zip code of the divergent address.  Required when divergent\
-            \ zip code is used. (DE= AN (5), INTL = AN (8))"
+          description: |-
+            The zip code of the divergent address.  Required when divergent zip code is used. (DE= AN (5), INTL = AN (8))
         town:
           type: string
           maxLength: 30
-          description: The town of the divergent address. Required when divergent
-            town is used.
+          description: |-
+            The town of the divergent address. Required when divergent town is used.
         countryCode:
           type: string
-          description: The countryCode represents the country. According to ISO 3166-1
-            alpha-2 two letter country codes.
+          description: |-
+            The countryCode represents the country. According to ISO 3166-1 alpha-2 two letter country codes.
           example: DE
         addressAddition:
           type: string
           maxLength: 50
-          description: The optional address addition to the divergent address. Information like "Second Floor" or "Example Company" can be entered here.
+          description: |-
+            The optional address addition to the divergent address. Information like "Second Floor" or "Example Company" 
+            can be entered here.
         addressAddition2:
           type: string
           maxLength: 20
@@ -2810,9 +2898,9 @@ components:
           type: string
           maxLength: 20
           description: The optional address addition to the divergent address.
-      description: If a divergent sender address is included in the request those
-        data will be used to create the label instead of the data we saved as default
-        for your client
+      description: |-
+        If a divergent sender address is included in the request those data will be used to create the label instead 
+        of the data we saved as default for your client.
     DivergentSenderName:
       required:
         - lastname
@@ -2840,11 +2928,11 @@ components:
         lastname:
           type: string
           maxLength: 50
-          description: The surname of the divergent name. Required when divergent
-            sender is used.
-      description: If a divergent sender name is included in the request those data
-        will be used to create the label instead of the data we saved as default for
-        your client
+          description: |-
+            The surname of the divergent name. Required when divergent sender is used.
+      description: |-
+        If a divergent sender name is included in the request those data will be used to create the label instead of 
+        the data we saved as default for your client.
     Entity:
       type: object
       properties:
@@ -2885,15 +2973,15 @@ components:
           type: string
         originShipmentID:
           type: string
-          description: shipment id of the origin shipment
+          description: shipment id of the origin shipment.
         createDate:
           type: string
           description: Return order creation date
           format: date-time
         actualOrderState:
           type: string
-          description: "Status of the shipment order Values: CREATED, DELETED, PLACED\
-            \ (label printed), ARCHIVED, FAILED"
+          description: |-
+            Status of the shipment order Values: CREATED, DELETED, PLACED (label printed), ARCHIVED, FAILED.
         clientReference:
           type: string
         clientReference2:
@@ -2910,6 +2998,8 @@ components:
           $ref: "#/components/schemas/Carrier"
         qrCode:
           $ref: "#/components/schemas/QRCode"
+        customsAndTaxes:
+          $ref: "#/components/schemas/ReturnOrderCustomsAndTaxes"
         listOfResultCodes:
           type: array
           items:
@@ -2934,8 +3024,8 @@ components:
           description: Document ID for the IdentService. Use only uppercase letters.
         identType:
           type: string
-          description: "Document type for the IdentService Values: GERMAN_IDENTITY_CARD,\
-            \ GERMAN_PASSPORT, INTERNATIONAL_PASSPORT"
+          description: |-
+            Document type for the IdentService Values.
           enum:
             - "GERMAN_IDENTITY_CARD"
             - "GERMAN_PASSPORT"
@@ -2960,7 +3050,7 @@ components:
           maximum: 120
           minimum: 30
           type: integer
-          description: The number of days after the code becomes invalid
+          description: The number of days after the code becomes invalid.
           format: integer
       description: label
     LabelAddress:
@@ -3006,9 +3096,9 @@ components:
           maxLength: 50
           type: string
           description: text to print
-      description: Optional hint text that can be provided for return orders. Only
-        characters from the Basic Latin block of the Basic Multilingual Plane are
-        supported.
+      description: |-
+        Optional hint text that can be provided for return orders. Only characters from the Basic Latin block of the 
+        Basic Multilingual Plane are supported.
     MultipartService:
       required:
         - numberOfParts
@@ -3051,7 +3141,9 @@ components:
           type: string
         lastname:
           type: string
-          description: "It's highly recommended to split firstname and lastname on your own. If this is not possible, enter both information here."
+          description: |-
+            It's highly recommended to split firstname and lastname on your own. If this is not possible, enter both 
+            information here.
         middlename:
           type: string
         gender:
@@ -3081,55 +3173,11 @@ components:
         line10:
           type: string
     ShipmentOrderParcel:
+      allOf:
+        - $ref: "#/components/schemas/Parcel"
       required:
         - parcelWeight
       type: object
-      properties:
-        parcelClass:
-          type: string
-          description: ParcelClass has to be set for Digital Sales customers.
-          enum:
-            - "XS"
-            - "S"
-            - "M"
-            - "L"
-            - "XL"
-        parcelHeight:
-          maximum: 2000
-          type: integer
-          description: Height of the parcel (mm).
-          format: int64
-        parcelWidth:
-          maximum: 2000
-          type: integer
-          description: Width of the parcel (mm).
-          format: int64
-        parcelDepth:
-          maximum: 2000
-          type: integer
-          description: Depth of the parcel (mm).
-          format: int64
-        parcelWeight:
-          maximum: 9999999999999
-          minimum: 1
-          type: integer
-          description: Weight of the parcel (g).
-          format: int64
-        parcelVolume:
-          maximum: 4500
-          minimum: 0
-          type: integer
-          description: Volume of the parcel (dl). Volume has a limit of 4500 dl.
-          format: int64
-        productType:
-          pattern: "(BAG|BIKE|LARGE_ITEM|PARCEL){0,1}?"
-          type: string
-          description: "ProductType. If not set, PARCEL will be set as default"
-          enum:
-            - "BAG"
-            - "BIKE"
-            - "LARGE_ITEM"
-            - "PARCEL"
       description: Parcel
     Parcel:
       type: object
@@ -3168,12 +3216,15 @@ components:
           maximum: 4500
           minimum: 0
           type: integer
-          description: Volume of the parcel (dl). Volume has a limit of 4500 dl. Mandatory for smaller self service business customers (onboarded via myhermes.de) and/or for international shipments.
+          description: |-
+            Volume of the parcel (dl). Volume has a limit of 4500 dl. Mandatory for smaller self service business 
+            customers (onboarded via myhermes.de) and/or for international shipments.
           format: int64
         productType:
           pattern: "(BAG|BIKE|LARGE_ITEM|PARCEL){0,1}?"
           type: string
-          description: "ProductType. If not set, PARCEL will be set as default"
+          description: |-
+            ProductType. If not set, PARCEL will be set as default.
           enum:
             - "BAG"
             - "BIKE"
@@ -3235,7 +3286,8 @@ components:
         psID:
           maxLength: 18
           type: string
-          description: "ID of the selected ParcelShop to which the parcel is to be delivered."
+          description: |-
+            ID of the selected ParcelShop to which the parcel is to be delivered.
         psSelectionRule:
           type: string
           description: "ParcelShop selection rule fixed for this variant."
@@ -3260,13 +3312,16 @@ components:
           maximum: 300
           default: 10
           type: integer
-          description: "Maximum distance (in kilometers) to the ParcelShop from the receiver's address. If the maximum distance is not set, the default value is 10 km."
+          description: |-
+            Maximum distance (in kilometers) to the ParcelShop from the receiver's address. If the maximum distance is 
+            not set, the default value is 10 km.
         psSelectionRule:
           type: string
           description: "ParcelShop selection rule fixed for this variant."
           enum:
             - "SELECT_BY_RECEIVER_ADDRESS"
-      description: "ParcelShop delivery based on the receiver's address and maximum distance"
+      description: |-
+        ParcelShop delivery based on the receiver's address and maximum distance.
     PickupAddress:
       required:
         - countryCode
@@ -3278,30 +3333,32 @@ components:
       properties:
         street:
           type: string
-          description: "Contains the street of an optional pickup address. Otherwise,\
-            \ the address stored by the business partner is used. Required field if\
-            \ “pickupAddress” or “pickupName” is transferred."
+          description: |-
+            Contains the street of an optional pickup address. Otherwise, the address stored by the business partner is
+            used. Required field if "pickupAddress" or "pickupName" is transferred.
           example: Essener Str.
         houseNumber:
           type: string
-          description: The house number of an optional pickup address. Becomes a required
-            field if “pickupAddress” or “pickupName” is transferred.
+          description: |-
+            The house number of an optional pickup address. Becomes a required field if "pickupAddress" or "pickupName"
+            is transferred.
           example: "89"
         zipCode:
           type: string
-          description: The zip code of an optional pickup address. Becomes a required
-            field if “pickupAddress” or “pickupName” is transferred. The zip code
-            may contain numeric values only despite the data type being alphanumeric.
+          description: |-
+            The zip code of an optional pickup address. Becomes a required field if "pickupAddress" or "pickupName" is 
+            transferred. The zip code may contain numeric values only despite the data type being alphanumeric.
           example: "22419"
         town:
           type: string
-          description: The town of an optional pickup address. Becomes a required
-            field if “pickupAddress” or “pickupName” is transferred.
+          description: |-
+            The town of an optional pickup address. Becomes a required field if "pickupAddress" or "pickupName" is 
+            transferred.
           example: Hamburg
         countryCode:
           type: string
-          description: The countryCode represents the country. According to ISO 3166-1
-            alpha-2 two letter country codes.
+          description: |-
+            The countryCode represents the country. According to ISO 3166-1 alpha-2 two letter country codes.
           example: DE
         addressAddition:
           type: string
@@ -3334,8 +3391,9 @@ components:
           description: The middle name of an optional name. (AN (50))
         lastname:
           type: string
-          description: The last surname of an optional name. (Required field if “pickupName”
-            or “pickupAddress” is transferred.) (AN (50))
+          description: |-
+            The last surname of an optional name. (Required field if "pickupName" or "pickupAddress" is transferred.) 
+            (AN (50))
           example: Mustermann
       description: Pickup name
     PickupOrder:
@@ -3356,8 +3414,8 @@ components:
           type: string
           format: date
           pattern: "^((19|20)\\d\\d)-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])$"
-          description: Date on which the parcel is to be collected. YYYY-MM-DD (AN
-            (10))
+          description: |-
+            Date on which the parcel is to be collected. YYYY-MM-DD (AN (10))
           example: 2023-08-01
         pickupTimeSlot:
           pattern: (BETWEEN_10_AND_13|BETWEEN_12_AND_15|BETWEEN_14_AND_17)
@@ -3382,8 +3440,8 @@ components:
           description: Pickup order ID
         actualOrderState:
           type: string
-          description: "Status of the shipment order Values: CREATED, DELETED, PLACED\
-            \ (label printed), ARCHIVED, FAILED"
+          description: |-
+            Status of the shipment order Values: CREATED, DELETED, PLACED (label printed), ARCHIVED, FAILED.
         pickupDate:
           type: string
           description: "Pickup date (Format: YYYY-MM-DD)"
@@ -3396,13 +3454,13 @@ components:
           $ref: "#/components/schemas/PickupAddress"
         volume:
           type: string
-          description: Total volume of the pickup order
+          description: Total volume of the pickup order.
         parcelCount:
           type: string
-          description: Total parcel count of the pickup order
+          description: Total parcel count of the pickup order.
         isCreatedByRhythmJob:
           type: string
-          description: Flag if this pickup order is created from a pickup rhyhtm
+          description: Flag if this pickup order is created from a pickup rhythm.
         orderCreationDate:
           type: string
           description: Pickup order creation date
@@ -3436,36 +3494,41 @@ components:
         street:
           type: string
           maxLength: 50
-          description: The street of the receiver address. It's highly recommended to split street and houseNumber on your own. If this is not possible, enter both information here.
+          description: |-
+            The street of the receiver address. It's highly recommended to split street and houseNumber on your own. 
+            If this is not possible, enter both information here.
         houseNumber:
           type: string
           maxLength: 5
           description: The house number of the receiver address.
         zipCode:
           type: string
-          description: "The zip code of the receiver address. Mandatory for all countries\
-            \ except of Ireland (DE = AN (5), INTL = AN (8))"
+          description: |-
+            The zip code of the receiver address. Mandatory for all countries except of Ireland (DE = AN (5), 
+            INTL = AN (8))
         town:
           type: string
           maxLength: 30
           description: The town of the receiver address.
         countryCode:
           type: string
-          description: The countryCode represents the country. According to ISO 3166-1
-            alpha-2 two letter country codes.
+          description: |-
+            The countryCode represents the country. According to ISO 3166-1 alpha-2 two letter country codes.
           example: DE
         addressAddition:
           type: string
           maxLength: 50
-          description: The optional address addition to the receiver address. Information like "Second Floor" or "Example Company" can be entered here.
+          description: |-
+            The optional address addition to the receiver address. Information like "Second Floor" or "Example Company" 
+            can be entered here.
         addressAddition2:
           type: string
-          description: The optional address addition to the receiver address. (AN
-            (20))
+          description: |-
+            The optional address addition to the receiver address. (AN (20))
         addressAddition3:
           type: string
-          description: The optional address addition to the receiver address. (AN
-            (20))
+          description: |-
+            The optional address addition to the receiver address. (AN (20))
     Contact:
       type: object
       properties:
@@ -3523,12 +3586,13 @@ components:
       properties:
         code:
           type: string
-          description: "Contains the code, if the generated status cannot be mapped\
-            \ in an HTTP status code. (AN (11))"
+          description: |-
+            Contains the code, if the generated status cannot be mapped in an HTTP status code. (AN (11))
         message:
           type: string
-          description: "Contains a supplementary code description, if the generated\
-            \ status cannot be mapped in an HTTP status code. (AN (X))"
+          description: |-
+            Contains a supplementary code description, if the generated status cannot be mapped in an HTTP status code. 
+            (AN (X))
       description: List of error messages
     ReturnOrderServices:
       type: object
@@ -3536,9 +3600,25 @@ components:
         flexReturnService:
           type: boolean
           description: |
-            Boolean for booking the “flex return” service.
+            Boolean for booking the flex return service.
 
-            When booking the service, Parcel - parcelWeight is a mandatory field.
+            When booking the service, parcel weight is mandatory.
+        bulkGoodService:
+          type: boolean
+          description: Boolean for booking the bulk goods service
+        returnPickupService:
+          $ref: "#/components/schemas/ReturnPickupService"
+    ReturnPickupService:
+      type: object
+      required:
+        - pickupDate
+      properties:
+        pickupDate:
+          type: string
+          format: date
+          example: "2025-01-10"
+          description: The date when the return order should be picked up (YYYY-MM-DD)
+      description: Service for scheduling a pickup of the return order.
     ReturnPickupAddress:
       required:
         - countryCode
@@ -3549,25 +3629,26 @@ components:
       properties:
         street:
           type: string
-          description: Contains the street of an optional pickup address. Required
-            field if “pickupAddress” or “pickupName” is transferred (AN (27))
+          description: |-
+            Contains the street of an optional pickup address. Required field if “pickupAddress” or “pickupName” is transferred (AN (27))
         houseNumber:
           type: string
           description: The house number of a pickup address. (AN (5))
         zipCode:
           type: string
-          description: The zip code of a pickup address. Becomes a required field
-            if “pickupAddress” or “pickupName” is transferred. The zip code may contain
-            numeric values only despite the data type being alphanumeric. (DE = AN
-            (5))
+          description: |-
+            The zip code of a pickup address. Becomes a required field if “pickupAddress” or “pickupName” is 
+            transferred. The zip code may contain numeric values only despite the data type being alphanumeric.
+            (DE = AN(5))
         town:
           type: string
-          description: The town of a pickup address. Becomes a required field if “pickupAddress”
-            or “pickupName” is transferred.(AN (30))
+          description: |-
+            The town of a pickup address. Becomes a required field if "pickupAddress" or "pickupName" is transferred.
+            (AN (30))
         countryCode:
           type: string
-          description: The countryCode represents the country. According to ISO 3166-1
-            alpha-2 two letter country codes.
+          description: |-
+            The countryCode represents the country. According to ISO 3166-1 alpha-2 two letter country codes.
           example: DE
         addressAddition:
           type: string
@@ -3595,10 +3676,9 @@ components:
           description: The middle name of a pickup name. (AN (50))
         lastname:
           type: string
-          description: The surname of a pickup name. Required field if “pickupName”
-            or “pickupAddress” is transferred. (AN (50))
-      description: "The name of the pickup contact; optional for Digital Sales customers,\
-        \ when a shipmentID or shipmentOrderID is passed"
+          description: |-
+            The surname of a pickup name. Required field if "pickupName" or "pickupAddress" is transferred. (AN (50))
+      description: "The name of the pickup contact."
     ReturnPickupOrderResponse:
       required:
         - pickupOrderID
@@ -3646,29 +3726,36 @@ components:
         street:
           type: string
           maxLength: 50
-          description: The street of the sender address. It's highly recommended to split street and houseNumber on your own. If this is not possible, enter both information here. Is mandatory when the return order is created without previous shipment order.
+          description: |-
+            The street of the sender address. It's highly recommended to split street and houseNumber on your own. If 
+            this is not possible, enter both information here. Is mandatory when the return order is created without 
+            previous shipment order.
         houseNumber:
           type: string
-          description: The house number of the sender address. Is mandatory when the
-            return order is created without previous shipment order (AN (5))
+          description: |-
+            The house number of the sender address. Is mandatory when the return order is created without previous 
+            shipment order (AN (5)).
         zipCode:
           type: string
-          description: The zip code of the sender address. The zip code may contain
-            numeric or alphanumeric values. Is mandatory when the return order is
-            created without previous shipment order (AN (8))
+          description: |-
+            The zip code of the sender address. The zip code may contain numeric or alphanumeric values. Is mandatory 
+            when the return order is created without previous shipment order (AN (8)).
         town:
           type: string
-          description: The town of the sender address. Is mandatory when the return
-            order is created without previous shipment order (AN (30))
+          description: |-
+            The town of the sender address. Is mandatory when the return order is created without previous shipment 
+            order (AN (30)).
         countryCode:
           type: string
-          description: The countryCode represents the country. According to ISO 3166-1
-            alpha-2 two letter country codes.
+          description: |-
+            The countryCode represents the country. According to ISO 3166-1 alpha-2 two letter country codes.
           example: DE
         addressAddition:
           type: string
           maxLength: 50
-          description: The optional address addition to the sender address. Information like "Second Floor" or "Example Company" can be entered here.
+          description: |-
+            The optional address addition to the sender address. Information like "Second Floor" or "Example Company" 
+            can be entered here.
         addressAddition2:
           type: string
           description: The optional address addition to the sender address. (AN (20))
@@ -3691,8 +3778,9 @@ components:
           description: The middle name of the sender name. (AN (50))
         lastname:
           type: string
-          description: The surname of the sender. Is mandatory when the return order
-            is created without previous shipment order (AN (50))
+          description: |-
+            The surname of the sender. Is mandatory when the return order is created without previous shipment order.
+            (AN (50))
     SenderContact:
       allOf:
         - $ref: "#/components/schemas/Contact"
@@ -3742,8 +3830,8 @@ components:
           description: Boolean for booking redirection prohibited service
         excludeParcelShopAuthorization:
           type: boolean
-          description: Boolean for exclusion of authorization to pickup an order at
-            a parcel shop
+          description: |-
+            Boolean for exclusion of authorization to pickup an order at a parcel shop
         lateInjectionService:
           type: boolean
           description: Boolean for booking the late injection service
@@ -3809,31 +3897,32 @@ components:
           type: string
         line1:
           type: string
-          description: "Contains the first line of the split text, if the type TEXT\
-            \ was requested."
+          description: |-
+            Contains the first line of the split text, if the type TEXT was requested.
         line2:
           type: string
-          description: "Contains the second line of the split text, if the type TEXT\
-            \ was requested."
+          description: |-
+            Contains the second line of the split text, if the type TEXT was requested.
         line3:
           type: string
-          description: "Contains the third line of the split text, if the type TEXT\
-            \ was requested."
+          description: |-
+            Contains the third line of the split text, if the type TEXT was requested.
         line4:
           type: string
-          description: "Contains the fourth line of the split text, if the type TEXT\
-            \ was requested."
+          description: |-
+            Contains the fourth line of the split text, if the type TEXT was requested.
         line5:
           type: string
-          description: "Contains the fifth line of the split text, if the type TEXT\
-            \ was requested."
+          description: |-
+            Contains the fifth line of the split text, if the type TEXT was requested.
     ShipmentOrderData:
       type: object
       properties:
         shipmentID:
           type: string
-          description: German shipment IDs consist of 14 or 20 digits. This also applies
-            to returns and international shipments. (AN (20))
+          description: |-
+            German shipment IDs consist of 14 or 20 digits. This also applies to returns and international shipments. 
+            (AN (20))
         shipmentOrderID:
           type: string
           description: AN (11)
@@ -3842,8 +3931,8 @@ components:
           description: Creation date of the parcel (AN (30))
         actualOrderState:
           type: string
-          description: "Status of the shipment order Values: CREATED, DELETED, PLACED\
-            \ (label printed), ARCHIVED, FAILED"
+          description: |-
+            Status of the shipment order Values: CREATED, DELETED, PLACED (label printed), ARCHIVED, FAILED.
         mediator:
           type: string
           description: N (11)
@@ -3861,6 +3950,8 @@ components:
           $ref: "#/components/schemas/Parcel"
         service:
           $ref: "#/components/schemas/ServiceData"
+        customsAndTaxes:
+          $ref: "#/components/schemas/ShipmentOrderCustomsAndTaxes"
     ShipmentOrderServices:
       type: object
       properties:
@@ -3907,8 +3998,8 @@ components:
           description: Boolean for booking redirection prohibited service
         excludeParcelShopAuthorization:
           type: boolean
-          description: Boolean for exclusion of authorization to pickup an order at
-            a parcel shop
+          description: |-
+            Boolean for exclusion of authorization to pickup an order at a parcel shop
         lateInjectionService:
           type: boolean
           description: Boolean for booking the late injection service
@@ -3955,8 +4046,7 @@ components:
         countryCode:
           maxLength: 2
           type: string
-          description: The countryCode represents the country. According to ISO 3166-1
-            alpha-2 two letter country codes.
+          description: The countryCode represents the country. According to ISO 3166-1 alpha-2 two letter country codes.
           example: DE
         addressAddition:
           maxLength: 50
@@ -3989,7 +4079,8 @@ components:
           description: The mail address of the shipment origin address contact.
     FiscalRepresentationAddress:
       type: object
-      description: "Fiscal representation address. This section is required when zazAccount is used."
+      description: |-
+        Fiscal representation address. This section is required when zazAccount is used.
       properties:
         company:
           type: string

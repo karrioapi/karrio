@@ -1,7 +1,8 @@
 import csv
 import pathlib
-import karrio.lib as lib
+
 import karrio.core.models as models
+import karrio.lib as lib
 
 PRESET_DEFAULTS = dict(
     dimension_unit="CM",
@@ -20,9 +21,7 @@ class PackagePresets(lib.Enum):
     Note that dimensions are in CM and weight in KG
     """
 
-    canadapost_mailing_box = lib.units.PackagePreset(
-        **dict(width=10.2, height=15.2, length=1.0), **PRESET_DEFAULTS
-    )
+    canadapost_mailing_box = lib.units.PackagePreset(**dict(width=10.2, height=15.2, length=1.0), **PRESET_DEFAULTS)
     canadapost_extra_small_mailing_box = lib.units.PackagePreset(
         **dict(width=14.0, height=14.0, length=14.0), **PRESET_DEFAULTS
     )
@@ -148,14 +147,10 @@ def shipping_options_initializer(
     _options = options.copy()
 
     # Apply default non delivery options for if international.
-    no_international_option_specified: bool = not any(
-        key in _options for key in INTERNATIONAL_NON_DELIVERY_OPTION
-    )
+    no_international_option_specified: bool = not any(key in _options for key in INTERNATIONAL_NON_DELIVERY_OPTION)
 
     if is_international and no_international_option_specified:
-        _options.update(
-            {ShippingOption.canadapost_return_at_senders_expense.name: True}
-        )
+        _options.update({ShippingOption.canadapost_return_at_senders_expense.name: True})
 
     # Apply package options if specified.
     if package_options is not None:
@@ -165,9 +160,7 @@ def shipping_options_initializer(
     def items_filter(key: str) -> bool:
         return key in ShippingOption and key not in CUSTOM_OPTIONS  # type:ignore
 
-    return lib.units.ShippingOptions(
-        _options, ShippingOption, items_filter=items_filter
-    )
+    return lib.units.ShippingOptions(_options, ShippingOption, items_filter=items_filter)
 
 
 class TrackingStatus(lib.Enum):
@@ -297,6 +290,7 @@ class TrackingIncidentReason(lib.Enum):
 
     Based on Canada Post tracking event codes.
     """
+
     # Carrier-caused issues
     carrier_damaged_parcel = ["119", "142", "143", "144", "145", "146", "147", "148", "149"]
     carrier_sorting_error = ["128", "129", "130", "131", "132", "133"]
@@ -343,7 +337,7 @@ def load_services_from_csv() -> list:
     if not csv_path.exists():
         return []
     services_dict: dict[str, dict] = {}
-    with open(csv_path, "r", encoding="utf-8") as f:
+    with open(csv_path, encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
             service_code = row["service_code"]
@@ -370,7 +364,9 @@ def load_services_from_csv() -> list:
                 rate=float(row.get("rate", 0.0)),
                 min_weight=float(row["min_weight"]) if row.get("min_weight") else None,
                 max_weight=float(row["max_weight"]) if row.get("max_weight") else None,
-                transit_days=int(row["transit_days"].split("-")[0]) if row.get("transit_days") and row["transit_days"].split("-")[0].isdigit() else None,
+                transit_days=int(row["transit_days"].split("-")[0])
+                if row.get("transit_days") and row["transit_days"].split("-")[0].isdigit()
+                else None,
                 country_codes=country_codes if country_codes else None,
             )
             services_dict[karrio_service_code]["zones"].append(zone)

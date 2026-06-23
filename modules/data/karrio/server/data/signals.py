@@ -1,11 +1,10 @@
-from django.db.models import signals
-
-from karrio.server.conf import settings
-from karrio.server.core.logging import logger
 import karrio.server.core.utils as utils
 import karrio.server.data.models as models
-import karrio.server.events.tasks as tasks
 import karrio.server.data.serializers as serializers
+import karrio.server.events.tasks as tasks
+from django.db.models import signals
+from karrio.server.conf import settings
+from karrio.server.core.logging import logger
 
 
 def register_all():
@@ -39,9 +38,7 @@ def batch_operation_updated(sender, instance, *args, **kwargs):
     context = dict(
         user_id=utils.failsafe(lambda: instance.created_by.id),
         test_mode=instance.test_mode,
-        org_id=utils.failsafe(
-            lambda: instance.org.first().id if hasattr(instance, "org") else None
-        ),
+        org_id=utils.failsafe(lambda: instance.org.first().id if hasattr(instance, "org") else None),
     )
 
     if settings.MULTI_ORGANIZATIONS and context["org_id"] is None:

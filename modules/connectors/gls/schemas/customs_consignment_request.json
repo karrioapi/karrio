@@ -1,0 +1,135 @@
+{
+  "parcelNumbers": ["12345678901"],
+  "glsIncotermCode": "DDP-10",
+  "totalGrossWeight": {
+    "amount": 5.5,
+    "unit": "KGM"
+  },
+  "exporter": {
+    "address": {
+      "name1": "Exporter Company GmbH",
+      "name2": "John Doe",
+      "street1": "Main Street",
+      "street2": "Building A",
+      "houseNumber": "12",
+      "postcode": "12345",
+      "city1": "Berlin",
+      "stateOrRegion": "BE",
+      "countryCode": "DE"
+    },
+    "contactPerson": {
+      "name": "John Doe",
+      "emailAddress": "john@example.com",
+      "phoneCountryPrefix": "+49",
+      "phoneNumber": "030-1234-567",
+      "mobileCountryPrefix": "+49",
+      "mobileNumber": "0170-1234-567"
+    },
+    "eoriNumber": "DE10224719977443322",
+    "swissUid": "CHE123456789",
+    "taxId": "DE123456789",
+    "vatRegistrationNumber": "DE987654321",
+    "isCommercial": true,
+    "authorizationNumber": "DESDE8100ZA002079",
+    "loadingPlaceCode": "TT05"
+  },
+  "importer": {
+    "address": {
+      "name1": "Importer Company Ltd",
+      "name2": "Jane Smith",
+      "street1": "Baker Street",
+      "street2": "Suite 5",
+      "houseNumber": "221B",
+      "postcode": "NW1 6XE",
+      "city1": "London",
+      "stateOrRegion": "ENG",
+      "countryCode": "GB"
+    },
+    "contactPerson": {
+      "name": "Jane Smith",
+      "emailAddress": "jane@example.com",
+      "phoneCountryPrefix": "+44",
+      "phoneNumber": "020-7123-4567",
+      "mobileCountryPrefix": "+44",
+      "mobileNumber": "07700-900-123"
+    },
+    "eoriNumber": "GB123456789000",
+    "taxId": "GB123456789",
+    "isCommercial": true
+  },
+  "consignee": {
+    "address": {
+      "name1": "Consignee Receiver Ltd",
+      "name2": "Alex Brown",
+      "street1": "Oxford Street",
+      "street2": "Floor 3",
+      "houseNumber": "100",
+      "postcode": "W1D 1LL",
+      "city1": "London",
+      "stateOrRegion": "ENG",
+      "countryCode": "GB"
+    },
+    "contactPerson": {
+      "name": "Alex Brown",
+      "emailAddress": "alex@example.com",
+      "phoneCountryPrefix": "+44",
+      "phoneNumber": "020-7987-6543",
+      "mobileCountryPrefix": "+44",
+      "mobileNumber": "07700-100-200"
+    }
+  },
+  "invoice": {
+    "invoiceNumber": "INV-2026-0001",
+    "invoiceDate": "2026-05-26",
+    "totalGoodsValue": {
+      "amount": 250.0,
+      "currency": "EUR"
+    }
+  },
+  "lineItems": [
+    {
+      "quantity": {
+        "amount": 2.0,
+        "unit": "PCE"
+      },
+      "commodityCode": "6109.10.00",
+      "goodsDescription": "Cotton T-shirts",
+      "countryOfOrigin": "DE",
+      "valueInInvoiceCurrency": 125.0,
+      "preferentialTrade": null,
+      "statisticalValue": {
+        "amount": 120.0,
+        "currency": "EUR"
+      },
+      "statisticalQuantity": 2.0,
+      "nationalCustomsFields": {
+        "de": {
+          "regionOfOrigin": "BE"
+        },
+        "be": {
+          "regionOfOrigin": "BRU"
+        }
+      },
+      "grossWeight": {
+        "amount": 2.75,
+        "unit": "KGM"
+      },
+      "netWeight": {
+        "amount": 2.5,
+        "unit": "KGM"
+      }
+    }
+  ],
+  "customerReference": "REF-2026-CUST-0001",
+  "additionalInformation": "Sample customs consignment for schema generation",
+  "isExportDeclarationRequested": false,
+  "exportDeclarationNumbers": ["MRN12345678901234"],
+  "transitMRNs": ["TR12345678901234"],
+  "transitType": "T1",
+  "saveAsDraft": false,
+  "linkedDocuments": [
+    {
+      "documentId": "doc_abc123"
+    }
+  ]
+}

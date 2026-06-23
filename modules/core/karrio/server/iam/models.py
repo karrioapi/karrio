@@ -1,9 +1,8 @@
-from django.db import models
-from django.contrib.auth.models import PermissionsMixin, Permission
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.utils.translation import gettext_lazy as _
-
 import karrio.server.user.models as user
+from django.contrib.auth.models import Permission, PermissionsMixin
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 User = user.User
 Group = user.Group
@@ -13,6 +12,16 @@ class ContextPermission(PermissionsMixin):
     class Meta:
         verbose_name = _("context permission")
         verbose_name_plural = _("context permission")
+        constraints = [
+            # A ContextPermission represents the permission set for a single
+            # (content_type, object) pair. Duplicates are always a bug and
+            # poison every `get()` / `get_or_create()` keyed on these columns
+            # (e.g. permission sync during tenant onboarding).
+            models.UniqueConstraint(
+                fields=["content_type", "object_pk"],
+                name="unique_context_permission_per_object",
+            ),
+        ]
 
     def __str__(self) -> str:
         return f"{self.object_pk} - {self.content_type}"
@@ -23,17 +32,14 @@ class ContextPermission(PermissionsMixin):
         related_name="+",
         verbose_name=_("content type"),
     )
-    object_pk = models.CharField(
-        db_index=True, max_length=50, verbose_name=_("object pk")
-    )
+    object_pk = models.CharField(db_index=True, max_length=50, verbose_name=_("object pk"))
     content_object = GenericForeignKey("content_type", "object_pk")
     groups = models.ManyToManyField(
         Group,
         verbose_name=_("groups"),
         blank=True,
         help_text=_(
-            "The groups this user context belongs to. A user will get all permissions "
-            "granted to each of their groups."
+            "The groups this user context belongs to. A user will get all permissions granted to each of their groups."
         ),
         related_name="context",
         related_query_name="context",

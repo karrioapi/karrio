@@ -2,9 +2,10 @@
 
 import csv
 import pathlib
-import karrio.lib as lib
-import karrio.core.units as units
+
 import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
 
 
 class ConnectionConfig(lib.Enum):
@@ -16,92 +17,91 @@ class ConnectionConfig(lib.Enum):
 
 
 class LabelType(lib.StrEnum):
-    """Asendia label format types."""
+    """Asendia label format types (values sent in POST /api/parcels body)."""
 
     PDF = "PDF"
     PNG = "PNG"
     ZPL = "Zebra"
 
 
-class ProductCode(lib.StrEnum):
-    """Asendia product codes."""
-
-    # e-PAQ products
-    asendia_epaq_standard = "EPAQSTD"
-    asendia_epaq_plus = "EPAQPLUS"
-    asendia_epaq_elite = "EPAQELITE"
-    asendia_epaq_returns = "EPAQRET"
-
-    # Country Road products
-    asendia_country_road = "CROAD"
-    asendia_country_road_plus = "CROADPLUS"
-
-    # Priority products
-    asendia_priority = "PRIORITY"
-    asendia_priority_tracked = "PRIORITYTRK"
+LABEL_MIME = {
+    "PDF": "application/pdf",
+    "PNG": "image/png",
+    "Zebra": "text/plain",
+}
 
 
 class ServiceCode(lib.StrEnum):
-    """Asendia service codes."""
+    """Asendia service modifier codes (AsendiaService.service — mandatory API field)."""
 
-    # Common service codes
-    asendia_cup = "CUP"  # Collection/Pickup
-    asendia_std = "STD"  # Standard
-    asendia_exp = "EXP"  # Express
+    # Standard service modifiers
+    asendia_cup = "CUP"  # Customs unpaid / Customs paid at destination
+    asendia_cppr = "CPPR"  # Customs prepaid by retailer
+
+    # Return-specific service modifiers
+    asendia_retpp = "RETPP"  # Prepaid return
+    asendia_retpap = "RETPAP"  # Partially paid return
 
 
 class ShippingService(lib.StrEnum):
-    """Asendia shipping services (product + service combination)."""
+    """Asendia shipping services (product codes from AsendiaService.product)."""
 
-    # e-PAQ Standard services
+    # e-PAQ products
     asendia_epaq_standard = "EPAQSTD"
-    asendia_epaq_standard_cup = "EPAQSTD_CUP"
-
-    # e-PAQ Plus services
-    asendia_epaq_plus = "EPAQPLUS"
-    asendia_epaq_plus_cup = "EPAQPLUS_CUP"
-
-    # e-PAQ Elite services
-    asendia_epaq_elite = "EPAQELITE"
-    asendia_epaq_elite_cup = "EPAQELITE_CUP"
+    asendia_epaq_plus = "EPAQPLS"
+    asendia_epaq_select = "EPAQSCT"
+    asendia_epaq_elite = "EPAQELT"
+    asendia_epaq_go = "EPAQGO"
 
     # e-PAQ Returns
-    asendia_epaq_returns = "EPAQRET"
     asendia_epaq_returns_domestic = "EPAQRETDOM"
-
-    # Country Road services
-    asendia_country_road = "CROAD"
-    asendia_country_road_plus = "CROADPLUS"
-
-    # Priority services
-    asendia_priority = "PRIORITY"
-    asendia_priority_tracked = "PRIORITYTRK"
+    asendia_epaq_returns_international = "EPAQRETINT"
 
 
 class PackagingType(lib.StrEnum):
-    """Asendia format/packaging types."""
+    """Asendia format/packaging types (AsendiaService.format)."""
 
     # Asendia format codes
-    asendia_packet = "B"  # Standard packet format
-    asendia_parcel = "P"  # Parcel format
+    asendia_boxable = "B"  # Boxable
+    asendia_non_boxable = "N"  # Non boxable
+    asendia_large = "L"  # Large
+    asendia_extra_large = "XL"  # Extra Large
 
     # Unified Packaging type mapping
-    envelope = asendia_packet
-    pak = asendia_packet
-    tube = asendia_parcel
-    pallet = asendia_parcel
-    small_box = asendia_packet
-    medium_box = asendia_parcel
-    your_packaging = asendia_packet
+    envelope = asendia_non_boxable
+    pak = asendia_non_boxable
+    tube = asendia_large
+    pallet = asendia_extra_large
+    small_box = asendia_boxable
+    medium_box = asendia_boxable
+    your_packaging = asendia_boxable
+
+
+def resolve_format(product: str, packaging_type: str, smartgate: bool) -> str:
+    """Resolve ``asendiaService.format`` — always required by the API (VE-004), and
+    clamped to the value set the account has a quote for, which is product-specific:
+
+      - SmartGate (SGF/SGD)            → N or L  (coerce others → N)
+      - e-PAQ Elite                    → L or XL (coerce B/N → L)
+      - all other e-PAQ products       → B or N  (coerce L/XL → N)
+
+    The packaging-mapped code picks within the allowed set; out-of-set falls back to
+    the set's default. See SPECS for the table.
+    """
+    code = PackagingType.map(packaging_type or "your_packaging").value_or_key
+    if smartgate:
+        return code if code in ("N", "L") else "N"
+    if product == ShippingService.asendia_epaq_elite.value:
+        return code if code in ("L", "XL") else "L"
+    return code if code in ("B", "N") else "N"
 
 
 class InsuranceOption(lib.StrEnum):
     """Asendia insurance options."""
 
+    asendia_el45 = "EL45"
     asendia_el150 = "EL150"
     asendia_el500 = "EL500"
-    asendia_el1000 = "EL1000"
-    asendia_el2500 = "EL2500"
 
 
 class ReturnLabelType(lib.StrEnum):
@@ -117,20 +117,60 @@ class ReturnPaymentType(lib.StrEnum):
 
 
 class ShippingOption(lib.Enum):
-    """Asendia shipping options."""
+    """Asendia shipping options.
+
+    The flag options below ride ``asendiaService.options`` (a list of wire
+    codes). Their wire code is the first ``OptionEnum`` argument — read it
+    from ``option.code``, never duplicate it in a parallel dict.
+    """
+
+    # Product / service feature flags (ride asendiaService.options as wire codes)
+    asendia_economy = lib.OptionEnum("ECO", bool, meta=dict(configurable=True, service_level=True))
+    asendia_signature = lib.OptionEnum("SIG", bool, meta=dict(configurable=True, service_level=True))
+    asendia_pudo = lib.OptionEnum("PUDO", bool, meta=dict(configurable=True, service_level=True))
+    asendia_mailbox = lib.OptionEnum("MBX", bool, meta=dict(configurable=True, service_level=True))
+    asendia_dangerous_goods = lib.OptionEnum("DG", bool, meta=dict(configurable=True, service_level=True))
+    asendia_personal_delivery = lib.OptionEnum("PD", bool, meta=dict(configurable=True, service_level=True))
+    asendia_smartgate_flex = lib.OptionEnum("SGF", bool, meta=dict(configurable=True, service_level=True))
+    asendia_smartgate_direct = lib.OptionEnum("SGD", bool, meta=dict(configurable=True, service_level=True))
+    asendia_direct_access = lib.OptionEnum("DA", bool, meta=dict(configurable=True, service_level=True))
+    asendia_printed_matter = lib.OptionEnum("PM", bool, meta=dict(configurable=True, service_level=True))
 
     # Asendia specific options
-    asendia_insurance = lib.OptionEnum("insurance", str)
-    asendia_return_label = lib.OptionEnum("return_label", bool)
-    asendia_return_label_type = lib.OptionEnum("return_label_type", str)
-    asendia_return_label_payment = lib.OptionEnum("return_label_payment", str)
-    asendia_sender_eori = lib.OptionEnum("sender_eori", str)
-    asendia_seller_eori = lib.OptionEnum("seller_eori", str)
-    asendia_sender_tax_id = lib.OptionEnum("sender_tax_id", str)
-    asendia_receiver_tax_id = lib.OptionEnum("receiver_tax_id", str)
+    asendia_insurance = lib.OptionEnum("insurance", str, meta=dict(configurable=True, service_level=False))
+    asendia_return_label = lib.OptionEnum(
+        "return_label", bool, meta=dict(category="RETURN", configurable=True, service_level=True)
+    )
+    asendia_return_label_type = lib.OptionEnum(
+        "return_label_type", str, meta=dict(category="RETURN", configurable=True, service_level=False)
+    )
+    asendia_return_label_payment = lib.OptionEnum(
+        "return_label_payment", str, meta=dict(category="RETURN", configurable=True, service_level=False)
+    )
+    asendia_sender_eori = lib.OptionEnum("sender_eori", str, meta=dict(configurable=True, service_level=False))
+    asendia_seller_eori = lib.OptionEnum("seller_eori", str, meta=dict(configurable=True, service_level=False))
+    asendia_sender_tax_id = lib.OptionEnum("sender_tax_id", str, meta=dict(configurable=True, service_level=False))
+    asendia_receiver_tax_id = lib.OptionEnum("receiver_tax_id", str, meta=dict(configurable=True, service_level=False))
+    asendia_service_type = lib.OptionEnum("service_type", str, meta=dict(configurable=True, service_level=True))
 
     # Unified Option type mapping
     insurance = asendia_insurance
+
+
+# Boolean feature flags serialized into asendiaService.options (wire codes read
+# off option.code). Order is preserved on the wire.
+SHIPMENT_FLAG_OPTIONS = (
+    "asendia_economy",
+    "asendia_signature",
+    "asendia_pudo",
+    "asendia_mailbox",
+    "asendia_dangerous_goods",
+    "asendia_personal_delivery",
+    "asendia_smartgate_flex",
+    "asendia_smartgate_direct",
+    "asendia_direct_access",
+    "asendia_printed_matter",
+)
 
 
 def shipping_options_initializer(
@@ -243,7 +283,7 @@ def load_services_from_csv() -> list:
     # Group zones by service
     services_dict: dict[str, dict] = {}
 
-    with open(csv_path, "r", encoding="utf-8") as f:
+    with open(csv_path, encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
             service_code = row["service_code"]
@@ -258,53 +298,33 @@ def load_services_from_csv() -> list:
                     "service_name": service_name,
                     "service_code": karrio_service_code,
                     "currency": row.get("currency", "EUR"),
-                    "min_weight": (
-                        float(row["min_weight"]) if row.get("min_weight") else None
-                    ),
-                    "max_weight": (
-                        float(row["max_weight"]) if row.get("max_weight") else None
-                    ),
-                    "max_length": (
-                        float(row["max_length"]) if row.get("max_length") else None
-                    ),
-                    "max_width": (
-                        float(row["max_width"]) if row.get("max_width") else None
-                    ),
-                    "max_height": (
-                        float(row["max_height"]) if row.get("max_height") else None
-                    ),
+                    "min_weight": (float(row["min_weight"]) if row.get("min_weight") else None),
+                    "max_weight": (float(row["max_weight"]) if row.get("max_weight") else None),
+                    "max_length": (float(row["max_length"]) if row.get("max_length") else None),
+                    "max_width": (float(row["max_width"]) if row.get("max_width") else None),
+                    "max_height": (float(row["max_height"]) if row.get("max_height") else None),
                     "weight_unit": "KG",
                     "dimension_unit": "CM",
                     "domicile": (row.get("domicile") or "").lower() == "true",
-                    "international": (
-                        True if (row.get("international") or "").lower() == "true" else None
-                    ),
+                    "international": (True if (row.get("international") or "").lower() == "true" else None),
                     "zones": [],
                 }
 
             # Parse country codes
-            country_codes = [
-                c.strip() for c in row.get("country_codes", "").split(",") if c.strip()
-            ]
+            country_codes = [c.strip() for c in row.get("country_codes", "").split(",") if c.strip()]
 
             # Create zone
             zone = models.ServiceZone(
                 label=row.get("zone_label", "Default Zone"),
                 rate=float(row.get("rate", 0.0)),
-                transit_days=(
-                    int(row["transit_days"]) if row.get("transit_days") else None
-                ),
+                transit_days=(int(row["transit_days"]) if row.get("transit_days") else None),
                 country_codes=country_codes if country_codes else None,
             )
 
             services_dict[karrio_service_code]["zones"].append(zone)
 
     # Convert to ServiceLevel objects
-    return [
-        models.ServiceLevel(**service_data) for service_data in services_dict.values()
-    ]
+    return [models.ServiceLevel(**service_data) for service_data in services_dict.values()]
 
 
 DEFAULT_SERVICES = load_services_from_csv()
-
-

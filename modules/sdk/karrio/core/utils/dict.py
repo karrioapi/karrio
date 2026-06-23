@@ -1,17 +1,19 @@
-import re
 import enum
-import attr
 import json
+import re
 import types
+from collections.abc import Callable
+from typing import Any, TypeVar
+
+import attr
 import jstruct.utils as jstruct
-from typing import Union, Any, TypeVar, Callable, Type, Optional
 
 T = TypeVar("T")
 
 
 class DICTPARSE:
     @staticmethod
-    def jsonify(entity: Union[dict, Any]) -> str:
+    def jsonify(entity: dict | Any) -> str:
         """Serialize value to JSON.
 
         :param value: a value that can be serialized to JSON.
@@ -44,7 +46,7 @@ class DICTPARSE:
         )
 
     @staticmethod
-    def to_dict(entity: Any, clear_empty: bool = None) -> dict:
+    def to_dict(entity: Any, clear_empty: bool | None = None) -> dict:
         """Parse value into a Python dictionay.
 
         :param value: a value that can converted in dictionary.
@@ -56,20 +58,12 @@ class DICTPARSE:
             entity = re.sub(r",[ \t\r\n]+\]", "]", entity)
 
         return json.loads(
-            (
-                DICTPARSE.jsonify(entity)
-                if not isinstance(entity, (str, bytes))
-                else entity
-            ),
-            object_hook=lambda d: {
-                k: v
-                for k, v in d.items()
-                if (v not in (None, [], "") if _clear_empty else True)
-            },
+            (DICTPARSE.jsonify(entity) if not isinstance(entity, (str, bytes)) else entity),
+            object_hook=lambda d: {k: v for k, v in d.items() if (v not in (None, [], "") if _clear_empty else True)},
         )
 
     @staticmethod
-    def to_object(object_type: Type[T], data: dict = None) -> Optional[T]:
+    def to_object(object_type: type[T], data: dict = None) -> T | None:
         """Create an instance of "object_type" from the "data".
 
         :param object_type: an object class.

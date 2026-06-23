@@ -1,0 +1,69 @@
+{
+    "Shipment": {
+        "ShipmentReference": [
+            "XXXXXX",
+            "XXXXXXx"
+        ],
+        "Middleware": "JTLviaGLS",
+        "ShippingDate": "2026-05-28",
+        "Identifier": "XXXXXXXXXXXXXX",
+        "Product": "PARCEL",
+        "Consignee": {
+            "Address": {
+                "Name1": "Name 1",
+                "Name2": "XXXXXXXXXXx",
+                "Name3": "XXXXXXXXXXX",
+                "CountryCode": "DE",
+                "ZIPCode": "12524",
+                "City": "Berlin",
+                "Street": "Widosteig",
+                "StreetNumber": "17",
+                "eMail": "martin.vogler@gls-germany.com",
+                "ContactPerson": "XXXXXXXX",
+                "FixedLinePhonenumber": "XXXXXXXXXXXXXXXxx",
+                "MobilePhoneNumber": "XXXXXXXXXXXXXXX"
+            }
+        },
+        "Shipper": {
+            "ContactID": "276a45e7ZY",
+            "AlternativeShipperAddress": {
+                "Name1": "XXXXXXXXX",
+                "Name2": "XXXXXXXX",
+                "Name3": "XXXXXXXX",
+                "CountryCode": "DE",
+                "ZIPCode": "60487",
+                "City": "Frankfurt am Main",
+                "Street": "Leipziger Str.",
+                "StreetNumber": "82",
+                "eMail": "martin.vogler@gls-germany.com",
+                "ContactPerson": "XXXXXXXXXXXXXXX",
+                "FixedLinePhonenumber": "XXXXXXXXXXXXXXX",
+                "MobilePhoneNumber": "XXXXXXXXXXXXXXX"
+            }
+        },
+        "Service": [
+            {
+                "Service": {
+                    "ServiceName": "service_addresseeonly"
+                }
+            }
+        ],
+        "ShipmentUnit": [
+            {
+                "ShipmentUnitReference": [
+                    "Shipmentunitref",
+                    "2"
+                ],
+                "Weight": 5.7,
+                "Note1": "Note1",
+                "Note2": "Note2"
+            }
+        ]
+    },
+    "PrintingOptions": {
+        "ReturnLabels": {
+            "TemplateSet": "NONE",
+            "LabelFormat": "PDF"
+        }
+    }
+}

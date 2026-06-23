@@ -1,8 +1,6 @@
 """Karrio FedEx client settings."""
 
 import attr
-import jstruct
-import karrio.lib as lib
 import karrio.providers.fedex.utils as provider_utils
 
 

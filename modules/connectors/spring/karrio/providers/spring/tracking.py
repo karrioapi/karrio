@@ -1,17 +1,15 @@
 """Karrio Spring tracking API implementation."""
 
+import karrio.core.models as models
+import karrio.lib as lib
+import karrio.providers.spring.error as error
+import karrio.providers.spring.units as provider_units
+import karrio.providers.spring.utils as provider_utils
 import karrio.schemas.spring.tracking_request as spring_req
 import karrio.schemas.spring.tracking_response as spring_res
 
-import typing
-import karrio.lib as lib
-import karrio.core.models as models
-import karrio.providers.spring.error as error
-import karrio.providers.spring.utils as provider_utils
-import karrio.providers.spring.units as provider_units
 
-
-def _match_status(code: str) -> typing.Optional[str]:
+def _match_status(code: str) -> str | None:
     """Match code against TrackingStatus enum values."""
     if not code:
         return None
@@ -21,7 +19,7 @@ def _match_status(code: str) -> typing.Optional[str]:
     return None
 
 
-def _match_reason(code: str) -> typing.Optional[str]:
+def _match_reason(code: str) -> str | None:
     """Match code against TrackingIncidentReason enum values."""
     if not code:
         return None
@@ -32,13 +30,13 @@ def _match_reason(code: str) -> typing.Optional[str]:
 
 
 def parse_tracking_response(
-    _response: lib.Deserializable[typing.List[typing.Tuple[str, dict]]],
+    _response: lib.Deserializable[list[tuple[str, dict]]],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+) -> tuple[list[models.TrackingDetails], list[models.Message]]:
     """Parse TrackShipment responses from Spring API."""
     responses = _response.deserialize()
 
-    messages: typing.List[models.Message] = sum(
+    messages: list[models.Message] = sum(
         [
             error.parse_error_response(response, settings, tracking_number=tracking_number)
             for tracking_number, response in responses

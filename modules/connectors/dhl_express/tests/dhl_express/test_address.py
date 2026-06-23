@@ -1,30 +1,25 @@
 import re
 import unittest
-import logging
 from unittest.mock import patch
+
 import karrio.sdk as karrio
-from karrio.core.utils import DP
 from karrio.core.models import AddressValidationRequest
+from karrio.core.utils import DP
+
 from .fixture import gateway
 
 
 class TestDHLAddressValidation(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        self.AddressValidationRequest = AddressValidationRequest(
-            **address_validation_data
-        )
+        self.AddressValidationRequest = AddressValidationRequest(**address_validation_data)
 
     def test_create_AddressValidation_request(self):
-        request = gateway.mapper.create_address_validation_request(
-            self.AddressValidationRequest
-        )
+        request = gateway.mapper.create_address_validation_request(self.AddressValidationRequest)
 
         # remove MessageTime, Date and ReadyTime for testing purpose
         self.assertEqual(
-            re.sub(
-                "            <MessageTime>[^>]+</MessageTime>", "", request.serialize()
-            ),
+            re.sub("            <MessageTime>[^>]+</MessageTime>", "", request.serialize()),
             AddressValidationRequestXML,
         )
 
@@ -41,15 +36,9 @@ class TestDHLAddressValidation(unittest.TestCase):
     def test_parse_address_validation_response(self):
         with patch("karrio.mappers.dhl_express.proxy.lib.request") as mock:
             mock.return_value = AddressValidationResponseXML
-            parsed_response = (
-                karrio.Address.validate(self.AddressValidationRequest)
-                .from_(gateway)
-                .parse()
-            )
+            parsed_response = karrio.Address.validate(self.AddressValidationRequest).from_(gateway).parse()
 
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedAddressValidationResponse)
-            )
+            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedAddressValidationResponse))
 
 
 if __name__ == "__main__":

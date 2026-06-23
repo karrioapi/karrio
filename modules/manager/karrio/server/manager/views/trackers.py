@@ -1,25 +1,24 @@
-import io
 import base64
-import django_downloadview
+import io
 
+import django_downloadview
+import karrio.server.core.dataunits as dataunits
+import karrio.server.core.filters as filters
+import karrio.server.manager.models as models
+import karrio.server.manager.serializers as serializers
+import karrio.server.openapi as openapi
+from django.core.files.base import ContentFile
 from django.db.models import Q
 from django.urls import path, re_path
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from rest_framework.pagination import LimitOffsetPagination
-from django.core.files.base import ContentFile
-from rest_framework.response import Response
-from rest_framework.request import Request
-from rest_framework import status
-
-from karrio.server.core.logging import logger
-from karrio.server.core.views.api import GenericAPIView, APIView
+from karrio.server.core.views.api import APIView, GenericAPIView
 from karrio.server.manager.router import router
-import karrio.server.manager.serializers as serializers
-import karrio.server.core.dataunits as dataunits
-import karrio.server.manager.models as models
-import karrio.server.core.filters as filters
-import karrio.server.openapi as openapi
+from rest_framework import status
+from rest_framework.exceptions import PermissionDenied
+from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.request import Request
+from rest_framework.response import Response
 
 ENDPOINT_ID = "$$$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 Trackers = serializers.PaginatedResult("TrackerList", serializers.TrackingStatus)
@@ -27,9 +26,7 @@ Trackers = serializers.PaginatedResult("TrackerList", serializers.TrackingStatus
 
 class TrackerList(GenericAPIView):
     throttle_scope = "carrier_request"
-    pagination_class = type(
-        "CustomPagination", (LimitOffsetPagination,), dict(default_limit=20)
-    )
+    pagination_class = type("CustomPagination", (LimitOffsetPagination,), dict(default_limit=20))
     filter_backends = (DjangoFilterBackend,)
     filterset_class = filters.TrackerFilters
     serializer_class = Trackers
@@ -64,9 +61,7 @@ class TrackerList(GenericAPIView):
         Retrieve all shipment trackers.
         """
         trackers = self.filter_queryset(self.get_queryset())
-        response = self.paginate_queryset(
-            serializers.TrackingStatus(trackers, many=True).data
-        )
+        response = self.paginate_queryset(serializers.TrackingStatus(trackers, many=True).data)
         return self.get_paginated_response(response)
 
     @openapi.extend_schema(
@@ -111,15 +106,9 @@ class TrackerList(GenericAPIView):
         data = serializer.validated_data
 
         carrier_name = query.get("hub") if "hub" in query else data["carrier_name"]
-        pending_pickup = serializers.get_query_flag(
-            "pending_pickup", query, nullable=False
-        )
+        pending_pickup = serializers.get_query_flag("pending_pickup", query, nullable=False)
 
-        instance = (
-            models.Tracking.access_by(request)
-            .filter(tracking_number=data["tracking_number"])
-            .first()
-        )
+        instance = models.Tracking.access_by(request).filter(tracking_number=data["tracking_number"]).first()
 
         carrier_filter = {
             **{k: v for k, v in query.items() if k != "hub"},
@@ -129,11 +118,7 @@ class TrackerList(GenericAPIView):
         data = {
             **data,
             "tracking_number": data["tracking_number"],
-            "options": (
-                {data["tracking_number"]: {"carrier": data["carrier_name"]}}
-                if "hub" in query
-                else {}
-            ),
+            "options": ({data["tracking_number"]: {"carrier": data["carrier_name"]}} if "hub" in query else {}),
         }
 
         tracker = (
@@ -191,11 +176,7 @@ class TrackersCreate(APIView):
         This API creates or retrieves (if existent) a tracking status object containing the
         details and events of a shipping in progress.
         """
-        instance = (
-            models.Tracking.access_by(request)
-            .filter(tracking_number=tracking_number)
-            .first()
-        )
+        instance = models.Tracking.access_by(request).filter(tracking_number=tracking_number).first()
 
         query = request.query_params
         carrier_filter = {
@@ -205,9 +186,7 @@ class TrackersCreate(APIView):
         }
         data = {
             "tracking_number": tracking_number,
-            "options": (
-                {tracking_number: {"carrier": carrier_name}} if "hub" in query else {}
-            ),
+            "options": ({tracking_number: {"carrier": carrier_name}} if "hub" in query else {}),
         }
 
         tracker = (
@@ -243,9 +222,7 @@ class TrackersDetails(APIView):
         """
         Retrieve a package tracker
         """
-        __filter = Q(pk=identifier) | Q(
-            tracking_number=identifier
-        )
+        __filter = Q(pk=identifier) | Q(tracking_number=identifier)
         trackers = models.Tracking.objects.filter(__filter)
 
         if len(trackers) == 0:
@@ -280,9 +257,7 @@ class TrackersDetails(APIView):
             serializers.TrackerUpdateData.map(
                 tracker,
                 context=request,
-                data=serializers.process_dictionaries_mutations(
-                    ["metadata", "options", "info"], payload, tracker
-                ),
+                data=serializers.process_dictionaries_mutations(["metadata", "options", "info"], payload, tracker),
             )
             .save()
             .instance
@@ -348,7 +323,7 @@ class TrackerDocs(django_downloadview.VirtualDownloadView):
         self.preview = "preview" in query_params
         self.attachment = "download" in query_params
 
-        response = super(TrackerDocs, self).get(request, pk, doc, format, **kwargs)
+        response = super().get(request, pk, doc, format, **kwargs)
         response["X-Frame-Options"] = "ALLOWALL"
         return response
 
@@ -362,7 +337,7 @@ class TrackerDocs(django_downloadview.VirtualDownloadView):
 
 class TrackerEventInject(APIView):
     """
-    Inbound tracking event API for event injection (testing purposes).
+    Inbound tracking event API for event injection (test-mode trackers only).
     """
 
     @openapi.extend_schema(
@@ -370,11 +345,15 @@ class TrackerEventInject(APIView):
         operation_id=f"{ENDPOINT_ID}inject",
         extensions={"x-operationId": "injectTrackingEvents"},
         summary="Inject tracking events",
-        description="Inject tracking events into an existing tracker for testing purposes.",
+        description=(
+            "Inject tracking events into an existing tracker for testing purposes. "
+            "Only test-mode trackers may be injected; live trackers are rejected."
+        ),
         request=serializers.TrackerEventInjectRequest(),
         responses={
             200: serializers.Operation(),
             400: serializers.ErrorResponse(),
+            403: serializers.ErrorResponse(),
             404: serializers.ErrorResponse(),
             500: serializers.ErrorResponse(),
         },
@@ -384,11 +363,19 @@ class TrackerEventInject(APIView):
         Inject tracking events into an existing tracker.
 
         This endpoint allows injecting events for testing the tracking pipeline.
+        It is restricted to test-mode trackers so that live carrier tracking
+        history and the linked shipment lifecycle state cannot be tampered with.
         """
         import karrio.lib as lib
         import karrio.server.manager.serializers.tracking as tracking_serializers
 
         tracker = models.Tracking.access_by(request).get(pk=tracker_id)
+
+        # Event injection is a testing affordance only. Refuse to mutate live
+        # trackers so callers cannot forge carrier events or drive a real
+        # shipment to a delivered/failed/etc. status (SHIP2-1177).
+        if not tracker.test_mode:
+            raise PermissionDenied("Tracking events can only be injected on test-mode trackers.")
 
         serializer = serializers.TrackerEventInjectRequest(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -412,9 +399,7 @@ class TrackerEventInject(APIView):
         tracking_serializers.update_tracker(tracker, tracking_details)
 
         return Response(
-            serializers.Operation(
-                dict(operation="Inject Tracking Events", success=True)
-            ).data,
+            serializers.Operation(dict(operation="Inject Tracking Events", success=True)).data,
             status=status.HTTP_200_OK,
         )
 

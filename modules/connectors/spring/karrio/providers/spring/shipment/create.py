@@ -1,22 +1,21 @@
 """Karrio Spring shipment API implementation."""
 
+import uuid
+
+import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
+import karrio.providers.spring.error as error
+import karrio.providers.spring.units as provider_units
+import karrio.providers.spring.utils as provider_utils
 import karrio.schemas.spring.shipment_request as spring_req
 import karrio.schemas.spring.shipment_response as spring_res
 
-import uuid
-import typing
-import karrio.lib as lib
-import karrio.core.units as units
-import karrio.core.models as models
-import karrio.providers.spring.error as error
-import karrio.providers.spring.utils as provider_utils
-import karrio.providers.spring.units as provider_units
-
 
 def parse_shipment_response(
-    _response: lib.Deserializable[typing.List[dict]],
+    _response: lib.Deserializable[list[dict]],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.Optional[models.ShipmentDetails], typing.List[models.Message]]:
+) -> tuple[models.ShipmentDetails | None, list[models.Message]]:
     """Parse shipment responses from Spring API.
 
     Spring is a per-package carrier, so we receive a list of responses
@@ -25,7 +24,7 @@ def parse_shipment_response(
     responses = _response.deserialize()
 
     # Collect all error messages from all responses
-    messages: typing.List[models.Message] = sum(
+    messages: list[models.Message] = sum(
         [error.parse_error_response(response, settings) for response in responses],
         start=[],
     )
@@ -183,15 +182,11 @@ def shipment_request(
     # Get declaration type mapping
     declaration_type = None
     if customs and customs.content_type:
-        declaration_type = provider_units.CustomsContentType.map(
-            customs.content_type
-        ).value
+        declaration_type = provider_units.CustomsContentType.map(customs.content_type).value
 
     # Get customs duty type
     customs_duty = options.spring_customs_duty.state or (
-        provider_units.CustomsDuty.map(customs.incoterm).value
-        if customs and customs.incoterm
-        else "DDU"
+        provider_units.CustomsDuty.map(customs.incoterm).value if customs and customs.incoterm else "DDU"
     )
 
     # Generate base reference for multi-piece shipment
@@ -205,11 +200,7 @@ def shipment_request(
             Shipment=spring_req.ShipmentType(
                 LabelFormat=label_format,
                 # Append package index to reference for multi-piece tracking
-                ShipperReference=(
-                    f"{base_reference}-{index + 1}"
-                    if len(packages) > 1
-                    else base_reference
-                ),
+                ShipperReference=(f"{base_reference}-{index + 1}" if len(packages) > 1 else base_reference),
                 OrderReference=options.spring_order_reference.state,
                 OrderDate=options.spring_order_date.state,
                 DisplayId=options.spring_display_id.state,

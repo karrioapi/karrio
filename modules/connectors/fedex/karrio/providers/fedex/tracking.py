@@ -1,13 +1,12 @@
 """Karrio FedEx tracking API implementation."""
 
+import karrio.core.models as models
+import karrio.lib as lib
+import karrio.providers.fedex.error as provider_error
+import karrio.providers.fedex.units as provider_units
+import karrio.providers.fedex.utils as provider_utils
 import karrio.schemas.fedex.tracking_request as fedex
 import karrio.schemas.fedex.tracking_response as tracking
-import typing
-import karrio.lib as lib
-import karrio.core.models as models
-import karrio.providers.fedex.error as provider_error
-import karrio.providers.fedex.utils as provider_utils
-import karrio.providers.fedex.units as provider_units
 
 DATETIME_FORMATS = ["%Y-%m-%dT%H:%M:%S%z", "%Y-%m-%dT%H:%M:%S"]
 
@@ -15,17 +14,16 @@ DATETIME_FORMATS = ["%Y-%m-%dT%H:%M:%S%z", "%Y-%m-%dT%H:%M:%S"]
 def parse_tracking_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+) -> tuple[list[models.TrackingDetails], list[models.Message]]:
     response = _response.deserialize()
 
     results = response.get("output", {}).get("completeTrackResults") or []
     details = [
         _extract_details(result, settings)
         for result in results
-        if result.get("trackResults") is not None
-        and result["trackResults"][0].get("scanEvents") is not None
+        if result.get("trackResults") is not None and result["trackResults"][0].get("scanEvents") is not None
     ]
-    messages: typing.List[models.Message] = sum(
+    messages: list[models.Message] = sum(
         [
             provider_error.parse_error_response(
                 result.get("trackResults"),
@@ -44,20 +42,18 @@ def parse_tracking_response(
 def _extract_details(
     result: dict,
     settings: provider_utils.Settings,
-) -> typing.Optional[models.TrackingDetails]:
+) -> models.TrackingDetails | None:
     package = lib.to_object(tracking.CompleteTrackResultType, result)
     detail = max(
         package.trackResults,
         key=lambda item: max(
-            lib.to_date(event.date, try_formats=DATETIME_FORMATS).replace(tzinfo=None)
-            for event in item.scanEvents
+            lib.to_date(event.date, try_formats=DATETIME_FORMATS).replace(tzinfo=None) for event in item.scanEvents
         ),
         default=None,
     )
     estimated_delivery = lib.failsafe(
         lambda: lib.fdate(
-            detail.standardTransitTimeWindow.window.begins
-            or detail.estimatedDeliveryTimeWindow.window.begins,
+            detail.standardTransitTimeWindow.window.begins or detail.estimatedDeliveryTimeWindow.window.begins,
             try_formats=DATETIME_FORMATS,
         )
     )
@@ -67,11 +63,7 @@ def _extract_details(
     )
     delivered = status == "delivered"
     img = lib.failsafe(
-        lambda: (
-            provider_utils.get_proof_of_delivery(package.trackingNumber, settings)
-            if delivered
-            else None
-        )
+        lambda: provider_utils.get_proof_of_delivery(package.trackingNumber, settings) if delivered else None
     )
 
     signed_by = lib.failsafe(lambda: detail.deliveryDetails.signedByName)
@@ -109,12 +101,8 @@ def _extract_details(
         info=models.TrackingInfo(
             carrier_tracking_link=settings.tracking_url.format(package.trackingNumber),
             shipment_service=lib.failsafe(lambda: detail.serviceDetail.description),
-            package_weight_unit=lib.failsafe(
-                lambda: detail.shipmentDetails.weight[0].unit
-            ),
-            package_weight=lib.failsafe(
-                lambda: lib.to_decimal(detail.shipmentDetails.weight[0].value)
-            ),
+            package_weight_unit=lib.failsafe(lambda: detail.shipmentDetails.weight[0].unit),
+            package_weight=lib.failsafe(lambda: lib.to_decimal(detail.shipmentDetails.weight[0].value)),
             shipment_destination_postal_code=lib.failsafe(
                 lambda: detail.destinationLocation.locationContactAndAddress.address.postalCode
             ),

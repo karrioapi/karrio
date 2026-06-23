@@ -28,7 +28,6 @@ def reverse_func(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("providers", "0072_rename_eshippersettings_eshipperxmlsettings_and_more"),
     ]

@@ -1,10 +1,11 @@
 """Karrio Sendle client proxy."""
 
 import urllib.parse
-import karrio.lib as lib
+
 import karrio.api.proxy as proxy
-import karrio.providers.sendle.utils as provider_utils
+import karrio.lib as lib
 import karrio.mappers.sendle.settings as provider_settings
+import karrio.providers.sendle.utils as provider_utils
 
 
 class Proxy(proxy.Proxy):
@@ -66,10 +67,7 @@ class Proxy(proxy.Proxy):
                     else {}
                 ),
             ),
-            [
-                provider_utils.shipment_next_call(response, self.settings, has_failure)
-                for response in orders
-            ],
+            [provider_utils.shipment_next_call(response, self.settings, has_failure) for response in orders],
         )
 
         return lib.Deserializable(

@@ -1,0 +1,3169 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://www.cargonet.software" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" elementFormDefault="qualified" targetNamespace="http://www.cargonet.software">
+      <xs:element name="isAlive">
+        <xs:complexType/>
+      </xs:element>
+      <xs:element name="isAliveResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="isAliveResult" type="xs:boolean"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="setAlive">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="value" type="xs:boolean"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="setAliveResponse">
+        <xs:complexType/>
+      </xs:element>
+      <xs:element name="UserCredentials" type="tns:UserCredentials"/>
+      <xs:complexType name="UserCredentials">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="userid" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="password" type="xs:string"/>
+        </xs:sequence>
+        <xs:anyAttribute/>
+      </xs:complexType>
+      <xs:element name="VerifyConfiguration">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:VerifyConfigurationRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="VerifyConfigurationRequest">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="customer" type="tns:Customer"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="ip" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Customer">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:CustomerSmall">
+            <xs:sequence>
+              <xs:element minOccurs="1" maxOccurs="1" name="countrycode" type="xs:int"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="CustomerSmall">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="centernumber" type="xs:int"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="number" type="xs:int"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="VerifyConfigurationResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="VerifyConfigurationResult" type="tns:VerifyConfigurationResponse"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="VerifyConfigurationResponse">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="Allowed" type="xs:boolean"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="VerifyUserCredentials" type="tns:VerifyUserCredentials"/>
+      <xs:complexType name="VerifyUserCredentials">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:UserCredentials">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="Verify_userid" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="Verify_password" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="CreateShipment">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:StdShipmentRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="StdShipmentRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:StdShipmentBaseRequest"/>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="StdShipmentBaseRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ShipmentRequestDefaultData">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="weight" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="referencenumber" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="reference2" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="reference3" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="reference4" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ShipmentRequestDefaultData">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ShipmentRequestBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="services" type="tns:StdServices"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ShipmentRequestBase">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="receiveraddress" type="tns:Address"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="receiverinfo" type="tns:AddressInfo"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="shipperaddress" type="tns:Address"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="shipperinfo" type="tns:AddressInfo"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="retourAddress" type="tns:Address"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="customer_countrycode" type="xs:int"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="customer_centernumber" type="xs:int"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="customer_number" type="xs:int"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="shippingdate" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Address">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:AddressMini">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="name" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="phoneNumber" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="faxNumber" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="geoX" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="geoY" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="AddressMini">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="countryPrefix" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="zipCode" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="city" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="street" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ShopAddress">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:Address">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="shopid" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="AddressInfo">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="contact" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="name2" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="name3" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="name4" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="digicode1" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="digicode2" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="intercomid" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="vinfo1" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="vinfo2" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="StdServices">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ContactServices">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="extraInsurance" type="tns:ExtraInsurance"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="parcelshop" type="tns:ParcelShop"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="reverse" type="tns:Reverse"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="reverseInverseReturn" type="tns:ReverseInverseReturn"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="reversInverseBcReturn" type="tns:ReverseInverseReturnBc"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="autoConsolidation" type="tns:AutoConsolidation"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="pickupAtCustomer" type="tns:PickupData"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="bic3" type="tns:Bic3"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="sameday" type="tns:Sameday"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="marketing" type="tns:Marketing"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="tyre" type="tns:Tyre"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ContactServices">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:CreateServicesBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="contact" type="tns:Contact"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="CreateServicesBase">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ServiceBaseList"/>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ServiceBaseList" abstract="true">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:AppendOptionsBase"/>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="AppendOptionsBase" abstract="true"/>
+      <xs:complexType name="Bic3">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:AppendOptionsBase">
+            <xs:sequence>
+              <xs:element minOccurs="1" maxOccurs="1" name="generateBic3" type="xs:boolean"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="PickupData">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ServiceBaseList">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="time_from" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="time_to" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="remark" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="pick_remark" type="xs:string"/>
+              <xs:element minOccurs="1" maxOccurs="1" name="dayCheckDone" nillable="true" type="xs:boolean"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ServiceBase" abstract="true">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ServiceBaseList"/>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="DefaultService" abstract="true">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ServiceBase"/>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="Tyre">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:DefaultService"/>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="NonService">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:DefaultService"/>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="Marketing">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:NonService">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="name" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="Sameday">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:DefaultService"/>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="Consolidation">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:DefaultService">
+            <xs:sequence>
+              <xs:element minOccurs="1" maxOccurs="1" name="type" type="tns:etypeConsolidation"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:simpleType name="etypeConsolidation">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="CombinedDelivery"/>
+          <xs:enumeration value="CombinedInvoicing"/>
+          <xs:enumeration value="CombinedDeliveryAndInvoicing"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:complexType name="AutoConsolidation">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:Consolidation"/>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ReverseReturnBase">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:DefaultService"/>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ReverseBcReturn">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ReverseReturnBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="original_parcel" type="tns:BcData"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="BcData">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="BarcodeId" type="xs:string"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="BarcodeSource" type="xs:int"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ReverseInverseReturnBc">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ReverseBcReturn"/>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ReverseReturn">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ReverseReturnBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="original_parcel" type="tns:Parcel"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="Parcel">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="countrycode" type="xs:int"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="centernumber" type="xs:int"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="parcelnumber" type="xs:long"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ReverseInverseReturn">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ReverseReturn"/>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="Reverse">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:DefaultService">
+            <xs:sequence>
+              <xs:element minOccurs="1" maxOccurs="1" name="expireOffset" type="xs:int"/>
+              <xs:element minOccurs="1" maxOccurs="1" name="type" type="tns:etypeReverse"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="retour_receiver" type="tns:Address"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:simpleType name="etypeReverse">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="OnDemand"/>
+          <xs:enumeration value="Prepared"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:complexType name="ParcelShop">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:DefaultService">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="shopaddress" type="tns:ShopAddress"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ExtraInsurance">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:DefaultService">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="value" type="xs:string"/>
+              <xs:element minOccurs="1" maxOccurs="1" name="type" type="tns:etypeInsurance"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:simpleType name="etypeInsurance">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="byShipments"/>
+          <xs:enumeration value="byWeight"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:complexType name="Secure">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:DefaultService"/>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="Contact">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:DefaultService">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="sms" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="email" type="xs:string"/>
+              <xs:element minOccurs="1" maxOccurs="1" name="type" type="tns:etypeContact"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="autoText" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="secureService" type="tns:Secure"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:simpleType name="etypeContact">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="No"/>
+          <xs:enumeration value="Predict"/>
+          <xs:enumeration value="AutomaticSMS"/>
+          <xs:enumeration value="AutomaticMail"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:element name="CreateShipmentResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="CreateShipmentResult" type="tns:ArrayOfShipment"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="ArrayOfShipment">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="Shipment" nillable="true" type="tns:Shipment"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Shipment">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="countrycode" type="xs:int"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="centernumber" type="xs:int"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="parcelnumber" type="xs:long"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="barcode" type="xs:long"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="type" type="tns:etype"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:simpleType name="etype">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="REVERSE"/>
+          <xs:enumeration value="PROOF"/>
+          <xs:enumeration value="EPRINT"/>
+          <xs:enumeration value="EPRINTATTACHMENT"/>
+          <xs:enumeration value="MASTER"/>
+          <xs:enumeration value="COLLECTIONREQUEST"/>
+          <xs:enumeration value="BIC3"/>
+          <xs:enumeration value="REVERSEBIC3"/>
+          <xs:enumeration value="PROOFBIC3"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:element name="CreateShipmentBc">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:StdShipmentRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="CreateShipmentBcResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="CreateShipmentBcResult" type="tns:ArrayOfShipmentBc"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="ArrayOfShipmentBc">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="ShipmentBc" nillable="true" type="tns:ShipmentBc"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ShipmentBc">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Shipment" type="tns:BcDataExt"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="Type" type="tns:etype"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="BcDataExt">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:BcData">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="BarCode" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="CreateShipmentWithLabels">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:StdShipmentLabelRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="StdShipmentLabelRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:StdShipmentLabelBaseRequest">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="bic3data" type="tns:Bic3LabelData"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="overrideShipperLabelAddress" type="tns:Address"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="injectionHub" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="refnrasbarcode" type="xs:boolean"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="referenceInBarcode" type="tns:ReferenceInBarcode"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="StdShipmentLabelBaseRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:StdShipmentRequest">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="customLabelText" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="labelType" type="tns:LabelType"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="LabelType">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="type" type="tns:eLabelType"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:simpleType name="eLabelType">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="Default"/>
+          <xs:enumeration value="PDF"/>
+          <xs:enumeration value="PDF_A6"/>
+          <xs:enumeration value="ZPL"/>
+          <xs:enumeration value="ZPL300"/>
+          <xs:enumeration value="ZPL_A6"/>
+          <xs:enumeration value="ZPL300_A6"/>
+          <xs:enumeration value="EPL"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:complexType name="Bic3LabelData">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="mode" type="tns:eBic3Mode"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:simpleType name="eBic3Mode">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="OnlyStdLabels"/>
+          <xs:enumeration value="OnlyBic3"/>
+          <xs:enumeration value="All"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:complexType name="ReferenceInBarcode">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="type" type="tns:eReferenceType"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:simpleType name="eReferenceType">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="Referencenumber"/>
+          <xs:enumeration value="Reference2"/>
+          <xs:enumeration value="Reference3"/>
+          <xs:enumeration value="Reference4"/>
+          <xs:enumeration value="BcId"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:element name="CreateShipmentWithLabelsResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="CreateShipmentWithLabelsResult" type="tns:ShipmentsWithLabels"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="ShipmentsWithLabels">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="shipments" type="tns:ArrayOfShipment"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="labels" type="tns:ArrayOfLabel"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfLabel">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="Label" nillable="true" type="tns:Label"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Label">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="type" type="tns:etype"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="label" type="xs:base64Binary"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="CreateShipmentWithLabelsBc">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:StdShipmentLabelRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="CreateShipmentWithLabelsBcResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="CreateShipmentWithLabelsBcResult" type="tns:ShipmentsWithLabelsBc"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="ShipmentsWithLabelsBc">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="shipments" type="tns:ArrayOfShipmentBc"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="labels" type="tns:ArrayOfLabel"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="CreateMultiShipment">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:MultiShipmentRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="MultiShipmentRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ShipmentRequestBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="services" type="tns:MultiServices"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="slaves" type="tns:ArrayOfSlaveRequest"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="MultiServices">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ContactServices">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="consolidation" type="tns:Consolidation"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="pickupAtCustomer" type="tns:PickupData"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="tyre" type="tns:Tyre"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfSlaveRequest">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="SlaveRequest" nillable="true" type="tns:SlaveRequest"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="SlaveRequest">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="weight" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="referencenumber" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="reference2" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="reference3" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="reference4" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="services" type="tns:SlaveServices"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="SlaveServices">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:SlaveServicesBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="marketing" type="tns:Marketing"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="SlaveServicesBase">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ServiceBaseList">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="extraInsurance" type="tns:ExtraInsurance"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="CreateMultiShipmentResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="CreateMultiShipmentResult" type="tns:MultiShipment"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="MultiShipment">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="mastershipment" type="tns:Shipment"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="shipments" type="tns:ArrayOfShipment"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="CreateMultiShipmentBc">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:MultiShipmentRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="CreateMultiShipmentBcResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="CreateMultiShipmentBcResult" type="tns:MultiShipmentBc"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="MultiShipmentBc">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="mastershipment" type="tns:ShipmentBc"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="shipments" type="tns:ArrayOfShipmentBc"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetServiceNoticeAnswers">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:ServiceNoticeAnswersRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="ServiceNoticeAnswersRequest">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="type" type="tns:ServiceNoticeType"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="language" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:simpleType name="ServiceNoticeType">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="pick"/>
+          <xs:enumeration value="dely"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:element name="GetServiceNoticeAnswersResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetServiceNoticeAnswersResult" type="tns:ServiceNoticeAnswersResponse"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="ServiceNoticeAnswersResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="answers" type="tns:ArrayOfText"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfText">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="Text" nillable="true" type="tns:Text"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Text">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="id" type="xs:int"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="text" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetServiceNotices">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:ServiceNoticeRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="ServiceNoticeRequest">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="customer" type="tns:Customer"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="language" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetServiceNoticesResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetServiceNoticesResult" type="tns:ServiceNoticeResponse"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="ServiceNoticeResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="servicenotices" type="tns:ArrayOfServiceNotice"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfServiceNotice">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="ServiceNotice" nillable="true" type="tns:ServiceNotice"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ServiceNotice">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="BarcodeId" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="BarcodeSource" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="customer" type="tns:Customer"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="reason" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="date" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="status" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="weight" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="info" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="counterquestion" type="xs:string"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="type" type="tns:ServiceNoticeType"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetAllServiceNotices">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:GetAllServiceNoticesRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="GetAllServiceNoticesRequest">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Customer" type="tns:Customer"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Languages" type="tns:ArrayOfString"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="LastKey" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfString">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetAllServiceNoticesResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetAllServiceNoticesResult" type="tns:GetAllServiceNoticesResponse"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="GetAllServiceNoticesResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="ServiceNotices" type="tns:ArrayOfServiceNoticeEntry"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="LastKey" type="xs:string"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="DataComplete" type="xs:boolean"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfServiceNoticeEntry">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="ServiceNoticeEntry" nillable="true" type="tns:ServiceNoticeEntry"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ServiceNoticeEntry">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="BarcodeId" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="BarcodeSource" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Customer" type="tns:Customer"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Reason" type="tns:ArrayOfReason"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Date" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Status" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Weight" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Info" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Counterquestion" type="xs:string"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="Type" type="tns:ServiceNoticeType"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfReason">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="Reason" nillable="true" type="tns:Reason"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Reason">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Language" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Text" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetBic3">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:GetBic3Request"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="GetBic3Request">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="centernumber" type="xs:int"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="customer" type="tns:Customer"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetBic3Response">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="GetBic3Result" type="xs:long"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetBic3Routing">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:GetBic3RoutingRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="GetBic3RoutingRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:GeoRoutingRequest">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="customer" type="tns:Customer"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="GeoRoutingRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:GeoRoutingBaseRequest">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="serviceCode" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="GeoRoutingBaseRequest">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="countryPrefix" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="zipCode" type="xs:string"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="destinationDepot" type="xs:int"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="date" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="buCode" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="depotStr" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetBic3RoutingResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetBic3RoutingResult" type="tns:GetBic3RoutingResponse"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="GetBic3RoutingResponse">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="bic3" type="xs:long"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="route" type="tns:GeoRouting"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="GeoRouting">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="barcodeId" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="barcodePostcode" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="buAlphaStr" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="buCode" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="cSort" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="dCountry" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="dDepot" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="dDepotCountry" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="dDepotStr" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="dSort" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="networkCode" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="oSort" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="partnerCode" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="routingText" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="sSort" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="serviceMark" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="serviceText" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="version" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="soCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetGeoRouting">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:GeoRoutingRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetGeoRoutingResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetGeoRoutingResult" type="tns:GeoRouting"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetGeoRoutingReverse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:GeoRoutingReverseRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="GeoRoutingReverseRequest">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="originIso2Country" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="originZipCode" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="originDepot" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="destinationIso2Country" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="destinationZipCode" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="soCodeReverse" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="retourShipperIso2Country" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="retourShipperZipCode" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="retourIso2Country" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="retourZipCode" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="soCodeRetour" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="date" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetGeoRoutingReverseResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetGeoRoutingReverseResult" type="tns:GetGeoRoutingReverseResponse"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="GetGeoRoutingReverseResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Reverse" type="tns:GeoRouting"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="ReverseRetour" type="tns:GeoRouting"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="UpdateServiceNotice">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:UpdateServiceNoticeRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="UpdateServiceNoticeRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:UpdateServiceNoticeRequestBase">
+            <xs:sequence>
+              <xs:element minOccurs="1" maxOccurs="1" name="answerID" type="xs:int"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="text" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="address" type="tns:Address"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="UpdateServiceNoticeRequestBase">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="BarcodeId" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="BarcodeSource" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="customer" type="tns:Customer"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="UpdateServiceNoticeResponse">
+        <xs:complexType/>
+      </xs:element>
+      <xs:element name="CancelServiceNotice">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:CancelServiceNoticeRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="CancelServiceNoticeRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:UpdateServiceNoticeRequestBase"/>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="CancelServiceNoticeResponse">
+        <xs:complexType/>
+      </xs:element>
+      <xs:element name="GetRetourShipmentData">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:RetourShipmentRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="RetourShipmentRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:RetourShipmentBaseRequest">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="countrycode" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="centernumber" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="original_parcelnumber" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="RetourShipmentBaseRequest"/>
+      <xs:element name="GetRetourShipmentDataResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetRetourShipmentDataResult" type="tns:RetourShipmentData"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="RetourShipmentData">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ShipmentData">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="services" type="tns:RetourServices"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ShipmentData">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ShipmentDataBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="countrycode" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="centernumber" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="parcelnumber" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="countrycode_retour" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="centernumber_retour" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="parcelnumber_retour" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ShipmentDataBase">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="customer_centernumber" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="customernumber" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="shipperaddress" type="tns:Address"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="customeraddress" type="tns:Address"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="receiveraddress" type="tns:Address"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="RetourServices">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ServiceBaseList">
+            <xs:sequence>
+              <xs:element minOccurs="1" maxOccurs="1" name="expireOffset" type="xs:int"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="GetRetourShipmentDataBc">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:RetourShipmentBcRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="RetourShipmentBcRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:RetourShipmentBaseRequest">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="customer" type="tns:Customer"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="originalBarcode" type="xs:string"/>
+              <xs:element minOccurs="1" maxOccurs="1" name="originalBarcodeSource" nillable="true" type="xs:int"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="originalBarcodeId" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="GetRetourShipmentDataBcResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetRetourShipmentDataBcResult" type="tns:RetourShipmentDataBc"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="RetourShipmentDataBc">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ShipmentDataBc">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="services" type="tns:RetourServices"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ShipmentDataBc">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ShipmentDataBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="shipment" type="tns:BcDataExt"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="shipmentRetour" type="tns:BcDataExt"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="CreateReverseInverseShipment">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:ReverseShipmentRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="ReverseShipmentRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ShipmentRequestBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="weight" type="xs:string"/>
+              <xs:element minOccurs="1" maxOccurs="1" name="expire_offset" type="xs:int"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="referencenumber" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="services" type="tns:ReverseInverseServices"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ReverseInverseServices">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ServiceBaseList">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="extraInsurance" type="tns:ExtraInsurance"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="contact" type="tns:Contact"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="CreateReverseInverseShipmentResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="CreateReverseInverseShipmentResult" type="tns:Shipment"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="CreateReverseInverseShipmentBc">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:ReverseShipmentRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="CreateReverseInverseShipmentBcResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="CreateReverseInverseShipmentBcResult" type="tns:ShipmentBc"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="CreateReverseInverseShipmentWithLabels">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:ReverseShipmentLabelRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="ReverseShipmentLabelRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ReverseShipmentRequest">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="receiver_contact_name" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="customLabelText" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="labelType" type="tns:LabelType"/>
+              <xs:element minOccurs="1" maxOccurs="1" name="refasbarcode" type="xs:boolean"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="CreateReverseInverseShipmentWithLabelsResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="CreateReverseInverseShipmentWithLabelsResult" type="tns:ShipmentWithLabels"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="ShipmentWithLabels">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="shipment" type="tns:Shipment"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="labels" type="tns:ArrayOfLabel"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="CreateReverseInverseShipmentWithLabelsBc">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:ReverseShipmentLabelRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="CreateReverseInverseShipmentWithLabelsBcResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="CreateReverseInverseShipmentWithLabelsBcResult" type="tns:ShipmentWithLabelsBc"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="ShipmentWithLabelsBc">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Shipment" type="tns:ShipmentBc"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Labels" type="tns:ArrayOfLabel"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetLabel">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:ReceiveLabelRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="ReceiveLabelRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ReceiveLabelRequestBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="countrycode" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="centernumber" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="parcelnumber" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ReceiveLabelRequestBase" abstract="true">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="overrideShipperLabelAddress" type="tns:Address"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="refnrasbarcode" type="xs:boolean"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="referenceInBarcode" type="tns:ReferenceInBarcode"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="bic3data" type="tns:Bic3LabelData"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="injectionHub" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="labelType" type="tns:LabelType"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetLabelResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetLabelResult" type="tns:LabelResponse"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="LabelResponse">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:LabelBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="countrycode" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="centernumber" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="parcelnumber" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="LabelBaseResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="labels" type="tns:ArrayOfLabel"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetLabelBc">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:ReceiveLabelBcRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="ReceiveLabelBcRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ReceiveLabelRequestBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="shipmentNumber" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="customer" type="tns:Customer"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="GetLabelBcResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetLabelBcResult" type="tns:LabelBcResponse"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="LabelBcResponse">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:LabelBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="shipment" type="tns:BcDataExt"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="GetLabelData">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:GetLabelDataRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="GetLabelDataRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ShipmentRequestBcBase">
+            <xs:sequence>
+              <xs:element minOccurs="1" maxOccurs="1" name="Options" type="tns:eLabelDataOptions"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ShipmentRequestBcBase">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:GetShipmentRequestBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="Barcode" type="xs:string"/>
+              <xs:element minOccurs="1" maxOccurs="1" name="BarcodeSource" nillable="true" type="xs:int"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="BarcodeId" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="GetShipmentRequestBase">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="customer" type="tns:Customer"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:simpleType name="eLabelDataOptions">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="Default"/>
+          <xs:enumeration value="Images"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:element name="GetLabelDataResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetLabelDataResult" type="tns:GetLabelDataResponse"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="GetLabelDataResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Data" type="tns:LabelData"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="BarcodeData" type="tns:ArrayOfBarcodeData"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="LabelData">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:LabelDataPn">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="Bic3Depot" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="Bic3Number" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="Bic3Checkdigit" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="LabelDataPn">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:LabelDataBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="DutiableHint" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="Hint" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="Routingtext" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="Servicetext" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="ServiceMark" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="ReceiverCenterLine" type="xs:string"/>
+              <xs:element minOccurs="1" maxOccurs="1" name="OSortInverse" type="xs:boolean"/>
+              <xs:element minOccurs="1" maxOccurs="1" name="OSort2Inverse" type="xs:boolean"/>
+              <xs:element minOccurs="1" maxOccurs="1" name="DSortInverse" type="xs:boolean"/>
+              <xs:element minOccurs="1" maxOccurs="1" name="IsShop" type="xs:boolean"/>
+              <xs:element minOccurs="1" maxOccurs="1" name="ReverseHint" type="xs:boolean"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="LabelDataBase">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="ServiceCode" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="SSort" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="OSort" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="OSort2" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="DSort" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfBarcodeData">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="BarcodeData" nillable="true" type="tns:BarcodeData"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="BarcodeData">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="Identifier" type="tns:BcIdentifier"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="BarcodeValue" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="BarcodeText" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="bcImage" type="xs:base64Binary"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:simpleType name="BcIdentifier">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="Aztec"/>
+          <xs:enumeration value="Bic3"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:element name="GetSecureData">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:GetSecureDataRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="GetSecureDataRequest">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Token" type="tns:ArrayOfString"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetSecureDataResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetSecureDataResult" type="tns:GetSecureDataResponse"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="GetSecureDataResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Data" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="SecureCodes" type="tns:ArrayOfString"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="BarcodeImage" type="xs:base64Binary"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetRetourLabel">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:ReceiveRetourLabelRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="ReceiveRetourLabelRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ReceiveRetourLabelRequestBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="countrycode" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="centernumber" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="parcelnumber" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ReceiveRetourLabelRequestBase" abstract="true">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ReceiveLabelRequestBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="services" type="tns:RetourServices"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="weight" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="shipperaddress" type="tns:Address"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="receiveraddress" type="tns:Address"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="customLabelText" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="GetRetourLabelResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetRetourLabelResult" type="tns:LabelResponse"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetRetourLabelBc">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:ReceiveRetourLabelBcRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="ReceiveRetourLabelBcRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ReceiveRetourLabelRequestBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="shipmentNumber" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="customer" type="tns:Customer"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="GetRetourLabelBcResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetRetourLabelBcResult" type="tns:LabelResponse"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="CreateCollectionRequest">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:CollectionRequestRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="CollectionRequestRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:CollectionRequestRequestBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="shipperinfo" type="tns:AddressInfo"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="receiverinfo" type="tns:AddressInfo"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="pick_date" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="time_from" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="time_to" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="pick_remark" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="delivery_remark" type="xs:string"/>
+              <xs:element minOccurs="1" maxOccurs="1" name="dayCheckDone" nillable="true" type="xs:boolean"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="CollectionRequestRequestBase" abstract="true">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="receiveraddress" type="tns:Address"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="shipperaddress" type="tns:Address"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="customer_countrycode" type="xs:int"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="customer_centernumber" type="xs:int"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="customer_number" type="xs:int"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="parcel_count" type="xs:int"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="remark" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="referencenumber" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="reference2" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="reference3" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="reference4" type="xs:string"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="HideCustomerAddress" nillable="true" type="xs:boolean"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="services" type="tns:CollectionRequestServices"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="CollectionRequestServices">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:CreateServicesBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="extraInsurance" type="tns:ExtraInsurance"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="contact" type="tns:ContactCollectionRequest"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="marketing" type="tns:Marketing"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ContactCollectionRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:Contact">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="shipper_email" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="shipper_mobil" type="xs:string"/>
+              <xs:element minOccurs="1" maxOccurs="1" name="shipperNotificationType" nillable="true" type="tns:etypeShipperContact"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:simpleType name="etypeShipperContact">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="No"/>
+          <xs:enumeration value="AutomaticMail"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:element name="CreateCollectionRequestResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="CreateCollectionRequestResult" type="tns:ArrayOfShipment"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="CreateCollectionRequestBc">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:CollectionRequestRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="CreateCollectionRequestBcResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="CreateCollectionRequestBcResult" type="tns:ArrayOfShipmentBc"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="TerminateCollectionRequest">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:TerminateCollectionRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="TerminateCollectionRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:TerminateCollectionRequestParcel"/>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="TerminateCollectionRequestParcel">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:TerminateCollectionRequestBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="parcel" type="tns:Parcel"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="TerminateCollectionRequestBase" abstract="true">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="customer" type="tns:Customer"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="TerminateCollectionRequestResponse">
+        <xs:complexType/>
+      </xs:element>
+      <xs:element name="TerminateCollectionRequestBc">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:TerminateCollectionRequestBc"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="TerminateCollectionRequestBc">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:TerminateCollectionRequestBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="barcode" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="TerminateCollectionRequestBcResponse">
+        <xs:complexType/>
+      </xs:element>
+      <xs:element name="CreatePickupAtCustomer">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:PickupAtCustomerRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="PickupAtCustomerRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:PickupAtCustomerRequestBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="shipments" type="tns:ArrayOfParcel"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="PickupAtCustomerRequestBase">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="shipperaddress" type="tns:Address"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="customer" type="tns:Customer"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="pick_date" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="data" type="tns:PickupData"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfParcel">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="Parcel" nillable="true" type="tns:Parcel"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="CreatePickupAtCustomerResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="CreatePickupAtCustomerResult" type="tns:Parcel"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="CreatePickupAtCustomerBc">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:PickupAtCustomerBcRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="PickupAtCustomerBcRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:PickupAtCustomerRequestBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="shipments" type="tns:ArrayOfString"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="CreatePickupAtCustomerBcResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="CreatePickupAtCustomerBcResult" type="tns:PickupAtCustomerResponse"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="PickupAtCustomerResponse">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="Sin" type="xs:long"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetShipment">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:ShipmentRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="ShipmentRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:GetShipmentRequestBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="parcel" type="tns:Parcel"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="GetShipmentResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetShipmentResult" type="tns:ShipmentDataExtended"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="ShipmentDataExtended">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ShipmentDataExtendedBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="countrycode" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="centernumber" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="parcelnumber" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ShipmentDataExtendedBase">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="customer_centernumber" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="customernumber" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="weight" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="shipping_date" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="referencenumber" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="reference2" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="reference3" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="reference4" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="referenceInternational" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="shipperaddress" type="tns:Address"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="customeraddress" type="tns:Address"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="receiveraddress" type="tns:Address"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="receiver_contact" type="tns:Contact"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="pickup_remark" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="deliver_remark" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="receiverinfo" type="tns:AddressInfo"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="shipperCenter" type="xs:int"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="receiverCenter" type="xs:int"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="receiverTourNumber" type="xs:int"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Dimension" type="tns:ParcelDimension"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ParcelDimension">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Length" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Width" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Height" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Girth" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetShipmentBc">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:ShipmentRequestBc"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="ShipmentRequestBc">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ShipmentRequestBcBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="Language" type="xs:string"/>
+              <xs:element minOccurs="1" maxOccurs="1" name="GetServices" nillable="true" type="xs:boolean"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="GetShipmentBcResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetShipmentBcResult" type="tns:ShipmentDataExtendedBc"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="ShipmentDataExtendedBc">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ShipmentDataExtendedBcBase">
+            <xs:sequence>
+              <xs:element minOccurs="1" maxOccurs="1" name="IsPostman" type="xs:boolean"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ShipmentDataExtendedBcBase">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ShipmentDataExtendedBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="Barcode" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="BarcodeSource" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="BarcodeId" type="xs:string"/>
+              <xs:element minOccurs="1" maxOccurs="1" name="Sin" type="xs:long"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="Services" type="tns:ArrayOfServiceEntry"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfServiceEntry">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="ServiceEntry" nillable="true" type="tns:ServiceEntry"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ServiceEntry">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Name" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Type" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Attribute" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Value" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Detail" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Status" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetShipmentWcs">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:ShipmentRequestBc"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetShipmentWcsResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetShipmentWcsResult" type="tns:ShipmentDataExtendedBcBase"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetShipmentBcMulti">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:GetShipmentBcMultiRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="GetShipmentBcMultiRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ShipmentRequestBc">
+            <xs:sequence>
+              <xs:element minOccurs="1" maxOccurs="1" name="LinkedType" nillable="true" type="tns:eLinkedType"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:simpleType name="eLinkedType">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="None"/>
+          <xs:enumeration value="Consolidation"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:element name="GetShipmentBcMultiResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetShipmentBcMultiResult" type="tns:GetShipmentBcMultiResponse"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="GetShipmentBcMultiResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Shipments" type="tns:ArrayOfGetShipmentEntry"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfGetShipmentEntry">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="GetShipmentEntry" nillable="true" type="tns:GetShipmentEntry"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="GetShipmentEntry">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ShipmentDataExtendedBc">
+            <xs:sequence>
+              <xs:element minOccurs="1" maxOccurs="1" name="LinkedShipmentType" nillable="true" type="tns:eLinkedShipmentType"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:simpleType name="eLinkedShipmentType">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="Slave"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:element name="GetReverseOnDemandMode">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="customer" type="tns:Customer"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetReverseOnDemandModeResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="GetReverseOnDemandModeResult" type="xs:int"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="IsPickableOnDate">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:IsPickableRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="IsPickableRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:DayRequestBase"/>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="DayRequestBase">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="address" type="tns:AddressMini"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="date" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="IsPickableOnDateResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="IsPickableOnDateResult" type="xs:boolean"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="IsDeliverableOnDate">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:IsDeliverableRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="IsDeliverableRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:DayRequestBase"/>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="IsDeliverableOnDateResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="IsDeliverableOnDateResult" type="xs:boolean"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetLastNumber">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:GetLastNumberRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="GetLastNumberRequest">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Customer" type="tns:Customer"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Entries" type="tns:ArrayOfEntry"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfEntry">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="Entry" nillable="true" type="tns:Entry"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Entry">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="BarcodeSource" type="xs:int"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Domain" type="xs:string"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="NumberFrom" nillable="true" type="xs:long"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="NumberTo" nillable="true" type="xs:long"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetLastNumberResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetLastNumberResult" type="tns:GetLastNumberResponse"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="GetLastNumberResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="entries" type="tns:ArrayOfLong"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfLong">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="long" type="xs:long"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetNationalTransitTime">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:GetNationalTransitTimeRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="GetNationalTransitTimeRequest">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="SC_CountryCode" type="xs:int"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="SC_CenterNumber" type="xs:int"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="RC_CountryCode" type="xs:int"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="RC_CenterNumber" type="xs:int"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="TransitTime_Type" type="tns:TransitTimeType"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:simpleType name="TransitTimeType">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="TransitTime_Default"/>
+          <xs:enumeration value="TransitTime_Predict"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:element name="GetNationalTransitTimeResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetNationalTransitTimeResult" type="tns:GetNationalTransitTimeResponse"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="GetNationalTransitTimeResponse">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="TransitTime" type="xs:int"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetRdvShipmentData">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:GetRdvShipmentDataRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="GetRdvShipmentDataRequest">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="SearchMode" type="tns:RdvShipmentDataSearchMode"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="SearchString" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:simpleType name="RdvShipmentDataSearchMode">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="SearchByParcelNumber"/>
+          <xs:enumeration value="SearchByAvisDePassage"/>
+          <xs:enumeration value="SearchByToken"/>
+          <xs:enumeration value="SearchByBIC3"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:element name="GetRdvShipmentDataResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetRdvShipmentDataResult" type="tns:ArrayOfRdvShipmentData"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="ArrayOfRdvShipmentData">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="RdvShipmentData" nillable="true" type="tns:RdvShipmentData"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="RdvShipmentData">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:RdvShipmentDataBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="Parcel" type="tns:ParcelInfoSin"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="ShipmentSin" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="AvisDePassageSin" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="RdvShipmentDataBase">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="ParcelOptional" type="xs:boolean"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="ShippingDate" type="xs:string"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="SC_CenterNumber" type="xs:int"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="RC_CenterNumber" type="xs:int"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="Weight" type="xs:float"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="NumberOfParcelsReal" type="xs:int"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="CustomerRDVProfile" type="xs:boolean"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="TerminalRDVAllowed" type="xs:boolean"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="SavePlaceRDVAllowed" type="xs:boolean"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="RDVServiceAllowed" type="xs:boolean"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="Predict" type="xs:boolean"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="PredictCutOffDate" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="ShipperName" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="ConsumerName" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="ReceiverAddress" type="tns:RdvAddress"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="ReceiverEmailAddress" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="ReceiverMobileNumber" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="ReceiverAltZipCode" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="ShipperInfo" type="tns:RdvDeliveryInfo"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="RdvUpdateable" type="xs:boolean"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="RdvInfo" type="tns:RdvDeliveryInfo"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Services" type="tns:ArrayOfRdvService"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="RdvAddress">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Name" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="CountryPrefix" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="ZipCode" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="City" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Street" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="PhoneNumber" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="GeoCoord_Y" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="GeoCoord_X" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="RdvDeliveryInfo">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:RdvDeliveryInfoSmall">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="Date" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="TimeFrom" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="TimeTo" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="RdvDeliveryInfoSmall">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="ContactName" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Digicode1" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Digicode2" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="IntercomID" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Remark" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfRdvService">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="RdvService" nillable="true" type="tns:RdvService"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="RdvService">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="Type" type="xs:int"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="Attribute" type="xs:int"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="Status" type="xs:int"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ParcelInfoSin">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ParcelInfo">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="Sin" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ParcelInfo">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="BarcodeSource" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="BarcodeId" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="UpdateRdvShipmentDataForShop">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:UpdateRdvShipmentDataForShopRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="UpdateRdvShipmentDataForShopRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:UpdateRdvShipmentData">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="ShopID" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="Receiver_ContactName" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="DeliveryDate" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="EsnInfo" type="tns:RdvEsnInfo"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="UpdateRdvShipmentData">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Sin" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Receiver_EmailAddress" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Receiver_MobileNumber" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="User" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="RdvEsnInfo">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="CreateEsn" type="xs:boolean"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="EsnDirective" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="UpdateRdvShipmentDataForShopResponse">
+        <xs:complexType/>
+      </xs:element>
+      <xs:element name="UpdateRdvShipmentDataForAgencyPickup">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:UpdateRdvShipmentDataForAgencyPickupRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="UpdateRdvShipmentDataForAgencyPickupRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:UpdateRdvShipmentData">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="DeliveryDate" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="EsnInfo" type="tns:RdvEsnInfo"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="UpdateRdvShipmentDataForAgencyPickupResponse">
+        <xs:complexType/>
+      </xs:element>
+      <xs:element name="UpdateRdvShipmentData">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:UpdateRdvShipmentDataRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="UpdateRdvShipmentDataRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:UpdateRdvShipmentData">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="Address" type="tns:RdvAddress"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="DeliveryInfo" type="tns:RdvDeliveryInfo"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="EsnInfo" type="tns:RdvEsnInfo"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="AdditionalData" type="tns:RdvData"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="RdvData">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="DayCheckDone" type="xs:boolean"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="UpdateRdvShipmentDataResponse">
+        <xs:complexType/>
+      </xs:element>
+      <xs:element name="UpdateRdvShipmentDataForPredict">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:UpdateRdvShipmentDataPredictRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="UpdateRdvShipmentDataPredictRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:UpdateRdvShipmentData">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="DeliveryInfo" type="tns:RdvDeliveryInfo"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="EsnInfo" type="tns:RdvEsnInfo"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="AdditionalData" type="tns:RdvData"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="UpdateRdvShipmentDataForPredictResponse">
+        <xs:complexType/>
+      </xs:element>
+      <xs:element name="UpdateRdvShipmentDataForSafePlace">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:UpdateRdvShipmentDataForSafePlaceRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="UpdateRdvShipmentDataForSafePlaceRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:UpdateRdvShipmentData">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="DeliveryInfo" type="tns:RdvDeliveryInfoSmall"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="EsnInfo" type="tns:RdvEsnInfo"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="Image" type="xs:base64Binary"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="UpdateRdvShipmentDataForSafePlaceResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="UpdateRdvShipmentDataForSafePlaceResult" type="tns:UpdateRdvShipmentDataForSafePlaceResponse"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="UpdateRdvShipmentDataForSafePlaceResponse">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:UpdateRdvShipmentDataResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="Code" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="Barcode" type="xs:base64Binary"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="UpdateRdvShipmentDataResponse"/>
+      <xs:element name="GetSafePlaceData">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:GetSafePlaceDataRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="GetSafePlaceDataRequest">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="BarcodeSource" nillable="true" type="xs:int"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="BarcodeId" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Customer" type="tns:Customer"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetSafePlaceDataResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetSafePlaceDataResult" type="tns:GetSafePlaceDataResponse"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="GetSafePlaceDataResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Images" type="tns:ArrayOfBase64Binary"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfBase64Binary">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="base64Binary" nillable="true" type="xs:base64Binary"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetCustomerAddress">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="customer" type="tns:Customer"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetCustomerAddressResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetCustomerAddressResult" type="tns:CustomerAddress"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="CustomerAddress">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="CountryCode" type="xs:int"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="CustomerCenterNumber" type="xs:int"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="CustomerNumber" type="xs:int"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Title" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Name0" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Name1" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Name2" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Name3" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="CountryPrefix" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="ZipCode" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="City" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Street" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="HouseNumber" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="HouseNumberExtension" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Floor" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="PostOfficeBox" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="PhoneNumber" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="FaxNumber" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="MobileNumber" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Email" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="IsCustomerBlocked">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="customer" type="tns:Customer"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="IsCustomerBlockedResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="IsCustomerBlockedResult" type="xs:boolean"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetNumberRange">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:NumberRangeRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="NumberRangeRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:NumberRangeBaseRequest">
+            <xs:sequence>
+              <xs:element minOccurs="1" maxOccurs="1" name="CountryCode" type="xs:int"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="ShippingCenterNumber" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="NumberRangeFrom" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="NumberRangeTo" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="NumberRangeFree" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="NumberType" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="NumberRangeBaseRequest" abstract="true">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="ClientID" type="xs:string"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="CustomerCenterNumber" type="xs:int"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="CustomerNumber" type="xs:int"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="NumberRangeType" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetNumberRangeResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetNumberRangeResult" type="tns:NumberRangeResponse"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="NumberRangeResponse">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:NumberRangeBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="1" maxOccurs="1" name="CountryCode" type="xs:int"/>
+              <xs:element minOccurs="1" maxOccurs="1" name="CenterNumber" type="xs:int"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="NumberRangeBaseResponse" abstract="true">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="NumberRangeFrom" type="xs:long"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="NumberRangeTo" type="xs:long"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="NumberRangeFree" type="xs:long"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="CustomerCenterNumber" type="xs:int"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="CustomerNumber" type="xs:int"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="ClientId" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="ValidUntil" type="xs:string"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="NumberRangeType" type="xs:int"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="NumberType" type="xs:int"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetNumberRangeBc">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:NumberRangeBcRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="NumberRangeBcRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:NumberRangeBcBaseRequest">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="NumberType" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="NumberRangeBcBaseRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:NumberRangeBaseRequest">
+            <xs:sequence>
+              <xs:element minOccurs="1" maxOccurs="1" name="BarcodecSource" type="xs:int"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="Domain" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="GetNumberRangeBcResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetNumberRangeBcResult" type="tns:NumberRangeBcResponse"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="NumberRangeBcResponse">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:NumberRangeBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="1" maxOccurs="1" name="BarcodeSource" type="xs:int"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="Domain" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="TerminateNumberRange">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:TerminateNumberRangeRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="TerminateNumberRangeRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:TerminateNumberRangeBaseRequest">
+            <xs:sequence>
+              <xs:element minOccurs="1" maxOccurs="1" name="CountryCode" type="xs:int"/>
+              <xs:element minOccurs="1" maxOccurs="1" name="ShippingCenterNumber" type="xs:int"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="TerminateNumberRangeBaseRequest" abstract="true">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="NumberRangeFrom" type="xs:long"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="NumberRangeTo" type="xs:long"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="ClientID" type="xs:string"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="CustomerCenterNumber" type="xs:int"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="CustomerNumber" type="xs:int"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="TerminateNumberRangeResponse">
+        <xs:complexType/>
+      </xs:element>
+      <xs:element name="TerminateNumberRangeBc">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:TerminateNumberRangeBcRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="TerminateNumberRangeBcRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:TerminateNumberRangeBaseRequest">
+            <xs:sequence>
+              <xs:element minOccurs="1" maxOccurs="1" name="BarcodecSource" type="xs:int"/>
+              <xs:element minOccurs="0" maxOccurs="1" name="Domain" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="TerminateNumberRangeBcResponse">
+        <xs:complexType/>
+      </xs:element>
+      <xs:element name="TerminateShipment">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:TerminateShipmentRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="TerminateShipmentRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ShipmentRequestBcBase">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="Reason" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="TerminateShipmentResponse">
+        <xs:complexType/>
+      </xs:element>
+      <xs:element name="GetCustomerProfile">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:GetCustomerProfileRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="GetCustomerProfileRequest">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Customers" type="tns:ArrayOfCustomer"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Language" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfCustomer">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="Customer" nillable="true" type="tns:Customer"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetCustomerProfileResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetCustomerProfileResult" type="tns:GetCustomerProfileResponse"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="GetCustomerProfileResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="CustomerProfiles" type="tns:ArrayOfCustomerProfile"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfCustomerProfile">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="CustomerProfile" nillable="true" type="tns:CustomerProfile"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="CustomerProfile">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Customer" type="tns:Customer"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="Locked" type="xs:boolean"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Addresses" type="tns:ArrayOfProfileAddress"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Services" type="tns:ArrayOfCustomerService"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfProfileAddress">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="ProfileAddress" nillable="true" type="tns:ProfileAddress"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ProfileAddress">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="Type" type="tns:AddressType"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="Priority" type="xs:int"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Title" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Name0" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Name1" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Name2" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Name3" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="CountryPrefix" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="ZipCode" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="City" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Street" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="HouseNumber" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="HouseNumberExtension" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Floor" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="PostOfficeBox" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="PhoneNumber" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="FaxNumber" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="MobileNumber" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Email" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="GeoX" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="GeoY" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:simpleType name="AddressType">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="StandardAddress"/>
+          <xs:enumeration value="PickupAddress"/>
+          <xs:enumeration value="ReturnAddress"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:complexType name="ArrayOfCustomerService">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="CustomerService" nillable="true" type="tns:CustomerService"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="CustomerService">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Name" type="xs:string"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="Type" type="xs:int"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="Attribute" nillable="true" type="xs:int"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="Mode" nillable="true" type="xs:int"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="Export" type="tns:eExportService"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="LimitType" type="tns:eLimitTypeService"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="LimitMin" nillable="true" type="xs:float"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="LimitMax" nillable="true" type="xs:float"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:simpleType name="eExportService">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="CheckCountry"/>
+          <xs:enumeration value="OnlyNational"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="eLimitTypeService">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="NoLimit"/>
+          <xs:enumeration value="ServiceValue"/>
+          <xs:enumeration value="AttributeValue"/>
+          <xs:enumeration value="NumberOfParcels"/>
+          <xs:enumeration value="Weight"/>
+          <xs:enumeration value="CutOff"/>
+          <xs:enumeration value="Validity"/>
+          <xs:enumeration value="ParcelWeight"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:element name="GetProperties">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:GetPropertiesRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="GetPropertiesRequest">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="HardwareId" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Customer" type="tns:Customer"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Product" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetPropertiesResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetPropertiesResult" type="tns:GetPropertiesResponse"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="GetPropertiesResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Properties" type="tns:ArrayOfPropertyDefinition"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfPropertyDefinition">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="PropertyDefinition" nillable="true" type="tns:PropertyDefinition"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="PropertyDefinition">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="Id" type="xs:int"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="PropertyType" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="DataType" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Property" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Query" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Options" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="PutProperties">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:PutPropertiesRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="PutPropertiesRequest">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Customer" type="tns:Customer"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="ShipperNumber" type="xs:int"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="HardwareId" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Options" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Properties" type="tns:ArrayOfPropertyEntry"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Sum" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfPropertyEntry">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="PropertyEntry" nillable="true" type="tns:PropertyEntry"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="PropertyEntry">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="PropertyId" type="xs:int"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Value" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="PutPropertiesResponse">
+        <xs:complexType/>
+      </xs:element>
+      <xs:element name="GetOptionValue">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:GetOptionRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="GetOptionRequest">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Customer" type="tns:Customer"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="ProductType" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="HardwareId" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Option" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Group" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetOptionValueResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetOptionValueResult" type="tns:GetOptionResponse"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="GetOptionResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Value" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Parameter" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetOptionValues">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:GetOptionsRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="GetOptionsRequest">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Customer" type="tns:Customer"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="ProductType" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="HardwareId" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Group" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Options" type="tns:ArrayOfString"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetOptionValuesResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetOptionValuesResult" type="tns:GetOptionsResponse"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="GetOptionsResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Options" type="tns:ArrayOfGetOptionResponse"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfGetOptionResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="GetOptionResponse" nillable="true" type="tns:GetOptionResponse"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="SendCNOTData">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:CNOTData"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="CNOTData">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="HardwareId" type="xs:string"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="Depot" type="xs:int"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="TourNumber" type="xs:string"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="TimeStamp" type="xs:dateTime"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Status" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Tasks" type="tns:ArrayOfTask"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Locations" type="tns:ArrayOfLocation"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="PhoneCalls" type="tns:ArrayOfPhoneCall"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfTask">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="Task" nillable="true" type="tns:Task"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Task">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Type" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Parcels" type="tns:ArrayOfCNOTParcel"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="ContactName" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Location" type="tns:Location"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="NotProcessed" type="xs:boolean"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="Finished" type="xs:boolean"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="CreatedAt" type="xs:dateTime"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="OnPositionAt" type="xs:dateTime"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="FinishedAt" type="xs:dateTime"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="VisitCounter" type="xs:int"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="TaskId" type="xs:int"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="IsB2C" type="xs:boolean"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Rendezvous" type="tns:Rendezvous"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="PhoneCalls" type="tns:ArrayOfPhoneCall"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfCNOTParcel">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="CNOTParcel" nillable="true" type="tns:CNOTParcel"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="CNOTParcel">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="BcSrc" nillable="true" type="xs:int"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="BcId" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Barcode" type="xs:string"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="Prio" type="xs:boolean"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="DeliveryRecordPosition" type="xs:unsignedInt"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="DeliveryNotificationNumber" type="xs:string"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="OnTourAppended" type="xs:boolean"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Comment" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="TimeWindowFrom" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="TimeWindowTo" type="xs:string"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="TDVHit" type="xs:boolean"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="TDVAddressRef" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Location">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="TimeStamp" type="xs:dateTime"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="Latitude" type="xs:double"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="Longitude" type="xs:double"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Rendezvous">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="Type" type="tns:eRendezvousType"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="From" type="xs:dateTime"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="To" type="xs:dateTime"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="PredictChoice" type="xs:int"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:simpleType name="eRendezvousType">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="MissingRendezvous"/>
+          <xs:enumeration value="NoRendezvous"/>
+          <xs:enumeration value="Depot"/>
+          <xs:enumeration value="ParcelShop"/>
+          <xs:enumeration value="NewDelivery"/>
+          <xs:enumeration value="NewAddress"/>
+          <xs:enumeration value="Predict"/>
+          <xs:enumeration value="SafePlace"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:complexType name="ArrayOfPhoneCall">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="PhoneCall" nillable="true" type="tns:PhoneCall"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="PhoneCall">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Number" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Type" type="xs:string"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="DurationSec" type="xs:int"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="Date" type="xs:dateTime"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfLocation">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="Location" nillable="true" type="tns:Location"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="SendCNOTDataResponse">
+        <xs:complexType/>
+      </xs:element>
+      <xs:element name="AddStatisticData">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:AddStatisticDataRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="AddStatisticDataRequest">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="ClientId" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Customer" type="tns:Customer"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Data" type="tns:ArrayOfStatisticData"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfStatisticData">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="StatisticData" nillable="true" type="tns:StatisticData"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="StatisticData">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="ValueName" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Date" type="xs:string"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="Value" type="xs:long"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="AddStatisticDataResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="AddStatisticDataResult" type="tns:AddStatisticDataResponse"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="AddStatisticDataResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Done" type="tns:ArrayOfBoolean"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfBoolean">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="boolean" type="xs:boolean"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="CheckIfReverseInverseShipmentExists">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:CheckIfReverseInverseShipmentExistsRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="CheckIfReverseInverseShipmentExistsRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:ParcelBcIdRequest"/>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="ParcelBcIdRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:BcIdBaseRequest">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="Parcel" type="tns:Parcel"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="BcIdBaseRequest" abstract="true"/>
+      <xs:element name="CheckIfReverseInverseShipmentExistsResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="CheckIfReverseInverseShipmentExistsResult" type="tns:CheckReverseInverseShipmentReturn"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:simpleType name="CheckReverseInverseShipmentReturn">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="WellDone"/>
+          <xs:enumeration value="OriginalShipmentNotFound"/>
+          <xs:enumeration value="OriginalShipmentAlreadyLinked"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:element name="CheckIfReverseInverseShipmentExistsBcId">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:CheckIfReverseInverseShipmentExistsBcIdRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="CheckIfReverseInverseShipmentExistsBcIdRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:BcIdRequest"/>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="BcIdRequest">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:BcIdBaseRequest">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="Barcode" type="tns:BcData"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="CheckIfReverseInverseShipmentExistsBcIdResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="CheckIfReverseInverseShipmentExistsBcIdResult" type="tns:CheckReverseInverseShipmentReturn"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetShipping">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:GetShippingRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="GetShippingRequest">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="date" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="customer" type="tns:Customer"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GetShippingResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetShippingResult" type="tns:GetShippingResponse"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="GetShippingResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="shippings" type="tns:ArrayOfShipping"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="ArrayOfShipping">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="Shipping" nillable="true" type="tns:Shipping"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Shipping">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="shipment" type="xs:string"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="barcodeSource" type="xs:int"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="barcodeId" type="xs:string"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="weight" type="xs:double"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="receiverAddress" type="tns:AddressIso2Name"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="reference" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="AddressIso2Name">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:AddressName">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="CountryPrefixIso2" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="AddressName">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:AddressMini">
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" name="name" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element name="getInfo">
+        <xs:complexType/>
+      </xs:element>
+      <xs:element name="getInfoResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="getInfoResult" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="VerifyClient">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:VerifyRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="VerifyRequest">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Customer" type="tns:Customer"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="TimeStamp" type="xs:long"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="VerifyClientResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="VerifyClientResult" type="tns:VerifyResponse"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="VerifyResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Data" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="runAction">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:RunActionRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="RunActionRequest">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Action" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Parameter" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="runActionResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="runActionResult" type="tns:RunActionResponse"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="RunActionResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Response" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="runTransaction">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="request" type="tns:TransactionRequest"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="TransactionRequest">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="TransactionId" type="xs:string"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Data" type="xs:string"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="AlternativeCenter" nillable="true" type="xs:int"/>
+          <xs:element minOccurs="0" maxOccurs="1" name="Language" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="runTransactionResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="runTransactionResult" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+  

@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("providers", "0071_alter_tgesettings_my_toll_token"),
     ]

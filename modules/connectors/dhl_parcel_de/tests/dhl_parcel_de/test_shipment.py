@@ -1,10 +1,11 @@
 import unittest
-from unittest.mock import patch, ANY
-from .fixture import gateway
+from unittest.mock import ANY, patch
 
-import karrio.sdk as karrio
-import karrio.lib as lib
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import cached_auth, gateway
 
 
 class TestDPDHLGermanyShippingOptionOverrides(unittest.TestCase):
@@ -12,36 +13,74 @@ class TestDPDHLGermanyShippingOptionOverrides(unittest.TestCase):
 
     def setUp(self):
         self.maxDiff = None
-        self.ShipmentWithOptionsRequest = models.ShipmentRequest(
-            **ShipmentPayloadWithOptions
-        )
+        self.ShipmentWithOptionsRequest = models.ShipmentRequest(**ShipmentPayloadWithOptions)
 
     def test_create_shipment_request_with_option_overrides(self):
         """Shipping options should override connection_config in the request payload."""
-        request = gateway.mapper.create_shipment_request(
-            self.ShipmentWithOptionsRequest
-        )
+        request = gateway.mapper.create_shipment_request(self.ShipmentWithOptionsRequest)
         serialized = request.serialize()
 
         # Profile should be overridden by shipping option
         self.assertEqual(serialized["profile"], "MY_CUSTOM_PROFILE")
         # Cost center should be set from shipping option
-        self.assertEqual(
-            serialized["shipments"][0]["costCenter"], "CC-12345"
-        )
+        self.assertEqual(serialized["shipments"][0]["costCenter"], "CC-12345")
 
     def test_create_shipment_with_label_type_option(self):
         """Shipping option label_type should override connection_config label_type in the URL."""
         with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
             mock.return_value = "{}"
-            karrio.Shipment.create(self.ShipmentWithOptionsRequest).from_(
-                gateway
-            )
+            karrio.Shipment.create(self.ShipmentWithOptionsRequest).from_(gateway)
 
             url = mock.call_args[1]["url"]
             # Option sets PDF_910_300_600, overriding connection config ZPL2_910_300_700_oz
             self.assertIn("docFormat=PDF", url)
             self.assertIn("printFormat=910-300-600", url)
+
+    def test_create_shipment_request_with_reference_option(self):
+        """dhl_parcel_de_reference option should override payload.reference for refNo."""
+        request_data = {
+            **ShipmentPayloadWithOptions,
+            "reference": "Original Ref",
+            "options": {
+                **ShipmentPayloadWithOptions["options"],
+                "dhl_parcel_de_reference": "Option Ref Override",
+            },
+        }
+        request = gateway.mapper.create_shipment_request(models.ShipmentRequest(**request_data))
+        serialized = request.serialize()
+
+        # refNo should use the option value, not payload.reference
+        self.assertEqual(serialized["shipments"][0]["refNo"], "Option Ref Override")
+
+    def test_create_shipment_request_reference_fallback(self):
+        """When dhl_parcel_de_reference is not set, refNo should fall back to payload.reference."""
+        request = gateway.mapper.create_shipment_request(self.ShipmentWithOptionsRequest)
+        serialized = request.serialize()
+
+        # refNo should fall back to payload.reference
+        self.assertEqual(serialized["shipments"][0]["refNo"], "Order No. 5678")
+
+    def test_create_shipment_request_with_shipper_ref_option(self):
+        """dhl_parcel_de_shipper_ref sends the ShipperReference variant *instead of* the address."""
+        request_data = {
+            **ShipmentPayloadWithOptions,
+            "options": {
+                **ShipmentPayloadWithOptions["options"],
+                "dhl_parcel_de_shipper_ref": "GKP-SHIPPER-123",
+            },
+        }
+        request = gateway.mapper.create_shipment_request(models.ShipmentRequest(**request_data))
+        serialized = request.serialize()
+
+        # oneOf Shipper / ShipperReference → only shipperRef is sent, no address fields
+        self.assertEqual(serialized["shipments"][0]["shipper"], {"shipperRef": "GKP-SHIPPER-123"})
+
+    def test_create_shipment_request_without_shipper_ref(self):
+        """When dhl_parcel_de_shipper_ref is not set, shipperRef must be absent from the shipper."""
+        request = gateway.mapper.create_shipment_request(self.ShipmentWithOptionsRequest)
+        serialized = request.serialize()
+
+        self.assertNotIn("shipperRef", serialized["shipments"][0]["shipper"])
 
 
 class TestDPDHLGermanyShipping(unittest.TestCase):
@@ -49,9 +88,7 @@ class TestDPDHLGermanyShipping(unittest.TestCase):
         self.maxDiff = None
         self.ShipmentRequest = models.ShipmentRequest(**ShipmentPayload)
         self.IntlShipmentRequest = models.ShipmentRequest(**IntlShipmentPayload)
-        self.ShipmentCancelRequest = models.ShipmentCancelRequest(
-            **ShipmentCancelPayload
-        )
+        self.ShipmentCancelRequest = models.ShipmentCancelRequest(**ShipmentCancelPayload)
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
@@ -64,9 +101,7 @@ class TestDPDHLGermanyShipping(unittest.TestCase):
         self.assertEqual(request.serialize(), IntlShipmentRequest)
 
     def test_create_cancel_shipment_request(self):
-        request = gateway.mapper.create_cancel_shipment_request(
-            self.ShipmentCancelRequest
-        )
+        request = gateway.mapper.create_cancel_shipment_request(self.ShipmentCancelRequest)
 
         self.assertEqual(request.serialize(), ShipmentCancelRequest)
 
@@ -93,51 +128,35 @@ class TestDPDHLGermanyShipping(unittest.TestCase):
     def test_parse_shipment_response(self):
         with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
             mock.return_value = ShipmentResponse
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_parse_cancel_shipment_response(self):
         with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
             mock.return_value = ShipmentCancelResponse
-            parsed_response = (
-                karrio.Shipment.cancel(self.ShipmentCancelRequest)
-                .from_(gateway)
-                .parse()
-            )
+            parsed_response = karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()
 
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedCancelShipmentResponse
-            )
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedCancelShipmentResponse)
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
             mock.return_value = ErrorResponse
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
     def test_parse_validation_messages_response(self):
         with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
             mock.return_value = ValidationMessagesErrorResponse
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
 
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedValidationMessagesErrorResponse
-            )
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedValidationMessagesErrorResponse)
 
     def test_parse_multiple_validation_messages_response(self):
         with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
             mock.return_value = MultipleValidationMessagesErrorResponse
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
 
             self.assertListEqual(
                 lib.to_dict(parsed_response),
@@ -147,20 +166,14 @@ class TestDPDHLGermanyShipping(unittest.TestCase):
     def test_parse_shipment_response_with_customs_doc(self):
         with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
             mock.return_value = ShipmentResponseWithCustomsDoc
-            parsed_response = (
-                karrio.Shipment.create(self.IntlShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.IntlShipmentRequest).from_(gateway).parse()
 
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedShipmentResponseWithCustomsDoc
-            )
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponseWithCustomsDoc)
 
     def test_parse_shipment_response_with_return_label(self):
         with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
             mock.return_value = ShipmentWeithReturnLabelResponse
-            parsed_response = (
-                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
 
             self.assertListEqual(
                 lib.to_dict(parsed_response),
@@ -168,8 +181,458 @@ class TestDPDHLGermanyShipping(unittest.TestCase):
             )
 
 
+class TestDPDHLGermanyCashOnDelivery(unittest.TestCase):
+    """SHIP2-1138: regression tests for Cash on Delivery (Nachnahme).
+
+    Validated against the DHL Parcel DE sandbox. The minimum payload DHL
+    accepts for a normal-privilege merchant is:
+
+        services.cashOnDelivery = {
+            "amount":           {"currency": "EUR", "value": <float>},
+            "accountReference": "<DHL Business Portal reference>",
+            "transferNote1":    "<payment reference>",
+        }
+
+    The previous connector emitted a flat `{currency, value, accountHolder, ...}`
+    object — DHL never saw an `amount` field and rejected every CoD shipment
+    with "Please enter a Cash on Delivery amount." It also duplicated the CoD
+    block on every parcel of a multi-piece shipment, which would have charged
+    the recipient N × the intended total once the validation issue was fixed.
+    """
+
+    def setUp(self):
+        self.maxDiff = None
+
+    def test_cod_request_with_account_reference(self):
+        """Standard CoD payload — nested amount + accountReference + transferNote1."""
+        request = gateway.mapper.create_shipment_request(models.ShipmentRequest(**CodShipmentPayload))
+
+        self.assertDictEqual(
+            request.serialize()["shipments"][0]["services"]["cashOnDelivery"],
+            CodShipmentExpectedRequest,
+        )
+
+    def test_cod_currency_defaults_to_eur_and_transfer_note1_to_payload_reference(self):
+        """Currency falls back to EUR and transferNote1 to payload.reference when unset."""
+        payload = {
+            **CodShipmentPayload,
+            "options": {
+                "cash_on_delivery": 50.0,
+                "dhl_parcel_de_cod_account_reference": "Sandbox3",
+            },
+        }
+        request = gateway.mapper.create_shipment_request(models.ShipmentRequest(**payload))
+
+        self.assertDictEqual(
+            request.serialize()["shipments"][0]["services"]["cashOnDelivery"],
+            CodShipmentExpectedRequest,
+        )
+
+    def test_cod_with_explicit_transfer_notes(self):
+        """Both transfer notes can be set via per-shipment options."""
+        payload = {
+            **CodShipmentPayload,
+            "options": {
+                **CodShipmentPayload["options"],
+                "dhl_parcel_de_cod_transfer_note1": "Invoice 12345",
+                "dhl_parcel_de_cod_transfer_note2": "Customer Ref ABC",
+            },
+        }
+        request = gateway.mapper.create_shipment_request(models.ShipmentRequest(**payload))
+
+        self.assertDictEqual(
+            request.serialize()["shipments"][0]["services"]["cashOnDelivery"],
+            CodShipmentWithTransferNotesExpectedRequest,
+        )
+
+    def test_cod_only_applied_to_first_parcel_of_multi_package_shipment(self):
+        """Multi-package: only the first parcel collects the CoD amount."""
+        payload = {
+            **CodShipmentPayload,
+            "parcels": [
+                {"weight": 1.0, "weight_unit": "KG"},
+                {"weight": 1.5, "weight_unit": "KG"},
+                {"weight": 2.0, "weight_unit": "KG"},
+            ],
+        }
+        request = gateway.mapper.create_shipment_request(models.ShipmentRequest(**payload))
+        shipments = request.serialize()["shipments"]
+
+        self.assertListEqual(
+            [s["services"].get("cashOnDelivery") for s in shipments],
+            [CodShipmentExpectedRequest, None, None],
+        )
+
+    def test_no_cash_on_delivery_option_means_no_cod_block(self):
+        """Shipments without the CoD option must not emit a cashOnDelivery field."""
+        payload = {**CodShipmentPayload, "options": {}}
+        request = gateway.mapper.create_shipment_request(models.ShipmentRequest(**payload))
+        services = request.serialize()["shipments"][0]["services"]
+
+        self.assertNotIn("cashOnDelivery", services)
+
+
+class TestDPDHLGermanyCashOnDeliveryConnectionConfig(unittest.TestCase):
+    """SHIP2-1138 follow-up: the CoD bank-account reference is no longer
+    a per-shipping-method option. Admins set it once on the carrier
+    connection (`ConnectionConfig.cod_account_reference`) and every
+    CoD-bearing shipment inherits it. Per-shipment options still
+    override the connection-config default when set explicitly.
+    Transfer notes (cod_transfer_note1/2) remain configurable per
+    shipping method since they are payment-reference metadata that
+    varies per order.
+    """
+
+    def setUp(self):
+        self.maxDiff = None
+        # Custom gateway with the bank-account reference baked into the
+        # connection config — mirrors `tests/dhl_parcel_de/fixture.py`
+        # plus the new `cod_account_reference` ConnectionConfig key.
+        self.gateway_with_cod_defaults = karrio.gateway["dhl_parcel_de"].create(
+            dict(
+                username="username",
+                password="password",
+                client_id="client_id",
+                client_secret="client_secret",
+                test_mode=True,
+                config={
+                    "label_type": "ZPL2_910_300_700_oz",
+                    "cod_account_reference": "ConnConfigSandbox",
+                },
+            ),
+            cache=lib.Cache(**cached_auth),
+        )
+
+    def test_account_reference_falls_back_to_connection_config(self):
+        """No per-shipment bank-account option → use connection_config default."""
+        payload = {
+            **CodShipmentPayload,
+            "options": {"cash_on_delivery": 50.0},
+        }
+        request = self.gateway_with_cod_defaults.mapper.create_shipment_request(models.ShipmentRequest(**payload))
+
+        cod = request.serialize()["shipments"][0]["services"]["cashOnDelivery"]
+        self.assertEqual(cod["accountReference"], "ConnConfigSandbox")
+        # transferNote1 still falls back to payload.reference when the
+        # per-shipment option isn't set.
+        self.assertEqual(cod["transferNote1"], "Order No. 1234")
+        self.assertNotIn("transferNote2", cod)
+
+    def test_per_shipment_account_reference_overrides_connection_config(self):
+        """Per-shipment `cod_account_reference` option > connection_config."""
+        payload = {
+            **CodShipmentPayload,
+            "options": {
+                "cash_on_delivery": 50.0,
+                "dhl_parcel_de_cod_account_reference": "PerShipOverride",
+                "dhl_parcel_de_cod_transfer_note1": "Per-Ship Note",
+                "dhl_parcel_de_cod_transfer_note2": "Per-Ship Note 2",
+            },
+        }
+        request = self.gateway_with_cod_defaults.mapper.create_shipment_request(models.ShipmentRequest(**payload))
+
+        self.assertDictEqual(
+            request.serialize()["shipments"][0]["services"]["cashOnDelivery"],
+            {
+                "amount": {"currency": "EUR", "value": 50.0},
+                "accountReference": "PerShipOverride",
+                "transferNote1": "Per-Ship Note",
+                "transferNote2": "Per-Ship Note 2",
+            },
+        )
+
+    def test_transfer_notes_are_not_read_from_connection_config(self):
+        """Transfer notes are per-shipment options only — even if a
+        merchant smuggles them into the carrier connection config, the
+        request must not pick them up."""
+        gateway_with_smuggled_notes = karrio.gateway["dhl_parcel_de"].create(
+            dict(
+                username="username",
+                password="password",
+                client_id="client_id",
+                client_secret="client_secret",
+                test_mode=True,
+                config={
+                    "label_type": "ZPL2_910_300_700_oz",
+                    "cod_account_reference": "Sandbox",
+                    "cod_transfer_note1": "Should be ignored",
+                    "cod_transfer_note2": "Should also be ignored",
+                },
+            ),
+            cache=lib.Cache(**cached_auth),
+        )
+
+        payload = {
+            **CodShipmentPayload,
+            "options": {"cash_on_delivery": 50.0},
+        }
+        request = gateway_with_smuggled_notes.mapper.create_shipment_request(models.ShipmentRequest(**payload))
+
+        cod = request.serialize()["shipments"][0]["services"]["cashOnDelivery"]
+        # transferNote1 falls back to payload.reference, NOT the connection config
+        self.assertEqual(cod["transferNote1"], "Order No. 1234")
+        # transferNote2 stays unset — connection-config value is ignored
+        self.assertNotIn("transferNote2", cod)
+
+    def test_inline_bank_account_falls_back_to_connection_config(self):
+        """Bank credentials (accountHolder/bankName/iban/bic) configured
+        on the carrier connection are emitted as `cashOnDelivery.bankAccount`
+        when the shipment doesn't provide its own."""
+        gateway_with_bank = karrio.gateway["dhl_parcel_de"].create(
+            dict(
+                username="username",
+                password="password",
+                client_id="client_id",
+                client_secret="client_secret",
+                test_mode=True,
+                config={
+                    "label_type": "ZPL2_910_300_700_oz",
+                    "cod_bank_account_holder": "JTL Test GmbH",
+                    "cod_bank_name": "Sparkasse Köln",
+                    "cod_bank_iban": "DE89370400440532013000",
+                    "cod_bank_bic": "COBADEFFXXX",
+                },
+            ),
+            cache=lib.Cache(**cached_auth),
+        )
+
+        payload = {
+            **CodShipmentPayload,
+            "options": {"cash_on_delivery": 50.0},
+        }
+        request = gateway_with_bank.mapper.create_shipment_request(models.ShipmentRequest(**payload))
+
+        cod = request.serialize()["shipments"][0]["services"]["cashOnDelivery"]
+        self.assertDictEqual(
+            cod["bankAccount"],
+            {
+                "accountHolder": "JTL Test GmbH",
+                "bankName": "Sparkasse Köln",
+                "iban": "DE89370400440532013000",
+                "bic": "COBADEFFXXX",
+            },
+        )
+
+    def test_per_shipment_bank_account_overrides_connection_config(self):
+        """Per-shipment bank-account options override connection_config
+        defaults field-by-field."""
+        gateway_with_bank = karrio.gateway["dhl_parcel_de"].create(
+            dict(
+                username="username",
+                password="password",
+                client_id="client_id",
+                client_secret="client_secret",
+                test_mode=True,
+                config={
+                    "label_type": "ZPL2_910_300_700_oz",
+                    "cod_bank_account_holder": "Default Holder",
+                    "cod_bank_name": "Default Bank",
+                    "cod_bank_iban": "DE00000000000000000000",
+                    "cod_bank_bic": "DEFAULTBIC",
+                },
+            ),
+            cache=lib.Cache(**cached_auth),
+        )
+
+        payload = {
+            **CodShipmentPayload,
+            "options": {
+                "cash_on_delivery": 50.0,
+                "dhl_parcel_de_cod_bank_account_holder": "Override Holder",
+                "dhl_parcel_de_cod_bank_iban": "DE89370400440532013000",
+                # bankName / bic not overridden — should fall back to config
+            },
+        }
+        request = gateway_with_bank.mapper.create_shipment_request(models.ShipmentRequest(**payload))
+
+        cod = request.serialize()["shipments"][0]["services"]["cashOnDelivery"]
+        self.assertDictEqual(
+            cod["bankAccount"],
+            {
+                "accountHolder": "Override Holder",
+                "bankName": "Default Bank",
+                "iban": "DE89370400440532013000",
+                "bic": "DEFAULTBIC",
+            },
+        )
+
+    def test_no_bank_account_block_when_nothing_configured(self):
+        """If neither connection_config nor options set any bank field,
+        the request must omit `bankAccount` entirely."""
+        payload = {
+            **CodShipmentPayload,
+            "options": {"cash_on_delivery": 50.0},
+        }
+        request = self.gateway_with_cod_defaults.mapper.create_shipment_request(models.ShipmentRequest(**payload))
+
+        cod = request.serialize()["shipments"][0]["services"]["cashOnDelivery"]
+        self.assertNotIn("bankAccount", cod)
+
+
+class TestDPDHLGermanyDroppointConsignee(unittest.TestCase):
+    """SHIP2-1135: regression tests for Packstation / Postfiliale / Postfach.
+
+    The DHL Consignee schema is a oneOf — Locker / PostOffice / POBox /
+    Contact. Sending a Packstation address with addressStreet+addressHouse
+    populated alongside lockerID got the request rejected. The connector
+    now detects the droppoint kind from the recipient address and emits the
+    matching variant containing only the droppoint-permitted fields.
+
+    Detection rules (all case-insensitive, anchored at the start of the
+    street name; explicit options always win):
+
+      street_name matches            → consignee variant
+      ─────────────────────────────  → ────────────────
+      pack[-/space]?station          → Locker     (lockerID + postNumber)
+      post[-/space]?filiale,         → PostOffice (retailID + postNumber|email)
+        filiale, paket[-/space]?shop
+      post[-/space]?fach             → POBox      (poBoxID, name1)
+    """
+
+    def setUp(self):
+        self.maxDiff = None
+
+    def test_packstation_detected_from_address(self):
+        """Address `Packstation 105` + Postnummer in line2 → Locker variant."""
+        request = gateway.mapper.create_shipment_request(models.ShipmentRequest(**PackstationShipmentPayload))
+
+        self.assertDictEqual(
+            request.serialize()["shipments"][0]["consignee"],
+            PackstationConsignee,
+        )
+
+    def test_packstation_with_explicit_options(self):
+        """Explicit lockerID / postNumber options also produce a Locker."""
+        payload = {
+            **PackstationShipmentPayload,
+            "recipient": {
+                **PackstationShipmentPayload["recipient"],
+                # No keyword in the address — option-only entry point.
+                "address_line1": "",
+                "address_line2": "",
+            },
+            "options": {
+                "dhl_parcel_de_locker_id": 105,
+                "dhl_parcel_de_post_number": 12345678,
+            },
+        }
+        request = gateway.mapper.create_shipment_request(models.ShipmentRequest(**payload))
+
+        self.assertDictEqual(
+            request.serialize()["shipments"][0]["consignee"],
+            PackstationConsignee,
+        )
+
+    def test_postfiliale_detected_from_address(self):
+        """`Postfiliale 502` + Postnummer in line2 → PostOffice variant."""
+        request = gateway.mapper.create_shipment_request(models.ShipmentRequest(**PostfilialeShipmentPayload))
+
+        self.assertDictEqual(
+            request.serialize()["shipments"][0]["consignee"],
+            PostfilialeConsignee,
+        )
+
+    def test_postfiliale_with_email_no_postnumber(self):
+        """Postfiliale falls back to email when no Postnummer is present."""
+        payload = {
+            **PostfilialeShipmentPayload,
+            "recipient": {
+                **PostfilialeShipmentPayload["recipient"],
+                "address_line2": "",
+                "email": "maria@musterfrau.de",
+            },
+        }
+        request = gateway.mapper.create_shipment_request(models.ShipmentRequest(**payload))
+
+        self.assertDictEqual(
+            request.serialize()["shipments"][0]["consignee"],
+            PostfilialeConsigneeWithEmail,
+        )
+
+    def test_postfach_detected_from_address(self):
+        """`Postfach 1234` → POBox variant with name1 + poBoxID."""
+        request = gateway.mapper.create_shipment_request(models.ShipmentRequest(**PostfachShipmentPayload))
+
+        self.assertDictEqual(
+            request.serialize()["shipments"][0]["consignee"],
+            PostfachConsignee,
+        )
+
+    def test_normal_address_unaffected(self):
+        """A regular street address still produces the contact-address shape."""
+        request = gateway.mapper.create_shipment_request(models.ShipmentRequest(**ShipmentPayload))
+        consignee = request.serialize()["shipments"][0]["consignee"]
+
+        # No droppoint identifiers leak into a contact-address consignee.
+        self.assertNotIn("lockerID", consignee)
+        self.assertNotIn("retailID", consignee)
+        self.assertNotIn("poBoxID", consignee)
+        self.assertNotIn("postNumber", consignee)
+        # And the regular street fields ARE present.
+        self.assertEqual(consignee["addressStreet"], "Kurt-Schumacher-Str.")
+        self.assertEqual(consignee["addressHouse"], "20")
+
+    def test_packstation_does_not_emit_contact_address_fields(self):
+        """Droppoint consignee must not carry addressStreet / addressHouse."""
+        request = gateway.mapper.create_shipment_request(models.ShipmentRequest(**PackstationShipmentPayload))
+        consignee = request.serialize()["shipments"][0]["consignee"]
+
+        self.assertNotIn("addressStreet", consignee)
+        self.assertNotIn("addressHouse", consignee)
+        self.assertNotIn("phone", consignee)
+        self.assertNotIn("contactName", consignee)
+
+
 if __name__ == "__main__":
     unittest.main()
+
+
+CodShipmentPayload = {
+    "service": "dhl_parcel_de_paket",
+    "reference": "Order No. 1234",
+    "shipper": {
+        "company_name": "My Online Shop GmbH",
+        "address_line1": "Sträßchensweg",
+        "street_number": "10",
+        "postal_code": "53113",
+        "city": "Bonn",
+        "country_code": "DE",
+        "email": "max@mustermann.de",
+    },
+    "recipient": {
+        "company_name": "Maria Muster",
+        "address_line1": "Kurt-Schumacher-Str. 20",
+        "address_line2": "Apartment 107",
+        "postal_code": "53113",
+        "city": "Bonn",
+        "country_code": "DE",
+        "email": "maria@musterfrau.de",
+        "phone_number": "+49 987654321",
+    },
+    "parcels": [
+        {"weight": 1.0, "weight_unit": "KG"},
+    ],
+    "options": {
+        "cash_on_delivery": 50.0,
+        "currency": "EUR",
+        "dhl_parcel_de_cod_account_reference": "Sandbox3",
+    },
+}
+
+
+CodShipmentExpectedRequest = {
+    "amount": {"currency": "EUR", "value": 50.0},
+    "accountReference": "Sandbox3",
+    "transferNote1": "Order No. 1234",
+}
+
+
+CodShipmentWithTransferNotesExpectedRequest = {
+    "amount": {"currency": "EUR", "value": 50.0},
+    "accountReference": "Sandbox3",
+    "transferNote1": "Invoice 12345",
+    "transferNote2": "Customer Ref ABC",
+}
 
 
 ShipmentPayloadWithOptions = {
@@ -840,3 +1303,120 @@ ParsedShipmentWithReturnLabelResponse = [
         },
     ],
 ]
+
+
+# --- SHIP2-1135: droppoint (Packstation / Postfiliale / Postfach) fixtures ---
+
+# JTL Wawi sends Packstation orders as a regular DHL address with the keyword
+# in the street line and the locker number in the house-number slot. The
+# Postnummer is dropped into address_line2 (no dedicated Wawi field for it).
+PackstationShipmentPayload = {
+    "service": "dhl_parcel_de_paket",
+    "reference": "Order No. 1234",
+    "shipper": {
+        "company_name": "My Online Shop GmbH",
+        "address_line1": "Sträßchensweg",
+        "street_number": "10",
+        "postal_code": "53113",
+        "city": "Bonn",
+        "country_code": "DE",
+        "email": "max@mustermann.de",
+    },
+    "recipient": {
+        "person_name": "Maria Musterfrau",
+        "address_line1": "Packstation 105",
+        "address_line2": "12345678",  # Postnummer
+        "postal_code": "53111",
+        "city": "Bonn",
+        "country_code": "DE",
+    },
+    "parcels": [
+        {"weight": 0.5, "weight_unit": "KG"},
+    ],
+}
+
+PackstationConsignee = {
+    "name": "Maria Musterfrau",
+    "lockerID": 105,
+    "postNumber": 12345678,
+    "postalCode": "53111",
+    "city": "Bonn",
+    "country": "DEU",
+}
+
+PostfilialeShipmentPayload = {
+    "service": "dhl_parcel_de_paket",
+    "reference": "Order No. 1234",
+    "shipper": {
+        "company_name": "My Online Shop GmbH",
+        "address_line1": "Sträßchensweg",
+        "street_number": "10",
+        "postal_code": "53113",
+        "city": "Bonn",
+        "country_code": "DE",
+        "email": "max@mustermann.de",
+    },
+    "recipient": {
+        "person_name": "Maria Musterfrau",
+        "address_line1": "Postfiliale 502",
+        "address_line2": "12345678",
+        "postal_code": "53113",
+        "city": "Bonn",
+        "country_code": "DE",
+    },
+    "parcels": [
+        {"weight": 0.5, "weight_unit": "KG"},
+    ],
+}
+
+PostfilialeConsignee = {
+    "name": "Maria Musterfrau",
+    "retailID": 502,
+    "postNumber": 12345678,
+    "postalCode": "53113",
+    "city": "Bonn",
+    "country": "DEU",
+}
+
+PostfilialeConsigneeWithEmail = {
+    "name": "Maria Musterfrau",
+    "retailID": 502,
+    "email": "maria@musterfrau.de",
+    "postalCode": "53113",
+    "city": "Bonn",
+    "country": "DEU",
+}
+
+PostfachShipmentPayload = {
+    "service": "dhl_parcel_de_paket",
+    "reference": "Order No. 1234",
+    "shipper": {
+        "company_name": "My Online Shop GmbH",
+        "address_line1": "Sträßchensweg",
+        "street_number": "10",
+        "postal_code": "53113",
+        "city": "Bonn",
+        "country_code": "DE",
+        "email": "max@mustermann.de",
+    },
+    "recipient": {
+        "person_name": "Joe Black",
+        "address_line1": "Postfach 1234",
+        "postal_code": "53113",
+        "city": "Bonn",
+        "country_code": "DE",
+        "email": "joe@black.de",
+    },
+    "parcels": [
+        {"weight": 0.5, "weight_unit": "KG"},
+    ],
+}
+
+PostfachConsignee = {
+    "name1": "Joe Black",
+    "poBoxID": 1234,
+    "email": "joe@black.de",
+    "postalCode": "53113",
+    "city": "Bonn",
+    "country": "DEU",
+}

@@ -1,12 +1,16 @@
 """ParcelOne shipment operations."""
 
+from karrio.providers.parcelone.shipment.cancel import (
+    parse_shipment_cancel_response,
+    shipment_cancel_request,
+)
 from karrio.providers.parcelone.shipment.create import (
     parse_shipment_response,
     shipment_request,
 )
-from karrio.providers.parcelone.shipment.cancel import (
-    parse_shipment_cancel_response,
-    shipment_cancel_request,
+from karrio.providers.parcelone.shipment.return_shipment import (
+    parse_return_shipment_response,
+    return_shipment_request,
 )
 
 __all__ = [
@@ -14,4 +18,6 @@ __all__ = [
     "shipment_request",
     "parse_shipment_cancel_response",
     "shipment_cancel_request",
+    "parse_return_shipment_response",
+    "return_shipment_request",
 ]

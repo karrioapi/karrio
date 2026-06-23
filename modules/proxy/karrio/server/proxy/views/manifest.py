@@ -1,14 +1,13 @@
 import django.urls as urls
-import rest_framework.status as status
-import rest_framework.request as request
-import rest_framework.response as response
-
-from karrio.server.core.logging import logger
-import karrio.server.openapi as openapi
-import karrio.server.core.views.api as api
-import karrio.server.proxy.router as router
 import karrio.server.core.gateway as gateway
 import karrio.server.core.serializers as serializers
+import karrio.server.core.views.api as api
+import karrio.server.openapi as openapi
+import karrio.server.proxy.router as router
+import rest_framework.request as request
+import rest_framework.response as response
+import rest_framework.status as status
+
 ENDPOINT_ID = "@@@$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
 DESCRIPTION = """
@@ -39,9 +38,7 @@ class ManifestingAPI(api.APIView):
 
         manifest = gateway.Manifests.create(payload, context=request)
 
-        return response.Response(
-            serializers.ManifestResponse(manifest).data, status=status.HTTP_200_OK
-        )
+        return response.Response(serializers.ManifestResponse(manifest).data, status=status.HTTP_200_OK)
 
 
 router.router.urls.append(

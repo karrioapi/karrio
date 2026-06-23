@@ -1946,9 +1946,15 @@ export const RateSheetEditor = ({
     return token ? { Authorization: `Bearer ${token}` } : {};
   };
 
-  const handleDryRun = async (file: File) => {
+  const getImportUrl = () => {
     const base = getApiBase();
-    const url = `${base}/v1/batches/data/import`;
+    return isAdmin
+      ? `${base}/admin/batches/data/import`
+      : `${base}/v1/batches/data/import`;
+  };
+
+  const handleDryRun = async (file: File) => {
+    const url = getImportUrl();
     const form = new FormData();
     form.append("resource_type", "rate_sheet");
     form.append("dry_run", "true");
@@ -1969,8 +1975,7 @@ export const RateSheetEditor = ({
   const handleImportConfirm = async (file: File) => {
     setIsImportConfirming(true);
     try {
-      const base = getApiBase();
-      const url = `${base}/v1/batches/data/import`;
+      const url = getImportUrl();
       const form = new FormData();
       form.append("resource_type", "rate_sheet");
       form.append("data_file", file);
@@ -1982,10 +1987,18 @@ export const RateSheetEditor = ({
       if (!res.ok) {
         throw new Error(json.errors?.[0]?.message || json.detail || "Import failed");
       }
-      toast({ title: "Rate sheet imported successfully" });
-      setEditorMode("edit");
-      // Trigger refetch
-      query?.refetch?.();
+
+      const importedCount = json.rate_sheet_ids?.length || 1;
+      const description = importedCount > 1
+        ? `${importedCount} rate sheets created`
+        : json.created
+          ? "New rate sheet created"
+          : "Rate sheet updated with imported data";
+
+      toast({ title: "Rate sheet imported successfully", description });
+
+      // Close and let the parent list refresh so the user sees the new sheet(s)
+      onClose();
     } catch (err: any) {
       toast({ title: "Import failed", description: err?.message, variant: "destructive" });
     } finally {

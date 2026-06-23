@@ -1,17 +1,17 @@
-import karrio.schemas.fedex.paperless_request as fedex
 import time
-import typing
-import karrio.lib as lib
+
 import karrio.core.models as models
+import karrio.lib as lib
 import karrio.providers.fedex.error as provider_error
 import karrio.providers.fedex.units as provider_units
 import karrio.providers.fedex.utils as provider_utils
+import karrio.schemas.fedex.paperless_request as fedex
 
 
 def parse_document_upload_response(
-    _response: lib.Deserializable[typing.List[dict]],
+    _response: lib.Deserializable[list[dict]],
     settings: provider_utils.Settings,
-) -> typing.Tuple[models.DocumentUploadDetails, typing.List[models.Message]]:
+) -> tuple[models.DocumentUploadDetails, list[models.Message]]:
     responses = _response.deserialize()
 
     metas = [_["output"]["meta"] for _ in responses if _.get("output", {}).get("meta")]
@@ -22,7 +22,7 @@ def parse_document_upload_response(
 
 
 def _extract_details(
-    metas: typing.List[dict],
+    metas: list[dict],
     settings: provider_utils.Settings,
 ) -> models.DocumentUploadDetails:
     return models.DocumentUploadDetails(
@@ -57,11 +57,7 @@ def document_upload_request(
     request = [
         fedex.PaperlessRequestType(
             document=fedex.DocumentType(
-                workflowName=(
-                    "ETDPreshipment"
-                    if options.pre_shipment.state
-                    else "ETDPostshipment"
-                ),
+                workflowName=("ETDPreshipment" if options.pre_shipment.state else "ETDPostshipment"),
                 carrierCode=options.fedex_carrier_code.state,
                 name=document.doc_name,
                 contentType=document.doc_format,

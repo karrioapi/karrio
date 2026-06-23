@@ -1,12 +1,14 @@
 """SmartKargo carrier rate tests."""
 
-import unittest
-from unittest.mock import patch, ANY
-from .fixture import gateway
 import logging
-import karrio.sdk as karrio
-import karrio.lib as lib
+import unittest
+from unittest.mock import ANY, patch
+
 import karrio.core.models as models
+import karrio.lib as lib
+import karrio.sdk as karrio
+
+from .fixture import gateway
 
 logger = logging.getLogger(__name__)
 
@@ -32,9 +34,7 @@ class TestSmartKargoRating(unittest.TestCase):
     def test_parse_rate_response(self):
         with patch("karrio.mappers.smartkargo.proxy.lib.request") as mock:
             mock.return_value = RateResponse
-            parsed_response = (
-                karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertListEqual(
                 lib.to_dict(parsed_response),
                 ParsedRateResponse,
@@ -43,9 +43,7 @@ class TestSmartKargoRating(unittest.TestCase):
     def test_parse_error_response(self):
         with patch("karrio.mappers.smartkargo.proxy.lib.request") as mock:
             mock.return_value = ErrorResponse
-            parsed_response = (
-                karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
-            )
+            parsed_response = karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertListEqual(
                 lib.to_dict(parsed_response),
                 ParsedErrorResponse,

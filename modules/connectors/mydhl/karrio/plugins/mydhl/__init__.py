@@ -1,11 +1,9 @@
+import karrio.providers.mydhl.units as units
+import karrio.providers.mydhl.utils as utils
 from karrio.core.metadata import PluginMetadata
-
 from karrio.mappers.mydhl.mapper import Mapper
 from karrio.mappers.mydhl.proxy import Proxy
 from karrio.mappers.mydhl.settings import Settings
-import karrio.providers.mydhl.units as units
-import karrio.providers.mydhl.utils as utils
-
 
 # This METADATA object is used by Karrio to discover and register this plugin
 # when loaded through Python entrypoints or local plugin directories.
