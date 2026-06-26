@@ -122,11 +122,16 @@ function renderError(msg: any, _: number): any {
     });
   } else if (Array.isArray(error) && error.length > 0) {
     return (error || []).map((msg: any, index: number) => {
-      if (msg.carrier_name) {
+      if (msg.carrier_name || msg.carrier_id) {
+        // Show carrier_name:carrier_id so a message is attributable to the
+        // specific connection (matches the rate row provenance), which matters
+        // when several connections of the same carrier are configured.
+        const provenance = [msg.carrier_name, msg.carrier_id]
+          .filter(Boolean)
+          .join(":");
         return (
-          <p key={`carrier-${index}-${msg.carrier_name || msg.carrier_id}`}>
-            {msg.carrier_name || msg.carrier_id || JSON.stringify(msg)}{" "}
-            {msg.details?.carrier} {msg.message}
+          <p key={`carrier-${index}-${provenance}`}>
+            {provenance} {msg.details?.carrier} {msg.message}
           </p>
         );
       }
