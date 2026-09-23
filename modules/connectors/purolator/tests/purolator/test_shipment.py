@@ -132,7 +132,7 @@ PARSED_SHIPMENT_RESPONSE = [
         "shipment_identifier": "329014521622",
         "docs": {"label": ANY},
         "meta": {
-            "carrier_tracking_link": "https://tools.usps.com/go/TrackConfirmAction?tLabels=329014521622"
+            "carrier_tracking_link": "https://www.purolator.com/en/shipping/tracker?pin=329014521622"
         },
     },
     [],
