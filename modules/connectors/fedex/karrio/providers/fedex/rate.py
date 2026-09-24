@@ -132,6 +132,16 @@ def rate_request(
         lib.text(options.fedex_smart_post_hub_id.state)
         or lib.text(settings.connection_config.smart_post_hub_id.state)
     )
+    package_declared_value = lambda package: lib.identity(
+        lib.to_money(package.total_value)
+        or lib.to_money(package.options.declared_value.state)
+        or 0.0
+    )
+    # FedEx rejects the entire rate request when a declared value is
+    # combined with SmartPost, so SmartPost is excluded from the quote.
+    has_declared_value = any(
+        package_declared_value(package) > 0 for package in packages
+    )
     rate_options = lambda _options: [
         option
         for _, option in _options.items()
@@ -206,7 +216,12 @@ def rate_request(
                     residential=recipient.residential,
                 )
             ),
-            serviceType=getattr(service, "value", None),
+            serviceType=lib.identity(
+                None
+                if has_declared_value
+                and service == provider_units.ShippingService.fedex_smart_post
+                else getattr(service, "value", None)
+            ),
             emailNotificationDetail=None,
             preferredCurrency=default_currency,
             rateRequestType=request_types,
@@ -224,11 +239,7 @@ def rate_request(
                     groupPackageCount=1,
                     contentRecord=[],
                     declaredValue=fedex.FixedValueType(
-                        amount=lib.identity(
-                            lib.to_money(package.total_value)
-                            or lib.to_money(package.options.declared_value.state)
-                            or 0.0
-                        ),
+                        amount=package_declared_value(package),
                         currency=default_currency,
                     ),
                     weight=fedex.WeightType(
@@ -394,7 +405,7 @@ def rate_request(
                     ),
                     specialServices=None,
                 )
-                if hub_id is not None
+                if hub_id is not None and not has_declared_value
                 else None
             ),
             expressFreightDetail=None,

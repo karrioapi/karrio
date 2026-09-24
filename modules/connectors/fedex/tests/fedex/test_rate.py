@@ -32,6 +32,37 @@ class TestFedExRating(unittest.TestCase):
 
         self.assertEqual(request.serialize(), RateUseScheduledPickupRequest)
 
+    def test_create_rate_request_with_declared_value(self):
+        request = gateway.mapper.create_rate_request(
+            models.RateRequest(
+                **{
+                    **RatePayload,
+                    "options": {
+                        **RatePayload["options"],
+                        "declared_value": 100.0,
+                    },
+                }
+            )
+        )
+
+        self.assertEqual(request.serialize(), RateDeclaredValueRequest)
+
+    def test_create_rate_request_with_declared_value_and_smart_post_service(self):
+        request = gateway.mapper.create_rate_request(
+            models.RateRequest(
+                **{
+                    **RatePayload,
+                    "services": ["fedex_smart_post"],
+                    "options": {
+                        **RatePayload["options"],
+                        "declared_value": 100.0,
+                    },
+                }
+            )
+        )
+
+        self.assertEqual(request.serialize(), RateDeclaredValueRequest)
+
     def test_get_rate(self):
         with patch("karrio.mappers.fedex.proxy.lib.request") as mock:
             mock.return_value = "{}"
@@ -364,6 +395,23 @@ RateUseScheduledPickupRequest = {
     "requestedShipment": {
         **RateRequest["requestedShipment"],
         "pickupType": "USE_SCHEDULED_PICKUP",
+    },
+}
+
+RateDeclaredValueRequest = {
+    **RateRequest,
+    "requestedShipment": {
+        **{
+            key: value
+            for key, value in RateRequest["requestedShipment"].items()
+            if key != "smartPostInfoDetail"
+        },
+        "requestedPackageLineItems": [
+            {
+                **RateRequest["requestedShipment"]["requestedPackageLineItems"][0],
+                "declaredValue": {"amount": 100.0, "currency": "USD"},
+            }
+        ],
     },
 }
 
