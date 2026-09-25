@@ -9,6 +9,7 @@ import karrio.core.advisors as advisors
 import karrio.core.metadata as metadata
 import karrio.core.models as models
 import karrio.core.settings as settings
+from karrio.api.interface import Rating
 
 import logging
 
@@ -310,6 +311,122 @@ class TestRunAdvisors(unittest.TestCase):
 
         self.assertListEqual(seen, ["shipping"])
 
+
+def carrier_advisor(request, context):
+    return [
+        models.Message(
+            carrier_name=context.carrier_name,
+            carrier_id=context.carrier_id,
+            code="carrier_advice",
+            level="warning",
+            message=f"{context.operation} advice for {context.carrier_id}",
+        )
+    ]
+
+
+def mock_gateway(carrier_id: str) -> MagicMock:
+    gateway = MagicMock()
+    gateway.settings.carrier_name = "test_carrier"
+    gateway.settings.carrier_id = carrier_id
+    gateway.settings.account_country_code = "SE"
+    gateway.settings.test_mode = True
+    gateway.settings.config = {}
+    gateway.check.return_value = []
+    return gateway
+
+
+def rating_gateway(carrier_id: str, rates: list, messages: list = []) -> MagicMock:
+    gateway = mock_gateway(carrier_id)
+    gateway.mapper.create_rate_request.return_value = lib.Serializable({})
+    gateway.proxy.get_rates.return_value = lib.Deserializable("{}", lib.to_dict)
+    gateway.mapper.parse_rate_response.return_value = (rates, messages)
+    return gateway
+
+
+def aborted_gateway(carrier_id: str) -> MagicMock:
+    gateway = mock_gateway(carrier_id)
+    gateway.check.return_value = [
+        models.Message(
+            carrier_name="test_carrier",
+            carrier_id=carrier_id,
+            code="SHIPPING_SDK_NON_SUPPORTED_ERROR",
+            message="not supported",
+        )
+    ]
+    return gateway
+
+
+def rate_details(carrier_id: str) -> models.RateDetails:
+    return models.RateDetails(
+        carrier_name="test_carrier",
+        carrier_id=carrier_id,
+        service="standard",
+        currency="SEK",
+        total_charge=100.0,
+    )
+
+
+def carrier_warning(carrier_id: str) -> models.Message:
+    return models.Message(
+        carrier_name="test_carrier",
+        carrier_id=carrier_id,
+        code="carrier_warning",
+        level="warning",
+        message="carrier says hi",
+    )
+
+
+class TestRatingAdvisors(unittest.TestCase):
+    def fetch(self, *gateways):
+        with patch.object(references, "ADVISORS", [("conventions", carrier_advisor)]):
+            return Rating.fetch(RatePayload).from_(*gateways).parse()
+
+    def test_advisor_runs_once_per_carrier_with_rates(self):
+        rates, messages = self.fetch(
+            rating_gateway("carrier_a", [rate_details("carrier_a")]),
+            rating_gateway("carrier_b", [rate_details("carrier_b")]),
+        )
+
+        self.assertEqual(len(rates), 2)
+        self.assertListEqual(
+            lib.to_dict(messages),
+            [
+                {
+                    "carrier_name": "test_carrier",
+                    "carrier_id": "carrier_a",
+                    "code": "carrier_advice",
+                    "level": "warning",
+                    "message": "rating advice for carrier_a",
+                },
+                {
+                    "carrier_name": "test_carrier",
+                    "carrier_id": "carrier_b",
+                    "code": "carrier_advice",
+                    "level": "warning",
+                    "message": "rating advice for carrier_b",
+                },
+            ],
+        )
+
+    def test_no_advice_for_gateways_without_rates_or_aborted(self):
+        rates, messages = self.fetch(
+            rating_gateway(
+                "carrier_a", [rate_details("carrier_a")], [carrier_warning("carrier_a")]
+            ),
+            rating_gateway("carrier_c", [], [carrier_warning("carrier_c")]),
+            aborted_gateway("carrier_d"),
+        )
+
+        self.assertEqual(len(rates), 1)
+        self.assertListEqual(
+            [(m.carrier_id, m.code) for m in messages],
+            [
+                ("carrier_a", "carrier_warning"),
+                ("carrier_a", "carrier_advice"),
+                ("carrier_c", "carrier_warning"),
+                ("carrier_d", "SHIPPING_SDK_NON_SUPPORTED_ERROR"),
+            ],
+        )
 
 if __name__ == "__main__":
     unittest.main()

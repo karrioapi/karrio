@@ -6,6 +6,7 @@ import functools
 import karrio.lib as lib
 import karrio.core.errors as errors
 import karrio.core.models as models
+import karrio.core.advisors as advisors
 import karrio.api.gateway as gateway
 from karrio.core.utils.logger import logger
 from karrio.universal.mappers.rating_proxy import RatingMixinProxy
@@ -349,30 +350,39 @@ class Rating:
 
             def flatten(*args):
                 responses = [p.parse() for p in deserializable_collection]
-                flattened_rates = sum(
+                gateway_rates = [
                     (
-                        (
-                            (lambda gateway: filter_rates(rates, gateway))(
-                                # find the gateway that matches the carrier_id of the rates
-                                next(
-                                    (
-                                        g
-                                        for g in gateways
-                                        if (
-                                            g.settings.carrier_id == rates[0].carrier_id
-                                        )
-                                    )
+                        (lambda gateway: filter_rates(rates, gateway))(
+                            # find the gateway that matches the carrier_id of the rates
+                            next(
+                                (
+                                    g
+                                    for g in gateways
+                                    if (g.settings.carrier_id == rates[0].carrier_id)
                                 )
                             )
-                            if len(rates) > 0
-                            else rates
                         )
-                        for rates, _ in responses
-                        if rates is not None
+                        if rates
+                        else []
+                    )
+                    for rates, _ in responses
+                ]
+                flattened_rates = sum(gateway_rates, [])
+                # responses follow gateways order (run_asynchronously preserves it)
+                messages = sum(
+                    (
+                        [
+                            *m,
+                            *(
+                                advisors.run_advisors(payload, g.settings, "rating")
+                                if any(rates)
+                                else []
+                            ),
+                        ]
+                        for g, rates, (_, m) in zip(gateways, gateway_rates, responses)
                     ),
                     [],
                 )
-                messages = sum((m for _, m in responses), [])
                 return flattened_rates, messages
 
             return IDeserialize(flatten)
