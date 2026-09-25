@@ -1,5 +1,6 @@
 """Tests for plugin shipment advisors (metadata, registry, runner, invocation)."""
 
+import typing
 import attr
 import unittest
 from unittest.mock import patch, MagicMock
@@ -333,11 +334,11 @@ def mock_gateway(carrier_id: str) -> MagicMock:
     return gateway
 
 
-def rating_gateway(carrier_id: str, rates: list, messages: list = []) -> MagicMock:
+def rating_gateway(carrier_id: str, rates: list, messages: typing.Optional[list] = None) -> MagicMock:
     gateway = mock_gateway(carrier_id)
     gateway.mapper.create_rate_request.return_value = lib.Serializable({})
     gateway.proxy.get_rates.return_value = lib.Deserializable("{}", lib.to_dict)
-    gateway.mapper.parse_rate_response.return_value = (rates, messages)
+    gateway.mapper.parse_rate_response.return_value = (rates, messages or [])
     return gateway
 
 
