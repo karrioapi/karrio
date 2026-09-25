@@ -112,6 +112,37 @@ def filter_rates(rates: typing.List[models.RateDetails], gateway: gateway.Gatewa
     ]
 
 
+def advise_shipment(
+    result: typing.Tuple[
+        typing.Optional[models.ShipmentDetails], typing.List[models.Message]
+    ],
+    request: models.ShipmentRequest,
+    gateway: gateway.Gateway,
+) -> typing.Tuple[typing.Optional[models.ShipmentDetails], typing.List[models.Message]]:
+    """Append shipment advisor messages to a parsed shipment creation result
+
+    Args:
+        result: the parsed (details, messages) shipment creation result
+        request: the unified shipment request as sent to the carrier
+        gateway: the gateway in use
+
+    Returns:
+        the result unchanged when no shipment details were produced or no
+        advisor returned a message, otherwise with advisor messages appended
+    """
+    details, messages = result
+    advice = (
+        advisors.run_advisors(request, gateway.settings, "shipping")
+        if details is not None
+        else []
+    )
+
+    if not any(advice):
+        return result
+
+    return details, [*(messages or []), *advice]
+
+
 @attr.s(auto_attribs=True)
 class IDeserialize:
     """A lazy deserializer type class"""
@@ -493,7 +524,11 @@ class Shipment:
 
                 @fail_safe(gateway)
                 def _deserialize():
-                    return gateway.mapper.parse_return_shipment_response(_response)
+                    return advise_shipment(
+                        gateway.mapper.parse_return_shipment_response(_response),
+                        swapped_payload,
+                        gateway,
+                    )
 
                 return IDeserialize(_deserialize)
 
@@ -510,7 +545,11 @@ class Shipment:
 
             @fail_safe(gateway)
             def deserialize():
-                return gateway.mapper.parse_shipment_response(response)
+                return advise_shipment(
+                    gateway.mapper.parse_shipment_response(response),
+                    payload,
+                    gateway,
+                )
 
             return IDeserialize(deserialize)
 

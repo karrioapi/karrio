@@ -9,7 +9,7 @@ import karrio.core.advisors as advisors
 import karrio.core.metadata as metadata
 import karrio.core.models as models
 import karrio.core.settings as settings
-from karrio.api.interface import Rating
+from karrio.api.interface import Rating, Shipment
 
 import logging
 
@@ -427,6 +427,108 @@ class TestRatingAdvisors(unittest.TestCase):
                 ("carrier_d", "SHIPPING_SDK_NON_SUPPORTED_ERROR"),
             ],
         )
+
+
+ShipmentPayload = {
+    "shipper": {
+        "person_name": "Merchant",
+        "address_line1": "Storgatan 1",
+        "city": "Stockholm",
+        "postal_code": "11122",
+        "country_code": "SE",
+    },
+    "recipient": {
+        "person_name": "Customer",
+        "address_line1": "Karl Johans gate 1",
+        "city": "Oslo",
+        "postal_code": "0150",
+        "country_code": "NO",
+    },
+    "parcels": [{"weight": 1.0, "weight_unit": "KG"}],
+    "service": "standard",
+}
+
+
+def shipment_details(carrier_id: str) -> models.ShipmentDetails:
+    return models.ShipmentDetails(
+        carrier_id=carrier_id,
+        carrier_name="test_carrier",
+        tracking_number="TRK123",
+        shipment_identifier="TRK123",
+        docs=dict(label="base64label"),
+    )
+
+
+def shipping_gateway(carrier_id: str, result: tuple) -> MagicMock:
+    gateway = mock_gateway(carrier_id)
+    gateway.mapper.create_shipment_request.return_value = lib.Serializable({})
+    gateway.proxy.create_shipment.return_value = lib.Deserializable("{}", lib.to_dict)
+    gateway.mapper.parse_shipment_response.return_value = result
+    gateway.mapper.create_return_shipment_request.return_value = lib.Serializable({})
+    gateway.proxy.create_return_shipment.return_value = lib.Deserializable(
+        "{}", lib.to_dict
+    )
+    gateway.mapper.parse_return_shipment_response.return_value = result
+    return gateway
+
+
+class TestShipmentAdvisors(unittest.TestCase):
+    def create(self, gateway, advisor=carrier_advisor, **payload):
+        with patch.object(references, "ADVISORS", [("conventions", advisor)]):
+            return (
+                Shipment.create({**ShipmentPayload, **payload}).from_(gateway).parse()
+            )
+
+    def test_advisor_message_is_added_to_successful_shipment(self):
+        details, messages = self.create(
+            shipping_gateway(
+                "carrier_a",
+                (shipment_details("carrier_a"), [carrier_warning("carrier_a")]),
+            )
+        )
+
+        self.assertEqual(details, shipment_details("carrier_a"))
+        self.assertListEqual(
+            lib.to_dict(messages),
+            [
+                lib.to_dict(carrier_warning("carrier_a")),
+                {
+                    "carrier_name": "test_carrier",
+                    "carrier_id": "carrier_a",
+                    "code": "carrier_advice",
+                    "level": "warning",
+                    "message": "shipping advice for carrier_a",
+                },
+            ],
+        )
+
+    def test_no_advice_for_failed_shipment(self):
+        details, messages = self.create(
+            shipping_gateway("carrier_a", (None, [carrier_warning("carrier_a")]))
+        )
+
+        self.assertIsNone(details)
+        self.assertListEqual(messages, [carrier_warning("carrier_a")])
+
+    def test_no_advice_for_aborted_shipment(self):
+        details, messages = self.create(aborted_gateway("carrier_a"))
+
+        self.assertIsNone(details)
+        self.assertListEqual(
+            [m.code for m in messages], ["SHIPPING_SDK_NON_SUPPORTED_ERROR"]
+        )
+
+    def test_return_shipment_is_advised_on_swapped_request(self):
+        details, messages = self.create(
+            shipping_gateway("carrier_a", (shipment_details("carrier_a"), [])),
+            advisor=country_advisor,
+            is_return=True,
+        )
+
+        self.assertListEqual(
+            [m.message for m in messages], ["shipper country NO"]
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
