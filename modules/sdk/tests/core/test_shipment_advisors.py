@@ -1,11 +1,14 @@
 """Tests for plugin shipment advisors (metadata, registry, runner, invocation)."""
 
+import attr
 import unittest
 from unittest.mock import patch, MagicMock
 import karrio.lib as lib
 import karrio.references as references
+import karrio.core.advisors as advisors
 import karrio.core.metadata as metadata
 import karrio.core.models as models
+import karrio.core.settings as settings
 
 import logging
 
@@ -115,6 +118,80 @@ class TestAdvisorRegistry(unittest.TestCase):
         self.assertEqual(plugin["type"], "advisor")
         self.assertListEqual(plugin["types"], ["advisor"])
 
+
+@attr.s(auto_attribs=True)
+class CredentialSettings(settings.Settings):
+    api_key: str = None
+    secret: str = None
+
+    @property
+    def carrier_name(self):
+        return "advised_carrier"
+
+
+def credential_settings() -> CredentialSettings:
+    return CredentialSettings(
+        carrier_id="advised_carrier_se",
+        account_country_code="SE",
+        test_mode=True,
+        api_key="API-KEY-VALUE",
+        secret="SECRET-VALUE",
+        metadata={"token": "METADATA-VALUE"},
+        config={"label_type": "PDF", "nested": {"flag": True}},
+        id="CONNECTION-ID-VALUE",
+    )
+
+
+RatePayload = {
+    "shipper": {"postal_code": "11122", "country_code": "SE"},
+    "recipient": {"postal_code": "0150", "country_code": "NO"},
+    "parcels": [{"weight": 1.0, "weight_unit": "KG"}],
+}
+
+
+def rate_request() -> models.RateRequest:
+    return lib.to_object(models.RateRequest, RatePayload)
+
+
+class TestAdvisorContext(unittest.TestCase):
+    def test_context_exposes_only_allowlisted_fields(self):
+        context = advisors.AdvisorContext.from_settings(
+            credential_settings(), "rating"
+        )
+
+        self.assertDictEqual(
+            attr.asdict(context),
+            {
+                "carrier_name": "advised_carrier",
+                "carrier_id": "advised_carrier_se",
+                "account_country_code": "SE",
+                "test_mode": True,
+                "operation": "rating",
+                "config": {"label_type": "PDF", "nested": {"flag": True}},
+            },
+        )
+        self.assertFalse(
+            any(
+                hasattr(context, name)
+                for name in ["api_key", "secret", "metadata", "id", "settings"]
+            )
+        )
+
+    def test_context_config_is_a_deep_copy(self):
+        connection = credential_settings()
+        context = advisors.AdvisorContext.from_settings(connection, "shipping")
+
+        context.config["nested"]["flag"] = False
+
+        self.assertTrue(connection.config["nested"]["flag"])
+
+    def test_context_is_immutable(self):
+        context = advisors.AdvisorContext.from_settings(
+            credential_settings(), "rating"
+        )
+
+        with self.assertRaises(attr.exceptions.FrozenInstanceError):
+            context.carrier_id = "other"
 
 if __name__ == "__main__":
     unittest.main()
