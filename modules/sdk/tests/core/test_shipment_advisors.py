@@ -583,5 +583,74 @@ class TestWithoutAdvisors(unittest.TestCase):
         self.assertIs(result, parsed)
 
 
+# Mirrors the example plugin in apps/www/docs/carriers/sdk/advisors.mdx
+def invoice_email_advisor(request, context):
+    if context.operation != "shipping":
+        return []
+
+    if (request.shipper.country_code, request.recipient.country_code) != ("SE", "NO"):
+        return []
+
+    return [
+        models.Message(
+            carrier_name=None,
+            carrier_id=None,
+            code="commercial_invoice_email",
+            level="warning",
+            message="Email the commercial invoice to the recipient",
+        )
+    ]
+
+
+LANE_CONVENTIONS_METADATA = metadata.PluginMetadata(
+    id="lane_conventions",
+    label="Lane Conventions",
+    shipment_advisors=[invoice_email_advisor],
+)
+
+
+class TestDocumentedAdvisorPlugin(unittest.TestCase):
+    def setUp(self):
+        patcher = patch.object(
+            references,
+            "ADVISORS",
+            [
+                (LANE_CONVENTIONS_METADATA.id, advisor)
+                for advisor in LANE_CONVENTIONS_METADATA.shipment_advisors
+            ],
+        )
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    def test_documented_plugin_is_typed_advisor(self):
+        self.assertEqual(LANE_CONVENTIONS_METADATA.plugin_type, "advisor")
+
+    def test_documented_advisor_advises_shipments_only(self):
+        _, rate_messages = (
+            Rating.fetch(RatePayload)
+            .from_(rating_gateway("carrier_a", [rate_details("carrier_a")]))
+            .parse()
+        )
+        _, shipment_messages = (
+            Shipment.create(ShipmentPayload)
+            .from_(shipping_gateway("carrier_a", (shipment_details("carrier_a"), [])))
+            .parse()
+        )
+
+        self.assertListEqual(rate_messages, [])
+        self.assertListEqual(
+            lib.to_dict(shipment_messages),
+            [
+                {
+                    "carrier_name": "test_carrier",
+                    "carrier_id": "carrier_a",
+                    "code": "commercial_invoice_email",
+                    "level": "warning",
+                    "message": "Email the commercial invoice to the recipient",
+                }
+            ],
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
