@@ -776,6 +776,9 @@ def buy_shipment_label(
                 **response_details,
                 **extra,
                 "meta": merged_meta,
+                "messages": merge_messages(
+                    shipment.messages, lib.to_dict(response.messages)
+                ),
             },
         )
         .save()
@@ -794,6 +797,25 @@ def buy_shipment_label(
     )
 
     return purchased_shipment
+
+
+def merge_messages(
+    *collections: typing.Optional[typing.List[dict]],
+) -> typing.List[dict]:
+    """Concatenate message lists, keeping the first message per (carrier_id, code, message)."""
+    messages = [
+        message for collection in collections for message in (collection or [])
+    ]
+    keys = [
+        (message.get("carrier_id"), message.get("code"), message.get("message"))
+        for message in messages
+    ]
+
+    return [
+        message
+        for index, message in enumerate(messages)
+        if keys[index] not in keys[:index]
+    ]
 
 
 def reset_related_shipment_rates(shipment: typing.Optional[models.Shipment]):
