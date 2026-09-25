@@ -32,6 +32,29 @@ class TestFedExRating(unittest.TestCase):
 
         self.assertEqual(request.serialize(), RateUseScheduledPickupRequest)
 
+    def test_create_rate_request_with_state_code_countries(self):
+        request = gateway.mapper.create_rate_request(
+            models.RateRequest(
+                **{
+                    **RatePayload,
+                    "shipper": {
+                        **RatePayload["shipper"],
+                        "postal_code": "11122",
+                        "country_code": "SE",
+                        "state_code": "O",
+                    },
+                    "recipient": {
+                        "city": "New York",
+                        "postal_code": "10001",
+                        "country_code": "US",
+                        "state_code": "NY",
+                    },
+                }
+            )
+        )
+
+        self.assertEqual(request.serialize(), RateStateCodeCountriesRequest)
+
     def test_get_rate(self):
         with patch("karrio.mappers.fedex.proxy.lib.request") as mock:
             mock.return_value = "{}"
@@ -364,6 +387,29 @@ RateUseScheduledPickupRequest = {
     "requestedShipment": {
         **RateRequest["requestedShipment"],
         "pickupType": "USE_SCHEDULED_PICKUP",
+    },
+}
+
+RateStateCodeCountriesRequest = {
+    **RateRequest,
+    "requestedShipment": {
+        **RateRequest["requestedShipment"],
+        "recipient": {
+            "address": {
+                "city": "New York",
+                "countryCode": "US",
+                "postalCode": "10001",
+                "residential": False,
+                "stateOrProvinceCode": "NY",
+            }
+        },
+        "shipper": {
+            "address": {
+                "countryCode": "SE",
+                "postalCode": "11122",
+                "residential": False,
+            }
+        },
     },
 }
 

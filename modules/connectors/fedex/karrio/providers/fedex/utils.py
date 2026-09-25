@@ -91,8 +91,12 @@ def parse_response(binary_string):
     return lib.decode(content)
 
 
+# vendor/*-api.json require state codes for US, CA, PR; the reference guide adds MX, IN, AE
+STATE_CODE_COUNTRIES = ["US", "CA", "PR", "MX", "IN", "AE"]
+
+
 def state_code(address: lib.units.ComputedAddress) -> str:
-    if address.state_code is None:
+    if address.state_code is None or address.country_code not in STATE_CODE_COUNTRIES:
         return None
 
     return (
