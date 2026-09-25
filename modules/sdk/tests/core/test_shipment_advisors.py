@@ -193,5 +193,123 @@ class TestAdvisorContext(unittest.TestCase):
         with self.assertRaises(attr.exceptions.FrozenInstanceError):
             context.carrier_id = "other"
 
+
+def message_advisor(**kwargs):
+    return lambda request, context: [models.Message(**{**dict(carrier_name=None, carrier_id=None), **kwargs})]
+
+
+def failing_advisor(request, context):
+    raise ValueError("advisor exploded")
+
+
+def mutating_advisor(request, context):
+    request.shipper.country_code = "DK"
+    return []
+
+
+class TestRunAdvisors(unittest.TestCase):
+    def run_with(self, *registered, request=None, operation="rating"):
+        with patch.object(references, "ADVISORS", list(registered)):
+            return advisors.run_advisors(
+                request or rate_request(), credential_settings(), operation
+            )
+
+    def test_no_advisors_returns_no_messages(self):
+        self.assertListEqual(self.run_with(), [])
+
+    def test_levels_above_warning_are_downgraded(self):
+        messages = self.run_with(
+            ("p1", message_advisor(code="a", level="error", message="A")),
+            ("p2", message_advisor(code="b", level="info", message="B")),
+            ("p3", message_advisor(code="c", level="warning", message="C")),
+            ("p4", message_advisor(code="d", message="D")),
+        )
+
+        self.assertListEqual(
+            [(m.code, m.level) for m in messages],
+            [("a", "warning"), ("b", "info"), ("c", "warning"), ("d", "warning")],
+        )
+
+    def test_mutating_advisor_leaves_request_unchanged(self):
+        request = rate_request()
+        seen = []
+
+        self.run_with(
+            ("mutator", mutating_advisor),
+            ("observer", lambda req, ctx: seen.append(req.shipper.country_code) or []),
+            request=request,
+        )
+
+        self.assertEqual(request.shipper.country_code, "SE")
+        self.assertListEqual(seen, ["SE"])
+
+    def test_failing_advisor_is_reported_and_others_still_run(self):
+        messages = self.run_with(
+            ("broken_plugin", failing_advisor),
+            ("conventions", country_advisor),
+        )
+
+        self.assertListEqual(
+            lib.to_dict(messages),
+            [
+                {
+                    "carrier_name": "advised_carrier",
+                    "carrier_id": "advised_carrier_se",
+                    "code": "shipment_advisor_failed",
+                    "level": "warning",
+                    "message": "Shipment advisor from plugin 'broken_plugin' failed",
+                    "details": {
+                        "plugin": "broken_plugin",
+                        "error": "advisor exploded",
+                    },
+                },
+                {
+                    "carrier_name": "advised_carrier",
+                    "carrier_id": "advised_carrier_se",
+                    "code": "country_advice",
+                    "level": "warning",
+                    "message": "shipper country SE",
+                },
+            ],
+        )
+
+    def test_invalid_advisor_output_is_reported_as_failure(self):
+        messages = self.run_with(("garbage", lambda req, ctx: [object()]))
+
+        self.assertListEqual(
+            [(m.code, m.details["plugin"]) for m in messages],
+            [("shipment_advisor_failed", "garbage")],
+        )
+
+    def test_message_identity_is_filled_from_context(self):
+        messages = self.run_with(
+            ("p1", message_advisor(code="a", level="warning")),
+            (
+                "p2",
+                message_advisor(
+                    carrier_name="explicit",
+                    carrier_id="explicit_id",
+                    code="b",
+                    level="warning",
+                ),
+            ),
+        )
+
+        self.assertListEqual(
+            [(m.carrier_name, m.carrier_id) for m in messages],
+            [("advised_carrier", "advised_carrier_se"), ("explicit", "explicit_id")],
+        )
+
+    def test_advisor_receives_operation_in_context(self):
+        seen = []
+
+        self.run_with(
+            ("p1", lambda req, ctx: seen.append(ctx.operation) or []),
+            operation="shipping",
+        )
+
+        self.assertListEqual(seen, ["shipping"])
+
+
 if __name__ == "__main__":
     unittest.main()
