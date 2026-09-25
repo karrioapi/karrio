@@ -103,9 +103,7 @@ def _advise(
             for message in (advisor(copy.deepcopy(request), context) or [])
         ]
     except Exception as error:
-        logger.warning(
-            "Shipment advisor failed", plugin=plugin_id, error=str(error)
-        )
+        logger.warning("Shipment advisor failed", plugin=plugin_id, error=str(error))
         return [
             models.Message(
                 carrier_name=context.carrier_name,
