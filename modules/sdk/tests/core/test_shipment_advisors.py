@@ -70,5 +70,51 @@ class TestPluginMetadataAdvisors(unittest.TestCase):
         self.assertListEqual(second.shipment_advisors, [])
 
 
+def entrypoint_plugins(*plugins: metadata.PluginMetadata) -> dict:
+    return {plugin.id: {"entrypoint": {plugin.id: plugin}} for plugin in plugins}
+
+
+class TestAdvisorRegistry(unittest.TestCase):
+    def setUp(self):
+        self.advisor_only = metadata.PluginMetadata(
+            id="conventions",
+            label="Conventions",
+            shipment_advisors=[country_advisor],
+        )
+
+    def tearDown(self):
+        references.import_extensions()
+
+    def import_with(self, *plugins: metadata.PluginMetadata):
+        with patch(
+            "karrio.core.plugins.discover_entrypoint_plugins",
+            return_value=entrypoint_plugins(*plugins),
+        ):
+            references.import_extensions()
+
+    def test_advisors_are_collected_from_advisor_only_plugins(self):
+        self.import_with(self.advisor_only)
+
+        self.assertIn(("conventions", country_advisor), references.get_advisors())
+        self.assertNotIn("conventions", references.PROVIDERS)
+        self.assertNotIn("conventions", references.LSP_PLUGINS)
+
+    def test_advisors_are_reset_on_reimport(self):
+        self.import_with(self.advisor_only)
+        self.import_with()
+
+        self.assertNotIn(("conventions", country_advisor), references.get_advisors())
+
+    def test_advisor_only_plugin_is_not_unknown_in_references(self):
+        self.import_with(self.advisor_only)
+
+        plugin = references.collect_references(plugin_registry={})["plugins"][
+            "conventions"
+        ]
+
+        self.assertEqual(plugin["type"], "advisor")
+        self.assertListEqual(plugin["types"], ["advisor"])
+
+
 if __name__ == "__main__":
     unittest.main()
