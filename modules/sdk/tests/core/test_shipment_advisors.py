@@ -156,9 +156,7 @@ def rate_request() -> models.RateRequest:
 
 class TestAdvisorContext(unittest.TestCase):
     def test_context_exposes_only_allowlisted_fields(self):
-        context = advisors.AdvisorContext.from_settings(
-            credential_settings(), "rating"
-        )
+        context = advisors.AdvisorContext.from_settings(credential_settings(), "rating")
 
         self.assertDictEqual(
             attr.asdict(context),
@@ -187,16 +185,16 @@ class TestAdvisorContext(unittest.TestCase):
         self.assertTrue(connection.config["nested"]["flag"])
 
     def test_context_is_immutable(self):
-        context = advisors.AdvisorContext.from_settings(
-            credential_settings(), "rating"
-        )
+        context = advisors.AdvisorContext.from_settings(credential_settings(), "rating")
 
         with self.assertRaises(attr.exceptions.FrozenInstanceError):
             context.carrier_id = "other"
 
 
 def message_advisor(**kwargs):
-    return lambda request, context: [models.Message(**{**dict(carrier_name=None, carrier_id=None), **kwargs})]
+    return lambda request, context: [
+        models.Message(**{**dict(carrier_name=None, carrier_id=None), **kwargs})
+    ]
 
 
 def failing_advisor(request, context):
@@ -525,9 +523,64 @@ class TestShipmentAdvisors(unittest.TestCase):
             is_return=True,
         )
 
-        self.assertListEqual(
-            [m.message for m in messages], ["shipper country NO"]
+        self.assertListEqual([m.message for m in messages], ["shipper country NO"])
+
+
+class TestWithoutAdvisors(unittest.TestCase):
+    def setUp(self):
+        patcher = patch.object(references, "ADVISORS", [])
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    def test_rate_response_is_unchanged(self):
+        rates, messages = (
+            Rating.fetch(RatePayload)
+            .from_(
+                rating_gateway(
+                    "carrier_a",
+                    [rate_details("carrier_a")],
+                    [carrier_warning("carrier_a")],
+                ),
+                rating_gateway("carrier_b", [rate_details("carrier_b")]),
+                rating_gateway("carrier_c", [], [carrier_warning("carrier_c")]),
+                aborted_gateway("carrier_d"),
+            )
+            .parse()
         )
+
+        self.assertListEqual(
+            rates, [rate_details("carrier_a"), rate_details("carrier_b")]
+        )
+        self.assertListEqual(
+            [(m.carrier_id, m.code) for m in messages],
+            [
+                ("carrier_a", "carrier_warning"),
+                ("carrier_c", "carrier_warning"),
+                ("carrier_d", "SHIPPING_SDK_NON_SUPPORTED_ERROR"),
+            ],
+        )
+
+    def test_shipment_response_is_unchanged(self):
+        parsed = (shipment_details("carrier_a"), [carrier_warning("carrier_a")])
+
+        result = (
+            Shipment.create(ShipmentPayload)
+            .from_(shipping_gateway("carrier_a", parsed))
+            .parse()
+        )
+
+        self.assertIs(result, parsed)
+
+    def test_return_shipment_response_is_unchanged(self):
+        parsed = (shipment_details("carrier_a"), [])
+
+        result = (
+            Shipment.create({**ShipmentPayload, "is_return": True})
+            .from_(shipping_gateway("carrier_a", parsed))
+            .parse()
+        )
+
+        self.assertIs(result, parsed)
 
 
 if __name__ == "__main__":
