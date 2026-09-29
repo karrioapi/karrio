@@ -98,7 +98,7 @@ def pickup_request(
                 address=fedex.AccountAddressOfRecordType(
                     streetLines=address.address_lines,
                     city=address.city,
-                    stateOrProvinceCode=address.state_code,
+                    stateOrProvinceCode=provider_utils.state_code(address),
                     postalCode=address.postal_code,
                     countryCode=address.country_code,
                     residential=address.residential,

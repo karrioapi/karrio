@@ -8,10 +8,11 @@ import json
 import PyPDF2
 import asyncio
 import datetime
+import unicodedata
 import urllib.parse
 import PIL.Image
 import PIL.ImageFile
-from functools import reduce
+from functools import reduce, lru_cache
 from urllib.error import HTTPError
 from urllib.request import urlopen, Request, ProxyHandler, build_opener, install_opener
 from typing import List, TypeVar, Callable, Optional, Any, Union, cast
@@ -801,6 +802,81 @@ class Location:
             raise Exception(
                 'Missing country code. e.g: Location(state_code, country="US").as_state_name'
             ) from e
+
+    @property
+    def as_state_code(self) -> Optional[str]:
+        country = str(self.extra.get("country") or "").upper()
+        lookups = _state_code_lookups(country)
+
+        if not self.value or lookups is None:
+            return self.value
+
+        code_lookup, name_lookup = lookups
+        value = self.value.strip()
+        value = (
+            value[len(country) + 1 :]
+            if value.upper().startswith(f"{country}-")
+            else value
+        )
+
+        return code_lookup.get(_fold_state_text(value)) or next(
+            (
+                name_lookup[key]
+                for key in _state_match_keys(value)
+                if key in name_lookup
+            ),
+            self.value,
+        )
+
+
+STATE_NAME_SUFFIXES = ("state", "province", "county", "region")
+
+
+def _fold_state_text(value: str) -> str:
+    decomposed = unicodedata.normalize("NFD", value)
+    stripped = "".join(c for c in decomposed if unicodedata.category(c) != "Mn")
+    return stripped.casefold().strip()
+
+
+def _state_match_keys(value: str) -> List[str]:
+    folded = _fold_state_text(value)
+    head, _, last = folded.rpartition(" ")
+    unsuffixed = head.strip() if last in STATE_NAME_SUFFIXES else ""
+
+    return [key for key in dict.fromkeys([folded, unsuffixed]) if key]
+
+
+@lru_cache(maxsize=None)
+def _state_code_lookups(
+    country: str,
+) -> Optional[tuple[dict[str, str], dict[str, str]]]:
+    from karrio.core.units import CountryState
+
+    states = CountryState.__members__.get(country)
+
+    if states is None:
+        return None
+
+    subdivisions = {
+        code: state.value for code, state in states.value.__members__.items()
+    }
+    keys_by_code = {
+        code: _state_match_keys(name) for code, name in subdivisions.items()
+    }
+    codes_by_key = {
+        key: {code for code, code_keys in keys_by_code.items() if key in code_keys}
+        for keys in keys_by_code.values()
+        for key in keys
+    }
+
+    return (
+        {_fold_state_text(code): code for code in subdivisions},
+        {
+            key: next(iter(codes))
+            for key, codes in codes_by_key.items()
+            if len(codes) == 1
+        },
+    )
 
 
 def sort_events_chronologically(events: List[Any]) -> List[Any]:

@@ -813,6 +813,18 @@ def to_state_name(
     return utils.Location(value, **{**kwargs, "country": country}).as_state_name
 
 
+def to_state_code(
+    value: typing.Optional[str],
+    country: str,
+    **kwargs,
+) -> typing.Optional[str]:
+    """Resolve a subdivision name or ISO 3166-2 code to the country's state code.
+
+    Values that match no subdivision, or more than one, are returned unchanged.
+    """
+    return utils.Location(value, **{**kwargs, "country": country}).as_state_code
+
+
 def to_address(
     address: typing.Optional[models.Address],
 ) -> units.ComputedAddress:
