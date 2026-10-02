@@ -161,7 +161,7 @@ ParsedTrackingResponse = [
             "events": [
                 {
                     "date": "2024-01-20",
-                    "time": "14:30 PM",
+                    "time": "02:30 PM",
                     "description": "The shipment has been delivered.",
                     "code": "3500",
                     "location": "Hamburg, DEU",

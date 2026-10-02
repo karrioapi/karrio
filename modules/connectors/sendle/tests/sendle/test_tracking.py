@@ -69,7 +69,7 @@ ParsedTrackingResponse = [
                     "mailbox!",
                     "location": "NEW YORK, NY",
                     "status": "delivered",
-                    "time": "14:56 PM",
+                    "time": "02:56 PM",
                     "timestamp": "2023-04-05T14:56:00.000Z",
                 },
                 {
@@ -114,7 +114,7 @@ ParsedTrackingResponse = [
                     "description": "Your package is in transit with the carrier.",
                     "location": "JERSEY CITY NJ NETWORK DISTRIBUTION CENTER",
                     "status": "in_transit",
-                    "time": "22:43 PM",
+                    "time": "10:43 PM",
                     "timestamp": "2023-04-04T22:43:00.000Z",
                 },
                 {
@@ -123,7 +123,7 @@ ParsedTrackingResponse = [
                     "description": "Your package is in transit with the carrier.",
                     "location": "TEANECK, NJ",
                     "status": "in_transit",
-                    "time": "16:55 PM",
+                    "time": "04:55 PM",
                     "timestamp": "2023-04-04T16:55:00.000Z",
                 },
                 {
@@ -131,7 +131,7 @@ ParsedTrackingResponse = [
                     "date": "2023-04-04",
                     "description": "Parcel picked up",
                     "status": "in_transit",
-                    "time": "16:12 PM",
+                    "time": "04:12 PM",
                     "timestamp": "2023-04-04T16:12:00.000Z",
                 },
                 {

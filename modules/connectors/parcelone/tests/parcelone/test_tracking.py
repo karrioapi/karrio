@@ -82,7 +82,7 @@ ParsedTrackingResponse = [
                     "description": "Package delivered",
                     "location": "Munich, Germany",
                     "status": "delivered",
-                    "time": "14:30 PM",
+                    "time": "02:30 PM",
                     "timestamp": "2024-01-15T14:30:00.000Z",
                 },
                 {
@@ -100,7 +100,7 @@ ParsedTrackingResponse = [
                     "description": "Arrived at destination facility",
                     "location": "Munich Hub",
                     "status": "in_transit",
-                    "time": "22:00 PM",
+                    "time": "10:00 PM",
                     "timestamp": "2024-01-14T22:00:00.000Z",
                 },
                 {
@@ -118,7 +118,7 @@ ParsedTrackingResponse = [
                     "description": "Shipment picked up",
                     "location": "Berlin",
                     "status": "pending",
-                    "time": "16:00 PM",
+                    "time": "04:00 PM",
                     "timestamp": "2024-01-13T16:00:00.000Z",
                 },
             ],

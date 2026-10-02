@@ -162,7 +162,7 @@ ParsedTrackingResponse = [
                     "description": "Arrived at UK sorting hub",
                     "location": "Heathrow Hub, GB",
                     "status": "in_transit",
-                    "time": "14:30 PM",
+                    "time": "02:30 PM",
                     "timestamp": "2025-01-15T14:30:00.000Z",
                 },
                 {
@@ -180,7 +180,7 @@ ParsedTrackingResponse = [
                     "description": "Cleared customs",
                     "location": "Los Angeles ISC, US",
                     "status": "in_transit",
-                    "time": "18:20 PM",
+                    "time": "06:20 PM",
                     "timestamp": "2025-01-17T18:20:00.000Z",
                 },
                 {

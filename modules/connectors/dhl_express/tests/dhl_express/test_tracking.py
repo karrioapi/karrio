@@ -163,7 +163,7 @@ ParsedTrackingResponse = [
                     "description": "Processed at Location Bergamo - Italy ",
                     "location": "Bergamo - Italy ",
                     "status": "picked_up",
-                    "time": "23:30 PM",
+                    "time": "11:30 PM",
                     "timestamp": "2009-08-30T23:30:00.000Z",
                 },
                 {
@@ -172,7 +172,7 @@ ParsedTrackingResponse = [
                     "description": "Arrived at DHL facility in Bergamo -\n                        Italy ",
                     "location": "Bergamo - Italy ",
                     "status": "in_transit",
-                    "time": "19:43 PM",
+                    "time": "07:43 PM",
                     "timestamp": "2009-08-30T19:43:00.000Z",
                 },
                 {
@@ -199,7 +199,7 @@ ParsedTrackingResponse = [
                     "description": "Arrived at DHL facility in Leipzig -\n                        Germany ",
                     "location": "Leipzig - Germany ",
                     "status": "in_transit",
-                    "time": "00:32 AM",
+                    "time": "12:32 AM",
                     "timestamp": "2009-08-29T00:32:00.000Z",
                 },
                 {
@@ -208,7 +208,7 @@ ParsedTrackingResponse = [
                     "description": "Departed from DHL facility in Barcelona\n                        - Spain ",
                     "location": "Barcelona - Spain ",
                     "status": "in_transit",
-                    "time": "22:01 PM",
+                    "time": "10:01 PM",
                     "timestamp": "2009-08-28T22:01:00.000Z",
                 },
                 {
@@ -217,7 +217,7 @@ ParsedTrackingResponse = [
                     "description": "Arrived at DHL facility in Barcelona -\n                        Spain ",
                     "location": "Barcelona - Spain ",
                     "status": "in_transit",
-                    "time": "21:17 PM",
+                    "time": "09:17 PM",
                     "timestamp": "2009-08-28T21:17:00.000Z",
                 },
                 {
@@ -226,14 +226,14 @@ ParsedTrackingResponse = [
                     "description": "Processed at Location Barcelona - Spain ",
                     "location": "Barcelona - Spain ",
                     "status": "picked_up",
-                    "time": "20:39 PM",
+                    "time": "08:39 PM",
                     "timestamp": "2009-08-28T20:39:00.000Z",
                 },
                 {
                     "code": "RW",
                     "date": "2009-08-28",
                     "location": "Barcelona - Spain ",
-                    "time": "19:27 PM",
+                    "time": "07:27 PM",
                     "timestamp": "2009-08-28T19:27:00.000Z",
                 },
                 {
@@ -241,7 +241,7 @@ ParsedTrackingResponse = [
                     "date": "2009-08-28",
                     "description": "Departing origin 00:00:00",
                     "location": "Barcelona - Spain ",
-                    "time": "19:27 PM",
+                    "time": "07:27 PM",
                     "timestamp": "2009-08-28T19:27:00.000Z",
                 },
                 {
@@ -250,7 +250,7 @@ ParsedTrackingResponse = [
                     "description": "Shipment picked up 960528602",
                     "location": "Barcelona - Spain ",
                     "status": "picked_up",
-                    "time": "13:26 PM",
+                    "time": "01:26 PM",
                     "timestamp": "2009-08-28T13:26:00.000Z",
                 },
             ],
@@ -305,7 +305,7 @@ ParsedTrackingResponse = [
                     "description": "Shipment picked up",
                     "location": "Hong Kong - Hong Kong ",
                     "status": "picked_up",
-                    "time": "23:58 PM",
+                    "time": "11:58 PM",
                     "timestamp": "2009-08-13T23:58:00.000Z",
                 },
             ],

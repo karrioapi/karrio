@@ -304,7 +304,7 @@ def ftime(
 def flocaltime(
     time_str: str,
     current_format: str = "%H:%M:%S",
-    output_format: str = "%H:%M %p",
+    output_format: str = "%I:%M %p",
     try_formats: typing.List[str] = None,
 ) -> typing.Optional[str]:
     return utils.DF.ftime(
