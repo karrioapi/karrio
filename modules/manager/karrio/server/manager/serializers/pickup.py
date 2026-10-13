@@ -419,7 +419,7 @@ class PickupUpdateData(PickupSerializer):
 
         # Extract billing_number from first shipment's meta (if available)
         billing_number = next(
-            (s.meta.get("billing_number") for s in self._shipments if s.meta.get("billing_number")),
+            (s.meta.get("billing_number") for s in shipments if s.meta.get("billing_number")),
             None,
         )
 

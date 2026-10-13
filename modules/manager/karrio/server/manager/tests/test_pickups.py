@@ -257,6 +257,25 @@ class TestPickupDetails(TestFixture):
             request.options["tracking_numbers"], ["123456789012", "PKG-2"]
         )
 
+    def test_update_pickup_forwards_linked_shipment_billing_number(self):
+        self.shipment.meta = {**(self.shipment.meta or {}), "billing_number": "BILL-1"}
+        self.shipment.save()
+        url = reverse(
+            "karrio.server.manager:shipment-pickup-details",
+            kwargs=dict(pk=self.pickup.pk),
+        )
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock, patch(
+            "karrio.server.core.gateway.karrio.Pickup.update",
+            wraps=karrio.Pickup.update,
+        ) as update:
+            mock.return_value = UPDATE_RETURNED_VALUE
+            response = self.client.post(url, PICKUP_UPDATE_DATA)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        request = update.call_args.args[0]
+        self.assertEqual(request.options["billing_number"], "BILL-1")
+
     def test_cancel_pickup(self):
         url = reverse(
             "karrio.server.manager:shipment-pickup-cancel",
