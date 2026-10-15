@@ -50,9 +50,7 @@ function reducer(
         ? undefined
         : { ...(state || {}), ...(value as CommodityType) };
     case "value_amount":
-      const value_currency = isNone(value)
-        ? state.value_currency
-        : CurrencyCodeEnum.USD;
+      const value_currency = state.value_currency ?? CurrencyCodeEnum.USD;
       return { ...state, [name]: value, value_currency };
     default:
       return { ...state, [name]: value };
@@ -110,7 +108,12 @@ export const CommodityEditModalProvider = ({
 
     dispatch({
       name,
-      value: target.type === "number" ? parseFloat(value as string) : value,
+      value:
+        target.type === "number"
+          ? value === ""
+            ? null
+            : parseFloat(value as string)
+          : value,
     });
   };
   const handleSubmit = async (e: React.FormEvent) => {
@@ -265,7 +268,7 @@ export const CommodityEditModalProvider = ({
                       wrapperClass="column is-3 px-2 py-1"
                       fieldClass="mb-0 p-0"
                       onChange={handleChange}
-                      value={commodity?.quantity}
+                      value={commodity?.quantity ?? ""}
                       onInvalid={validityCheck(
                         validationMessage("Please enter a valid quantity"),
                       )}
@@ -295,7 +298,7 @@ export const CommodityEditModalProvider = ({
                             type="number"
                             className="input is-small"
                             onChange={handleChange}
-                            value={commodity.weight}
+                            value={commodity.weight ?? ""}
                             disabled={!isNone(commodity?.parent_id)}
                             onInvalid={validityCheck(
                               validationMessage("Please enter a valid weight"),
@@ -338,7 +341,7 @@ export const CommodityEditModalProvider = ({
                             name="value_amount"
                             className="input is-small"
                             onChange={handleChange}
-                            value={commodity.value_amount || ""}
+                            value={commodity.value_amount ?? ""}
                             disabled={!isNone(commodity?.parent_id)}
                           />
                         </p>
