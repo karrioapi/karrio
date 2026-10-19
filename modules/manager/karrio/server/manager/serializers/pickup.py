@@ -111,6 +111,30 @@ def address_exists(value):
         )
 
 
+def linked_shipment_references(shipments: typing.List[models.Shipment]) -> dict:
+    """Collect the identifiers and tracking numbers of a pickup's linked shipments."""
+    unique = lambda values: list(dict.fromkeys(filter(None, values)))
+
+    return dict(
+        shipment_identifiers=unique(
+            _
+            for shipment in shipments
+            for _ in [
+                *(shipment.meta.get("shipment_identifiers") or []),
+                shipment.shipment_identifier,
+            ]
+        ),
+        tracking_numbers=unique(
+            _
+            for shipment in shipments
+            for _ in [
+                shipment.tracking_number,
+                *(shipment.meta.get("tracking_numbers") or []),
+            ]
+        ),
+    )
+
+
 class PickupSerializer(PickupRequest):
     parcels = None
     address = AddressData(
@@ -217,21 +241,12 @@ class PickupData(PickupSerializer):
             if connection_id:
                 carrier_filter["carrier_id"] = connection_id
 
-        # Extract shipment identifiers only if shipments linked
-        shipment_identifiers = []
+        references = linked_shipment_references(self._shipments)
+        shipment_identifiers = references["shipment_identifiers"]
+        tracking_numbers = references["tracking_numbers"]
         billing_number = None
 
         if self._shipments:
-            shipment_identifiers = [
-                _
-                for shipment in self._shipments
-                for _ in set(
-                    [
-                        *(shipment.meta.get("shipment_identifiers") or []),
-                        shipment.shipment_identifier,
-                    ]
-                )
-            ]
             # Extract billing_number from first shipment's meta (if available)
             billing_number = next(
                 (s.meta.get("billing_number") for s in self._shipments if s.meta.get("billing_number")),
@@ -261,8 +276,10 @@ class PickupData(PickupSerializer):
         request_data = {
             **filtered_data,
             "parcels": parcels_list,
+            "shipment_identifiers": shipment_identifiers,
             "options": {
                 **({"shipment_identifiers": shipment_identifiers} if shipment_identifiers else {}),
+                **({"tracking_numbers": tracking_numbers} if tracking_numbers else {}),
                 **({"billing_number": billing_number} if billing_number else {}),
                 **(validated_data.get("options") or {}),
             },
@@ -368,16 +385,10 @@ class PickupUpdateData(PickupSerializer):
     def update(
         self, instance: models.Pickup, validated_data: dict, context: dict, **kwargs
     ) -> models.Tracking:
-        shipment_identifiers = [
-            _
-            for shipment in self._shipments
-            for _ in set(
-                [
-                    *(shipment.meta.get("shipment_identifiers") or []),
-                    shipment.shipment_identifier,
-                ]
-            )
-        ]
+        shipments = self._shipments or list(instance.shipments.all())
+        references = linked_shipment_references(shipments)
+        shipment_identifiers = references["shipment_identifiers"]
+        tracking_numbers = references["tracking_numbers"]
 
         # Merge existing address with updates (address is now a JSON field)
         existing_address = instance.address or {}
@@ -408,7 +419,7 @@ class PickupUpdateData(PickupSerializer):
 
         # Extract billing_number from first shipment's meta (if available)
         billing_number = next(
-            (s.meta.get("billing_number") for s in self._shipments if s.meta.get("billing_number")),
+            (s.meta.get("billing_number") for s in shipments if s.meta.get("billing_number")),
             None,
         )
 
@@ -417,10 +428,12 @@ class PickupUpdateData(PickupSerializer):
             **base_data,
             **validated_data,
             "address": merged_address,
+            "shipment_identifiers": shipment_identifiers,
             "options": {
-                "shipment_identifiers": shipment_identifiers,
                 **({"billing_number": billing_number} if billing_number else {}),
                 **(instance.meta or {}),
+                "shipment_identifiers": shipment_identifiers,
+                **({"tracking_numbers": tracking_numbers} if tracking_numbers else {}),
                 **(validated_data.get("options") or {}),
             },
         }
