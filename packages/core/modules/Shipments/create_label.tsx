@@ -17,6 +17,8 @@ import {
   DEFAULT_CUSTOMS_CONTENT,
 } from "@karrio/types";
 import {
+  extractAddressFromTemplate,
+  extractParcelFromTemplate,
   formatRef,
   formatWeight,
   getShipmentCommodities,
@@ -200,13 +202,13 @@ export default function CreateLabelPage(pageProps: any) {
       return parent_quantity - packed_quantity;
     };
     const setInitialData = () => {
-      const shipper =
-        templates.data?.default_templates.default_address ||
-        ({} as any);
-      const parcel = {
-        ...(templates.data?.default_templates.default_parcel ||
-          DEFAULT_PARCEL_CONTENT),
-      };
+      const default_templates = templates.data?.default_templates;
+      const shipper = extractAddressFromTemplate(
+        default_templates?.default_address,
+      );
+      const parcel = default_templates?.default_parcel
+        ? extractParcelFromTemplate(default_templates.default_parcel)
+        : { ...DEFAULT_PARCEL_CONTENT };
 
       if (
         !!workspace_config.query.data?.workspace_config?.federal_tax_id &&
@@ -224,12 +226,8 @@ export default function CreateLabelPage(pageProps: any) {
       }
 
       onChange({
-        ...(shipper
-          ? { shipper: shipper as (typeof shipment)["shipper"] }
-          : {}),
-        ...(parcel
-          ? { parcels: [parcel] as (typeof shipment)["parcels"] }
-          : {}),
+        shipper: shipper as (typeof shipment)["shipper"],
+        parcels: [parcel] as (typeof shipment)["parcels"],
         label_type: LabelTypeEnum.PDF,
       });
 

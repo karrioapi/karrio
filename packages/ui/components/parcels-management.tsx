@@ -31,7 +31,11 @@ import {
 } from "lucide-react";
 import { ConfirmationDialog } from "./confirmation-dialog";
 import { ParcelForm, ParcelFormRef } from "./parcel-form";
-import { getURLSearchParams, isNoneOrEmpty } from "@karrio/lib";
+import {
+  extractParcelFromTemplate,
+  getURLSearchParams,
+  isNoneOrEmpty,
+} from "@karrio/lib";
 import {
   useParcelMutation,
   useParcels,
@@ -39,13 +43,6 @@ import {
 import { ParcelType, NotificationType } from "@karrio/types";
 import { useSearchParams } from "next/navigation";
 import { useNotifier } from "@karrio/ui/core/components/notifier";
-
-// Helper function to extract parcel fields from template (exclude template metadata)
-const extractParcelFromTemplate = (template: any) => {
-  if (!template) return {};
-  const { id, label, is_default, object_type, meta, created_at, updated_at, created_by, ...parcelData } = template;
-  return parcelData;
-};
 
 interface ParcelEditDialogProps {
   open: boolean;

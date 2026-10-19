@@ -134,6 +134,52 @@ export function formatAddressRegion(address: AddressType): string {
     .join(", ");
 }
 
+const ADDRESS_TEMPLATE_FIELDS = [
+  "id",
+  "label",
+  "is_default",
+  "object_type",
+  "validate_location",
+  "meta",
+  "created_at",
+  "updated_at",
+  "created_by",
+] as const;
+const PARCEL_TEMPLATE_FIELDS = [
+  "id",
+  "label",
+  "is_default",
+  "object_type",
+  "meta",
+  "created_at",
+  "updated_at",
+  "created_by",
+] as const;
+
+function omitFields<T extends object, K extends string>(
+  value: T | null | undefined,
+  fields: readonly K[],
+): Partial<Omit<T, K>> {
+  if (!value) return {};
+  return Object.fromEntries(
+    Object.entries(value).filter(
+      ([key]) => !(fields as readonly string[]).includes(key),
+    ),
+  ) as Partial<Omit<T, K>>;
+}
+
+export function extractAddressFromTemplate<T extends object>(
+  template?: T | null,
+): Partial<Omit<T, (typeof ADDRESS_TEMPLATE_FIELDS)[number]>> {
+  return omitFields(template, ADDRESS_TEMPLATE_FIELDS);
+}
+
+export function extractParcelFromTemplate<T extends object>(
+  template?: T | null,
+): Partial<Omit<T, (typeof PARCEL_TEMPLATE_FIELDS)[number]>> {
+  return omitFields(template, PARCEL_TEMPLATE_FIELDS);
+}
+
 export function formatCustomsLabel(customs: CustomsType): string {
   return [customs.content_type, customs.incoterm]
     .filter((c) => !isNone(c))

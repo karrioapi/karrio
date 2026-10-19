@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Check, X } from "lucide-react";
-import { formatAddress } from "@karrio/lib";
+import { extractAddressFromTemplate, formatAddress } from "@karrio/lib";
 import { cn } from "@karrio/ui/lib/utils";
 import {
   Command,
@@ -100,7 +100,7 @@ export const AddressCombobox = React.forwardRef<
 
   const handleTemplateSelect = (template: TemplateOption) => {
     setInputValue(template.label);
-    onValueChange?.(template.address, true);
+    onValueChange?.(extractAddressFromTemplate(template.address), true);
     setOpen(false);
     // Return focus to input after selection
     setTimeout(() => {

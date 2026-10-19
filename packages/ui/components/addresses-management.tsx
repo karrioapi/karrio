@@ -31,6 +31,7 @@ import {
 import { ConfirmationDialog } from "./confirmation-dialog";
 import { AddressForm, AddressFormRef } from "./address-form";
 import {
+  extractAddressFromTemplate,
   formatAddressLocationShort,
   formatAddressShort,
   getURLSearchParams,
@@ -44,13 +45,6 @@ import {
 import { AddressType } from "@karrio/types";
 import { useSearchParams } from "next/navigation";
 import { useToast } from "@karrio/ui/hooks/use-toast";
-
-// Helper function to extract address fields from template (exclude template metadata)
-const extractAddressFromTemplate = (template: any) => {
-  if (!template) return {};
-  const { id, label, is_default, object_type, validate_location, meta, created_at, updated_at, created_by, ...addressData } = template;
-  return addressData;
-};
 
 // Helper function to normalize address for comparison (exclude metadata)
 const normalizeAddressForComparison = (address: any) => {
