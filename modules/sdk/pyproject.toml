@@ -27,7 +27,7 @@ dependencies = [
     "Pillow",
     "phonenumbers",
     "python-barcode",
-    "PyPDF2",
+    "pypdf",
     "toml",
     "loguru",
 ]

@@ -1,6 +1,6 @@
 import typing
 import base64
-import PyPDF2
+import pypdf
 import datetime
 import functools
 import urllib.parse
@@ -1006,7 +1006,7 @@ def image_to_pdf(
 
 def bundle_pdfs(
     base64_strings: typing.List[str],
-) -> PyPDF2.PdfMerger:
+) -> pypdf.PdfWriter:
     return utils.bundle_pdfs(base64_strings)
 
 

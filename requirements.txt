@@ -128,7 +128,7 @@ py-soap==2026.1.32
 pycparser==3.0
 pydyf==0.12.1
 pyjwt==2.13.0
-pypdf2==3.0.1
+pypdf==6.18.1
 pyphen==0.17.2
 python-barcode==0.16.1
 python-dateutil==2.9.0.post0
