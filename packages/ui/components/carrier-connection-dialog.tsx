@@ -32,6 +32,7 @@ import { GetSystemConnections_system_carrier_connections_edges_node } from "@kar
 import { IntegrationStatusBadge } from "@karrio/ui/core/components/integration-status-badge";
 import { CarrierImage } from "@karrio/ui/core/components/carrier-image";
 import { EnhancedMetadataEditor } from "./enhanced-metadata-editor";
+import { OrderedEnumPills } from "./ordered-enum-pills";
 import { useOAuthConnection, supportsOAuth, useCarrierWebhook, supportsWebhook } from "@karrio/hooks/carrier-connections";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@karrio/ui/hooks/use-toast";
@@ -46,6 +47,9 @@ import { Zap, Loader2, Webhook, Check, X, Copy, Plus, Trash2, Info, ChevronDown,
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
 import * as z from "zod";
 
+
+const isEnumListConfig = (config?: { type?: string; enum?: string[]; fields?: unknown }): boolean =>
+  config?.type === "list" && Array.isArray(config.enum) && !config.fields;
 
 type Connection = Omit<GetSystemConnections_system_carrier_connections_edges_node, 'credentials' | 'config' | 'metadata'> & {
   credentials?: Record<string, any>;
@@ -301,6 +305,18 @@ export function CarrierConnectionDialog({
           {}
         );
         setValue("credentials", defaultCredentials);
+
+        const configs = references?.connection_configs?.[carrierName] || {};
+        const defaultEnumLists = Object.entries(configs).reduce(
+          (acc, [key, config]: [string, any]) =>
+            isEnumListConfig(config) && Array.isArray(config.default) && config.default.length > 0
+              ? { ...acc, [key]: config.default }
+              : acc,
+          {}
+        );
+        if (Object.keys(defaultEnumLists).length > 0) {
+          setValue("config", { ...(form.getValues("config") || {}), ...defaultEnumLists });
+        }
       }
     });
     return () => subscription.unsubscribe();
@@ -555,7 +571,7 @@ export function CarrierConnectionDialog({
               control={form.control}
               name={`config.${key}`}
               render={({ field: formField }) => (
-                <FormItem className={config.type === "boolean" ? "col-span-2" : ""}>
+                <FormItem className={config.type === "boolean" || isEnumListConfig(config) ? "col-span-2" : ""}>
                   <FormLabel>{formatLabel(config.name)}</FormLabel>
                   <FormControl>
                     {config.type === "string" && !config.enum ? (
@@ -576,6 +592,13 @@ export function CarrierConnectionDialog({
                           ))}
                         </SelectContent>
                       </Select>
+                    ) : isEnumListConfig(config) ? (
+                      <OrderedEnumPills
+                        options={config.enum}
+                        value={formField.value}
+                        onChange={formField.onChange}
+                        formatLabel={formatLabel}
+                      />
                     ) : config.type === "boolean" ? (
                       <div className="flex items-center gap-2 pt-2">
                         <Switch
