@@ -6,6 +6,7 @@ import functools
 import karrio.lib as lib
 import karrio.core.errors as errors
 import karrio.core.models as models
+import karrio.core.advisors as advisors
 import karrio.api.gateway as gateway
 from karrio.core.utils.logger import logger
 from karrio.universal.mappers.rating_proxy import RatingMixinProxy
@@ -109,6 +110,37 @@ def filter_rates(rates: typing.List[models.RateDetails], gateway: gateway.Gatewa
         for rate in rates
         if (not any(restricted_services) or rate.service in restricted_services)
     ]
+
+
+def advise_shipment(
+    result: typing.Tuple[
+        typing.Optional[models.ShipmentDetails], typing.List[models.Message]
+    ],
+    request: models.ShipmentRequest,
+    gateway: gateway.Gateway,
+) -> typing.Tuple[typing.Optional[models.ShipmentDetails], typing.List[models.Message]]:
+    """Append shipment advisor messages to a parsed shipment creation result
+
+    Args:
+        result: the parsed (details, messages) shipment creation result
+        request: the unified shipment request as sent to the carrier
+        gateway: the gateway in use
+
+    Returns:
+        the result unchanged when no shipment details were produced or no
+        advisor returned a message, otherwise with advisor messages appended
+    """
+    details, messages = result
+    advice = (
+        advisors.run_advisors(request, gateway.settings, "shipping")
+        if details is not None
+        else []
+    )
+
+    if not any(advice):
+        return result
+
+    return details, [*(messages or []), *advice]
 
 
 @attr.s(auto_attribs=True)
@@ -349,30 +381,39 @@ class Rating:
 
             def flatten(*args):
                 responses = [p.parse() for p in deserializable_collection]
-                flattened_rates = sum(
+                gateway_rates = [
                     (
-                        (
-                            (lambda gateway: filter_rates(rates, gateway))(
-                                # find the gateway that matches the carrier_id of the rates
-                                next(
-                                    (
-                                        g
-                                        for g in gateways
-                                        if (
-                                            g.settings.carrier_id == rates[0].carrier_id
-                                        )
-                                    )
+                        (lambda gateway: filter_rates(rates, gateway))(
+                            # find the gateway that matches the carrier_id of the rates
+                            next(
+                                (
+                                    g
+                                    for g in gateways
+                                    if (g.settings.carrier_id == rates[0].carrier_id)
                                 )
                             )
-                            if len(rates) > 0
-                            else rates
                         )
-                        for rates, _ in responses
-                        if rates is not None
+                        if rates
+                        else []
+                    )
+                    for rates, _ in responses
+                ]
+                flattened_rates = sum(gateway_rates, [])
+                # responses follow gateways order (run_asynchronously preserves it)
+                messages = sum(
+                    (
+                        [
+                            *m,
+                            *(
+                                advisors.run_advisors(payload, g.settings, "rating")
+                                if any(rates)
+                                else []
+                            ),
+                        ]
+                        for g, rates, (_, m) in zip(gateways, gateway_rates, responses)
                     ),
                     [],
                 )
-                messages = sum((m for _, m in responses), [])
                 return flattened_rates, messages
 
             return IDeserialize(flatten)
@@ -483,7 +524,11 @@ class Shipment:
 
                 @fail_safe(gateway)
                 def _deserialize():
-                    return gateway.mapper.parse_return_shipment_response(_response)
+                    return advise_shipment(
+                        gateway.mapper.parse_return_shipment_response(_response),
+                        swapped_payload,
+                        gateway,
+                    )
 
                 return IDeserialize(_deserialize)
 
@@ -500,7 +545,11 @@ class Shipment:
 
             @fail_safe(gateway)
             def deserialize():
-                return gateway.mapper.parse_shipment_response(response)
+                return advise_shipment(
+                    gateway.mapper.parse_shipment_response(response),
+                    payload,
+                    gateway,
+                )
 
             return IDeserialize(deserialize)
 
