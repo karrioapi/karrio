@@ -90,11 +90,14 @@ class TestAdvisorRegistry(unittest.TestCase):
     def tearDown(self):
         references.import_extensions()
 
-    def import_with(self, *plugins: metadata.PluginMetadata):
-        with patch(
+    def discovering(self, *plugins: metadata.PluginMetadata):
+        return patch(
             "karrio.core.plugins.discover_entrypoint_plugins",
             return_value=entrypoint_plugins(*plugins),
-        ):
+        )
+
+    def import_with(self, *plugins: metadata.PluginMetadata):
+        with self.discovering(*plugins):
             references.import_extensions()
 
     def test_advisors_are_collected_from_advisor_only_plugins(self):
@@ -111,11 +114,11 @@ class TestAdvisorRegistry(unittest.TestCase):
         self.assertNotIn(("conventions", country_advisor), references.get_advisors())
 
     def test_advisor_only_plugin_is_not_unknown_in_references(self):
-        self.import_with(self.advisor_only)
-
-        plugin = references.collect_references(plugin_registry={})["plugins"][
-            "conventions"
-        ]
+        with self.discovering(self.advisor_only):
+            references.import_extensions()
+            plugin = references.collect_references(plugin_registry={})["plugins"][
+                "conventions"
+            ]
 
         self.assertEqual(plugin["type"], "advisor")
         self.assertListEqual(plugin["types"], ["advisor"])
