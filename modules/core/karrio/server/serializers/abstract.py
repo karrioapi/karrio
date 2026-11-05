@@ -124,6 +124,22 @@ class PlainDictField(serializers.DictField):
         }
 
 
+class CarrierSettingsDictField(PlainDictField):
+    """Object-typed carrier connection setting field.
+
+    The connection dialog seeds every credential key with
+    `field.default || ""`, so object-typed settings without a default arrive
+    as blank strings; blank and null inputs are skipped so they behave as
+    absent keys rather than failing validation with not_a_dict.
+    """
+
+    def run_validation(self, data=serializers.empty):
+        if data is None or (isinstance(data, str) and not data.strip()):
+            raise serializers.SkipField()
+
+        return super().run_validation(data)
+
+
 class FlagField(serializers.BooleanField):
     pass
 
@@ -644,7 +660,7 @@ def field_to_serializer(args: dict):
         )
     if type == "object":
         # no default: injected defaults would persist keys the caller never sent
-        return PlainDictField(
+        return CarrierSettingsDictField(
             required=required,
             **(dict(allow_null=True) if not required else {}),
         )
