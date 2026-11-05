@@ -1968,6 +1968,12 @@ class ServiceLevelFeaturesType:
     # Neighbor delivery allowed
     neighbor_delivery: typing.Optional[bool] = None
 
+    # Labelless delivery: no physical label, e.g. QR code
+    labelless: typing.Optional[bool] = None
+
+    # Transit label: "best_effort" | "next_day" | "within_24h" | "within_48h"
+    transit_label: typing.Optional[str] = None
+
     @staticmethod
     def parse(features: typing.Optional[dict]) -> "ServiceLevelFeaturesType":
         """Parse a features dict into ServiceLevelFeaturesType."""
@@ -2354,6 +2360,12 @@ class CarrierConnectionType:
         """Country code from credentials (e.g., 'DE', 'AT') — safe to expose."""
         credentials = getattr(self, "credentials", None) or {}
         return credentials.get("account_country_code") or None
+
+    @strawberry.field
+    def custom_carrier_name(self: providers.CarrierConnection) -> typing.Optional[str]:
+        """Custom carrier name set on generic carrier connections."""
+        credentials = getattr(self, "credentials", None) or {}
+        return credentials.get("custom_carrier_name") or None
 
     @strawberry.field
     def metadata(self: providers.CarrierConnection, info: Info) -> typing.Optional[utils.JSON]:
