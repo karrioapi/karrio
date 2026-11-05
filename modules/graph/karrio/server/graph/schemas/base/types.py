@@ -1968,6 +1968,12 @@ class ServiceLevelFeaturesType:
     # Neighbor delivery allowed
     neighbor_delivery: typing.Optional[bool] = None
 
+    # Labelless delivery: no physical label, e.g. QR code
+    labelless: typing.Optional[bool] = None
+
+    # Transit label: "best_effort" | "next_day" | "within_24h" | "within_48h"
+    transit_label: typing.Optional[str] = None
+
     @staticmethod
     def parse(features: typing.Optional[dict]) -> "ServiceLevelFeaturesType":
         """Parse a features dict into ServiceLevelFeaturesType."""
