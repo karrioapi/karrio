@@ -159,7 +159,7 @@ export const LabelTemplateEditModalProvider = ({
                 </div>
                 <div>
                   <a
-                    className={`button is-small is-primary mx-1 ${isNoneOrEmpty(template.id) ? "is-static" : ""}`}
+                    className={`button is-small is-primary mx-1 ${isNoneOrEmpty(template.template) || isNoneOrEmpty(operation?.connection.id) ? "is-static" : ""}`}
                     href={url$`${references.HOST}/v1/carriers/${operation?.connection.id}/label.pdf`}
                     target="_blank"
                     rel="noreferrer"

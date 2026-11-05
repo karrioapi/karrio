@@ -13,6 +13,7 @@ import {
   Edit3,
   Eye,
   FileText,
+  StickyNote,
 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@karrio/ui/components/ui/select";
 import { Card, CardContent } from "@karrio/ui/components/ui/card";
@@ -40,10 +41,16 @@ import { RateSheetEditor } from "@karrio/ui/components/rate-sheet-editor";
 import { LinkRateSheetDialog } from "@karrio/ui/components/rate-sheet-dialog";
 import { useRateSheets, useRateSheetMutation, useRateSheet } from "@karrio/hooks/rate-sheet";
 import { cn } from "@karrio/ui/lib/utils";
+import { isNoneOrEmpty } from "@karrio/lib";
 import { supportsRateSheets } from "@karrio/lib/carrier-utils";
+import {
+  LabelTemplateEditModalProvider,
+  useLabelTemplateModal,
+} from "@karrio/ui/core/modals/label-template-edit-modal";
+import { useLoader } from "@karrio/ui/core/components/loader";
 // Note: carrier-utils normalization removed; backend provides canonical names
 
-export default function ConnectionsPage() {
+function ConnectionsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { toast } = useToast();
@@ -65,6 +72,8 @@ export default function ConnectionsPage() {
   const rateSheetMutation = useRateSheetMutation();
   const { handleSubmit: submitCarrierConnection } = useCarrierConnectionForm();
   const { references } = useAPIMetadata();
+  const labelModal = useLabelTemplateModal();
+  const { setLoading } = useLoader();
 
   const isLoading = carrierQuery.isLoading || systemQuery.isLoading;
 
@@ -201,6 +210,32 @@ export default function ConnectionsPage() {
   const askLinkRateSheet = (connection: any) => {
     setLinkConnection(connection);
     setIsLinkDialogOpen(true);
+  };
+
+  const handleEditLabelTemplate = (connection: any) => {
+    labelModal.editLabelTemplate({
+      connection: {
+        ...connection,
+        label_template: connection.credentials?.label_template,
+      },
+      onSubmit: async (label_template) => {
+        try {
+          await mutation.updateCarrierConnection.mutateAsync({
+            id: connection.id,
+            credentials: { label_template },
+          });
+          toast({ title: "Label template updated successfully" });
+        } catch (error: any) {
+          toast({
+            title: "Error updating label template",
+            description: error.message || "An error occurred",
+            variant: "destructive",
+          });
+        } finally {
+          setLoading(false);
+        }
+      },
+    });
   };
 
   if (isLoading) {
@@ -479,6 +514,19 @@ export default function ConnectionsPage() {
                     />
                   </div>
 
+                  {/* Label Template Button - Only show for custom carrier connections */}
+                  {connection.connection_type === "user" && !isNoneOrEmpty(connection.credentials?.custom_carrier_name) && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-9 w-9 hover:bg-muted"
+                      onClick={() => handleEditLabelTemplate(connection)}
+                      title="Edit Label Template"
+                    >
+                      <StickyNote className="h-4 w-4" />
+                    </Button>
+                  )}
+
                   {/* Rate Sheet Button - Only show for user connections and compatible carriers */}
                   {connection.connection_type === "user" && supportsRateSheets(connection, references) && (
                     <Button
@@ -624,5 +672,13 @@ export default function ConnectionsPage() {
         />
       )}
     </div>
+  );
+}
+
+export default function ConnectionsPage() {
+  return (
+    <LabelTemplateEditModalProvider>
+      <ConnectionsContent />
+    </LabelTemplateEditModalProvider>
   );
 }

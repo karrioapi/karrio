@@ -1654,6 +1654,7 @@ export const GET_USER_CONNECTIONS = gql`
           carrier_id
           carrier_name
           display_name
+          custom_carrier_name
           test_mode
           active
           capabilities

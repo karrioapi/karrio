@@ -179,6 +179,85 @@ class TestAdminCarrierConnections(AdminGraphTestCase):
             providers.SystemConnection.objects.filter(id=to_delete.id).exists()
         )
 
+class TestAdminSystemConnectionLabelTemplate(AdminGraphTestCase):
+    """Label-template saves on generic system connections.
+
+    The admin label-template editor (packages/admin/modules/carriers/index.tsx
+    handleEditLabelTemplate) saves a partial credentials delta through the
+    update_system_carrier_connection mutation:
+
+        {id, credentials: {label_template: <modal template object>}}
+
+    These tests pin whether that partial delta persists through the
+    hand-rolled credentials merge in SystemConnectionModelSerializer.update
+    (modules/core/karrio/server/providers/serializers/base.py).
+    """
+
+    def setUp(self):
+        super().setUp()
+        self.generic_system_connection = providers.SystemConnection.objects.create(
+            carrier_code="generic",
+            carrier_id="custom_system_carrier",
+            credentials={
+                "custom_carrier_name": "System Custom Carrier",
+                "display_name": "System Custom Carrier Display",
+            },
+            test_mode=False,
+            active=True,
+        )
+
+    def test_update_generic_system_connection_label_template(self):
+        """A partial credentials delta carrying only label_template persists
+        and leaves the other credential keys intact."""
+        response = self.query(
+            """
+            mutation update_system_connection($data: UpdateConnectionMutationInput!) {
+              update_system_carrier_connection(input: $data) {
+                connection {
+                  id
+                  credentials
+                }
+              }
+            }
+            """,
+            operation_name="update_system_connection",
+            variables={
+                "data": {
+                    "id": self.generic_system_connection.id,
+                    "credentials": {"label_template": LABEL_TEMPLATE},
+                }
+            },
+        )
+
+        self.assertResponseNoErrors(response)
+
+        connection = providers.SystemConnection.objects.get(
+            id=self.generic_system_connection.id
+        )
+        self.assertEqual(connection.credentials["label_template"], LABEL_TEMPLATE)
+        self.assertEqual(
+            connection.credentials["custom_carrier_name"],
+            "System Custom Carrier",
+        )
+        self.assertEqual(
+            connection.credentials["display_name"],
+            "System Custom Carrier Display",
+        )
+
+
+LABEL_TEMPLATE = {
+    "slug": "ucc_128",
+    "width": 4,
+    "height": 6,
+    "template_type": "SVG",
+    "template": (
+        "<svg xmlns='http://www.w3.org/2000/svg' width='4in' height='6in'>"
+        "{{ shipment.shipper.get('company_name', '').upper() }}</svg>"
+    ),
+    "shipment_sample": {},
+}
+
+
 class TestAdminBrokeredConnections(AdminGraphTestCase):
     """Tests for BrokeredConnection edge cases.
 

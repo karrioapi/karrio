@@ -45,9 +45,16 @@ import {
   Loader2,
   Network,
   FileText,
+  StickyNote,
 } from 'lucide-react';
 import { cn } from "@karrio/ui/lib/utils";
+import { isNoneOrEmpty } from "@karrio/lib";
 import { supportsRateSheets, getEffectiveCarrierName, isGenericCarrier } from "@karrio/lib/carrier-utils";
+import {
+  LabelTemplateEditModalProvider,
+  useLabelTemplateModal,
+} from "@karrio/ui/core/modals/label-template-edit-modal";
+import { useLoader } from "@karrio/ui/core/components/loader";
 
 export default function CarrierNetwork() {
   const [selectedTab, setSelectedTab] = useState("connections");
@@ -96,7 +103,11 @@ export default function CarrierNetwork() {
 
       {/* Content */}
       <div className="mt-6">
-        {selectedTab === "connections" && <CarrierConnectionManagement />}
+        {selectedTab === "connections" && (
+          <LabelTemplateEditModalProvider>
+            <CarrierConnectionManagement />
+          </LabelTemplateEditModalProvider>
+        )}
         {selectedTab === "rate-sheets" && <RateSheetManagement />}
       </div>
     </div>
@@ -121,6 +132,8 @@ function CarrierConnectionManagement() {
   const { query: rateSheetsQuery, rate_sheets } = useRateSheets({});
   const isLoading = connectionsQuery.isLoading || rateSheetsQuery.isLoading;
   const { references } = useAPIMetadata();
+  const labelModal = useLabelTemplateModal();
+  const { setLoading } = useLoader();
 
   const { createSystemConnection, updateSystemConnection, deleteSystemConnection } = useSystemConnectionMutation();
   const rateSheetMutation = useRateSheetMutation();
@@ -238,6 +251,32 @@ function CarrierConnectionManagement() {
         });
       },
       onError: (error) => handleError(error, "update status")
+    });
+  };
+
+  const handleEditLabelTemplate = (connection: Connection) => {
+    labelModal.editLabelTemplate({
+      connection: {
+        ...connection,
+        label_template: connection.credentials?.label_template,
+      },
+      onSubmit: async (label_template) => {
+        try {
+          await updateSystemConnection.mutateAsync({
+            id: connection.id,
+            credentials: { label_template },
+          });
+          toast({ title: "Label template updated successfully" });
+        } catch (error: any) {
+          toast({
+            title: "Error updating label template",
+            description: error.message || "An error occurred",
+            variant: "destructive",
+          });
+        } finally {
+          setLoading(false);
+        }
+      },
     });
   };
 
@@ -502,6 +541,17 @@ function CarrierConnectionManagement() {
                 <div className="flex items-center gap-2">
                   <Switch checked={connection.active} onCheckedChange={(checked) => handleStatusToggle(connection, checked)} />
                 </div>
+                {!isNoneOrEmpty(connection.credentials?.custom_carrier_name) && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-9 w-9 hover:bg-muted"
+                    onClick={() => handleEditLabelTemplate(connection)}
+                    title="Edit Label Template"
+                  >
+                    <StickyNote className="h-4 w-4" />
+                  </Button>
+                )}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon" className="h-9 w-9 hover:bg-muted">

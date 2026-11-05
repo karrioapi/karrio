@@ -258,10 +258,20 @@ class CarrierLabelPreview(VirtualDownloadView):
         """
         try:
             query_params = request.GET.dict()
-            carrier = models.CarrierConnection.objects.get(carrier_code="generic", pk=pk)
+            carrier = (
+                models.CarrierConnection.objects.filter(
+                    carrier_code="generic", pk=pk
+                ).first()
+                or models.SystemConnection.objects.filter(
+                    carrier_code="generic", pk=pk
+                ).first()
+            )
+            if carrier is None:
+                raise NotFound(f"Unknown generic carrier connection: {pk}")
+            carrier_name = carrier.get_credentials().get("custom_carrier_name")
 
             self.document = self._generate_label(carrier, format)
-            self.name = f"{carrier.custom_carrier_name}_label.{format}"
+            self.name = f"{carrier_name or carrier.carrier_id}_label.{format}"
             self.attachment = query_params.get("download", False)
 
             response = super(CarrierLabelPreview, self).get(
@@ -283,11 +293,10 @@ class CarrierLabelPreview(VirtualDownloadView):
         import karrio.sdk as karrio
         import karrio.providers.generic.units as units
 
-        template = carrier.label_template
+        template = carrier.get_credentials().get("label_template")
+        sample = (template or {}).get("shipment_sample") or {}
         data = lib.identity(
-            template.shipment_sample
-            if template is not None and len(template.shipment_sample.items()) > 0
-            else units.SAMPLE_SHIPMENT_REQUEST
+            sample if any(sample) else units.SAMPLE_SHIPMENT_REQUEST
         )
         service = lib.identity(
             data.get("service") or next((s.service_code for s in carrier.services))
