@@ -294,10 +294,12 @@ export function CarrierConnectionDialog({
         const carrierName = value.carrier_name as string;
         const fields = references?.connection_fields?.[carrierName] || {};
         const defaultCredentials = Object.entries(fields).reduce(
-          (acc, [key, field]: [string, any]) => ({
-            ...acc,
-            [key]: field.default || "",
-          }),
+          (acc, [key, field]: [string, any]) =>
+            // label_template has no seed value: it is set on an existing
+            // connection through the label template editor
+            key === "label_template"
+              ? acc
+              : { ...acc, [key]: field.default || "" },
           {}
         );
         setValue("credentials", defaultCredentials);
