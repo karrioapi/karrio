@@ -642,3 +642,14 @@ def field_to_serializer(args: dict):
             required=required,
             **(dict(default=default) if not required else {}),
         )
+    if type == "object":
+        # no default: injected defaults would persist keys the caller never sent
+        return PlainDictField(
+            required=required,
+            **(dict(allow_null=True) if not required else {}),
+        )
+    if type == "list":
+        return serializers.ListField(
+            required=required,
+            **(dict(allow_null=True) if not required else {}),
+        )
