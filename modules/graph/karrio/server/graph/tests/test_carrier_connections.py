@@ -1,5 +1,6 @@
 import karrio.lib as lib
 from unittest.mock import ANY
+import karrio.server.providers.models as providers
 from karrio.server.graph.tests.base import GraphTestCase
 
 
@@ -34,6 +35,17 @@ class TestSystemConnections(GraphTestCase):
 
 class TestUserConnections(GraphTestCase):
     def test_query_user_connections(self):
+        providers.CarrierConnection.objects.create(
+            carrier_code="generic",
+            carrier_id="custom_carrier",
+            test_mode=False,
+            created_by=self.user,
+            credentials=dict(
+                custom_carrier_name="Custom Carrier",
+                display_name="Custom Carrier Display",
+            ),
+            capabilities=["rating", "shipping"],
+        )
         response = self.query(
             """
             query get_user_connections {
@@ -46,6 +58,7 @@ class TestUserConnections(GraphTestCase):
                     active
                     test_mode
                     credentials
+                    custom_carrier_name
                   }
                 }
               }
@@ -145,6 +158,20 @@ USER_CONNECTIONS = {
     "data": {
         "user_connections": {
             "edges": [
+                {
+                    "node": {
+                        "active": True,
+                        "carrier_id": "custom_carrier",
+                        "carrier_name": "generic",
+                        "credentials": {
+                            "custom_carrier_name": "Custom Carrier",
+                            "display_name": "Custom Carrier Display",
+                        },
+                        "custom_carrier_name": "Custom Carrier",
+                        "id": ANY,
+                        "test_mode": False,
+                    }
+                },
                 {
                     "node": {
                         "active": True,
