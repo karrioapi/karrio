@@ -33,7 +33,7 @@ class TestCarrierLabelPreview(APITestCase):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.content, EXPECTED_LABEL)
+        self.assertEqual(b"".join(response.streaming_content), EXPECTED_LABEL)
 
     def test_label_preview_without_template(self):
         """A generic connection without a label_template falls back to the
