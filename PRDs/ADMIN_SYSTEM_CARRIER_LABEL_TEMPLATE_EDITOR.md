@@ -123,6 +123,22 @@ The preview endpoint resolves the template from connection credentials and retur
 2. Preview endpoint semantics for brokered connections (tenant hitting preview for a brokered system carrier): resolve via delegation or restrict to the system connection itself.
    Prefer whichever the existing permission scoping already permits.
 
+## Open-Question Resolutions (implementation addendum)
+
+1. Partial credentials delta is viable; the editor sends `{ id, credentials: { label_template } }`.
+   `SystemConnectionModelSerializer.update` merges the delta into the decrypted existing credentials before mapping through the generic settings serializer, which keeps `label_template` now that object-typed settings map to `CarrierSettingsDictField` (landed on the parent branch as the root-cause fix for the tenant save-persistence bug).
+   Pinned by `TestAdminSystemConnectionLabelTemplate` in `modules/admin/karrio/server/admin/tests/test_connections.py`, which also asserts the other credential keys survive the partial update.
+   No full-dict hydration is required.
+
+2. The preview endpoint resolves `CarrierConnection` first, then `SystemConnection`, and keeps its 409 error response when neither matches.
+   This serves the admin editor's preview button for system carriers while leaving tenant-owned behavior unchanged.
+   Brokered connections remain unserved: no UI path previews them (the tenant modal opens only on owned connections), matching the "restrict" side of the question and the endpoint's existing authenticated, not-org-scoped posture.
+   Template reads go through `get_credentials()` so encrypted-credential editions resolve identically.
+   Pinned by `test_label_preview_for_system_connection` and `test_label_preview_unknown_connection` in `modules/core/karrio/server/providers/tests/test_label_preview.py`.
+
+Verification: `karrio.server.admin.tests` (96 tests), `karrio.server.providers.tests` (26), and `karrio.server.graph.tests` (108) pass via the worktree overlay runner; `tsc --noEmit` on `packages/admin` is clean; the `@karrio/dashboard` production build (which compiles the admin carriers page) succeeds.
+The manual dev-deployment check from the testing strategy remains open.
+
 ## Testing Strategy
 
 Backend: unittest/Django tests for the preview endpoint (with and without template); existing admin and provider suites stay green.
