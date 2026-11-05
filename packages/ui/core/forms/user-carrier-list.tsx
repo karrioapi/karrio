@@ -181,7 +181,7 @@ export const UserConnectionList = (): JSX.Element => {
                           <li>
                             <span className="is-size-7 my-1 has-text-weight-semibold">
                               carrier_name:{" "}
-                              {(connection as any).custom_carrier_name ||
+                              {connection.custom_carrier_name ||
                                 connection.carrier_name}
                             </span>
                           </li>
@@ -200,7 +200,7 @@ export const UserConnectionList = (): JSX.Element => {
                     <td className="action is-vcentered pr-0">
                       <div className="buttons is-justify-content-end">
                         {!isNoneOrEmpty(
-                          (connection as any).custom_carrier_name,
+                          connection.custom_carrier_name,
                         ) && (
                             <button
                               title="edit label"

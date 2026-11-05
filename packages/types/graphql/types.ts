@@ -2362,6 +2362,7 @@ export interface get_user_connections_user_connections_edges_node {
   carrier_id: string;
   carrier_name: string;
   display_name: string;
+  custom_carrier_name: string | null;
   test_mode: boolean;
   active: boolean;
   capabilities: string[];
