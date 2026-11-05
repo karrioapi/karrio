@@ -127,6 +127,146 @@ class TestUserConnections(GraphTestCase):
         )
 
 
+class TestLabelTemplatePersistence(GraphTestCase):
+    """Reproduce the dashboard label template editor save not persisting.
+
+    The redesigned Connections page (packages/core/modules/Connections/index.tsx
+    handleEditLabelTemplate) saves a partial credentials delta through the
+    update_carrier_connection graph mutation:
+
+        {id, credentials: {label_template: <modal template object>}}
+
+    The modal (packages/ui/core/modals/label-template-edit-modal.tsx) submits
+    its whole template state object, shaped by DEFAULT_LABEL_TEMPLATE_CONTENT
+    plus user edits.
+    """
+
+    def setUp(self):
+        super().setUp()
+        self.generic_carrier = providers.CarrierConnection.objects.create(
+            carrier_code="generic",
+            carrier_id="custom_carrier",
+            test_mode=False,
+            created_by=self.user,
+            credentials=dict(
+                custom_carrier_name="Custom Carrier",
+                display_name="Custom Carrier Display",
+            ),
+            capabilities=["rating", "shipping"],
+        )
+
+    def test_update_generic_connection_label_template(self):
+        response = self.query(
+            """
+            mutation update_connection($data: UpdateCarrierConnectionMutationInput!) {
+              update_carrier_connection(input: $data) {
+                connection {
+                    id
+                    credentials
+                }
+              }
+            }
+            """,
+            operation_name="update_connection",
+            variables={
+                "data": {
+                    "id": self.generic_carrier.id,
+                    **LABEL_TEMPLATE_UPDATE_DATA["data"],
+                },
+            },
+        )
+
+        self.assertResponseNoErrors(response)
+        print("mutation response credentials:", response.data)
+
+        connection = providers.CarrierConnection.objects.get(
+            id=self.generic_carrier.id
+        )
+        print("reloaded raw credentials:", connection.credentials)
+        self.assertIn("label_template", connection.credentials)
+        self.assertEqual(
+            connection.credentials["label_template"],
+            LABEL_TEMPLATE_UPDATE_DATA["data"]["credentials"]["label_template"],
+        )
+
+    def test_update_generic_connection_label_template_legacy_toplevel(self):
+        """The pre-redesign UI (packages/ui/core/forms/user-carrier-list.tsx)
+        sent label_template as a top-level mutation input key. Document what
+        the graph layer does with that unknown key."""
+        response = self.query(
+            """
+            mutation update_connection($data: UpdateCarrierConnectionMutationInput!) {
+              update_carrier_connection(input: $data) {
+                connection {
+                    id
+                    credentials
+                }
+              }
+            }
+            """,
+            operation_name="update_connection",
+            variables={
+                "data": {
+                    "id": self.generic_carrier.id,
+                    "label_template": LABEL_TEMPLATE_UPDATE_DATA["data"][
+                        "credentials"
+                    ]["label_template"],
+                },
+            },
+        )
+
+        print("legacy-shape response:", response.data)
+
+        if response.data.get("errors") is None:
+            connection = providers.CarrierConnection.objects.get(
+                id=self.generic_carrier.id
+            )
+            print("legacy-shape reloaded credentials:", connection.credentials)
+
+    def test_generic_connection_serializer_keeps_label_template(self):
+        """Bisect the drop: feed the merged credentials dict directly to the
+        generated generic connection serializer that
+        CarrierConnectionModelSerializer.update re-serializes through
+        (modules/core/karrio/server/providers/serializers/base.py:250-260)."""
+        from karrio.server.providers.serializers.base import (
+            CONNECTION_SERIALIZERS,
+        )
+
+        merged = lib.to_dict(
+            {
+                **self.generic_carrier.credentials,
+                **LABEL_TEMPLATE_UPDATE_DATA["data"]["credentials"],
+            }
+        )
+        result = CONNECTION_SERIALIZERS["generic"].map(data=merged).data
+        print("generic serializer fields:", list(result.keys()))
+        self.assertIn("label_template", result)
+
+
+LABEL_TEMPLATE_UPDATE_DATA = {
+    "data": {
+        "credentials": {
+            # Exact object the modal's onSubmit receives and the Connections
+            # page nests under credentials: DEFAULT_LABEL_TEMPLATE_CONTENT
+            # with the slug filled and the template body edited. Untouched
+            # width/height remain the numeric defaults; shipment_sample
+            # stays the initial empty object.
+            "label_template": {
+                "slug": "ucc_128",
+                "width": 4,
+                "height": 6,
+                "template_type": "SVG",
+                "template": (
+                    "<svg xmlns='http://www.w3.org/2000/svg' width='4in' "
+                    "height='6in'></svg>"
+                ),
+                "shipment_sample": {},
+            },
+        },
+    }
+}
+
+
 SYSTEM_CONNECTIONS = {
     "data": {
         "system_connections": {
