@@ -57,6 +57,38 @@ class TestCarrierLabelPreview(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_label_preview_for_system_connection(self):
+        """The preview also resolves generic SystemConnections so the admin
+        label-template editor can preview system carrier templates."""
+        system_carrier = providers.SystemConnection.objects.create(
+            carrier_code="generic",
+            carrier_id="custom_system_carrier",
+            test_mode=True,
+            credentials=dict(
+                custom_carrier_name="System Custom Carrier",
+                label_template=LABEL_TEMPLATE,
+            ),
+            capabilities=["rating", "shipping"],
+        )
+        url = reverse(
+            "karrio.server.providers:carrier-label",
+            kwargs=dict(pk=system_carrier.id, format="svg"),
+        )
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(b"".join(response.streaming_content), EXPECTED_LABEL)
+
+    def test_label_preview_unknown_connection(self):
+        """An id matching no generic connection keeps the 409 error response."""
+        url = reverse(
+            "karrio.server.providers:carrier-label",
+            kwargs=dict(pk="unknown_connection_id", format="svg"),
+        )
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
+
 
 LABEL_TEMPLATE = {
     "slug": "ucc_128",
