@@ -223,6 +223,49 @@ class TestLabelTemplatePersistence(GraphTestCase):
             )
             print("legacy-shape reloaded credentials:", connection.credentials)
 
+    def test_create_generic_connection_with_blank_label_template(self):
+        """Reproduce the connection create failure introduced by mapping
+        object-typed credential descriptors to PlainDictField.
+
+        When a NEW connection's carrier is selected, the dialog seeds every
+        connection_fields key with `field.default || ""`
+        (packages/ui/components/carrier-connection-dialog.tsx defaultCredentials
+        builder). label_template has no default, so the create payload carries
+        it as a blank string, and the blank value must be treated as absent
+        instead of failing validation with not_a_dict.
+        """
+        response = self.query(
+            """
+            mutation create_connection($data: CreateCarrierConnectionMutationInput!) {
+              create_carrier_connection(input: $data) {
+                connection {
+                    id
+                    carrier_id
+                    carrier_name
+                    active
+                    test_mode
+                    credentials
+                }
+              }
+            }
+            """,
+            operation_name="create_connection",
+            variables=DIALOG_CREATE_DATA,
+        )
+
+        self.assertResponseNoErrors(response)
+
+        connection = providers.CarrierConnection.objects.get(
+            carrier_id="new-custom-carrier"
+        )
+        self.assertNotIn("label_template", connection.credentials)
+        self.assertEqual(
+            connection.credentials["display_name"], "New Custom Carrier"
+        )
+        self.assertEqual(
+            connection.credentials["custom_carrier_name"], "new_custom_carrier"
+        )
+
     def test_generic_connection_serializer_keeps_label_template(self):
         """Bisect the drop: feed the merged credentials dict directly to the
         generated generic connection serializer that
@@ -241,6 +284,31 @@ class TestLabelTemplatePersistence(GraphTestCase):
         result = CONNECTION_SERIALIZERS["generic"].map(data=merged).data
         print("generic serializer fields:", list(result.keys()))
         self.assertIn("label_template", result)
+
+
+DIALOG_CREATE_DATA = {
+    "data": {
+        # Shape assembled by useCarrierConnectionForm.handleSubmit
+        # (packages/hooks/user-connection.ts) for a new connection, with the
+        # credentials dict the dialog's defaultCredentials builder produces
+        # for generic: every connection_fields key set to `field.default || ""`,
+        # display_name/custom_carrier_name filled in by the user.
+        "carrier_name": "generic",
+        "carrier_id": "new-custom-carrier",
+        "active": True,
+        "credentials": {
+            "display_name": "New Custom Carrier",
+            "custom_carrier_name": "new_custom_carrier",
+            "account_country_code": "",
+            "account_number": "",
+            "metadata": {},
+            "config": {},
+            "label_template": "",
+        },
+        "config": {},
+        "metadata": {},
+    }
+}
 
 
 LABEL_TEMPLATE_UPDATE_DATA = {
