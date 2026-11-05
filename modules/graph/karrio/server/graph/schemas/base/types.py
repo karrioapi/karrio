@@ -2356,6 +2356,12 @@ class CarrierConnectionType:
         return credentials.get("account_country_code") or None
 
     @strawberry.field
+    def custom_carrier_name(self: providers.CarrierConnection) -> typing.Optional[str]:
+        """Custom carrier name set on generic carrier connections."""
+        credentials = getattr(self, "credentials", None) or {}
+        return credentials.get("custom_carrier_name") or None
+
+    @strawberry.field
     def metadata(self: providers.CarrierConnection, info: Info) -> typing.Optional[utils.JSON]:
         return getattr(self, "metadata", None)
 
