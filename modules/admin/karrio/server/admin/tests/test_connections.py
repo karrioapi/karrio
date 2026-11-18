@@ -1,4 +1,5 @@
 from unittest.mock import ANY
+from django.urls import reverse
 from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient
 from karrio.server.admin.tests.base import AdminGraphTestCase
@@ -81,6 +82,60 @@ class TestAdminCarrierConnections(AdminGraphTestCase):
         connection = response.data["data"]["system_carrier_connection"]
         self.assertEqual(connection["carrier_id"], "ups_system_account")
         self.assertEqual(connection["carrier_name"], "ups")
+
+    def test_staff_still_see_the_full_system_connection_config(self):
+        """Config secrets are withheld from tenants, not from staff managing
+        the platform connection (the documented staff exception)."""
+        self.system_connection.config = dict(
+            primary_id="SYSTEM", partner_tracking_api_code="platform-code"
+        )
+        self.system_connection.save()
+
+        response = self.query(
+            """
+            query get_system_carrier_connection($id: String!) {
+              system_carrier_connection(id: $id) { config }
+            }
+            """,
+            operation_name="get_system_carrier_connection",
+            variables={"id": self.system_connection.id},
+        )
+
+        self.assertResponseNoErrors(response)
+        self.assertDictEqual(
+            response.data["data"]["system_carrier_connection"]["config"],
+            dict(primary_id="SYSTEM", partner_tracking_api_code="platform-code"),
+        )
+
+    def test_a_non_staff_caller_cannot_read_the_system_connection_config(self):
+        """The full config is the staff exception: anyone else is refused."""
+        self.system_connection.config = dict(partner_tracking_api_code="platform-code")
+        self.system_connection.save()
+        member = get_user_model().objects.create_user("member@example.com", "test")
+        client = APIClient()
+        client.credentials(
+            HTTP_AUTHORIZATION="Token "
+            + Token.objects.create(user=member, test_mode=False).key
+        )
+        query = """
+            query get_system_carrier_connection($id: String!) {
+              system_carrier_connection(id: $id) { config }
+            }
+        """
+
+        response = client.post(
+            reverse("karrio.server.admin:admin-graph"),
+            dict(
+                query=query,
+                operation_name="get_system_carrier_connection",
+                variables={"id": self.system_connection.id},
+            ),
+            format="json",
+        )
+
+        self.assertIsNotNone(response.json().get("errors"))
+        self.assertIsNone((response.json().get("data") or {}).get("system_carrier_connection"))
+        self.assertNotIn("platform-code", response.content.decode())
 
     def test_create_system_carrier_connection(self):
         """Test creating a system carrier connection through admin API."""

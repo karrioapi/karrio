@@ -28,6 +28,141 @@ WEIGHT_UNITS = [(c.name, c.name) for c in units.WeightUnit]
 DIMENSION_UNITS = [(c.name, c.name) for c in units.DimensionUnit]
 CAPABILITIES_CHOICES = [(c, c) for c in units.CarrierCapabilities.get_capabilities()]
 
+# Credential keys that identify an account and are never secret. They are the
+# only credential values a connection ever returns to API clients: secrets are
+# write-only. An allowlist rather than the connectors' ``sensitive`` flag,
+# because most connectors do not set that flag on their secret fields, and a
+# new connector that forgets it must not start leaking its secrets.
+PUBLIC_CREDENTIAL_FIELDS = frozenset(
+    [
+        "account_country_code",
+        "account_id",
+        "account_number",
+        "account_type",
+        "client_id",
+        "consigner_id",
+        "contact_id",
+        "contract_id",
+        "CRID",
+        "custom_carrier_name",
+        "customer_account_number",
+        "customer_id",
+        "customer_number",
+        "customer_sub_account_number",
+        "delis_id",
+        "depot",
+        "display_name",
+        "dpd_bucode",
+        "dpd_client_id",
+        "dpd_login",
+        "id_emit",
+        "label_template",
+        "lang",
+        "language",
+        "mandator_id",
+        "manifest_MID",
+        "message_language",
+        "MID",
+        "org_unit_guid",
+        "org_unit_id",
+        "region",
+        "sendle_id",
+        "site_id",
+        "username",
+    ]
+)
+
+# Connection ``config`` keys that are settings or account identifiers, never
+# secrets: the only config values a connection returns to non-staff API
+# clients. Same rule as credentials, because config holds secrets too
+# (SmartKargo's partner_tracking_api_code is sent as an auth header, a
+# webhook_secret verifies carrier webhooks) and connectors declare config
+# options without any sensitive flag. A key not listed here, including any
+# a future connector adds, is write-only until it is reviewed and listed.
+PUBLIC_CONFIG_FIELDS = frozenset(
+    [
+        "account_currency",
+        "additional_id",
+        "brand_color",
+        "cep_id",
+        "cost_center",
+        "cost_center_id",  # seko utils.py ConnectionConfig
+        "cost_centre_id",  # seko utils.py ConnectionConfig
+        "cost_centre_name",  # seko utils.py ConnectionConfig
+        "creation_software",
+        "currency",
+        "default_billing_number",
+        "default_currency",  # SDK base ConnectionConfigOption
+        "destination",
+        "dropoff_type",
+        "enforce_zpl",
+        "extra_barcode",
+        "impport_request_produce_label",  # undeclared, read by landmark shipment/create.py
+        "import_request_by_default",
+        "label_branding",  # seko utils.py ConnectionConfig
+        "label_format",
+        "label_paper_format",
+        "label_printer_position",
+        "label_size",
+        "label_type",
+        "lang",
+        "language",
+        "language_code",  # SDK base ConnectionConfigOption
+        "locale",
+        "merchant_id",
+        "origin",
+        "paper_layout",
+        "partner_tracking_url",
+        "permit_number",  # usps(_international) utils.py ConnectionConfig
+        "permit_ZIP",  # usps(_international) utils.py ConnectionConfig
+        "pickup_billing_number",
+        "price_type",  # usps_international utils.py ConnectionConfig
+        "primary_id",
+        "printer_language",  # gls utils.py ConnectionConfig
+        "product_id",
+        "profile",
+        "rate_request_types",  # undeclared, read by fedex rate.py and shipment/create.py
+        "return_billing_number",
+        "sending_depot",
+        "server_url",
+        "service_billing_numbers",
+        "shipping_options",
+        "shipping_services",
+        "simulate",
+        "site_id",
+        "skip_service_filter",
+        "smart_post_hub_id",
+        "software_name",
+        "template_name",  # gls utils.py ConnectionConfig
+        "text_color",
+        "transmit_shipment_by_default",
+        "webhook_id",  # written by providers/views/connections.py on webhook register
+        "webhook_url",  # written by providers/views/connections.py on webhook register
+        "with_document",
+    ]
+)
+
+
+# Connection ``config`` keys that are secrets: write-only, never returned to
+# non-staff API clients. Not consulted at runtime (anything outside
+# PUBLIC_CONFIG_FIELDS is withheld anyway); it exists so that every config
+# option a connector declares is classified on purpose, which a test checks.
+SECRET_CONFIG_FIELDS = frozenset(
+    [
+        "partner_tracking_api_code",  # smartkargo: sent as the HTTP auth "code" header
+        "webhook_secret",  # written on webhook register, verifies inbound carrier events
+    ]
+)
+
+
+def get_public_config(config: typing.Optional[dict]) -> typing.Dict:
+    """Config values that may be returned to non-staff API clients."""
+    return {
+        key: value
+        for key, value in (config or {}).items()
+        if key in PUBLIC_CONFIG_FIELDS
+    }
+
 
 class CarrierConnectionQuerySet(models.QuerySet):
     """QuerySet for CarrierConnection with common filters."""
@@ -277,6 +412,26 @@ class CarrierConnection(core.OwnedEntity):
         connection_fields = references.REFERENCES.get("connection_fields", {})
         carrier_fields = connection_fields.get(self.ext, {})
         return set(carrier_fields.keys())
+
+    def get_public_credentials(self) -> typing.Dict:
+        """Credential values that may be returned to API clients.
+
+        Only account identifiers from ``PUBLIC_CREDENTIAL_FIELDS``, and never a
+        field the connector marks sensitive. Passwords, API keys and client
+        secrets are write-only: clients send them, the server never returns
+        them, and an update that omits one keeps the stored value.
+        """
+        sensitive = self.get_sensitive_fields()
+        return {
+            key: value
+            for key, value in (self.credentials or {}).items()
+            if key in PUBLIC_CREDENTIAL_FIELDS and key not in sensitive
+        }
+
+    def get_public_config(self) -> typing.Dict:
+        """Config values that may be returned to non-staff API clients: only
+        keys in ``PUBLIC_CONFIG_FIELDS``; config secrets are write-only."""
+        return get_public_config(self.config)
 
     def get_credentials(self, user_id: typing.Optional[typing.Any] = None) -> typing.Dict:
         """

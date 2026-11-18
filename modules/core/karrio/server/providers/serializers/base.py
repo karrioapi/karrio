@@ -146,9 +146,10 @@ class CarrierConnection(serializers.Serializer):
         help_text="""The carrier enabled capabilities.""",
     )
     config = serializers.PlainDictField(
+        source="get_public_config",
         required=False,
         default={},
-        help_text="Carrier connection custom config.",
+        help_text="Carrier connection custom config. Settings only: config secrets are write-only.",
     )
     metadata = serializers.PlainDictField(
         required=False,
@@ -176,6 +177,21 @@ class CarrierConnection(serializers.Serializer):
     def get_is_system(self, obj) -> bool:
         """Return True for BrokeredConnection (system connections), False for Carrier (user-owned)."""
         return isinstance(obj, providers.BrokeredConnection)
+
+
+def keep_withheld_config(config: typing.Optional[dict]) -> typing.Optional[dict]:
+    """Config secrets are never returned, so a client editing a connection
+    sends them blank: a blank ("") secret keeps the stored value. null still
+    removes a key (it is how a secret is deliberately cleared, e.g. by the
+    webhook deregister and disconnect endpoints)."""
+    if config is None:
+        return None
+
+    return {
+        key: value
+        for key, value in config.items()
+        if key in providers.PUBLIC_CONFIG_FIELDS or value != ""
+    }
 
 
 @serializers.owned_model_serializer
@@ -248,6 +264,14 @@ class CarrierConnectionModelSerializer(serializers.ModelSerializer):
             ]
 
         if "credentials" in validated_data:
+            # Secrets are never returned, so a client editing a connection sends
+            # them blank: a blank or null secret keeps the stored value.
+            public = providers.PUBLIC_CREDENTIAL_FIELDS - instance.get_sensitive_fields()
+            validated_data["credentials"] = {
+                key: value
+                for key, value in (validated_data["credentials"] or {}).items()
+                if key in public or value not in (None, "")
+            }
             data = serializers.process_dictionaries_mutations(
                 ["credentials"],
                 validated_data,
@@ -263,7 +287,7 @@ class CarrierConnectionModelSerializer(serializers.ModelSerializer):
             # Config is stored directly on Carrier model
             data = serializers.process_dictionaries_mutations(
                 ["config"],
-                dict(config=validated_data.pop("config")),
+                dict(config=keep_withheld_config(validated_data.pop("config"))),
                 instance,
             )
             validated_data["config"] = data["config"]
@@ -516,7 +540,11 @@ class BrokeredConnectionModelSerializer(serializers.ModelSerializer):
         if "config_overrides" in validated_data:
             data = serializers.process_dictionaries_mutations(
                 ["config_overrides"],
-                dict(config_overrides=validated_data.pop("config_overrides")),
+                dict(
+                    config_overrides=keep_withheld_config(
+                        validated_data.pop("config_overrides")
+                    )
+                ),
                 instance,
             )
             validated_data["config_overrides"] = data["config_overrides"]

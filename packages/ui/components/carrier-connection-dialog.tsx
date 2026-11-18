@@ -153,6 +153,20 @@ export function CarrierConnectionDialog({
     defaultValues,
   });
 
+  // Secrets are write-only: on edit the server returns account identifiers only.
+  // A field it did not return keeps its stored value when left blank.
+  const isWithheld = (key: string) =>
+    !!selectedConnection && !(key in (selectedConnection.credentials || {}));
+  const isBlank = (value: unknown) => value === undefined || value === null || value === "";
+  // Config keys the server never returns to a tenant (SECRET_CONFIG_FIELDS on the
+  // server). On a saved connection their absence means "stored but not shown".
+  const WITHHELD_CONFIG_KEYS = ["webhook_secret", "partner_tracking_api_code"];
+  const isConfigWithheld = (key: string) =>
+    !!selectedConnection &&
+    WITHHELD_CONFIG_KEYS.includes(key) &&
+    !(key in (selectedConnection.config || {}));
+  const KEEP_CURRENT_HINT = "Leave blank to keep the current value";
+
   const handleSubmit = async (values: FormData) => {
     if (!onSubmit) {
       toast({
@@ -166,7 +180,20 @@ export function CarrierConnectionDialog({
     try {
       // Keep carrier_name as-is (should be "generic" for custom carriers)
       // The custom_carrier_name stays in credentials where backend expects it
-      await onSubmit(values, selectedConnection);
+      const credentials = Object.fromEntries(
+        Object.entries(values.credentials || {}).filter(
+          ([key, value]) => !(isWithheld(key) && isBlank(value)),
+        ),
+      );
+      // An untouched withheld config secret is never sent as a value.
+      const config = values.config
+        ? Object.fromEntries(
+          Object.entries(values.config).filter(
+            ([key, value]) => !(isConfigWithheld(key) && isBlank(value)),
+          ),
+        )
+        : values.config;
+      await onSubmit({ ...values, credentials, config }, selectedConnection);
 
       toast({
         title: "Success",
@@ -250,7 +277,7 @@ export function CarrierConnectionDialog({
             return true; // Skip validation - system will provide
           }
           const value = credentials?.[key];
-          return value !== undefined && value !== "" && value !== null;
+          return !isBlank(value) || isWithheld(key);
         }
         return true;
       });
@@ -489,7 +516,12 @@ export function CarrierConnectionDialog({
                     placeholder="Select a country"
                   />
                 ) : field.type === "string" && !field.enum ? (
-                  <Input {...formField} value={formField.value || ""} autoComplete="off" />
+                  <Input
+                    {...formField}
+                    value={formField.value || ""}
+                    autoComplete="off"
+                    placeholder={isWithheld(key) ? KEEP_CURRENT_HINT : undefined}
+                  />
                 ) : field.type === "string" && field.enum ? (
                   <Select
                     onValueChange={formField.onChange}
@@ -559,7 +591,12 @@ export function CarrierConnectionDialog({
                   <FormLabel>{formatLabel(config.name)}</FormLabel>
                   <FormControl>
                     {config.type === "string" && !config.enum ? (
-                      <Input {...formField} value={formField.value || ''} />
+                      <Input
+                        {...formField}
+                        value={formField.value || ''}
+                        autoComplete="off"
+                        placeholder={isConfigWithheld(key) ? KEEP_CURRENT_HINT : undefined}
+                      />
                     ) : config.type === "string" && config.enum ? (
                       <Select
                         onValueChange={formField.onChange}
@@ -1432,11 +1469,16 @@ export function CarrierConnectionDialog({
                                       {...field}
                                       value={field.value || ""}
                                       type="password"
-                                      placeholder="Enter webhook secret for signature verification"
+                                      autoComplete="off"
+                                      placeholder={
+                                        isConfigWithheld("webhook_secret")
+                                          ? KEEP_CURRENT_HINT
+                                          : "Enter webhook secret for signature verification"
+                                      }
                                     />
                                   </FormControl>
                                   <p className="text-xs text-muted-foreground">
-                                    Used to verify webhook signatures. Auto-populated when using the register button, or enter manually if you registered the webhook externally.
+                                    Used to verify webhook signatures. Auto-populated when using the register button, or enter manually if you registered the webhook externally. A stored secret is never shown: leave the field blank to keep it, or enter a new value to replace it.
                                   </p>
                                 </FormItem>
                               )}
