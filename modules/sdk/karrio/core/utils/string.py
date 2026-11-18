@@ -67,8 +67,9 @@ class STRINGFORMAT:
                 processed = "".join(
                     c if c.isalnum() or c == separator else separator for c in processed
                 )
-                # Remove consecutive separators
-                while separator * 2 in processed:
+                # Remove consecutive separators (an empty separator has none,
+                # and "" * 2 is in every string: the loop would never end)
+                while separator and separator * 2 in processed:
                     processed = processed.replace(separator * 2, separator)
                 # Remove leading and trailing separators
                 processed = processed.strip(separator)
