@@ -777,24 +777,13 @@ class Tracking(core.OwnedEntity):
         )
 
     @property
-    def delivery_image_url(self) -> str:
-        if self.delivery_image is None:
-            return None
-
-        return urls.reverse(
-            "karrio.server.manager:tracker-docs",
-            kwargs=dict(pk=self.pk, doc="delivery_image"),
-        )
+    def delivery_image_url(self) -> typing.Optional[str]:
+        # The legacy image download endpoint has been removed.
+        return None
 
     @property
-    def signature_image_url(self) -> str:
-        if self.signature_image is None:
-            return None
-
-        return urls.reverse(
-            "karrio.server.manager:tracker-docs",
-            kwargs=dict(pk=self.pk, doc="signature_image"),
-        )
+    def signature_image_url(self) -> typing.Optional[str]:
+        return None
 
 
 @core.register_model
