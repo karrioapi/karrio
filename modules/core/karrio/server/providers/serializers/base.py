@@ -1,5 +1,6 @@
 import typing
 import django.db.transaction as transaction
+from django.http.request import RawPostDataException
 from rest_framework import status as http_status
 
 import karrio.lib as lib
@@ -752,8 +753,32 @@ class OAuthCallbackSerializer(serializers.Serializer):
 # =============================================================================
 
 
+# Message codes a connector answers with when it could not authenticate the
+# sender of an inbound event (no secret stored, no signature header, wrong
+# signature). The event is then refused with HTTP 401 and nothing is applied.
+WEBHOOK_AUTHENTICATION_ERROR_CODES = frozenset(
+    ["webhook_secret_not_configured", "webhook_signature_missing", "invalid_signature"]
+)
+
+# The one answer to every such rejection: it must not tell the caller whether a
+# secret is configured. The specific reason is in the server log.
+WEBHOOK_REJECTION_MESSAGE = "webhook signature verification failed"
+
+
 class WebhookEventSerializer(serializers.Serializer):
     """Handles webhook event processing logic."""
+
+    @staticmethod
+    def read_raw_body(request) -> typing.Optional[bytes]:
+        """The request body exactly as received, read BEFORE the request is parsed.
+
+        Reading it first leaves the stream available to DRF's parsers (the
+        bytes are cached on the request). None if it can no longer be read.
+        """
+        try:
+            return bytes(request.body)
+        except (AttributeError, RawPostDataException):
+            return None
 
     @staticmethod
     def process_event(request, pk: str) -> tuple:
@@ -779,15 +804,41 @@ class WebhookEventSerializer(serializers.Serializer):
                 http_status.HTTP_404_NOT_FOUND,
             )
 
+        raw_body = WebhookEventSerializer.read_raw_body(request)  # before request.data
         event, messages = gateway.Hooks.on_webhook_event(
             payload=dict(
                 url=request.build_absolute_uri(),
                 body=request.data,
                 query=dict(request.query_params),
                 headers=dict(request.headers),
+                raw_body=raw_body,
             ),
             carrier=connection,
         )
+
+        rejections = [
+            _.code for _ in messages if _.code in WEBHOOK_AUTHENTICATION_ERROR_CODES
+        ]
+        if event is None and rejections:
+            # Connection id and reason only: never the header value or the body.
+            logger.warning(
+                "Webhook signature verification failed",
+                connection_id=str(connection.id),
+                reason=rejections[0],
+            )
+            return (
+                dict(
+                    operation="Webhook event",
+                    success=False,
+                    messages=[
+                        dict(
+                            code="webhook_signature_verification_failed",
+                            message=WEBHOOK_REJECTION_MESSAGE,
+                        )
+                    ],
+                ),
+                http_status.HTTP_401_UNAUTHORIZED,
+            )
 
         if event and event.tracking:
             import karrio.server.manager.models as manager_models

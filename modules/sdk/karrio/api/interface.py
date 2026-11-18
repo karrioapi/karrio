@@ -791,6 +791,21 @@ class Webhook:
         return IRequestFrom(action)
 
 
+def _to_request_payload(
+    args: typing.Union[models.RequestPayload, dict],
+) -> models.RequestPayload:
+    """Build the payload, keeping raw_body (bytes) out of the JSON round trip."""
+    if isinstance(args, models.RequestPayload):
+        return args
+
+    data = dict(args)
+    raw_body = data.pop("raw_body", None)
+    payload = lib.to_object(models.RequestPayload, lib.to_dict(data))
+    payload.raw_body = raw_body
+
+    return payload
+
+
 class Hooks:
     """The unified Hooks API fluent interface"""
 
@@ -803,8 +818,9 @@ class Hooks:
         Args:
             args (Union[RequestPayload, dict]): the webhook event request payload
         """
-        logger.debug("Processing webhook event", payload=lib.to_dict(args))
-        payload = lib.to_object(models.RequestPayload, lib.to_dict(args))
+        payload = _to_request_payload(args)
+        # Never log the payload: it carries the request headers (signature) and body.
+        logger.debug("Processing webhook event", url=payload.url)
 
         def action(gateway: gateway.Gateway) -> IDeserialize:
             is_valid, abortion = check_operation(gateway, "on_webhook_event")

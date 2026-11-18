@@ -1202,9 +1202,9 @@ class Hooks:
         if carrier is None:
             raise NotFound("No active carrier connection found to process the request")
 
-        request = karrio.Hooks.on_webhook_event(
-            lib.to_object(datatypes.RequestPayload, lib.to_dict(payload))
-        )
+        # The SDK builds the payload itself: raw_body (bytes) must not go through
+        # the JSON round trip.
+        request = karrio.Hooks.on_webhook_event(payload)
 
         # The request call is wrapped in utils.identity to simplify mocking in tests
         return utils.identity(lambda: request.from_(carrier.gateway).parse())

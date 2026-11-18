@@ -1,6 +1,7 @@
 """Karrio Teleship webhook event processing implementation."""
 
 import hmac
+import json
 import typing
 import hashlib
 import karrio.lib as lib
@@ -27,13 +28,10 @@ def on_webhook_event(
     }
     """
 
-    if not verify_webhook_signature(payload, settings):
-        return None, [
-            models.Message(
-                code="invalid_signature",
-                message=f"Invalid webhook signature for {settings.carrier_name} webhook",
-            )
-        ]
+    # Fail closed: an event is only processed once its sender is authenticated.
+    rejection = webhook_signature_error(payload, settings)
+    if rejection is not None:
+        return None, [rejection]
 
     messages = error.parse_error_response(payload.body, settings)
     body = lib.to_dict(payload.body) if payload.body else {}
@@ -117,47 +115,126 @@ def _extract_webhook_tracking(
     )
 
 
+SIGNATURE_HEADER = "x-teleship-signature"
+
+
+def webhook_signature_error(
+    payload: models.RequestPayload,
+    settings: provider_utils.Settings,
+) -> typing.Optional[models.Message]:
+    """Authenticate an inbound event; None when the signature is valid.
+
+    Fails closed, with a distinct message for each reason:
+    - webhook_secret_not_configured: the connection has no stored secret
+    - webhook_signature_missing: no x-teleship-signature header
+    - invalid_signature: the signature matches none of the accepted forms
+    """
+    secret = settings.connection_config.webhook_secret.state
+    headers = {str(k).lower(): v for k, v in (payload.headers or {}).items()}
+    signature = headers.get(SIGNATURE_HEADER)
+
+    if not secret:
+        return models.Message(
+            carrier_id=settings.carrier_id,
+            carrier_name=settings.carrier_name,
+            code="webhook_secret_not_configured",
+            message=(
+                f"No webhook secret is configured for this {settings.carrier_name} "
+                "connection: the event was not accepted"
+            ),
+        )
+
+    if not signature:
+        return models.Message(
+            carrier_id=settings.carrier_id,
+            carrier_name=settings.carrier_name,
+            code="webhook_signature_missing",
+            message=(
+                f"Missing {SIGNATURE_HEADER} header on {settings.carrier_name} "
+                "webhook event"
+            ),
+        )
+
+    return (
+        None
+        if _signature_matches(str(signature), secret, signed_payloads(payload))
+        else models.Message(
+            carrier_id=settings.carrier_id,
+            carrier_name=settings.carrier_name,
+            code="invalid_signature",
+            message=f"Invalid webhook signature for {settings.carrier_name} webhook",
+        )
+    )
+
+
 def verify_webhook_signature(
     payload: models.RequestPayload,
     settings: provider_utils.Settings,
 ) -> bool:
-    """Verify the webhook signature using HMAC-SHA256.
+    """Verify the webhook signature (HMAC-SHA256 hex) with the stored secret.
 
-    JavaScript equivalent:
-        const crypto = require('crypto');
+    JavaScript equivalent (Teleship, openapi-public.json "Security & Signature
+    Verification"):
+        const expectedSignature = crypto
+          .createHmac('sha256', secret)
+          .update(JSON.stringify(payload))
+          .digest('hex');
 
-        function verifyWebhookSignature(payload, signature, secret) {
-          const expectedSignature = crypto
-            .createHmac('sha256', secret)
-            .update(JSON.stringify(payload))
-            .digest('hex');
-
-          return crypto.timingSafeEqual(
-            Buffer.from(signature),
-            Buffer.from(expectedSignature)
-          );
-        }
+    Always False without a stored secret or without the signature header.
     """
 
-    # Get the signature from headers (access dict directly - headers contain hyphens)
-    headers = payload.headers or {}
-    signature = headers.get("x-teleship-signature")
-    secret = settings.connection_config.webhook_secret.state
+    return webhook_signature_error(payload, settings) is None
 
-    # If no signature provided, skip verification (or return False for strict mode)
-    if not signature or not secret:
-        return True
 
-    # Compute expected signature using HMAC-SHA256
-    # The payload body should be JSON serialized consistently
-    payload_bytes = lib.to_json(payload.body).encode("utf-8")
-    secret_bytes = secret.encode("utf-8")
+def signed_payloads(payload: models.RequestPayload) -> typing.List[bytes]:
+    """The byte strings a valid signature may have been made over.
 
-    expected_signature = hmac.new(
-        secret_bytes,
-        payload_bytes,
-        hashlib.sha256,
-    ).hexdigest()
+    1. the raw request body, exactly as received;
+    2. its compact re-serialisation in received key order (what
+       JSON.stringify(payload) produces), for a sender whose body is not
+       byte-identical to its own stringify. Without raw bytes this is the
+       parsed body, whose key order is whatever the caller kept. Absent when
+       that form cannot be encoded (an escaped lone surrogate).
 
-    # Use constant-time comparison to prevent timing attacks
-    return hmac.compare_digest(signature, expected_signature)
+    The indented, key-sorted form of lib.to_json is never accepted.
+    """
+    raw = (
+        payload.raw_body.encode("utf-8")
+        if isinstance(payload.raw_body, str)
+        else payload.raw_body
+    )
+    parsed = lib.failsafe(lambda: json.loads(raw)) if raw else (payload.body or None)
+    # A body that parses but has no UTF-8 form (an escaped lone surrogate) has no
+    # compact candidate: it is simply absent, the raw body is still compared.
+    compact = (
+        lib.failsafe(
+            lambda: json.dumps(
+                parsed, separators=(",", ":"), ensure_ascii=False
+            ).encode("utf-8")
+        )
+        if parsed is not None
+        else None
+    )
+
+    return [_ for _ in [raw, compact] if _]
+
+
+def _signature_matches(
+    signature: str,
+    secret: str,
+    signed: typing.List[bytes],
+) -> bool:
+    given = signature.encode("utf-8")
+    # Every candidate is compared, in constant time (bytes: also safe for a
+    # non-ASCII header value).
+    matches = [
+        hmac.compare_digest(
+            given,
+            hmac.new(secret.encode("utf-8"), _, hashlib.sha256)
+            .hexdigest()
+            .encode("utf-8"),
+        )
+        for _ in signed
+    ]
+
+    return any(matches)

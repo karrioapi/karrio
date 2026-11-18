@@ -46,6 +46,8 @@ class ConnectionConfig(lib.Enum):
 
     shipping_options = lib.OptionEnum("shipping_options", list)
     shipping_services = lib.OptionEnum("shipping_services", list)
+    # Written when the webhook is registered; verifies inbound events.
+    webhook_secret = lib.OptionEnum("webhook_secret", str)
     label_format = lib.OptionEnum(
         "label_format",
         lib.units.create_enum("LabelType", [_.name for _ in list(LabelType)]),

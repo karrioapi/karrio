@@ -5,6 +5,7 @@ from jinja2 import Template
 HOOKS_EVENT_TEMPLATE = Template("""\"\"\"Karrio {{name}} webhook event processing implementation.\"\"\"
 
 import hmac
+import json
 import typing
 import hashlib
 import karrio.lib as lib
@@ -32,13 +33,10 @@ def on_webhook_event(
     }
     \"\"\"
 
-    if not verify_webhook_signature(payload, settings):
-        return None, [
-            models.Message(
-                code="invalid_signature",
-                message=f"Invalid webhook signature for {settings.carrier_name} webhook",
-            )
-        ]
+    # Fail closed: an event is only processed once its sender is authenticated.
+    rejection = webhook_signature_error(payload, settings)
+    if rejection is not None:
+        return None, [rejection]
 
     messages = error.parse_error_response(payload.body, settings)
     body = lib.typed(payload.body)
@@ -67,50 +65,130 @@ def on_webhook_event(
     return details, messages
 
 
+SIGNATURE_HEADER = "x-{{id}}-signature"
+
+
+def webhook_signature_error(
+    payload: models.RequestPayload,
+    settings: provider_utils.Settings,
+) -> typing.Optional[models.Message]:
+    \"\"\"Authenticate an inbound event; None when the signature is valid.
+
+    Fails closed, with a distinct message for each reason:
+    - webhook_secret_not_configured: the connection has no stored secret
+    - webhook_signature_missing: no signature header
+    - invalid_signature: the signature matches none of the accepted forms
+
+    A connector that verifies a signature must never skip the check because the
+    header or the secret is absent: this route is public, so an unsigned event
+    is an unauthenticated one.
+    \"\"\"
+    secret = settings.connection_config.webhook_secret.state
+    headers = {str(k).lower(): v for k, v in (payload.headers or {}).items()}
+    signature = headers.get(SIGNATURE_HEADER)
+
+    if not secret:
+        return models.Message(
+            carrier_id=settings.carrier_id,
+            carrier_name=settings.carrier_name,
+            code="webhook_secret_not_configured",
+            message=(
+                f"No webhook secret is configured for this {settings.carrier_name} "
+                "connection: the event was not accepted"
+            ),
+        )
+
+    if not signature:
+        return models.Message(
+            carrier_id=settings.carrier_id,
+            carrier_name=settings.carrier_name,
+            code="webhook_signature_missing",
+            message=(
+                f"Missing {SIGNATURE_HEADER} header on {settings.carrier_name} "
+                "webhook event"
+            ),
+        )
+
+    return (
+        None
+        if _signature_matches(str(signature), secret, signed_payloads(payload))
+        else models.Message(
+            carrier_id=settings.carrier_id,
+            carrier_name=settings.carrier_name,
+            code="invalid_signature",
+            message=f"Invalid webhook signature for {settings.carrier_name} webhook",
+        )
+    )
+
+
 def verify_webhook_signature(
     payload: models.RequestPayload,
     settings: provider_utils.Settings,
 ) -> bool:
-    \"\"\"Verify the webhook signature using HMAC-SHA256.
+    \"\"\"Verify the webhook signature (HMAC-SHA256 hex) with the stored secret.
 
     JavaScript equivalent:
-        const crypto = require('crypto');
+        const expectedSignature = crypto
+          .createHmac('sha256', secret)
+          .update(JSON.stringify(payload))
+          .digest('hex');
 
-        function verifyWebhookSignature(payload, signature, secret) {
-          const expectedSignature = crypto
-            .createHmac('sha256', secret)
-            .update(JSON.stringify(payload))
-            .digest('hex');
-
-          return crypto.timingSafeEqual(
-            Buffer.from(signature),
-            Buffer.from(expectedSignature)
-          );
-        }
+    Always False without a stored secret or without the signature header.
     \"\"\"
 
-    # Get the signature from headers
-    headers = lib.typed(payload.headers)
-    signature = headers.get("x-{{id}}-signature")
-    secret = settings.connection_config.webhook_secret.state
+    return webhook_signature_error(payload, settings) is None
 
-    # If no signature provided, skip verification (or return False for strict mode)
-    if not signature or not secret:
-        return True
 
-    # Compute expected signature using HMAC-SHA256
-    # The payload body should be JSON serialized consistently
-    payload_bytes = lib.to_json(payload.body).encode("utf-8")
-    secret_bytes = secret.encode("utf-8")
+def signed_payloads(payload: models.RequestPayload) -> typing.List[bytes]:
+    \"\"\"The byte strings a valid signature may have been made over.
 
-    expected_signature = hmac.new(
-        secret_bytes,
-        payload_bytes,
-        hashlib.sha256,
-    ).hexdigest()
+    1. the raw request body, exactly as received (payload.raw_body);
+    2. its compact re-serialisation in received key order (what
+       JSON.stringify(payload) produces). Absent when that form cannot be
+       encoded (an escaped lone surrogate).
 
-    # Use constant-time comparison to prevent timing attacks
-    return hmac.compare_digest(signature, expected_signature)
+    Never the indented, key-sorted output of lib.to_json.
+    \"\"\"
+    raw = (
+        payload.raw_body.encode("utf-8")
+        if isinstance(payload.raw_body, str)
+        else payload.raw_body
+    )
+    parsed = lib.failsafe(lambda: json.loads(raw)) if raw else (payload.body or None)
+    # A body that parses but has no UTF-8 form (an escaped lone surrogate) has no
+    # compact candidate: it is simply absent, the raw body is still compared.
+    compact = (
+        lib.failsafe(
+            lambda: json.dumps(
+                parsed, separators=(",", ":"), ensure_ascii=False
+            ).encode("utf-8")
+        )
+        if parsed is not None
+        else None
+    )
+
+    return [_ for _ in [raw, compact] if _]
+
+
+def _signature_matches(
+    signature: str,
+    secret: str,
+    signed: typing.List[bytes],
+) -> bool:
+    given = signature.encode("utf-8")
+    # Every candidate is compared, in constant time (bytes: also safe for a
+    # non-ASCII header value).
+    matches = [
+        hmac.compare_digest(
+            given,
+            hmac.new(secret.encode("utf-8"), _, hashlib.sha256)
+            .hexdigest()
+            .encode("utf-8"),
+        )
+        for _ in signed
+    ]
+
+    return any(matches)
 """)
 
 
@@ -267,3 +345,77 @@ class Hooks(hooks.Hooks):
     ) -> typing.Tuple[typing.List[typing.Dict], typing.List[models.Message]]:
         return provider.on_oauth_callback(payload, self.settings)
 """)
+
+
+TEST_HOOKS_EVENT_TEMPLATE = Template('''"""{{name}} carrier webhook event tests.
+
+Inbound events fail closed: no stored secret, no signature header or a wrong
+signature are each rejected with their own message and nothing is applied.
+"""
+
+import hmac
+import json
+import hashlib
+import unittest
+import karrio.sdk as karrio
+import karrio.core.models as models
+import karrio.providers.{{id}}.hooks.event as event_hooks
+from .fixture import gateway, client_id, client_secret
+
+webhook_secret = "whsec_test_webhook_secret"
+gateway_with_secret = karrio.gateway["{{id}}"].create(
+    dict(client_id=client_id, client_secret=client_secret, test_mode=True, config=dict(webhook_secret=webhook_secret)),
+)
+WebhookEvent = {"eventName": "shipment.updated", "objectType": "shipment", "objectId": "shp-1", "data": {}}
+
+
+def compact(body: dict) -> bytes:
+    """What JSON.stringify(payload) produces."""
+    return json.dumps(body, separators=(",", ":"), ensure_ascii=False).encode()
+
+
+def sign(raw: bytes, secret: str = webhook_secret) -> str:
+    return hmac.new(secret.encode(), raw, hashlib.sha256).hexdigest()
+
+
+class Test{{compact_name}}WebhookEvent(unittest.TestCase):
+    def payload(self, headers=None):
+        raw = compact(WebhookEvent)
+        return models.RequestPayload(
+            url="https://api.karrio.io/v1/connections/webhook/{{id}}-123/events",
+            body=WebhookEvent,
+            headers=headers or {},
+            raw_body=raw,
+        )
+
+    def test_on_webhook_event_rejects_a_missing_signature_header(self):
+        details, messages = event_hooks.on_webhook_event(self.payload(), gateway_with_secret.settings)
+
+        self.assertIsNone(details)
+        self.assertEqual([_.code for _ in messages], ["webhook_signature_missing"])
+
+    def test_on_webhook_event_rejects_a_wrong_signature(self):
+        headers = {"x-{{id}}-signature": sign(compact(WebhookEvent), "another-secret")}
+        details, messages = event_hooks.on_webhook_event(self.payload(headers), gateway_with_secret.settings)
+
+        self.assertIsNone(details)
+        self.assertEqual([_.code for _ in messages], ["invalid_signature"])
+
+    def test_on_webhook_event_rejects_when_no_secret_is_stored(self):
+        headers = {"x-{{id}}-signature": sign(compact(WebhookEvent))}
+        details, messages = event_hooks.on_webhook_event(self.payload(headers), gateway.settings)
+
+        self.assertIsNone(details)
+        self.assertEqual([_.code for _ in messages], ["webhook_secret_not_configured"])
+
+    def test_on_webhook_event_accepts_a_signed_event(self):
+        headers = {"X-{{id | title}}-Signature": sign(compact(WebhookEvent))}
+        details, messages = event_hooks.on_webhook_event(self.payload(headers), gateway_with_secret.settings)
+
+        self.assertEqual(messages, [])
+        self.assertIsNotNone(details)
+
+
+if __name__ == "__main__":
+    unittest.main()
+''')

@@ -1,9 +1,9 @@
 """Signed carrier events must stay within their connection's tracker pool."""
 import hashlib
 import hmac
+import json
 from types import SimpleNamespace
 
-import karrio.lib as lib
 from django.contrib.auth import get_user_model
 from karrio.server.core.tests import APITestCase
 from karrio.server.core.utils import create_carrier_snapshot
@@ -49,9 +49,10 @@ class TestWebhookTrackerMatch(APITestCase):
         )
 
     def event(self):
-        signature = hmac.new(b"test-signing-secret", lib.to_json(self.body).encode(), hashlib.sha256).hexdigest()
+        raw = json.dumps(self.body, separators=(",", ":")).encode()
+        signature = hmac.new(b"test-signing-secret", raw, hashlib.sha256).hexdigest()
         request = SimpleNamespace(
-            data=self.body, query_params={},
+            data=self.body, body=raw, query_params={},
             headers={"x-teleship-signature": signature},
             build_absolute_uri=lambda: "http://testserver/webhook",
         )

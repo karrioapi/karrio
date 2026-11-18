@@ -269,7 +269,7 @@ class TestConnectionWebhookEvent(APITestCase):
                     datatypes.Message(
                         carrier_name="teleship",
                         carrier_id="teleship_connection",
-                        code="SIGNATURE_INVALID",
+                        code="invalid_signature",
                         message="Webhook signature verification failed",
                     )
                 ],
@@ -283,7 +283,7 @@ class TestConnectionWebhookEvent(APITestCase):
             )
             response_data = json.loads(response.content)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertDictEqual(response_data, WEBHOOK_EVENT_SIGNATURE_ERROR_RESPONSE)
 
 
@@ -783,14 +783,10 @@ WEBHOOK_EVENT_NOT_FOUND_RESPONSE = {
 WEBHOOK_EVENT_SIGNATURE_ERROR_RESPONSE = {
     "operation": "Webhook event",
     "success": False,
-    "carrier_name": "teleship",
-    "carrier_id": "teleship_connection",
     "messages": [
         {
-            "carrier_name": "teleship",
-            "carrier_id": "teleship_connection",
-            "code": "SIGNATURE_INVALID",
-            "message": "Webhook signature verification failed",
+            "code": "webhook_signature_verification_failed",
+            "message": "webhook signature verification failed",
         }
     ],
 }
