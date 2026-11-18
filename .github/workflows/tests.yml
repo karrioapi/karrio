@@ -206,6 +206,9 @@ jobs:
           npm ci
           npm run build -w apps/dashboard
 
+      - name: Dashboard Tests
+        run: npm test -w apps/dashboard
+
   mcp-ci:
     runs-on: ubuntu-latest
 
