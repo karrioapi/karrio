@@ -763,9 +763,9 @@ class WebhookEventSerializer(serializers.Serializer):
         Returns:
             tuple: (response_data, http_status_code)
         """
-        import django.db.models as django
         import karrio.lib as lib
         import karrio.server.core.gateway as gateway
+        from karrio.server.core.logging import logger
 
         try:
             connection = providers.CarrierConnection.objects.get(pk=pk)
@@ -793,14 +793,31 @@ class WebhookEventSerializer(serializers.Serializer):
             import karrio.server.manager.models as manager_models
             import karrio.server.manager.serializers.tracking as tracking_serializers
 
-            tracker = manager_models.Tracking.objects.filter(
-                django.Q(tracking_number=event.tracking.tracking_number)
-                | django.Q(carrier__connection_id=str(connection.id))
-            ).first()
+            tracking_number = event.tracking_number or event.tracking.tracking_number
 
-            if tracker:
+            # A carrier event only applies to a tracker of its own connection
+            # that carries the event's tracking number (both must match).
+            # Tracking numbers are not unique, so an ambiguous match is a no-op.
+            matches = (
+                list(
+                    manager_models.Tracking.objects.filter(
+                        tracking_number=tracking_number,
+                        carrier__connection_id=str(connection.id),
+                    )[:2]
+                )
+                if tracking_number
+                else []
+            )
+
+            if len(matches) == 1:
                 tracking_serializers.update_tracker(
-                    tracker, lib.to_dict(event.tracking)
+                    matches[0], lib.to_dict(event.tracking)
+                )
+            elif len(matches) > 1:
+                logger.warning(
+                    "Ambiguous webhook tracker match; skipping update",
+                    tracking_number=tracking_number,
+                    connection_id=str(connection.id),
                 )
 
         return (
