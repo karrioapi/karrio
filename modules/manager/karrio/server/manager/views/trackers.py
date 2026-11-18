@@ -3,9 +3,10 @@ import base64
 import django_downloadview
 
 from django.db.models import Q
+from rest_framework.exceptions import NotFound
 from django.urls import path, re_path
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import LimitOffsetPagination
 from django.core.files.base import ContentFile
 from rest_framework.response import Response
@@ -224,7 +225,7 @@ class TrackersCreate(APIView):
 
 class TrackersDetails(APIView):
     throttle_scope = "carrier_request"
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
 
     @openapi.extend_schema(
         tags=["Trackers"],
@@ -246,10 +247,10 @@ class TrackersDetails(APIView):
         __filter = Q(pk=identifier) | Q(
             tracking_number=identifier
         )
-        trackers = models.Tracking.objects.filter(__filter)
+        trackers = models.Tracking.access_by(request).filter(__filter)
 
         if len(trackers) == 0:
-            models.Tracking.objects.get(__filter)
+            raise NotFound("Tracker not found.")
 
         return Response(serializers.TrackingStatus(trackers.first()).data)
 
