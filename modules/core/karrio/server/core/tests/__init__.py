@@ -32,3 +32,8 @@ from karrio.server.core.tests.base import APITestCase
 __all__ = ["APITestCase"]
 
 from karrio.server.core.tests.test_model_id_scoping import TestModelIdScoping  # noqa: F401
+from karrio.server.core.tests.test_token_auth_cache import (
+    TestTokenAuthCacheInvalidation,
+    TestTokenAuthCachePerSchema,
+    TestTokenAuthWithoutCache,
+)

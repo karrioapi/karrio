@@ -47,12 +47,62 @@ def catch_auth_exception(func):
     return wrapper
 
 
+TOKEN_CACHE_PREFIXES = ("token_auth", "token_basic_auth")
+# Eviction leaves a short-lived marker instead of an empty slot, and authenticators fill
+# the cache with cache.add, which never overwrites it: a request that read the old row
+# before the change committed cannot write it back after the eviction.
+TOKEN_REVOKED = "revoked"
+TOKEN_REVOKED_TTL = 30
+
+
+def token_cache_key(prefix: str, key: str) -> str:
+    """The cache key an authenticated API token is stored under. It carries the
+    active database schema when the connection has one, so a deployment that
+    switches schemas per tenant never reads one schema's entry under another.
+    Readers, revocation markers and eviction all build the key here."""
+    import hashlib
+    from django.db import connection
+
+    schema = getattr(connection, "schema_name", None) or ""
+    digest = hashlib.sha256(key.encode()).hexdigest()
+    return f"{prefix}:{schema}:{digest}" if schema else f"{prefix}:{digest}"
+
+
+def token_cache_ttl() -> int:
+    """Seconds an API-token authentication may be cached; 0 means never cached."""
+    return max(int(getattr(settings, "TOKEN_AUTH_CACHE_TTL", 0) or 0), 0)
+
+
+def cached_token_auth(cache, cache_key):
+    """The cached (user, token) pair, or None on a miss or a revocation marker."""
+    cached = cache.get(cache_key)
+    return cached if isinstance(cached, tuple) else None
+
+
+def token_cache_keys(keys) -> list:
+    """Every cache key these token keys are stored under, in the current schema."""
+    return [token_cache_key(prefix, key) for key in keys for prefix in TOKEN_CACHE_PREFIXES]
+
+
+def revoke_cache_keys(cache_keys) -> None:
+    """Replace these cache entries with a revocation marker for TOKEN_REVOKED_TTL
+    seconds, so the next request re-reads the token and its user from the database
+    and nothing can refill the entry meanwhile. Nothing is cached when the TTL is 0,
+    so there is nothing to evict."""
+    from django.core.cache import cache
+
+    if token_cache_ttl() == 0:
+        return
+
+    cache.set_many({cache_key: TOKEN_REVOKED for cache_key in cache_keys}, TOKEN_REVOKED_TTL)
+
+
 class TokenAuthentication(BaseTokenAuthentication):
-    # Cache token → (user, token) for 5 minutes to avoid DB query per request.
-    # Safe because API tokens are static secrets — they don't expire or rotate
-    # frequently. Cache is invalidated naturally by TTL, and revoked/deleted
-    # tokens will fail on next cache miss (within 5 minutes worst case).
-    TOKEN_CACHE_TTL = 300  # 5 minutes
+    # Cache token -> (user, token) for TOKEN_AUTH_CACHE_TTL seconds (0 = no cache).
+    # Deleting or editing a token, or changing its user, evicts the entry
+    # (core.signals -> revoke_cache_keys), now and again on commit, and blocks
+    # refills for TOKEN_REVOKED_TTL seconds. Bulk QuerySet.update / bulk_update send
+    # no signal and wait for the TTL.
 
     def get_model(self):
         if self.model is not None:
@@ -100,25 +150,28 @@ class TokenAuthentication(BaseTokenAuthentication):
         except UnicodeError:
             return None
 
+        ttl = token_cache_ttl()
+        if ttl == 0:
+            return super().authenticate(request)
+
         # Check cache first
-        import hashlib
         from django.core.cache import cache
 
-        cache_key = f"token_auth:{hashlib.sha256(key.encode()).hexdigest()}"
-        cached = cache.get(cache_key)
+        cache_key = token_cache_key("token_auth", key)
+        cached = cached_token_auth(cache, cache_key)
         if cached is not None:
             return cached
 
         # Cache miss — fall back to DB lookup
         auth = super().authenticate(request)
         if auth is not None:
-            cache.set(cache_key, auth, self.TOKEN_CACHE_TTL)
+            cache.add(cache_key, auth, ttl)
 
         return auth
 
 
 class TokenBasicAuthentication(BaseBasicAuthentication):
-    TOKEN_CACHE_TTL = 300  # 5 minutes
+    # Same caching rules as TokenAuthentication (TOKEN_AUTH_CACHE_TTL, 0 = no cache).
 
     @catch_auth_exception
     def authenticate(self, request):
@@ -149,12 +202,12 @@ class TokenBasicAuthentication(BaseBasicAuthentication):
         Authenticate the api token with optional request for context.
         Uses Django cache to avoid DB query on every request.
         """
-        import hashlib
         from django.core.cache import cache
         from karrio.server.user.models import Token
 
-        cache_key = f"token_basic_auth:{hashlib.sha256(api_key.encode()).hexdigest()}"
-        cached = cache.get(cache_key)
+        ttl = token_cache_ttl()
+        cache_key = token_cache_key("token_basic_auth", api_key)
+        cached = cached_token_auth(cache, cache_key) if ttl else None
         if cached is not None:
             return cached
 
@@ -168,7 +221,8 @@ class TokenBasicAuthentication(BaseBasicAuthentication):
             raise exceptions.AuthenticationFailed(_("User inactive or deleted."))
 
         result = (user, token)
-        cache.set(cache_key, result, self.TOKEN_CACHE_TTL)
+        if ttl:
+            cache.add(cache_key, result, ttl)
         return result
 
 

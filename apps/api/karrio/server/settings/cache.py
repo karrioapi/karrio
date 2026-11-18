@@ -119,3 +119,19 @@ else:
     # because constance rejects Django's default LocMemCache backend
     # (it requires a cross-process cache like Redis or Memcached).
     pass
+
+# How long an API-token authentication may be served from the cache, in seconds.
+# 0 disables that cache: every request re-reads the token and its user, so a
+# revocation takes effect immediately. With a value above 0, a change made through
+# the ORM's save() or delete() (the API, the admin, Django admin) evicts the entry
+# and blocks refills for 30 seconds. A change that sends no signal
+# (QuerySet.update, bulk_update, raw SQL) is served from the cache for up to
+# TOKEN_AUTH_CACHE_TTL seconds. That includes a staff or superuser demotion, which
+# the demoted user can undo through the API in that window: change staff flags with
+# save(), or run with 0. The cache is only shared across processes with Redis, so
+# it is on by default only there.
+TOKEN_AUTH_CACHE_TTL = config(
+    "TOKEN_AUTH_CACHE_TTL",
+    default=60 if (REDIS_HOST is not None and not SKIP_DEFAULT_CACHE) else 0,
+    cast=int,
+)
