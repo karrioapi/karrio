@@ -1,4 +1,5 @@
 import io
+import re
 import base64
 import django_downloadview
 
@@ -6,7 +7,7 @@ from django.db.models import Q
 from rest_framework.exceptions import NotFound
 from django.urls import path, re_path
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.pagination import LimitOffsetPagination
 from django.core.files.base import ContentFile
 from rest_framework.response import Response
@@ -17,6 +18,7 @@ from karrio.server.core.logging import logger
 from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.manager.router import router
 import karrio.server.manager.serializers as serializers
+from karrio.server.manager.serializers.public_tracking import PublicTrackingStatus
 import karrio.server.core.dataunits as dataunits
 import karrio.server.manager.models as models
 import karrio.server.core.filters as filters
@@ -225,14 +227,14 @@ class TrackersCreate(APIView):
 
 class TrackersDetails(APIView):
     throttle_scope = "carrier_request"
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     @openapi.extend_schema(
         tags=["Trackers"],
         operation_id=f"{ENDPOINT_ID}retrieve",
         extensions={"x-operationId": "retrieveTracker"},
         summary="Retrieves a package tracker",
-        description="Retrieve a package tracker by ID or tracking number.",
+        description="Entitled authenticated callers receive the full tracker by ID or tracking number. Other callers may use an exact tracker ID capability link and receive only carrier_name, tracking_number, status, delivered, estimated_delivery, and events (date, time, location, description; strings or null). No private tracker fields are included. Tracking number lookup requires entitlement.",
         parameters=[openapi.OpenApiParameter("identifier", str, openapi.OpenApiParameter.PATH, description="Tracker ID (trk_...) or tracking number")],
         responses={
             200: serializers.TrackingStatus(),
@@ -244,15 +246,23 @@ class TrackersDetails(APIView):
         """
         Retrieve a package tracker
         """
-        __filter = Q(pk=identifier) | Q(
-            tracking_number=identifier
+        if request.user.is_authenticated:
+            tracker = models.Tracking.access_by(request).filter(
+                Q(pk=identifier) | Q(tracking_number=identifier)
+            ).first()
+            if tracker is not None:
+                return Response(serializers.TrackingStatus(tracker).data)
+
+        # Exact random IDs are public capabilities, including for signed-in
+        # callers outside the owning scope. Never fall back by tracking number.
+        tracker = (
+            models.Tracking.objects.filter(pk=identifier).first()
+            if re.fullmatch(r"trk_[0-9a-f]{32}", identifier)
+            else None
         )
-        trackers = models.Tracking.access_by(request).filter(__filter)
-
-        if len(trackers) == 0:
+        if tracker is None:
             raise NotFound("Tracker not found.")
-
-        return Response(serializers.TrackingStatus(trackers.first()).data)
+        return Response(PublicTrackingStatus(tracker).data)
 
     @openapi.extend_schema(
         tags=["Trackers"],
