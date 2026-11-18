@@ -81,7 +81,7 @@ def update_trackers(
     tracker_ids: typing.Optional[typing.List[str]] = None,
     schema: str = None,
 ):
-    """Group stale trackers by carrier and enqueue one sub-task per carrier."""
+    """Group stale trackers by carrier connection and owner and enqueue one sub-task per group."""
     max_active_days = _get_max_active_days()
     max_age_cutoff = timezone.now() - datetime.timedelta(days=max_active_days)
 
@@ -112,23 +112,25 @@ def update_trackers(
             created_at__gt=max_age_cutoff,
         )
     )
-    active_tracker_data = list(qs.values_list("id", "carrier"))
+    active_tracker_data = list(qs.values_list("id", "carrier", "created_by_id"))
 
     if not active_tracker_data:
         logger.info("No active trackers found needing update")
         return
 
-    sorted_data = sorted(active_tracker_data, key=lambda item: _carrier_id(item[1]))
+    sorted_data = sorted(
+        active_tracker_data, key=lambda item: _group_key(item[1], item[2])
+    )
     carrier_groups = 0
 
-    for carrier_key, group in groupby(
-        sorted_data, key=lambda item: _carrier_id(item[1])
+    for group_key, group in groupby(
+        sorted_data, key=lambda item: _group_key(item[1], item[2])
     ):
-        ids_for_carrier = [tid for tid, _ in group]
+        ids_for_carrier = [tid for tid, _, _ in group]
         carrier_groups += 1
         logger.info(
             "Dispatching carrier tracking batch",
-            carrier_id=carrier_key,
+            carrier_id=group_key[0],
             tracker_count=len(ids_for_carrier),
         )
         from karrio.server.events.task_definitions.base import (
@@ -153,13 +155,23 @@ def update_trackers(
 
 
 def process_carrier_trackers(tracker_ids: typing.List[str], **kwargs):
-    """Fetch tracking info for one carrier's trackers in batches of 10."""
+    """Fetch tracking info for trackers in batches of 10, one connection and owner at a time.
+
+    The ids normally come from one dispatcher group, but a task queued earlier can
+    still carry trackers of several connections or owners: each group resolves its own
+    gateway and is only ever used for its own trackers.
+    """
     trackers = list(models.Tracking.objects.filter(id__in=tracker_ids))
 
     if not trackers:
         logger.info("No trackers found for given IDs", count=len(tracker_ids))
         return
 
+    for group in _split_by_connection(trackers):
+        _process_connection_group(group)
+
+
+def _process_connection_group(trackers: typing.List[models.Tracking]):
     carrier = resolve_carrier(trackers[0].carrier or {}, context=None)
 
     if not carrier:
@@ -204,6 +216,55 @@ def _carrier_id(carrier_snapshot: typing.Optional[dict]) -> str:
     if carrier_snapshot is None:
         return ""
     return carrier_snapshot.get("carrier_id") or ""
+
+
+def _group_key(
+    carrier_snapshot: typing.Optional[dict], owner_id: typing.Any = None
+) -> typing.Tuple[str, str, str, str]:
+    """Key deciding which trackers are polled together.
+
+    The carrier_id label is free text chosen by each owner and is not unique, so
+    it must not decide whose credentials are used. Trackers are grouped by the
+    connection they were created with (type and id, as resolve_carrier reads
+    them); the label comes first only to keep the dispatch order, and is the sole
+    key for a snapshot that has no connection id.
+
+    A group is also one owner (the tracker's creator): trackers of several owners
+    on a shared system connection use the same credentials, but the tracing
+    record of a batch is saved under one owner's context, so they are not mixed.
+    This trades some batching for separation.
+    """
+    snapshot = carrier_snapshot or {}
+    connection_id = snapshot.get("connection_id") or snapshot.get(
+        "carrier_connection_id"
+    )
+
+    owner = str(owner_id or "")
+
+    if not connection_id:
+        return (_carrier_id(snapshot), "", "", owner)
+
+    return (
+        _carrier_id(snapshot),
+        str(snapshot.get("connection_type") or utils.ConnectionType.ACCOUNT),
+        str(connection_id),
+        owner,
+    )
+
+
+def _split_by_connection(
+    trackers: typing.List[models.Tracking],
+) -> typing.List[typing.List[models.Tracking]]:
+    """Split trackers into one list per connection and owner, keeping their order."""
+    groups: typing.Dict[
+        typing.Tuple[str, str, str, str], typing.List[models.Tracking]
+    ] = {}
+
+    for tracker in trackers:
+        key = _group_key(tracker.carrier, tracker.created_by_id)
+        groups.setdefault(key, []).append(tracker)
+
+    return list(groups.values())
 
 
 def _process_batch(
