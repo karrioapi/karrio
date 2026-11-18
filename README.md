@@ -1,5 +1,18 @@
 # Karrio
 
+> [!IMPORTANT]
+> **This repository is being archived. Maintenance is suspended until further notice.**
+>
+> AI tools are now being used to search open-source projects for vulnerabilities at a scale and speed that wasn't possible before. Every public codebase is now exposed this way, and keeping one secure takes sustained, dedicated attention. That's attention we can't give Karrio right now while our whole team is focused on developing our internal product.
+>
+> Rather than leave the project open without the care it needs, we are pausing it. We will decide on Karrio's future later.
+>
+> **If you self-host Karrio**, upgrade to the final release, **2026.1.33**, which includes the latest security fixes. Until further notice, there will be no new releases or security patches.
+>
+> The repository stays available in read-only form, and we are not accepting issues, pull requests or reports in the meantime.
+>
+> Thank you to everyone who has built, used and contributed to Karrio.
+
 -   Website: <https://karrio.io>
 -   Documentation: [https://karrio.io/docs](https://karrio.io/docs)
 -   Forums: [Github Discussions](https://github.com/orgs/karrioapi/discussions)
