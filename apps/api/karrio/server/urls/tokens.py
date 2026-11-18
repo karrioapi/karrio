@@ -30,6 +30,7 @@ class ResourceTokenRequest(serializers.Serializer):
             ("order", "Order"),
             ("template", "Template"),
             ("document", "Document"),
+            ("carrier", "Carrier"),
         ],
         help_text="The type of resource to grant access to.",
     )
@@ -48,6 +49,7 @@ class ResourceTokenRequest(serializers.Serializer):
                 ("batch_labels", "Batch labels"),
                 ("batch_invoices", "Batch invoices"),
                 ("batch_manifests", "Batch manifests"),
+                ("label_preview", "Label template preview"),
             ]
         ),
         min_length=1,
@@ -93,6 +95,7 @@ RESOURCE_ACCESS_MODELS: dict = {
     ("document", "batch_labels"): "manager.Shipment",
     ("document", "batch_invoices"): "manager.Shipment",
     ("document", "batch_manifests"): "manager.Manifest",
+    ("carrier", "label_preview"): "providers.CarrierConnection",
 }
 
 
@@ -154,6 +157,10 @@ def _build_document_urls(resource_ids: list, access: list, format_ext: str, toke
     return {"batch": url_map.get(access_type, url_map["batch_labels"])}
 
 
+def _build_carrier_urls(resource_ids: list, format_ext: str, token: str) -> dict:
+    return {rid: f"/v1/carriers/{rid}/label.{format_ext}?token={token}" for rid in resource_ids}
+
+
 def build_resource_urls(
     resource_type: str,
     resource_ids: list,
@@ -170,6 +177,7 @@ def build_resource_urls(
         "order": lambda: _build_order_urls(resource_ids, access, format_ext, token),
         "template": lambda: _build_template_urls(resource_ids, token),
         "document": lambda: _build_document_urls(resource_ids, access, format_ext, token),
+        "carrier": lambda: _build_carrier_urls(resource_ids, format_ext, token),
     }
 
     return builders.get(resource_type, lambda: {})()
