@@ -52,7 +52,7 @@ class GraphQLView(AccessMixin, views.GraphQLView):
 
     def format_graphql_error(self, error: graphql.GraphQLError):
         formatted_error: dict = (
-            graphql.format_error(error)  # type: ignore
+            dict(error.formatted)
             if isinstance(error, graphql.GraphQLError)
             else {}
         )
