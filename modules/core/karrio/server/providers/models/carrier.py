@@ -139,6 +139,33 @@ PUBLIC_CONFIG_FIELDS = frozenset(
         "webhook_id",  # written by providers/views/connections.py on webhook register
         "webhook_url",  # written by providers/views/connections.py on webhook register
         "with_document",
+        # community plugins (settings and account identifiers, no secrets)
+        "account_service_type",  # allied_express, allied_express_local
+        "agency_code",  # geodis
+        "allow_courier_fallback",  # easyship
+        "app_id",  # tnt: application identifier sent in rate requests (default "PC")
+        "apply_shipping_rules",  # easyship
+        "business_id",  # tge
+        "channel",  # tge
+        "default_service_codes",  # shipengine
+        "delivery_max_datetime",  # veho
+        "email_from",  # tnt
+        "excluded_carriers",  # shipengine
+        "freight_mode",  # tge
+        "label_date",  # veho
+        "message_sender",  # tge
+        "platform_name",  # easyship
+        "preferred_carriers",  # shipengine
+        "processing_location",  # asendia_us
+        "service_level",  # sapient
+        "SHIP_GS1",  # tge: GS1 company prefix
+        "SHIP_range_end",  # tge
+        "SHIP_range_start",  # tge
+        "SSCC_GS1",  # tge: GS1 company prefix
+        "SSCC_range_end",  # tge
+        "SSCC_range_start",  # tge
+        "sub_account",  # asendia_us
+        "SYSID",  # tge: system identifier
     ]
 )
 
