@@ -7,7 +7,6 @@ class CreateUserForm(user_forms.SignUpForm):
     is_staff = forms.NullBooleanField(required=False, initial=None)
     is_active = forms.NullBooleanField(required=False, initial=None)
     is_superuser = forms.NullBooleanField(required=False, initial=None)
-    redirect_url = forms.URLField(required=False, initial=None)
 
     @transaction.atomic
     def save(self, commit=True):

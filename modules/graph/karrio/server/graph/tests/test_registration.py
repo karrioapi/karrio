@@ -1,4 +1,5 @@
 from unittest.mock import patch, MagicMock
+from django.test import override_settings
 from karrio.server.graph.tests.base import GraphTestCase
 from django.contrib.auth import get_user_model
 
@@ -157,6 +158,7 @@ class TestPasswordReset(GraphTestCase):
             full_name="Reset User",
         )
 
+    @override_settings(DASHBOARD_URL="http://example.com")
     @patch("django.core.mail.send_mail")
     def test_request_password_reset(self, mock_send_mail):
         """Test requesting a password reset"""

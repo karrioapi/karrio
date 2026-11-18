@@ -94,9 +94,10 @@ class InstanceConfigMutation(utils.BaseMutation):
 class CreateUserMutation(utils.BaseMutation):
     user: typing.Optional[types.SystemUserType] = None
 
+    # No error_wrapper: it would log a refused input again, with a stack trace.
+    # Unexpected failures are logged once below.
     @staticmethod
     @transaction.atomic
-    @utils.error_wrapper
     @utils.authentication_required
     @admin.superuser_required
     def mutate(
@@ -145,8 +146,12 @@ class CreateUserMutation(utils.BaseMutation):
             return CreateUserMutation(
                 user=iam.User.objects.get(id=user.id)
             )  # type:ignore
+        except exceptions.ValidationError:
+            # Invalid input is the caller's error: reported to them, not logged
+            # (a refused email link is already logged once, without the email).
+            raise
         except Exception as e:
-            logger.error("Failed to create user", email=input.get("email"), error=str(e), exc_info=True)
+            logger.error("Failed to create user", error=str(e), exc_info=True)
             raise e
 
 

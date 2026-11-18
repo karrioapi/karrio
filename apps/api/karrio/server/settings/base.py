@@ -177,6 +177,16 @@ ALLOW_ADMIN_APPROVED_SIGNUP = config(
 ALLOW_SIGNUP = (
     config("ALLOW_SIGNUP", default=False, cast=bool) or ALLOW_ADMIN_APPROVED_SIGNUP
 )
+# Frontends that password-reset, sign-up and email-change links may point to.
+# A client-supplied redirect_url is used only when its origin is listed here;
+# without one, the link is built from DASHBOARD_URL. With neither set, those
+# emails are refused (see karrio.server.core.links).
+DASHBOARD_URL = config("DASHBOARD_URL", default=None)
+EMAIL_LINK_ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in config("EMAIL_LINK_ALLOWED_ORIGINS", default="").split(",")
+    if origin.strip()
+]
 MULTI_ORGANIZATIONS = (
     importlib.util.find_spec("karrio.server.orgs") is not None  # type:ignore
 )

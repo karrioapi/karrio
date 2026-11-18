@@ -4,6 +4,7 @@ import datetime
 from strawberry.types import Info
 from rest_framework import exceptions
 from django.utils.http import urlsafe_base64_decode
+import django.core.exceptions as django_exceptions
 from django.contrib.contenttypes.models import ContentType
 from django_email_verification import confirm as email_verification
 from django_otp.plugins.otp_email import models as otp
@@ -11,6 +12,7 @@ from django.utils.translation import gettext_lazy as _
 from django.db import transaction, models
 
 from karrio.server.core.utils import ConfirmationToken, send_email
+import karrio.server.core.links as links
 from karrio.server.user.serializers import TokenSerializer
 from karrio.server.conf import settings
 from karrio.server.serializers import (
@@ -184,8 +186,14 @@ class RequestEmailChangeMutation(utils.BaseMutation):
     @utils.authentication_required
     @utils.password_required
     def mutate(
-        info: Info, email: str, password: str, redirect_url: str
+        info: Info, email: str, password: str, redirect_url: typing.Optional[str] = None
     ) -> "RequestEmailChangeMutation":
+        # Validated before a token exists: a refused link sends and creates nothing.
+        try:
+            link = links.email_link(links.CHANGE_EMAIL_ROUTE, redirect_url)
+        except django_exceptions.ValidationError as e:
+            raise exceptions.ValidationError({"redirect_url": e.messages})
+
         try:
             token = ConfirmationToken.for_data(
                 user=info.context.request.user,
@@ -199,7 +207,7 @@ class RequestEmailChangeMutation(utils.BaseMutation):
                 text_template="karrio/email_change_email.txt",
                 context=dict(
                     token=token,
-                    link=redirect_url,
+                    link=link,
                 ),
                 expiry=(datetime.datetime.now() + datetime.timedelta(hours=2)),
             )
@@ -254,15 +262,12 @@ class RegisterUserMutation(utils.BaseMutation):
                 "Please contact your administrator to create an account."
             )
 
-        try:
-            form = user_forms.SignUpForm(data=input)
-            if not form.is_valid():
-                errors = []
-                for field, messages in form.errors.items():
-                    for message in messages:
-                        errors.append(f"{field}: {message}")
-                raise Exception(". ".join(errors))
+        # Invalid input is the caller's error: reported, not logged as a failure.
+        form = user_forms.SignUpForm(data=input)
+        if not form.is_valid():
+            raise exceptions.ValidationError(form.errors)
 
+        try:
             user = form.save()
 
             return RegisterUserMutation(user=user)  # type:ignore
