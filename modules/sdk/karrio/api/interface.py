@@ -3,6 +3,7 @@
 import attr
 import typing
 import functools
+import urllib.parse
 import karrio.lib as lib
 import karrio.core.errors as errors
 import karrio.core.models as models
@@ -873,8 +874,13 @@ class Hooks:
         Args:
             args (Union[RequestPayload, dict]): the OAuth callback request payload
         """
-        logger.debug("Processing OAuth callback", payload=lib.to_dict(args))
         payload = lib.to_object(models.RequestPayload, lib.to_dict(args))
+        # Never log the payload (query credentials, cookies, Authorization) nor
+        # the URL's query: the carrier's redirect carries a client secret in it.
+        logger.debug(
+            "Processing OAuth callback",
+            url=urllib.parse.urlsplit(payload.url or "")._replace(query="", fragment="").geturl(),
+        )
 
         def action(gateway: gateway.Gateway) -> IDeserialize:
             is_valid, abortion = check_operation(gateway, "on_oauth_callback")

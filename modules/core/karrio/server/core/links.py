@@ -88,6 +88,17 @@ def allowed_origins() -> typing.Set[str]:
     return {normalize_origin(url) for url in configured if _plain_base(url)}
 
 
+def frontend_url(url: typing.Any) -> typing.Optional[str]:
+    """`url` on its normalised origin, only if it is a plain http(s) URL on a
+    configured frontend (``allowed_origins``); None otherwise, so a caller that
+    would redirect there sends the user nowhere instead."""
+    parts = _plain_base(url)
+    if parts is None or normalize_origin(url) not in allowed_origins():
+        return None
+
+    return f"{normalize_origin(url)}{parts.path}"
+
+
 def _refuse(message: str, **details) -> typing.NoReturn:
     logger.warning("Email link refused", reason=message, **details)
     raise exceptions.ValidationError(message, code="invalid_redirect_url")

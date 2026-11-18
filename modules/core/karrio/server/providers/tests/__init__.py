@@ -1,3 +1,4 @@
+from karrio.server.providers.tests.test_oauth_callback import *
 import logging
 
 logging.disable(logging.CRITICAL)
