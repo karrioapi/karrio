@@ -5,7 +5,6 @@ import {
   Building,
 } from "lucide-react";
 import { FeatureShowcase } from "@karrio/console/components/feature-showcase";
-import { BookDemoButton } from "@karrio/console/components/book-demo-button";
 import { CTASection } from "@/components/cta-section";
 
 export default async function Page() {
@@ -31,17 +30,6 @@ export default async function Page() {
             <p className="text-xl text-white/80 mb-10 max-w-3xl mx-auto">
               Enhance your shipping operations with a robust, scalable solution designed for complex enterprise requirements and high-volume needs.
             </p>
-
-            {/* CTA Buttons */}
-            <div className="flex justify-center">
-              <BookDemoButton
-                size="lg"
-                className="bg-[#5722cc] hover:bg-[#5722cc]/90"
-                calLink="karrio/enterprise"
-              >
-                Contact Sales
-              </BookDemoButton>
-            </div>
           </div>
         </div>
 

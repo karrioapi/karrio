@@ -8,7 +8,6 @@ import {
   Maximize2,
 } from "lucide-react";
 import { FeatureShowcase } from "@/components/feature-showcase";
-import { BookDemoButton } from "@/components/book-demo-button";
 import { RoadmapSection } from "@/components/roadmap-section";
 import { PricingSection } from "@/components/pricing-section";
 import { Button } from "@karrio/ui/components/ui/button";
@@ -43,7 +42,6 @@ export default async function LandingPage() {
               integrations, streamlined operations, and scalable logistics.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <BookDemoButton />
               <Button
                 size="lg"
                 variant="outline"

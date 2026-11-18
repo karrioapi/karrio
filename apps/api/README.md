@@ -23,7 +23,6 @@ karrio makes shipping services simple and accessible.
 
 There are several ways to use Karrio:
 
-- [Karrio Cloud](https://app.karrio.io) let's you use the fullset of shipping features. you don't need to deploy anything. We will manage and scale your infrastructure.
 - [Karrio OSS](https://github.com/karrioapi/karrio) is an open-source version of karrio that provides the core functionality of karrio (rating API, tracking API, shipping API), but lacks more advanced features (multi-tenant/orgs, shipping billing data, built-in address validation, etc.)
 
 ## Resources
