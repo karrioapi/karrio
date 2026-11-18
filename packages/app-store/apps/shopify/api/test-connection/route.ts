@@ -1,5 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+// A shop domain is a bare `<shop>.myshopify.com` host name. It is parsed with URL and
+// the input must equal the parsed host exactly, so nothing after a '#', '?', '/', '@'
+// or ':' (or any case or whitespace the parser would normalise away) is accepted.
+const SHOP_HOSTNAME = /^[a-z0-9][a-z0-9-]*\.myshopify\.com$/;
+
+function parseShopDomain(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  let url: URL;
+  try {
+    url = new URL(`https://${value}`);
+  } catch {
+    return null;
+  }
+  if (url.protocol !== 'https:' || url.username || url.password || url.port) return null;
+  if (url.pathname !== '/' || url.search || url.hash) return null;
+  if (url.hostname !== value || !SHOP_HOSTNAME.test(url.hostname)) return null;
+  return url.hostname;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { installation_id, shop_domain, access_token } = await request.json();
@@ -22,7 +41,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate shop domain format
-    if (!shop_domain.endsWith('.myshopify.com')) {
+    const shopHost = parseShopDomain(shop_domain);
+    if (!shopHost) {
       return NextResponse.json(
         {
           success: false,
@@ -33,9 +53,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Test connection by fetching shop information
-    console.log(`Testing connection to: https://${shop_domain}/admin/api/2023-10/shop.json`);
+    console.log(`Testing connection to: https://${shopHost}/admin/api/2023-10/shop.json`);
 
-    const shopResponse = await fetch(`https://${shop_domain}/admin/api/2023-10/shop.json`, {
+    const shopResponse = await fetch(`https://${shopHost}/admin/api/2023-10/shop.json`, {
+      redirect: 'manual', // never forward the token to another host
       headers: {
         'X-Shopify-Access-Token': access_token,
         'Content-Type': 'application/json',
@@ -74,7 +95,8 @@ export async function POST(request: NextRequest) {
     const shop = shopData.shop;
 
     // Test API access by checking available endpoints
-    const apiResponse = await fetch(`https://${shop_domain}/admin/api/2023-10.json`, {
+    const apiResponse = await fetch(`https://${shopHost}/admin/api/2023-10.json`, {
+      redirect: 'manual',
       headers: {
         'X-Shopify-Access-Token': access_token,
       },
