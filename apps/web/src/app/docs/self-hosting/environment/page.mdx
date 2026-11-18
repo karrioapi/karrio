@@ -83,7 +83,7 @@ These variables configure the Karrio dashboard.
 | Variable          | Description                              | Default                 | Required             |
 | ----------------- | ---------------------------------------- | ----------------------- | -------------------- |
 | `DASHBOARD_PORT`  | HTTP port for the dashboard              | `3002`                  | No                   |
-| `DASHBOARD_URL`   | Public URL for the dashboard             | `http://localhost:3002` | Yes (for production) |
+| `DASHBOARD_URL`   | Public URL for the dashboard; email links point here | `http://localhost:3002` | Yes (for production) |
 | `NEXTAUTH_SECRET` | Secret key for NextAuth (dashboard auth) | Same as `JWT_SECRET`    | Yes                  |
 | `JWT_SECRET`      | Secret key for JWT tokens                | Random string           | Yes                  |
 
@@ -99,6 +99,18 @@ These variables configure email sending for notifications.
 | `EMAIL_HOST_PASSWORD` | SMTP password                | None                | No       |
 | `EMAIL_USE_TLS`       | Use TLS for SMTP connection  | `True`              | No       |
 | `DEFAULT_FROM_EMAIL`  | Default sender email address | `noreply@localhost` | No       |
+
+## Security Settings
+
+These variables control where the API may send links, fetch document assets and deliver webhooks, and how long API-key logins are cached.
+
+| Variable | What it allows | When unset |
+| -------- | -------------- | ---------- |
+| `DASHBOARD_URL` | The frontend that password-reset, sign-up and email-change links point to. A client may choose another page only on an allowed origin. | Without `DASHBOARD_URL` or `EMAIL_LINK_ALLOWED_ORIGINS`, password-reset, sign-up confirmation and email-change emails are not sent. |
+| `EMAIL_LINK_ALLOWED_ORIGINS` | Extra frontend origins (comma-separated, `scheme://host[:port]`) a client may pass as `redirect_url` for those email links. | Only `DASHBOARD_URL` is allowed. |
+| `DOCUMENT_ASSET_ALLOWED_ORIGINS` | Extra `https` origins (comma-separated) that generated documents may load stylesheets and images from. | Documents load only `data:` URIs and the built-in stylesheet; any other asset is skipped, except a refused `@color-profile` source, which makes the document fail to render. |
+| `WEBHOOK_ALLOWED_DESTINATIONS` | Exact host names or CIDR ranges (comma-separated) that webhooks may deliver to even though they are not public addresses, for example an internal service. | Webhooks deliver only to public addresses. Cloud metadata addresses, the well-known IPv4-embedding IPv6 prefixes and ISATAP addresses are refused either way. |
+| `TOKEN_AUTH_CACHE_TTL` | Seconds an API-key login may be served from the cache. | `60` when a Redis cache is configured, otherwise `0` (no cache). A change made through the API or the admin takes effect on the next request; a bulk database update waits up to this many seconds. |
 
 ## Admin Account
 
