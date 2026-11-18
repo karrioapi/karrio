@@ -8,6 +8,7 @@ from datetime import timedelta, datetime, timezone
 from typing import TypeVar, Union, Callable, Any, List, Optional
 
 from django.conf import settings
+from django.db.models import Q
 from django.db import close_old_connections, connections
 from django.utils.translation import gettext_lazy as _
 import django_email_verification.confirm as confirm
@@ -723,6 +724,43 @@ def validate_resource_token(
     except Exception as e:
         logger.warning("Invalid resource access token: %s", str(e))
         return HttpResponseForbidden("Invalid or expired token.")
+
+
+def entitled_documents(model, request):
+    """The rows of `model` whose documents the caller of a download view may read.
+
+    `validate_resource_token` lets every signed-in caller through, so a download view
+    must scope its own lookup with this. Two kinds of caller reach those views:
+
+    - A `?token=` link: no signed-in user and no organisation to scope to. The token
+      was minted only after an access check on these exact ids (`/api/tokens`), so the
+      lookup stays unscoped by design (shared document links).
+    - A signed-in caller: only rows of an organisation they belong to. Membership,
+      not the active organisation, because a plain Django download view never
+      receives one and `access_by` would fall back to an arbitrary org of the caller.
+
+    `model` must be an `OwnedEntity` with an organisation link (`link__org`) when
+    `MULTI_ORGANIZATIONS` is on.
+    """
+    if not getattr(request.user, "is_authenticated", False):
+        return model.objects
+
+    if not settings.MULTI_ORGANIZATIONS:
+        # Single-tenant deployments keep whatever the configured access filter says.
+        return model.access_by(request)
+
+    # Same two rules as access_by: only active organisations count, and test and
+    # live data stay apart.
+    test_mode = getattr(request, "test_mode", None)
+    mode = Q() if test_mode is None else Q(test_mode=test_mode) | Q(test_mode__isnull=True)
+
+    return model.objects.filter(
+        (
+            Q(link__org__users__id=request.user.id, link__org__is_active=True)
+            | Q(created_by=request.user, link__org__isnull=True)
+        )
+        & mode
+    )
 
 
 def require_resource_token(

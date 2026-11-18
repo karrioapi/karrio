@@ -5,7 +5,10 @@ for various resources (documents, exports, etc.).
 """
 
 from datetime import datetime, timezone
+from django.apps import apps
 from django.urls import path
+from django.utils.translation import gettext_lazy as _
+from rest_framework import exceptions
 from rest_framework import serializers, status
 from rest_framework.views import APIView
 from rest_framework.request import Request
@@ -77,6 +80,37 @@ class ResourceTokenResponse(serializers.Serializer):
         child=serializers.CharField(),
         help_text="Map of resource IDs to their access URLs with token.",
     )
+
+
+# The model each (resource_type, access) pair is served from; mirrors the download views.
+RESOURCE_ACCESS_MODELS: dict = {
+    ("shipment", "label"): "manager.Shipment",
+    ("shipment", "invoice"): "manager.Shipment",
+    ("manifest", "manifest"): "manager.Manifest",
+    ("order", "batch_labels"): "orders.Order",
+    ("order", "batch_invoices"): "orders.Order",
+    ("template", "render"): "documents.DocumentTemplate",
+    ("document", "batch_labels"): "manager.Shipment",
+    ("document", "batch_invoices"): "manager.Shipment",
+    ("document", "batch_manifests"): "manager.Manifest",
+}
+
+
+def authorize_resource_ids(request, resource_type: str, resource_ids: list, access: list) -> None:
+    """Refuse a token unless the caller can see every requested resource; missing and foreign ids answer alike."""
+    labels = {RESOURCE_ACCESS_MODELS.get((resource_type, value)) for value in access or [None]}
+    if None in labels or len(labels) != 1:
+        raise exceptions.ValidationError({"access": _("This access is not available for this resource type.")})
+
+    try:
+        model = apps.get_model(labels.pop())
+    except LookupError:
+        raise exceptions.NotFound(_("One or more resources were not found.")) from None
+
+    wanted = set(resource_ids)
+    found = set(model.access_by(request).filter(pk__in=wanted).values_list("pk", flat=True))
+    if found != wanted:
+        raise exceptions.NotFound(_("One or more resources were not found."))
 
 
 # URL builders for different resource types
@@ -181,6 +215,10 @@ resources like shipment labels, manifests, and document templates.
         access = data["access"]
         format = data.get("format")
         expires_in = data.get("expires_in", 300)
+
+        # A token is only minted for resources the caller can already see: the
+        # download views trust it for exactly these ids.
+        authorize_resource_ids(request, resource_type, resource_ids, access)
 
         # Get org_id for multi-tenant environments
         org_id = None

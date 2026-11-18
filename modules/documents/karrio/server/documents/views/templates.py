@@ -178,18 +178,19 @@ class DocumentGenerator(api.BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            document_template = lib.identity(
-                None
-                if data.get("template_id") is None
-                else models.DocumentTemplate.objects.get(pk=data.get("template_id"))
-            )
-
             try:
+                document_template = lib.identity(
+                    None
+                    if data.get("template_id") is None
+                    else models.DocumentTemplate.access_by(request).get(pk=data.get("template_id"))
+                )
+
                 doc_file = generator.Documents.generate(
                     getattr(document_template, "template", data.get("template")),
                     related_object=getattr(document_template, "related_object", None),
                     metadata=getattr(document_template, "metadata", {}),
                     data=data.get("data", {}),
+                    context=request,
                     options=data.get("options", {}),
                     doc_name=data.get("doc_name"),
                     doc_format=data.get("doc_format"),

@@ -15,6 +15,7 @@ import karrio.server.manager.models as manager_models
 import karrio.server.documents.models as document_models
 import karrio.server.orders.serializers as orders_serializers
 import karrio.server.manager.serializers as manager_serializers
+from karrio.server.serializers.abstract import RequestContext, get_object_context
 
 FONT_CONFIG = fonts.FontConfiguration()
 PAGE_SEPARATOR = '<p style="page-break-before: always"></p>'
@@ -59,15 +60,16 @@ class Documents:
     ) -> io.BytesIO:
         options = kwargs.get("options") or {}
         metadata = kwargs.get("metadata") or {}
+        context = kwargs.get("context")
 
         # Build contexts based on related_object and provided data
         shipment_contexts = data.get("shipments_context") or lib.identity(
-            get_shipments_context(data["shipments"])
+            get_shipments_context(data["shipments"], context)
             if "shipments" in data and related_object == "shipment"
             else []
         )
         order_contexts = data.get("orders_context") or lib.identity(
-            get_orders_context(data["orders"])
+            get_orders_context(data["orders"], context)
             if "orders" in data and related_object == "order"
             else []
         )
@@ -192,17 +194,20 @@ class Documents:
 
     @staticmethod
     def generate_shipment_document(slug: str, shipment, **kwargs) -> dict:
-        template = document_models.DocumentTemplate.objects.get(slug=slug)
+        # The shipment's own owner is the scope: the template and the orders it reads
+        # resolve only within the organisation the shipment belongs to.
+        context = get_object_context(shipment)
+        template = _accessible(document_models.DocumentTemplate, context).get(slug=slug)
         # Get carrier from kwargs or from shipment.carrier (JSON snapshot)
         carrier = kwargs.get("carrier") or getattr(shipment, "carrier", None)
         params = dict(
             shipments_context=[
                 dict(
                     shipment=manager_serializers.Shipment(shipment).data,
-                    line_items=get_shipment_item_contexts(shipment),
+                    line_items=get_shipment_item_contexts(shipment, context),
                     carrier=get_carrier_context(carrier),
                     orders=orders_serializers.Order(
-                        get_shipment_order_contexts(shipment),
+                        get_shipment_order_contexts(shipment, context),
                         many=True,
                     ).data,
                 )
@@ -224,35 +229,39 @@ class Documents:
 # region
 
 
-def get_shipments_context(shipment_ids: str) -> typing.List[dict]:
+def get_shipments_context(
+    shipment_ids: str, context: typing.Optional[RequestContext] = None
+) -> typing.List[dict]:
     if shipment_ids == "sample":
         return [utils.SHIPMENT_SAMPLE]
 
     ids = shipment_ids.split(",")
-    shipments = manager_models.Shipment.objects.filter(id__in=ids)
+    shipments = _accessible(manager_models.Shipment, context).filter(id__in=ids)
 
     return [
         dict(
             shipment=manager_serializers.Shipment(shipment).data,
-            line_items=get_shipment_item_contexts(shipment),
+            line_items=get_shipment_item_contexts(shipment, context),
             # Get carrier from shipment.carrier (JSON snapshot)
             carrier=get_carrier_context(getattr(shipment, "carrier", None)),
             orders=orders_serializers.Order(
-                get_shipment_order_contexts(shipment), many=True
+                get_shipment_order_contexts(shipment, context), many=True
             ).data,
         )
         for shipment in shipments
     ]
 
 
-def get_shipment_item_contexts(shipment):
+def get_shipment_item_contexts(
+    shipment, context: typing.Optional[RequestContext] = None
+):
     """Get line items from orders related to the shipment.
 
     Since line_items is now a JSONField on Order, we query orders related
     to the shipment through the M2M relationship and extract line items.
     """
     # Get orders related to this shipment through M2M
-    orders = order_models.Order.objects.filter(shipments=shipment)
+    orders = _accessible(order_models.Order, context).filter(shipments=shipment)
 
     all_items = []
     for order in orders:
@@ -266,10 +275,13 @@ def get_shipment_item_contexts(shipment):
     return all_items
 
 
-def get_shipment_order_contexts(shipment):
+def get_shipment_order_contexts(
+    shipment, context: typing.Optional[RequestContext] = None
+):
     """Get orders related to the shipment through M2M relationship."""
     return (
-        order_models.Order.objects.filter(shipments=shipment)
+        _accessible(order_models.Order, context)
+        .filter(shipments=shipment)
         .order_by("-order_date")
         .distinct()
     )
@@ -285,12 +297,14 @@ def get_carrier_context(carrier=None):
     return carrier.data.to_dict()
 
 
-def get_orders_context(order_ids: str) -> typing.List[dict]:
+def get_orders_context(
+    order_ids: str, context: typing.Optional[RequestContext] = None
+) -> typing.List[dict]:
     if order_ids == "sample":
         return [utils.ORDER_SAMPLE]
 
     ids = order_ids.split(",")
-    orders = order_models.Order.objects.filter(id__in=ids)
+    orders = _accessible(order_models.Order, context).filter(id__in=ids)
 
     return [
         dict(
@@ -298,6 +312,11 @@ def get_orders_context(order_ids: str) -> typing.List[dict]:
         )
         for order in orders
     ]
+
+
+def _accessible(model, context: typing.Optional[RequestContext]):
+    # Rows only resolve for the context they belong to; without one, nothing resolves.
+    return model.objects.none() if context is None else model.access_by(context)
 
 
 # endregion

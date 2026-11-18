@@ -3,6 +3,7 @@ import base64
 import django_downloadview
 import django.urls as urls
 import django.core.files.base as base
+from django.http import JsonResponse
 import rest_framework.status as status
 import rest_framework.request as request
 import rest_framework.response as response
@@ -10,7 +11,7 @@ import rest_framework.pagination as pagination
 import rest_framework.throttling as throttling
 import django_filters.rest_framework as django_filters
 
-from karrio.server.core.utils import validate_resource_token
+from karrio.server.core.utils import entitled_documents, validate_resource_token
 from karrio.server.core.authentication import AccessMixin
 import karrio.server.openapi as openapi
 import karrio.server.core.views.api as api
@@ -117,10 +118,12 @@ class ManifestDoc(AccessMixin, django_downloadview.VirtualDownloadView):
 
         query_params = req.GET.dict()
 
-        self.manifest = models.Manifest.objects.filter(pk=pk, manifest__isnull=False).first()
+        # Scoped to the caller: the token check above lets every signed-in user through.
+        self.manifest = entitled_documents(models.Manifest, req).filter(pk=pk, manifest__isnull=False).first()
 
         if self.manifest is None:
-            return response.Response(
+            # A plain JsonResponse: a DRF Response has no renderer in a Django download view.
+            return JsonResponse(
                 {"errors": [{"message": f"Manifest '{pk}' not found or has no document"}]},
                 status=status.HTTP_404_NOT_FOUND,
             )
