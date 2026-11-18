@@ -30,3 +30,5 @@ from karrio.server.core.tests.test_request_id import (
 from karrio.server.core.tests.base import APITestCase
 
 __all__ = ["APITestCase"]
+
+from karrio.server.core.tests.test_model_id_scoping import TestModelIdScoping  # noqa: F401

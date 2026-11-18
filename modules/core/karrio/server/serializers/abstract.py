@@ -398,7 +398,16 @@ def allow_model_id(model_paths: []):  # type: ignore
                                     new_content.append(value)
                                     continue
 
-                                data = model_to_dict(model.objects.get(pk=value["id"]))
+                                context = kwargs.get("context")
+                                if isinstance(context, dict) and "request" in context:
+                                    context = context["request"]
+                                instance = (
+                                    model.access_by(context).filter(pk=value["id"]).first()
+                                    if context else None
+                                )
+                                if instance is None:
+                                    raise serializers.ValidationError({param: "Invalid record reference."})
+                                data = model_to_dict(instance)
 
                                 for field, field_data in data.items():
                                     if isinstance(field_data, list):

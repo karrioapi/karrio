@@ -13,7 +13,7 @@ Key patterns:
 import typing
 import uuid
 
-import karrio.lib as lib
+from django.forms.models import model_to_dict
 
 
 def generate_json_id(prefix: str = "id") -> str:
@@ -68,6 +68,7 @@ def resolve_template_to_json(
     model_class: type,
     include_template_ref: bool = True,
     excluded_fields: typing.Optional[set] = None,
+    context: typing.Any = None,
 ) -> typing.Optional[dict]:
     """Resolve a template ID to JSON data.
 
@@ -82,14 +83,19 @@ def resolve_template_to_json(
     Returns:
         JSON dict with template data, or None if not found
     """
-    template = model_class.objects.filter(id=template_id).first()
+    if isinstance(context, dict) and "request" in context:
+        context = context["request"]
+    if not context:
+        return None
+
+    template = model_class.access_by(context).filter(id=template_id).first()
     if template is None:
         return None
 
     default_excluded = {'created_at', 'updated_at', 'created_by', 'org', 'link'}
     excluded = default_excluded | (excluded_fields or set())
 
-    data = lib.to_dict(template)
+    data = model_to_dict(template)
     result = {k: v for k, v in data.items() if k not in excluded and v is not None}
 
     if include_template_ref:
@@ -105,6 +111,7 @@ def process_json_object_mutation(
     model_class: typing.Optional[type] = None,
     object_type: typing.Optional[str] = None,
     id_prefix: typing.Optional[str] = None,
+    context: typing.Any = None,
 ) -> typing.Optional[dict]:
     """Process mutation for a single JSON object field (shipper, recipient, etc.).
 
@@ -139,10 +146,10 @@ def process_json_object_mutation(
 
     # String = template ID resolution
     if isinstance(new_data, str) and model_class:
-        result = resolve_template_to_json(new_data, model_class)
+        result = resolve_template_to_json(new_data, model_class, context=context)
     # Dict with only 'id' = template ID resolution
     elif isinstance(new_data, dict) and set(new_data.keys()) == {'id'} and model_class:
-        result = resolve_template_to_json(new_data['id'], model_class)
+        result = resolve_template_to_json(new_data['id'], model_class, context=context)
     else:
         # Dict = deep merge with null removal
         result = deep_merge_remove_nulls(existing_data, new_data)
@@ -167,6 +174,7 @@ def process_json_array_mutation(
     nested_arrays: typing.Optional[dict] = None,
     object_type: typing.Optional[str] = None,
     data_field_name: typing.Optional[str] = None,
+    context: typing.Any = None,
 ) -> typing.Optional[list]:
     """Process mutation for a JSON array field (parcels, items, line_items, etc.).
 
@@ -240,7 +248,7 @@ def process_json_array_mutation(
         # Handle template ID resolution (string or {'id': ...} with only id key)
         if isinstance(item_data, str) and model_class:
             resolved = resolve_template_to_json(
-                item_data, model_class, include_template_ref=False
+                item_data, model_class, include_template_ref=False, context=context
             )
             if resolved:
                 item_data = {**resolved, 'template_id': item_data}
@@ -251,7 +259,7 @@ def process_json_array_mutation(
             and model_class
         ):
             resolved = resolve_template_to_json(
-                item_data['id'], model_class, include_template_ref=False
+                item_data['id'], model_class, include_template_ref=False, context=context
             )
             if resolved:
                 item_data = {**resolved, 'template_id': item_data['id']}
@@ -311,6 +319,7 @@ def process_json_array_mutation(
                         nested_instance,
                         id_prefix=nested_prefix,
                         model_class=nested_model,
+                        context=context,
                     )
                 else:
                     # Initialize nested arrays to empty list if not present
@@ -324,6 +333,7 @@ def process_customs_mutation(
     instance: typing.Any,
     address_model: typing.Optional[type] = None,
     product_model: typing.Optional[type] = None,
+    context: typing.Any = None,
 ) -> typing.Optional[dict]:
     """Process mutation for customs JSON field with nested duty_billing_address and commodities.
 
@@ -364,6 +374,7 @@ def process_customs_mutation(
             customs_instance,
             model_class=address_model,
             object_type='address',
+            context=context,
         )
 
     # Process commodities array
@@ -382,6 +393,7 @@ def process_customs_mutation(
             id_prefix='cmd',
             model_class=product_model,
             object_type='commodity',
+            context=context,
         )
 
     # Deep merge the rest of customs fields

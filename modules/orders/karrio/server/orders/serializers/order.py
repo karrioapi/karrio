@@ -96,7 +96,7 @@ class ScopeResolver:
 resolve_order_scope = ScopeResolver.from_context
 
 
-def process_order_line_items(payload: dict, instance=None):
+def process_order_line_items(payload: dict, instance=None, context=None):
     """Process line_items array for order create/update.
 
     Handles line item mutations and preserves fulfilled_quantity tracking.
@@ -116,6 +116,7 @@ def process_order_line_items(payload: dict, instance=None):
         "line_items", payload, instance,
         id_prefix="oli", model_class=manager_models.Commodity,
         data_field_name="line_items", object_type="commodity",
+        context=context,
     )
 
     # Preserve fulfilled_quantity from existing items and initialize for new items
@@ -149,21 +150,24 @@ class OrderSerializer(serializers.OrderData):
             json_fields.update(shipping_to=process_json_object_mutation(
                 "shipping_to", validated_data, None,
                 model_class=manager_models.Address, object_type="address", id_prefix="adr",
+                context=context,
             ))
 
         if "shipping_from" in validated_data:
             json_fields.update(shipping_from=process_json_object_mutation(
                 "shipping_from", validated_data, None,
                 model_class=manager_models.Address, object_type="address", id_prefix="adr",
+                context=context,
             ))
 
         if "billing_address" in validated_data:
             json_fields.update(billing_address=process_json_object_mutation(
                 "billing_address", validated_data, None,
                 model_class=manager_models.Address, object_type="address", id_prefix="adr",
+                context=context,
             ))
 
-        json_fields.update(line_items=process_order_line_items(validated_data))
+        json_fields.update(line_items=process_order_line_items(validated_data, context=context))
 
         # Merge request_id into meta for request correlation
         from karrio.server.core.middleware import get_request_id

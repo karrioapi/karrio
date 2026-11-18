@@ -74,7 +74,7 @@ class ShippingDetails(APIView):
         Once the shipping rates are retrieved, provide the required info to
         submit the shipment by specifying your preferred rate.
         """
-        payload = ShippingRequestValidation.map(data=request.data).data
+        payload = ShippingRequestValidation.map(data=request.data, context=request).data
 
         response = Shipments.create(
             payload,

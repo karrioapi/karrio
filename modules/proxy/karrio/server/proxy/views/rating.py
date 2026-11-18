@@ -40,7 +40,7 @@ class RateViewAPI(APIView):
         request=RateRequest(),
     )
     def post(self, request: Request):
-        payload = RateRequest.map(data=request.data).data
+        payload = RateRequest.map(data=request.data, context=request).data
 
         response = Rates.fetch(payload, context=request)
         status_code = (
