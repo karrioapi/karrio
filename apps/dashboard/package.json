@@ -6,7 +6,7 @@
     "build": "next build --webpack",
     "start": "next start",
     "lint": "next lint",
-    "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test tests/*.test.ts"
+    "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --import ./tests/support/register.mjs --test tests/*.test.ts"
   },
   "dependencies": {
     "@karrio/admin": "*",
