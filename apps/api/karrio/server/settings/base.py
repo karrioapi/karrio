@@ -205,6 +205,14 @@ APPS_MANAGEMENT = (
 DOCUMENTS_MANAGEMENT = (
     importlib.util.find_spec("karrio.server.documents") is not None  # type:ignore
 )
+# Extra https origins (scheme://host[:port], comma-separated) that generated
+# documents may load stylesheets and images from. Everything else a document
+# references is refused, except data: URIs and the built-in stylesheet.
+DOCUMENT_ASSET_ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in config("DOCUMENT_ASSET_ALLOWED_ORIGINS", default="").split(",")
+    if origin.strip()
+]
 DATA_IMPORT_EXPORT = (
     importlib.util.find_spec("karrio.server.data") is not None  # type:ignore
 )

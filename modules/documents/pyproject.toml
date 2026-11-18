@@ -17,7 +17,7 @@ classifiers = [
 ]
 dependencies = [
     "pyzint",
-    "weasyprint",
+    "weasyprint>=68.1",
     "karrio_server_core",
     "karrio_server_graph",
     "karrio_server_manager",
