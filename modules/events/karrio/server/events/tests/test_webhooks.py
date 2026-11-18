@@ -16,6 +16,12 @@ NOTIFICATION_DATETIME = timezone.now()
 
 
 class TestWebhooks(APITestCase):
+    def setUp(self):
+        super().setUp()
+        dns = patch("socket.getaddrinfo", return_value=[(2, 1, 6, "", ("93.184.216.34", 443))])
+        dns.start()
+        self.addCleanup(dns.stop)
+
     def test_create_webhook(self):
         url = reverse("karrio.server.events:webhook-list")
         data = WEBHOOK_DATA
@@ -30,6 +36,9 @@ class TestWebhooks(APITestCase):
 class TestWebhookDetails(APITestCase):
     def setUp(self) -> None:
         super().setUp()
+        dns = patch("socket.getaddrinfo", return_value=[(2, 1, 6, "", ("93.184.216.34", 443))])
+        dns.start()
+        self.addCleanup(dns.stop)
         self.webhook: Webhook = Webhook.objects.create(
             **{
                 "url": "https://api.karrio.io",
@@ -85,7 +94,7 @@ class TestWebhookDetails(APITestCase):
     def test_tracker_updated_payload_structure(self):
         """Webhook payload for tracker_updated contains tracking-specific fields."""
         with patch(
-            "karrio.server.events.task_definitions.base.webhook.requests.post"
+            "karrio.server.events.task_definitions.base.webhook.post_webhook"
         ) as mock_post:
             response = Response()
             response.status_code = 200
@@ -100,7 +109,7 @@ class TestWebhookDetails(APITestCase):
 
             # Verify the payload posted to the webhook URL
             mock_post.assert_called_once()
-            payload = mock_post.call_args[1]["json"]
+            payload = mock_post.call_args.args[1]
             self.assertEqual(payload["event"], "tracker_updated")
             data = payload["data"]
             self.assertIn("tracking_number", data)
@@ -114,7 +123,7 @@ class TestWebhookDetails(APITestCase):
     def test_shipment_purchased_payload_structure(self):
         """Webhook payload for shipment_purchased contains shipment-specific fields."""
         with patch(
-            "karrio.server.events.task_definitions.base.webhook.requests.post"
+            "karrio.server.events.task_definitions.base.webhook.post_webhook"
         ) as mock_post:
             response = Response()
             response.status_code = 200
@@ -129,7 +138,7 @@ class TestWebhookDetails(APITestCase):
 
             # Verify the payload posted to the webhook URL
             mock_post.assert_called_once()
-            payload = mock_post.call_args[1]["json"]
+            payload = mock_post.call_args.args[1]
             self.assertEqual(payload["event"], "shipment_purchased")
             data = payload["data"]
             self.assertIn("id", data)

@@ -738,3 +738,8 @@ if USE_LOGURU:
         print(f"Warning: Failed to initialize Loguru: {e}")
         print("Falling back to standard Django logging")
         USE_LOGURU = False
+
+# Operator-only exceptions for webhook hostnames or CIDRs (comma separated).
+WEBHOOK_ALLOWED_DESTINATIONS = config(
+    "WEBHOOK_ALLOWED_DESTINATIONS", default="", cast=decouple.Csv()
+)

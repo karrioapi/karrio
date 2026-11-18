@@ -1,5 +1,6 @@
 import typing
 import requests
+from karrio.server.events.webhook_http import post_webhook
 from datetime import datetime
 from django.conf import settings
 from django.db.models import Q
@@ -11,6 +12,7 @@ from karrio.server.core.logging import logger
 from karrio.server.serializers import Context
 from karrio.server.events import models
 import karrio.server.events.serializers.event as serializers
+
 NotificationResponse = typing.Tuple[str, requests.Response]
 User = get_user_model()
 
@@ -54,16 +56,21 @@ def notify_webhook_subscribers(
 
 def notify_subscribers(webhooks: typing.List[models.Webhook], payload: dict):
     def notify_subscriber(webhook: models.Webhook):
-        response = identity(
-            lambda: requests.post(
-                webhook.url,
-                json=payload,
-                headers={
-                    "Content-type": "application/json",
-                    "X-Event-Id": webhook.secret,
-                },
+        try:
+            response = identity(
+                lambda: post_webhook(
+                    webhook.url,
+                    payload,
+                    {"Content-type": "application/json", "X-Event-Id": webhook.secret},
+                )
             )
-        )
+        except Exception:
+            # Isolate every delivery: whatever one webhook raises counts as its
+            # own failed delivery and never stops the others. Log the id only,
+            # never the URL, the payload or the error text.
+            logger.warning("Webhook delivery blocked or failed", webhook_id=webhook.id)
+            response = requests.Response()
+            response.status_code = 502
 
         return webhook.id, response
 
@@ -90,12 +97,22 @@ def update_notified_webhooks(
                 # Disable the webhook if notification failed more than 5 times
                 webhook.disabled = webhook.failure_streak_count > 5
 
-            webhook.save()
+            webhook.save(
+                update_fields=[
+                    "last_event_at",
+                    "failure_streak_count",
+                    "disabled",
+                ]
+            )
 
             logger.debug("Webhook updated successfully", webhook_id=webhook_id)
 
         except Exception as update_error:
-            logger.warning("Failed to update webhook", webhook_id=webhook_id, error=str(update_error))
+            logger.warning(
+                "Failed to update webhook",
+                webhook_id=webhook_id,
+                error=str(update_error),
+            )
             logger.exception("Webhook update error", webhook_id=webhook_id)
 
 

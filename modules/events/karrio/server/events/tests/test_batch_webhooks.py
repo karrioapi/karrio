@@ -14,6 +14,9 @@ from karrio.server.manager import models
 class TestBatchWebhookResend(APITestCase):
     def setUp(self) -> None:
         super().setUp()
+        dns = patch("socket.getaddrinfo", return_value=[(2, 1, 6, "", ("93.184.216.34", 443))])
+        dns.start()
+        self.addCleanup(dns.stop)
         self.tracker = models.Tracking.objects.create(
             tracking_number="1Z12345E6205277936",
             test_mode=True,
