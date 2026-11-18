@@ -4,6 +4,21 @@ import { join } from 'path';
 // Cache for loaded route handlers to avoid repeated imports
 const routeCache = new Map<string, any>();
 
+// The app id and every path segment end up in a module path that is imported at runtime,
+// so each one must be a plain lowercase name: no dots, slashes, backslashes, encoded or
+// absolute-looking values. That keeps the import inside apps/<app>/api/**/route.
+const ROUTE_SEGMENT = /^[a-z0-9-]+$/;
+
+function isSafeRoute(appId: string, paths: string[]): boolean {
+  return (
+    typeof appId === 'string' &&
+    ROUTE_SEGMENT.test(appId) &&
+    Array.isArray(paths) &&
+    paths.length > 0 &&
+    paths.every((segment) => typeof segment === 'string' && ROUTE_SEGMENT.test(segment))
+  );
+}
+
 async function loadAppRoute(appId: string, apiPath: string) {
   const cacheKey = `${appId}:${apiPath}`;
 
@@ -42,6 +57,11 @@ async function handleRequest(
 ) {
   try {
     const { appId, paths } = params;
+
+    if (!isSafeRoute(appId, paths)) {
+      return new NextResponse('Not Found', { status: 404 });
+    }
+
     const apiPath = paths.join('/');
 
     // Load the app route module
