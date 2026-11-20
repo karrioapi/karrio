@@ -40,6 +40,79 @@ class TestFedExPickup(unittest.TestCase):
             "Please ring bell at loading dock.",
         )
 
+    def test_create_pickup_request_maps_qc_to_pq_for_canada(self):
+        payload_with_canadian_address = {
+            **PickupPayload,
+            "address": {
+                **PickupPayload["address"],
+                "city": "Montreal",
+                "postal_code": "H8Z2Z3",
+                "country_code": "CA",
+                "state_code": "QC",
+            },
+        }
+        request = gateway.mapper.create_pickup_request(
+            models.PickupRequest(**payload_with_canadian_address)
+        )
+
+        address = request.serialize()["originDetail"]["pickupLocation"]["address"]
+        self.assertEqual(address["stateOrProvinceCode"], "PQ")
+
+    def test_create_update_pickup_request_maps_qc_to_pq_for_canada(self):
+        payload_with_canadian_address = {
+            **PickupUpdatePayload,
+            "address": {
+                **PickupUpdatePayload["address"],
+                "city": "Montreal",
+                "postal_code": "H8Z2Z3",
+                "country_code": "CA",
+                "state_code": "QC",
+            },
+        }
+        request = gateway.mapper.create_pickup_update_request(
+            models.PickupUpdateRequest(**payload_with_canadian_address)
+        )
+
+        address = request.serialize()["originDetail"]["pickupLocation"]["address"]
+        self.assertEqual(address["stateOrProvinceCode"], "PQ")
+
+    def test_create_pickup_request_maps_quebec_name_to_pq(self):
+        request = gateway.mapper.create_pickup_request(
+            models.PickupRequest(
+                **{
+                    **PickupPayload,
+                    "address": {
+                        **PickupPayload["address"],
+                        "city": "Montreal",
+                        "postal_code": "H8Z2Z3",
+                        "country_code": "CA",
+                        "state_code": "Québec",
+                    },
+                }
+            )
+        )
+
+        address = request.serialize()["originDetail"]["pickupLocation"]["address"]
+        self.assertEqual(address["stateOrProvinceCode"], "PQ")
+
+    def test_create_pickup_request_omits_state_for_sweden(self):
+        request = gateway.mapper.create_pickup_request(
+            models.PickupRequest(**{**PickupPayload, "address": SwedishPickupAddress})
+        )
+
+        address = request.serialize()["originDetail"]["pickupLocation"]["address"]
+        self.assertNotIn("stateOrProvinceCode", address)
+
+    def test_create_update_pickup_request_omits_state_for_sweden(self):
+        request = gateway.mapper.create_pickup_update_request(
+            models.PickupUpdateRequest(
+                **{**PickupUpdatePayload, "address": SwedishPickupAddress}
+            )
+        )
+
+        address = request.serialize()["originDetail"]["pickupLocation"]["address"]
+        self.assertNotIn("stateOrProvinceCode", address)
+
     def test_create_update_pickup_request(self):
         request = gateway.mapper.create_pickup_update_request(self.PickupUpdateRequest)
 
@@ -135,6 +208,14 @@ PickupPayload = {
     "options": {
         "fedex_carrier_code": "FDXE",
     },
+}
+
+SwedishPickupAddress = {
+    **PickupPayload["address"],
+    "city": "Göteborg",
+    "postal_code": "41701",
+    "country_code": "SE",
+    "state_code": "Västra Götaland",
 }
 
 PickupPayloadWithSeconds = {
