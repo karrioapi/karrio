@@ -3,7 +3,6 @@
 import { Button } from "@karrio/ui/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
-import { BookDemoButton } from "./book-demo-button";
 
 interface CTASectionProps {
   title: string;
@@ -74,11 +73,6 @@ export function CTASection({
                   The optimal solution for teams with control and flexibility.
                 </p>
               </div>
-
-              <BookDemoButton
-                size="lg"
-                className="w-full sm:w-auto bg-[#5722cc] hover:bg-[#5722cc]/90"
-              />
             </div>
 
             <div className="aspect-video relative overflow-hidden bg-black/40 flex items-center justify-center">

@@ -25,3 +25,15 @@ gateway = karrio.gateway["teleship"].create(
     ),
     cache=lib.Cache(**cached_auth),
 )
+
+webhook_secret = "whsec_test_webhook_secret"
+
+gateway_with_webhook_secret = karrio.gateway["teleship"].create(
+    dict(
+        client_id=client_id,
+        client_secret=client_secret,
+        test_mode=True,
+        config=dict(webhook_secret=webhook_secret),
+    ),
+    cache=lib.Cache(**cached_auth),
+)

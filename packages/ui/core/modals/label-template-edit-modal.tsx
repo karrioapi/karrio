@@ -3,13 +3,12 @@ import {
   isEqual,
   isNone,
   isNoneOrEmpty,
-  url$,
   validationMessage,
   validityCheck,
 } from "@karrio/lib";
 import { DEFAULT_SVG_LABEL_TEMPLATE } from "@karrio/lib/sample";
 import React, { useContext, useReducer, useState } from "react";
-import { useAPIMetadata } from "@karrio/hooks/api-metadata";
+import { useDocumentPrinter } from "@karrio/hooks/resource-token";
 import { Tabs, TabStateProvider } from "../components/tabs";
 import { InputField } from "../components/input-field";
 import { jsonLanguage } from "@codemirror/lang-json";
@@ -76,7 +75,7 @@ function reducer(
 export const LabelTemplateEditModalProvider = ({
   children,
 }: LabelTemplateEditModalComponent): JSX.Element => {
-  const { references } = useAPIMetadata();
+  const printer = useDocumentPrinter();
   const { loading, setLoading } = useContext(Loading);
   const [isActive, setIsActive] = useState<boolean>(false);
   const [key, setKey] = useState<string>(`template-${Date.now()}`);
@@ -158,14 +157,14 @@ export const LabelTemplateEditModalProvider = ({
                   </span>
                 </div>
                 <div>
-                  <a
+                  <button
+                    type="button"
                     className={`button is-small is-primary mx-1 ${isNoneOrEmpty(template.id) ? "is-static" : ""}`}
-                    href={url$`${references.HOST}/v1/carriers/${operation?.connection.id}/label.pdf`}
-                    target="_blank"
-                    rel="noreferrer"
+                    disabled={isNoneOrEmpty(template.id) || printer.isLoading}
+                    onClick={() => printer.openCarrierLabelPreview(operation?.connection.id)}
                   >
                     Preview Template
-                  </a>
+                  </button>
                   <button
                     type="submit"
                     className="button is-small is-success"

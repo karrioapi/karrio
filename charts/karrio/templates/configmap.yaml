@@ -17,3 +17,11 @@ data:
   DATABASE_USERNAME: {{ .Values.database.username | quote }}
   REDIS_HOST: {{ .Values.redis.host | quote }}
   REDIS_PORT: {{ .Values.redis.port | quote }}
+  {{- if .Values.dashboardUrl }}
+  # Email links (password reset, sign-up, email change) may only point here.
+  DASHBOARD_URL: {{ .Values.dashboardUrl | quote }}
+  {{- end }}
+  {{- if .Values.emailLinkAllowedOrigins }}
+  # Extra frontends email links may point to (comma-separated scheme://host[:port]).
+  EMAIL_LINK_ALLOWED_ORIGINS: {{ .Values.emailLinkAllowedOrigins | quote }}
+  {{- end }}

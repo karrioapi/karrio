@@ -144,7 +144,7 @@ class ParcelDetail(APIView):
         parcel = models.Parcel.access_by(request).get(pk=pk)
         can_mutate_parcel(parcel, update=True)
 
-        ParcelSerializer.map(parcel, data=request.data).save()
+        ParcelSerializer.map(parcel, data=request.data, context=request).save()
 
         return Response(Parcel(parcel).data)
 

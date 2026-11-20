@@ -11,7 +11,6 @@ import {
   Plus,
   Minus,
 } from "lucide-react";
-import { BookDemoButton } from "@karrio/console/components/book-demo-button";
 import { CTASection } from "@/components/cta-section";
 import { Button } from "@karrio/ui/components/ui/button";
 import { ShippingFeaturesTab } from "@/components/shipping-features-tabs";
@@ -144,13 +143,6 @@ export default function Page() {
 
                 {/* CTA Buttons */}
                 <div className="flex gap-4">
-                  <BookDemoButton
-                    size="lg"
-                    className="bg-[#ff4800] hover:bg-[#ff4800]/90"
-                    calLink="karrio/embed"
-                  >
-                    Contact Sales
-                  </BookDemoButton>
                   <Button
                     size="lg"
                     variant="outline"
@@ -386,15 +378,6 @@ export default function Page() {
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
                 Scale your company's operations with our advanced on-prem or cloud shipping automation
               </h2>
-              <div className="mt-8">
-                <BookDemoButton
-                  size="lg"
-                  className="bg-[#4A90E2] hover:bg-[#4A90E2]/90"
-                  calLink="karrio/enterprise"
-                >
-                  Contact Sales
-                </BookDemoButton>
-              </div>
             </div>
           </div>
         </section>
@@ -412,15 +395,6 @@ export default function Page() {
                 <span className="text-[#ff4800] font-semibold">Try it out</span>{' '}
                 and see how your merchants ship faster.
               </p>
-              <div className="mt-8">
-                <BookDemoButton
-                  size="lg"
-                  className="bg-[#ff4800] hover:bg-[#ff4800]/90"
-                  calLink="karrio/embed"
-                >
-                  Start building
-                </BookDemoButton>
-              </div>
             </div>
           </div>
         </section>

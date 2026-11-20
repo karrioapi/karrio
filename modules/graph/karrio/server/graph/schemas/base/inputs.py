@@ -238,7 +238,7 @@ class DeleteAPIKeyMutationInput(utils.BaseInput):
 class RequestEmailChangeMutationInput(utils.BaseInput):
     email: str
     password: str
-    redirect_url: str
+    redirect_url: typing.Optional[str] = strawberry.UNSET
 
 
 @strawberry.input
@@ -251,7 +251,7 @@ class RegisterUserMutationInput(utils.BaseInput):
     email: str
     password1: str
     password2: str
-    redirect_url: str
+    redirect_url: typing.Optional[str] = strawberry.UNSET
     full_name: typing.Optional[str] = strawberry.UNSET
 
 
@@ -270,7 +270,7 @@ class ChangePasswordMutationInput(utils.BaseInput):
 @strawberry.input
 class RequestPasswordResetMutationInput(utils.BaseInput):
     email: str
-    redirect_url: str
+    redirect_url: typing.Optional[str] = strawberry.UNSET
 
 
 @strawberry.input

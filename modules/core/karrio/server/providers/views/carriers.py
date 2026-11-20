@@ -18,6 +18,8 @@ import karrio.server.samples as samples
 import karrio.server.core.views.api as api
 import karrio.server.providers.models as models
 from karrio.server.core.logging import logger
+from karrio.server.core.utils import validate_resource_token
+from karrio.server.core.authentication import AccessMixin
 from karrio.server.core import datatypes, dataunits, serializers
 ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 
@@ -245,7 +247,10 @@ class CarrierOptions(api.APIView):
         return Response(options, status=status.HTTP_200_OK)
 
 
-class CarrierLabelPreview(VirtualDownloadView):
+LABEL_PREVIEW_FAILED = dict(error="The label preview could not be generated.")
+
+
+class CarrierLabelPreview(AccessMixin, VirtualDownloadView):
     def get(
         self,
         request: Request,
@@ -256,21 +261,39 @@ class CarrierLabelPreview(VirtualDownloadView):
         """
         Preview a carrier label template...
         """
+        error = validate_resource_token(request, "carrier", [pk], "label_preview")
+        if error:
+            return error
+
+        # A signed-in caller sees only their own connections. A `?token=` link has no
+        # caller to scope to; /api/tokens minted it only for a connection its minter
+        # can see, and the token check above bound it to this exact pk.
+        connections = lib.identity(
+            models.CarrierConnection.access_by(request)
+            if request.user.is_authenticated
+            else models.CarrierConnection.objects
+        )
+        carrier = connections.filter(carrier_code="generic", pk=pk).first()
+
+        if carrier is None:
+            return JsonResponse(
+                dict(error=f"Carrier connection '{pk}' not found"),
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
         try:
             query_params = request.GET.dict()
-            carrier = models.CarrierConnection.objects.get(carrier_code="generic", pk=pk)
 
             self.document = self._generate_label(carrier, format)
             self.name = f"{carrier.custom_carrier_name}_label.{format}"
             self.attachment = query_params.get("download", False)
 
-            response = super(CarrierLabelPreview, self).get(
-                request, pk, format, **kwargs
-            )
-            response["X-Frame-Options"] = "ALLOWALL"
-            return response
+            return super(CarrierLabelPreview, self).get(request, pk, format, **kwargs)
         except Exception as e:
-            return JsonResponse(dict(error=str(e)), status=status.HTTP_409_CONFLICT)
+            # A fixed body: exception text would tell a caller more than that the
+            # preview failed (row state, internals). The detail goes to the log.
+            logger.exception("Carrier label preview failed", connection_id=pk, error=str(e))
+            return JsonResponse(LABEL_PREVIEW_FAILED, status=status.HTTP_409_CONFLICT)
 
     def get_file(self):
         content = base64.b64decode(self.document or "")

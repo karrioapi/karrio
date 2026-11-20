@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "karrio_server_documents"
-version = "2026.1.32"
+version = "2026.1.33"
 description = "Multi-carrier shipping API apps module"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -17,7 +17,7 @@ classifiers = [
 ]
 dependencies = [
     "pyzint",
-    "weasyprint",
+    "weasyprint>=68.1",
     "karrio_server_core",
     "karrio_server_graph",
     "karrio_server_manager",

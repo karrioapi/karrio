@@ -1,4 +1,4 @@
-from jinja2 import Template
+import jinja2.sandbox
 from karrio.core.utils import DP
 from karrio.core.units import Package, CountryISO
 from karrio.core.models import ShipmentRequest
@@ -6,6 +6,11 @@ from karrio.addons.renderer import render_label
 from karrio.universal.providers.shipping import (
     ShippingMixinSettings,
 )
+
+# Label templates are written by users (on custom carrier connections) and
+# rendered on the server, so they render sandboxed: a plain jinja2.Template
+# lets a template walk from any value to Python internals and run code.
+SANDBOXED_ENV = jinja2.sandbox.SandboxedEnvironment()
 
 
 def generate_label(
@@ -37,7 +42,7 @@ def generate_label(
     )
 
     return render_label(
-        label=Template(template).render(**context),
+        label=SANDBOXED_ENV.from_string(template).render(**context),
         label_type=getattr(shipment, "label_type", "PDF"),
         template_type=getattr(settings.label_template, "type", "SVG"),
         width=getattr(settings.label_template, "width", 4),

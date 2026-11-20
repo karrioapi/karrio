@@ -1,3 +1,69 @@
+# Karrio 2026.1.33
+
+> Final release before the repository is archived. It contains security fixes
+> only, plus the archive notice. Maintenance is suspended after this release
+> until further notice: there will be no new releases or security patches.
+> Self-hosters should upgrade and read the action items below; several fixes
+> change behaviour that integrations may depend on.
+
+## Action required on upgrade
+
+| Area | What operators must do |
+|---|---|
+| Account emails (password reset, sign-up confirmation, email change) | Set `DASHBOARD_URL` on the API and worker, plus `EMAIL_LINK_ALLOWED_ORIGINS` for any additional dashboard domains. Without them these emails are not sent. |
+| Tracker retrieval | API clients reading `GET /v1/trackers/{id or tracking number}` must authenticate. Anonymous reads work by exact tracker id only and return a reduced set of fields. |
+| Webhooks | Destinations on loopback, private-network and cloud-metadata addresses are refused by default. List internal destinations you need in `WEBHOOK_ALLOWED_DESTINATIONS`. If you deliver through an egress proxy, that proxy must enforce egress restrictions itself. |
+| Carrier connection secrets | Tenant GraphQL and REST no longer return carrier credentials or config secrets. Integrations that read them back must stop relying on it. |
+| Nested record ids in serializers | Custom code that builds the shipment, rate and similar serializers with record ids must pass a request context. |
+| Document templates | Templates that load external assets (logos, fonts, stylesheets) need their https origin listed in `DOCUMENT_ASSET_ALLOWED_ORIGINS`. Review stored templates: they now render in a sandbox and printed data is escaped. |
+| API-token authentication cache | `TOKEN_AUTH_CACHE_TTL` defaults to 60 seconds with Redis and 0 (off) otherwise. Without Redis, every API-token request authenticates against the database. Run with 0 if you change staff flags in bulk. |
+| Teleship webhooks | Teleship connections need a stored webhook secret (register the webhook again from Karrio, or set the secret). Unsigned or wrongly signed events are refused. |
+| Carrier OAuth callback | If your OAuth callback page is not on `DASHBOARD_URL`, list its origin in `EMAIL_LINK_ALLOWED_ORIGINS`. |
+
+The new settings are documented on the self-hosting environment page and in
+`.env.sample`.
+
+## Changes
+
+### Security fixes
+
+- fix(documents): scope document downloads and token minting to the caller
+- fix(providers): require access to the carrier label template preview
+- fix(graph): only send email links to configured frontends
+- fix(manager): authenticate and scope tracker retrieval
+- fix(manager): restrict anonymous tracking to public capability fields
+- fix(events): validate and constrain webhook destinations
+- fix(graph): stop returning carrier connection secrets
+- fix(core): scope record hydration to caller access
+- fix(documents): stop document templates reaching the network, files and the ORM
+- fix(dashboard): harden the generated carrier image route against reflected XSS
+- fix(manager): remove the dead tracker image download view and route
+- fix(sdk): render carrier label templates in the Jinja sandbox
+- fix(dashboard): validate the Shopify shop domain as an exact myshopify.com host
+- fix(dashboard): stop logging the Places key and require a session
+- fix(dashboard): keep dev-assets inside the app directory
+- fix(app-store): only import app routes whose name is a plain segment
+- fix(core): evict cached API-token authentication on revocation
+- fix(providers): match inbound carrier webhooks to trackers by number and connection
+- fix(sdk): stop lib.to_slug looping forever on an empty separator
+- fix(providers): fail closed on unsigned or wrongly signed Teleship webhook events
+- fix(events): poll each tracker with its own carrier connection
+- fix(providers): redirect the OAuth callback only to a configured frontend and escape its result page
+
+### Docs
+
+- docs: document the security-related environment settings
+- docs: announce that the repository is archived and maintenance is suspended
+
+### Chores
+
+- test(dashboard): let route tests import next/server and stub @karrio/lib
+- ci: run the dashboard unit tests in the dashboard job
+- chore(web): remove demo booking and hosted-app links
+- chore(web): redirect the website to the JTL Shipping page
+
+---
+
 # Karrio 2026.1.32
 
 > Patch release. Resolves six pressing operational and security issues reported

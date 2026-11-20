@@ -155,5 +155,6 @@ existingSecret: ""
 ## ──────────────────────────────────────────────
 ## Dashboard public URLs
 ## ──────────────────────────────────────────────
-dashboardUrl: ""          # e.g. https://app.example.com
+dashboardUrl: ""          # e.g. https://app.example.com (also where email links may point)
+emailLinkAllowedOrigins: ""  # extra dashboard origins for email links, comma-separated
 karrioPublicUrl: ""       # e.g. https://api.example.com

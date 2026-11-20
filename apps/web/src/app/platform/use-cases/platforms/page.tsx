@@ -8,7 +8,6 @@ import {
   Code,
 } from "lucide-react";
 import { FeatureShowcase } from "@karrio/console/components/feature-showcase";
-import { BookDemoButton } from "@karrio/console/components/book-demo-button";
 import { Button } from "@karrio/ui/components/ui/button";
 import { CTASection } from "@/components/cta-section";
 import Link from "next/link";
@@ -42,7 +41,6 @@ export default async function Page() {
               <Button size="lg" className="bg-[#5722cc] hover:bg-[#5722cc]/90">
                 <Link href="/#pricing">Get Started</Link>
               </Button>
-              <BookDemoButton variant="outline" className="border-white/20 hover:bg-white/10" />
             </div>
           </div>
         </div>

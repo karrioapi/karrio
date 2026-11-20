@@ -4,6 +4,25 @@ import { randomBytes } from 'crypto';
 // Store OAuth state temporarily (in production, use Redis or database)
 const oauthStates = new Map<string, { installation_id: string, shop: string, expires: number }>();
 
+// A shop domain is a bare `<shop>.myshopify.com` host name. It is parsed with URL and
+// the input must equal the parsed host exactly, so nothing after a '#', '?', '/', '@'
+// or ':' (or any case or whitespace the parser would normalise away) is accepted.
+const SHOP_HOSTNAME = /^[a-z0-9][a-z0-9-]*\.myshopify\.com$/;
+
+function parseShopDomain(value: unknown): string | null {
+    if (typeof value !== 'string') return null;
+    let url: URL;
+    try {
+        url = new URL(`https://${value}`);
+    } catch {
+        return null;
+    }
+    if (url.protocol !== 'https:' || url.username || url.password || url.port) return null;
+    if (url.pathname !== '/' || url.search || url.hash) return null;
+    if (url.hostname !== value || !SHOP_HOSTNAME.test(url.hostname)) return null;
+    return url.hostname;
+}
+
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const installation_id = searchParams.get('installation_id');
@@ -17,7 +36,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Validate shop domain format
-    if (!shop.endsWith('.myshopify.com')) {
+    const shopHost = parseShopDomain(shop);
+    if (!shopHost) {
         return NextResponse.json(
             { error: 'Invalid shop domain format' },
             { status: 400 }
@@ -65,7 +85,7 @@ export async function GET(request: NextRequest) {
         }
 
         // Build Shopify OAuth URL
-        const authUrl = new URL(`https://${shop}/admin/oauth/authorize`);
+        const authUrl = new URL(`https://${shopHost}/admin/oauth/authorize`);
         authUrl.searchParams.set('client_id', clientId);
         authUrl.searchParams.set('scope', scopes);
         authUrl.searchParams.set('redirect_uri', redirectUri);

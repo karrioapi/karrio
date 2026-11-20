@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@karrio/ui/components/ui/button";
-import { BookDemoButton } from "./book-demo-button";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -90,7 +89,7 @@ export function CTASection({
                 </p>
               </div>
 
-              {platformAction ? (
+              {platformAction && (
                 <Button
                   size="lg"
                   className={platformAction.className || "mt-2 bg-[#5722cc] hover:bg-[#5722cc]/90"}
@@ -100,11 +99,6 @@ export function CTASection({
                     {platformAction.text}
                   </Link>
                 </Button>
-              ) : (
-                <BookDemoButton
-                  size="lg"
-                  className="mt-2 bg-[#5722cc] hover:bg-[#5722cc]/90"
-                />
               )}
             </div>
 

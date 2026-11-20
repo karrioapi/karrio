@@ -2233,10 +2233,14 @@ class SystemConnectionType:
 
     @strawberry.field
     def config(self: providers.SystemConnection, info: Info) -> typing.Optional[utils.JSON]:
-        """Get the user's config for this SystemConnection from their BrokeredConnection."""
+        """Get the user's config for this SystemConnection from their BrokeredConnection.
+
+        Settings only: config secrets (the user's and the platform's base config)
+        are write-only and never returned.
+        """
         if hasattr(self, "_org_brokered"):
             brokered = next(iter(self._org_brokered), None)
-            return brokered.config if brokered else None
+            return brokered.get_public_config() if brokered else None
 
         if settings.MULTI_ORGANIZATIONS:
             org_id = getattr(info.context.request, "org", None)
@@ -2252,7 +2256,7 @@ class SystemConnectionType:
                 system_connection=self,
                 created_by__id=user_id,
             ).first()
-        return brokered.config if brokered else None
+        return brokered.get_public_config() if brokered else None
 
     @staticmethod
     @utils.authentication_required
@@ -2347,7 +2351,8 @@ class CarrierConnectionType:
 
     @strawberry.field
     def credentials(self: providers.CarrierConnection, info: Info) -> utils.JSON:
-        return self.credentials
+        """Account identifiers only: secrets are write-only and never returned."""
+        return self.get_public_credentials()
 
     @strawberry.field
     def account_country_code(self: providers.CarrierConnection) -> typing.Optional[str]:
@@ -2361,7 +2366,8 @@ class CarrierConnectionType:
 
     @strawberry.field
     def config(self: providers.CarrierConnection, info: Info) -> typing.Optional[utils.JSON]:
-        return getattr(self, "config", None)
+        """Settings only: config secrets are write-only and never returned."""
+        return self.get_public_config()
 
     @strawberry.field
     def rate_sheet(

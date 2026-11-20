@@ -2,7 +2,7 @@
 
 from unicodedata import category
 import attr
-from typing import List, Dict, Any, Union
+from typing import List, Dict, Any, Optional, Union
 from jstruct import JList, JStruct, REQUIRED
 
 
@@ -602,6 +602,9 @@ class RequestPayload:
     body: dict = {}
     query: dict = {}
     headers: dict = {}
+    # The request body exactly as received (before any parsing). Connectors
+    # that verify a signature over the body need these bytes.
+    raw_body: Optional[bytes] = None
 
 
 # ─────────────────────────────────────────────────────────────────────────────

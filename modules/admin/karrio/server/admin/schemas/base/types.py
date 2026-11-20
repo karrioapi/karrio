@@ -115,6 +115,11 @@ class SystemCarrierConnectionType(base.CarrierConnectionType):
         return self.get_credentials()
 
     @strawberry.field
+    def config(self: providers.SystemConnection, info: Info) -> typing.Optional[utils.JSON]:
+        """Full config for admin management (staff only, like credentials)."""
+        return self.config
+
+    @strawberry.field
     def usage(
         self: providers.SystemConnection,
         info: Info,

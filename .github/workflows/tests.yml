@@ -20,6 +20,11 @@ on: [push]
 permissions:
   contents: read
 
+# ubuntu-latest (26.04) ships a GCC that turns incompatible-pointer-types into an
+# error, and pyzint 0.1.10 only builds from source. Same flags as bin/deploy.
+env:
+  CFLAGS: "-Wno-error=array-bounds -Wno-error=stringop-overflow -Wno-error=incompatible-pointer-types"
+
 jobs:
   sdk-tests:
     runs-on: ubuntu-latest
@@ -205,6 +210,9 @@ jobs:
         run: |
           npm ci
           npm run build -w apps/dashboard
+
+      - name: Dashboard Tests
+        run: npm test -w apps/dashboard
 
   mcp-ci:
     runs-on: ubuntu-latest

@@ -23,6 +23,7 @@ import karrio.api.gateway as gateway
 import karrio.server.core.models as core
 import karrio.server.core.fields as fields
 import karrio.server.core.datatypes as datatypes
+from karrio.server.providers.models.carrier import get_public_config
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -228,6 +229,10 @@ class SystemConnection(models.Model):
     # ─────────────────────────────────────────────────────────────────
     # CREDENTIAL MANAGEMENT (Encrypted Storage)
     # ─────────────────────────────────────────────────────────────────
+
+    def get_public_config(self) -> typing.Dict:
+        """Config values that may be returned to non-staff API clients."""
+        return get_public_config(self.config)
 
     def get_sensitive_fields(self) -> typing.Set[str]:
         """
@@ -558,6 +563,11 @@ class BrokeredConnection(models.Model):
         base = dict(self.system_connection.config or {})
         overrides = dict(self.config_overrides or {})
         return {**base, **overrides}
+
+    def get_public_config(self) -> typing.Dict:
+        """Merged config values that may be returned to the brokered user. The
+        system base config is the platform's: its secrets are never returned."""
+        return get_public_config(self.config)
 
     @property
     def capabilities(self) -> list:

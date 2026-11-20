@@ -6,6 +6,7 @@ from django.db.models.fields import json
 import karrio.server.core.models as core
 import karrio.server.core.fields as core_fields
 import karrio.server.events.serializers.base as serializers
+from karrio.server.events.webhook_http import resolve_destination
 
 
 @core.register_model
@@ -41,6 +42,21 @@ class Webhook(core.OwnedEntity):
 
     # System Reference fields
     failure_streak_count = models.IntegerField(default=0)
+
+    def save(self, *args, **kwargs):
+        fields = kwargs.get("update_fields")
+        if fields is None or "url" in fields:
+            stored_url = (
+                type(self)
+                .objects.filter(pk=self.pk)
+                .values_list("url", flat=True)
+                .first()
+                if not self._state.adding
+                else None
+            )
+            if self._state.adding or stored_url != self.url:
+                resolve_destination(self.url)
+        return super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.id} + {self.url}"

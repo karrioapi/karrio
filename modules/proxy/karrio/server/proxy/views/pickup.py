@@ -51,7 +51,7 @@ class PickupSchedule(APIView):
         """
         Schedule one or many parcels pickup
         """
-        payload = PickupRequest.map(data=request.data).data
+        payload = PickupRequest.map(data=request.data, context=request).data
 
         response = Pickups.schedule(payload, context=request, carrier_name=carrier_name)
 
@@ -86,7 +86,7 @@ class PickupUpdate(APIView):
         """
         Modify a scheduled pickup
         """
-        payload = PickupUpdateRequest.map(data=request.data).data
+        payload = PickupUpdateRequest.map(data=request.data, context=request).data
 
         response = Pickups.update(payload, context=request, carrier_name=carrier_name)
 
@@ -121,7 +121,7 @@ class PickupCancel(APIView):
         """
         Cancel a pickup previously scheduled
         """
-        payload = PickupCancelRequest.map(data=request.data).data
+        payload = PickupCancelRequest.map(data=request.data, context=request).data
 
         response = Pickups.cancel(payload, context=request, carrier_name=carrier_name)
 

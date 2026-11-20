@@ -196,7 +196,6 @@ During this call, we'll:
 
 - **Email**: hello@karrio.io
 - **Website**: https://platform.karrio.io
-- **Schedule a Demo**: https://cal.com/karrio/enterprise
 
 ---
 

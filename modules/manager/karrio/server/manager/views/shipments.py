@@ -9,6 +9,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django_downloadview import VirtualDownloadView
 from django.core.files.base import ContentFile
 from django.urls import path, re_path
+from django.http import JsonResponse
 
 import karrio.lib as lib
 import karrio.server.openapi as openapi
@@ -296,7 +297,7 @@ class ShipmentDocs(AccessMixin, VirtualDownloadView):
         **kwargs,
     ):
         """Retrieve a shipment label or invoice."""
-        from karrio.server.core.utils import validate_resource_token
+        from karrio.server.core.utils import entitled_documents, validate_resource_token
 
         error = validate_resource_token(request, "shipment", [pk], doc)
         if error:
@@ -304,12 +305,16 @@ class ShipmentDocs(AccessMixin, VirtualDownloadView):
 
         query_params = request.GET.dict()
 
-        self.shipment = models.Shipment.objects.filter(
-            pk=pk, label__isnull=False
-        ).first()
+        # Scoped to the caller: the token check above lets every signed-in user through.
+        self.shipment = (
+            entitled_documents(models.Shipment, request)
+            .filter(pk=pk, label__isnull=False)
+            .first()
+        )
 
         if self.shipment is None:
-            return Response(
+            # A plain JsonResponse: a DRF Response has no renderer in a Django download view.
+            return JsonResponse(
                 {"errors": [{"message": f"Shipment '{pk}' not found or has no label"}]},
                 status=status.HTTP_404_NOT_FOUND,
             )

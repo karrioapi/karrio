@@ -1,13 +1,11 @@
-import io
-import base64
-import django_downloadview
+import re
 
 from django.db.models import Q
-from django.urls import path, re_path
+from rest_framework.exceptions import NotFound
+from django.urls import path
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.pagination import LimitOffsetPagination
-from django.core.files.base import ContentFile
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status
@@ -16,6 +14,7 @@ from karrio.server.core.logging import logger
 from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.manager.router import router
 import karrio.server.manager.serializers as serializers
+from karrio.server.manager.serializers.public_tracking import PublicTrackingStatus
 import karrio.server.core.dataunits as dataunits
 import karrio.server.manager.models as models
 import karrio.server.core.filters as filters
@@ -231,7 +230,7 @@ class TrackersDetails(APIView):
         operation_id=f"{ENDPOINT_ID}retrieve",
         extensions={"x-operationId": "retrieveTracker"},
         summary="Retrieves a package tracker",
-        description="Retrieve a package tracker by ID or tracking number.",
+        description="Entitled authenticated callers receive the full tracker by ID or tracking number. Other callers may use an exact tracker ID capability link and receive only carrier_name, tracking_number, status, delivered, estimated_delivery, and events (date, time, location, description; strings or null). No private tracker fields are included. Tracking number lookup requires entitlement.",
         parameters=[openapi.OpenApiParameter("identifier", str, openapi.OpenApiParameter.PATH, description="Tracker ID (trk_...) or tracking number")],
         responses={
             200: serializers.TrackingStatus(),
@@ -243,15 +242,23 @@ class TrackersDetails(APIView):
         """
         Retrieve a package tracker
         """
-        __filter = Q(pk=identifier) | Q(
-            tracking_number=identifier
+        if request.user.is_authenticated:
+            tracker = models.Tracking.access_by(request).filter(
+                Q(pk=identifier) | Q(tracking_number=identifier)
+            ).first()
+            if tracker is not None:
+                return Response(serializers.TrackingStatus(tracker).data)
+
+        # Exact random IDs are public capabilities, including for signed-in
+        # callers outside the owning scope. Never fall back by tracking number.
+        tracker = (
+            models.Tracking.objects.filter(pk=identifier).first()
+            if re.fullmatch(r"trk_[0-9a-f]{32}", identifier)
+            else None
         )
-        trackers = models.Tracking.objects.filter(__filter)
-
-        if len(trackers) == 0:
-            models.Tracking.objects.get(__filter)
-
-        return Response(serializers.TrackingStatus(trackers.first()).data)
+        if tracker is None:
+            raise NotFound("Tracker not found.")
+        return Response(PublicTrackingStatus(tracker).data)
 
     @openapi.extend_schema(
         tags=["Trackers"],
@@ -328,36 +335,6 @@ class TrackersDetails(APIView):
         tracker.delete(keep_parents=True)
 
         return Response(serializers.TrackingStatus(tracker).data)
-
-
-class TrackerDocs(django_downloadview.VirtualDownloadView):
-    @openapi.extend_schema(exclude=True)
-    def get(
-        self,
-        request: Request,
-        pk: str,
-        doc: str = "delivery_image",
-        **kwargs,
-    ):
-        """Retrieve a tracker image."""
-        self.tracker = models.Tracker.objects.get(pk=pk)
-        self.image = getattr(self.tracker, doc)
-        self.name = f"{doc}_{self.tracker.tracking_number}"
-
-        query_params = request.GET.dict()
-        self.preview = "preview" in query_params
-        self.attachment = "download" in query_params
-
-        response = super(TrackerDocs, self).get(request, pk, doc, format, **kwargs)
-        response["X-Frame-Options"] = "ALLOWALL"
-        return response
-
-    def get_file(self):
-        content = base64.b64decode(self.image or "")
-        buffer = io.BytesIO()
-        buffer.write(content)
-
-        return ContentFile(buffer.getvalue(), name=self.name)
 
 
 class TrackerEventInject(APIView):
@@ -440,12 +417,5 @@ router.urls.append(
         "trackers/<str:carrier_name>/<str:tracking_number>",
         TrackersCreate.as_view(),
         name="shipment-tracker",
-    )
-)
-router.urls.append(
-    re_path(
-        r"^trackers/(?P<pk>\w+)/(?P<doc>[a-z0-9]+)",
-        TrackerDocs.as_view(),
-        name="tracker-docs",
     )
 )

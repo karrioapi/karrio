@@ -43,9 +43,10 @@
         <p>{% if success %}You can close this window and return to the application.{% else %}{{ error_message }}{% endif %}</p>
         <p class="close-hint">This window will close automatically...</p>
     </div>
+    {{ result|json_script:"oauth-result" }}
     <script>
         (async function() {
-            var result = {{ result_json|safe }};
+            var result = JSON.parse(document.getElementById("oauth-result").textContent);
 
             /**
              * Encrypts data using AES-GCM with Web Crypto API.

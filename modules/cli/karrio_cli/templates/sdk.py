@@ -864,7 +864,8 @@ class ConnectionConfig(lib.Enum):
     shipping_options = lib.OptionEnum("shipping_options", list)
     shipping_services = lib.OptionEnum("shipping_services", list)
     label_type = lib.OptionEnum("label_type", str, "PDF")  # Example of label type config with PDF default
-
+{% if "webhook" in features %}    webhook_secret = lib.OptionEnum("webhook_secret", str)  # Written when the webhook is registered; verifies inbound events
+{% endif %}
 
 class PackagingType(lib.StrEnum):
     """ Carrier specific packaging type """

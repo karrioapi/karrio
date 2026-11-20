@@ -8,10 +8,54 @@ from karrio.server.core.logging import logger
 
 
 def register_signals():
+    from django.apps import apps
+    from django.contrib.auth import get_user_model
+    from django.db.models.signals import post_delete, post_save
+
     config_updated.connect(constance_updated)
     request_started.connect(initialize_settings)
+    post_delete.connect(token_changed, sender=apps.get_model("user", "Token"))
+    post_save.connect(token_changed, sender=apps.get_model("user", "Token"))
+    post_save.connect(user_saved, sender=get_user_model())
 
     logger.info("Signal registration complete", module="karrio.core")
+
+
+def _forget_now_and_on_commit(keys) -> None:
+    """Evict cached authentications for these token keys now, and again once the
+    surrounding transaction commits. Each eviction leaves a revocation marker that
+    authenticators never overwrite (they fill with cache.add), so a request that read
+    the old row before the commit cannot write it back. Only a request still in flight
+    TOKEN_REVOKED_TTL seconds after the commit could (core.authentication). The cache
+    keys are built here, in the schema the change was made in, and reused at commit,
+    so a schema switch before the commit cannot redirect the second eviction."""
+    from django.db import transaction
+    from karrio.server.core.authentication import revoke_cache_keys, token_cache_keys
+
+    cache_keys = token_cache_keys(keys)
+    revoke_cache_keys(cache_keys)
+    transaction.on_commit(lambda: revoke_cache_keys(cache_keys))
+
+
+def token_changed(sender, instance, created=False, **_kwargs):
+    """A deleted or edited API token (its user or test_mode) must stop authenticating
+    with the cached identity now. Also covers a deleted user: User.delete() and the
+    cascade delete its tokens. A new key has nothing cached yet."""
+    if created:
+        return
+
+    _forget_now_and_on_commit([instance.key])
+
+
+def user_saved(sender, instance, created=False, update_fields=None, **_kwargs):
+    """The cached pair carries the whole user (is_active, is_staff, is_superuser, ...),
+    so any change to a user evicts their API tokens: a deactivated user must stop
+    authenticating, and a demoted staff user must lose staff access, not keep it until
+    the entry expires. A login-timestamp-only save changes nothing the pair carries."""
+    if created or (update_fields is not None and set(update_fields) <= {"last_login"}):
+        return
+
+    _forget_now_and_on_commit(instance.tokens.values_list("key", flat=True))
 
 
 def initialize_settings(_sender=None, **_kwargs):

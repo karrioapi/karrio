@@ -1,7 +1,31 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { readFile } from 'fs/promises';
-import { join } from 'path';
-import { existsSync } from 'fs';
+import { readFile, realpath, stat } from 'fs/promises';
+import { isAbsolute, join, relative, resolve, sep } from 'path';
+
+// App slugs are plain directory names: never a path.
+const APP_SLUG = /^[A-Za-z0-9][A-Za-z0-9_-]*$/;
+
+// Resolves `file` below `base` and returns the real path of the regular file it points
+// to, or null when it does not exist, lies outside `base` (via `..` or an absolute path),
+// or really lives outside `boundary` (via a symlink, including `base` itself being one).
+async function resolveInside(boundary: string, base: string, file: string): Promise<string | null> {
+    const contains = (parent: string, child: string) => {
+        const rel = relative(parent, child);
+        return rel === '' || (rel !== '..' && !rel.startsWith(`..${sep}`) && !isAbsolute(rel));
+    };
+
+    try {
+        const candidate = resolve(base, file);
+        if (!contains(base, candidate)) return null;
+
+        const real = await realpath(candidate);
+        if (!contains(await realpath(boundary), real)) return null;
+
+        return (await stat(real)).isFile() ? real : null;
+    } catch {
+        return null; // missing, unreadable or a NUL byte in the name
+    }
+}
 
 export async function GET(
     request: NextRequest,
@@ -23,6 +47,10 @@ export async function GET(
         const [appSlug, ...assetPath] = pathSegments;
         const assetFilePath = assetPath.join('/');
 
+        if (!APP_SLUG.test(appSlug)) {
+            return new NextResponse('Asset not found', { status: 404 });
+        }
+
         // Construct the base path to the app directory
         const appBasePath = join(
             process.cwd(),
@@ -34,24 +62,14 @@ export async function GET(
             appSlug
         );
 
-        // Try to find the asset in different locations
-        let fullAssetPath: string | null = null;
+        // Try to find the asset in different locations, never outside the app directory:
+        // 1. the assets/ subdirectory first,
+        // 2. then the app root level (for README.md, etc.)
+        const fullAssetPath =
+            (await resolveInside(appBasePath, join(appBasePath, 'assets'), assetFilePath)) ??
+            (await resolveInside(appBasePath, appBasePath, assetFilePath));
 
-        // 1. Try in the assets/ subdirectory first
-        const assetsSubdirPath = join(appBasePath, 'assets', assetFilePath);
-        if (existsSync(assetsSubdirPath)) {
-            fullAssetPath = assetsSubdirPath;
-        }
-
-        // 2. If not found in assets/, try at the app root level (for README.md, etc.)
-        if (!fullAssetPath) {
-            const rootLevelPath = join(appBasePath, assetFilePath);
-            if (existsSync(rootLevelPath)) {
-                fullAssetPath = rootLevelPath;
-            }
-        }
-
-        // If still not found, return 404
+        // If still not found (or it escapes the app directory), return 404
         if (!fullAssetPath) {
             return new NextResponse('Asset not found', { status: 404 });
         }

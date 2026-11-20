@@ -35,7 +35,7 @@ class ManifestingAPI(api.APIView):
         request=serializers.ManifestRequest(),
     )
     def post(self, request: request.Request):
-        payload = serializers.ManifestRequest.map(data=request.data).data
+        payload = serializers.ManifestRequest.map(data=request.data, context=request).data
 
         manifest = gateway.Manifests.create(payload, context=request)
 

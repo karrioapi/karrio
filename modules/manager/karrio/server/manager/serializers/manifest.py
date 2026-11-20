@@ -48,6 +48,7 @@ class ManifestSerializer(core.ManifestData):
 
         response = gateway.Manifests.create(
             payload=core.ManifestRequest.map(
+                context=context,
                 data={
                     **data,
                     "shipment_identifiers": shipment_identifiers,

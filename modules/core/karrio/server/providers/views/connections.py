@@ -9,6 +9,7 @@ import karrio.lib as lib
 import karrio.server.openapi as openapi
 import karrio.server.core.views.api as api
 import karrio.server.core.filters as filters
+import karrio.server.core.links as links
 import karrio.server.core.gateway as gateway
 import karrio.server.providers.models as models
 import karrio.server.providers.serializers as serializers
@@ -376,6 +377,15 @@ class ConnectionOauthAuthorize(api.APIView):
 
 
 class ConnectionOauthCallback(api.APIView):
+    def finalize_response(self, request, response, *args, **kwargs):
+        """The result carries carrier credentials: never cache it, never send
+        it on as a Referer. Set on every response, refusals included."""
+        response = super().finalize_response(request, response, *args, **kwargs)
+        response["Cache-Control"] = "no-store"
+        response["Referrer-Policy"] = "no-referrer"
+
+        return response
+
     @openapi.extend_schema(
         exclude=True,
         tags=["Connections"],
@@ -417,9 +427,12 @@ class ConnectionOauthCallback(api.APIView):
         from django.shortcuts import render
         from django.http import HttpResponseRedirect
 
-        result, frontend_url = serializers.OAuthCallbackSerializer.process_callback(
+        result, state_frontend_url = serializers.OAuthCallbackSerializer.process_callback(
             request, carrier_name
         )
+        # The state is client supplied: only a configured frontend receives the
+        # result, any other (or none) gets the result page.
+        frontend_url = links.frontend_url(state_frontend_url)
 
         accept_header = request.headers.get("Accept", "")
 
@@ -441,7 +454,7 @@ class ConnectionOauthCallback(api.APIView):
                 dict(
                     success=result["success"],
                     error_message=error_message,
-                    result_json=json.dumps(result),
+                    result=result,
                 ),
             )
 

@@ -6,8 +6,14 @@ from django.contrib.auth import get_user_model
 from rest_framework.test import APITestCase, APIClient
 
 from karrio.server.user.models import Token
+from karrio.server.core.middleware import CreatorAccess
 from karrio.server.core.utils import ResourceAccessToken
 from karrio.server.core.tests.base import APITestCase as KarrioAPITestCase
+from karrio.server.documents.models import DocumentTemplate
+from karrio.server.manager.models import Manifest, Shipment
+from karrio.server.orders.models import Order
+
+MANIFEST_ADDRESS = {"postal_code": "10115", "city": "Berlin", "country_code": "DE", "address_line1": "Sample Str. 1"}
 
 
 class TestResourceAccessTokenUnit(TestCase):
@@ -239,6 +245,16 @@ class TestResourceTokenAPI(APITestCase):
         self.token = Token.objects.create(user=self.user, test_mode=True)
         self.client = APIClient()
         self.client.credentials(HTTP_AUTHORIZATION=f"Token {self.token.key}")
+        # Tokens are only minted for resources the caller can see, so the ids are real rows.
+        self.shipments = [
+            Shipment.objects.create(created_by=self.user, test_mode=True, tracking_number=f"TRK{i}")
+            for i in range(3)
+        ]
+        self.shipment = self.shipments[0]
+        self.manifest = Manifest.objects.create(created_by=self.user, test_mode=True, address=MANIFEST_ADDRESS)
+        self.template = DocumentTemplate.objects.create(
+            name="tpl", slug="tpl", template="{{ x }}", related_object="shipment", created_by=self.user
+        )
 
     def test_generate_shipment_label_token(self):
         """Test generating a token for shipment label access."""
@@ -246,7 +262,7 @@ class TestResourceTokenAPI(APITestCase):
             "/api/tokens",
             {
                 "resource_type": "shipment",
-                "resource_ids": ["shp_123"],
+                "resource_ids": [self.shipment.id],
                 "access": ["label"],
                 "format": "pdf",
             },
@@ -259,7 +275,7 @@ class TestResourceTokenAPI(APITestCase):
                 "has_token": "token" in response.data,
                 "has_expires_at": "expires_at" in response.data,
                 "has_resource_urls": "resource_urls" in response.data,
-                "has_shp_123_url": "shp_123" in response.data.get("resource_urls", {}),
+                "has_shp_123_url": self.shipment.id in response.data.get("resource_urls", {}),
             },
             {
                 "has_token": True,
@@ -275,7 +291,7 @@ class TestResourceTokenAPI(APITestCase):
             "/api/tokens",
             {
                 "resource_type": "document",
-                "resource_ids": ["shp_1", "shp_2", "shp_3"],
+                "resource_ids": [s.id for s in self.shipments],
                 "access": ["batch_labels"],
                 "format": "pdf",
             },
@@ -291,14 +307,14 @@ class TestResourceTokenAPI(APITestCase):
             "/api/tokens",
             {
                 "resource_type": "manifest",
-                "resource_ids": ["mnf_456"],
+                "resource_ids": [self.manifest.id],
                 "access": ["manifest"],
             },
             format="json",
         )
 
         self.assertEqual(response.status_code, 201)
-        self.assertIn("mnf_456", response.data["resource_urls"])
+        self.assertIn(self.manifest.id, response.data["resource_urls"])
 
     def test_generate_template_token(self):
         """Test generating a token for template access."""
@@ -306,14 +322,14 @@ class TestResourceTokenAPI(APITestCase):
             "/api/tokens",
             {
                 "resource_type": "template",
-                "resource_ids": ["tpl_789"],
+                "resource_ids": [self.template.id],
                 "access": ["render"],
             },
             format="json",
         )
 
         self.assertEqual(response.status_code, 201)
-        self.assertIn("tpl_789", response.data["resource_urls"])
+        self.assertIn(self.template.id, response.data["resource_urls"])
 
     def test_unauthenticated_request_fails(self):
         """Test that unauthenticated requests are rejected."""
@@ -322,7 +338,7 @@ class TestResourceTokenAPI(APITestCase):
             "/api/tokens",
             {
                 "resource_type": "shipment",
-                "resource_ids": ["shp_123"],
+                "resource_ids": [self.shipment.id],
                 "access": ["label"],
             },
             format="json",
@@ -336,7 +352,7 @@ class TestResourceTokenAPI(APITestCase):
             "/api/tokens",
             {
                 "resource_type": "invalid_type",
-                "resource_ids": ["shp_123"],
+                "resource_ids": [self.shipment.id],
                 "access": ["label"],
             },
             format="json",
@@ -350,7 +366,7 @@ class TestResourceTokenAPI(APITestCase):
             "/api/tokens",
             {
                 "resource_type": "shipment",
-                "resource_ids": ["shp_123"],
+                "resource_ids": [self.shipment.id],
                 "access": ["invalid_access"],
             },
             format="json",
@@ -378,7 +394,7 @@ class TestResourceTokenAPI(APITestCase):
             "/api/tokens",
             {
                 "resource_type": "shipment",
-                "resource_ids": ["shp_123"],
+                "resource_ids": [self.shipment.id],
                 "access": ["label"],
                 "expires_in": 600,
             },
@@ -393,7 +409,7 @@ class TestResourceTokenAPI(APITestCase):
             "/api/tokens",
             {
                 "resource_type": "shipment",
-                "resource_ids": ["shp_123"],
+                "resource_ids": [self.shipment.id],
                 "access": ["label"],
             },
             format="json",
@@ -592,3 +608,96 @@ class TestDocumentDownloadWithAPIToken(KarrioAPITestCase):
 
         # Should return 403 (Forbidden) when no auth is provided
         self.assertEqual(response.status_code, 403)
+
+
+class TestResourceTokenTenantScoping(APITestCase):
+    """A token is only minted for resources the caller can see. The test default filter
+    (`WideAccess`) filters nothing, so a per-owner filter is patched in."""
+
+    def setUp(self):
+        self.victim = get_user_model().objects.create_user(email="victim@example.com", password="test")
+        self.intruder = get_user_model().objects.create_user(email="intruder@example.com", password="test")
+        self.victim_rows = self._rows(self.victim)
+        self.own_rows = self._rows(self.intruder)
+        self.client = APIClient()
+        self._authenticate(self.intruder)
+        access = mock.patch("karrio.server.core.models.base.get_access_filter", CreatorAccess())
+        access.start()
+        self.addCleanup(access.stop)
+
+    @staticmethod
+    def _rows(user) -> dict:
+        shipment = Shipment.objects.create(created_by=user, test_mode=True, tracking_number=f"TRK-{user.pk}")
+        return {
+            "shipment": shipment,
+            "manifest": Manifest.objects.create(created_by=user, test_mode=True, address=MANIFEST_ADDRESS),
+            "order": Order.objects.create(order_id=f"ORD-{user.pk}", test_mode=True, created_by=user),
+            "template": DocumentTemplate.objects.create(
+                name=f"t{user.pk}", slug=f"t{user.pk}", template="x", related_object="shipment", created_by=user
+            ),
+        }
+
+    def _authenticate(self, user, test_mode: bool = True) -> None:
+        token = Token.objects.create(user=user, test_mode=test_mode)
+        self.client.credentials(HTTP_AUTHORIZATION=f"Token {token.key}")
+
+    def _mint(self, resource_type: str, ids: list, access: list):
+        return self.client.post(
+            "/api/tokens",
+            {"resource_type": resource_type, "resource_ids": ids, "access": access},
+            format="json",
+        )
+
+    def _cases(self, rows: dict) -> list:
+        return [
+            ("shipment", rows["shipment"].id, "label"),
+            ("shipment", rows["shipment"].id, "invoice"),
+            ("manifest", rows["manifest"].id, "manifest"),
+            ("order", rows["order"].id, "batch_labels"),
+            ("order", rows["order"].id, "batch_invoices"),
+            ("template", rows["template"].id, "render"),
+            ("document", rows["shipment"].id, "batch_labels"),
+            ("document", rows["shipment"].id, "batch_invoices"),
+            ("document", rows["manifest"].id, "batch_manifests"),
+        ]
+
+    def test_another_tenants_resource_is_refused_for_every_type(self):
+        for resource_type, resource_id, access in self._cases(self.victim_rows):
+            with self.subTest(resource_type=resource_type, access=access):
+                self.assertEqual(self._mint(resource_type, [resource_id], [access]).status_code, 404)
+
+    def test_own_resources_are_minted_for_every_type(self):
+        for resource_type, resource_id, access in self._cases(self.own_rows):
+            with self.subTest(resource_type=resource_type, access=access):
+                self.assertEqual(self._mint(resource_type, [resource_id], [access]).status_code, 201)
+
+    def test_a_missing_id_answers_exactly_like_a_foreign_one(self):
+        missing = self._mint("shipment", ["shp_does_not_exist"], ["label"])
+        foreign = self._mint("shipment", [self.victim_rows["shipment"].id], ["label"])
+
+        self.assertEqual((missing.status_code, missing.data), (foreign.status_code, foreign.data))
+        self.assertEqual(foreign.status_code, 404)
+
+    def test_one_foreign_id_among_own_ids_refuses_the_whole_token(self):
+        response = self._mint(
+            "document", [self.own_rows["shipment"].id, self.victim_rows["shipment"].id], ["batch_labels"]
+        )
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_a_live_mode_caller_cannot_mint_for_a_test_mode_row(self):
+        self._authenticate(self.intruder, test_mode=False)
+
+        response = self._mint("shipment", [self.own_rows["shipment"].id], ["label"])
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_access_served_by_another_model_is_rejected(self):
+        for resource_type, access in [
+            ("document", ["batch_labels", "batch_manifests"]),
+            ("shipment", ["manifest"]),
+            ("manifest", ["label"]),
+        ]:
+            with self.subTest(resource_type=resource_type, access=access):
+                response = self._mint(resource_type, [self.own_rows["shipment"].id], access)
+                self.assertEqual(response.status_code, 400)

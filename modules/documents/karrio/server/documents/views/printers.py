@@ -3,6 +3,7 @@ import sys
 import base64
 from django.urls import re_path
 from django.utils import timezone
+from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 from django.core.files.base import ContentFile
 from django_downloadview import VirtualDownloadView
@@ -13,8 +14,34 @@ import karrio.server.openapi as openapi
 import karrio.server.documents.models as models
 import karrio.server.documents.generator as generator
 from karrio.server.core.logging import logger
-from karrio.server.core.utils import validate_resource_token
-from karrio.server.core.authentication import AccessMixin
+from karrio.server.core.utils import (
+    ResourceAccessToken,
+    entitled_documents,
+    validate_resource_token,
+)
+from karrio.server.core.authentication import AccessMixin, get_request_org
+from karrio.server.serializers.abstract import Context, RequestContext
+from rest_framework.exceptions import AuthenticationFailed, PermissionDenied
+
+
+def _access_context(request) -> RequestContext:
+    """The caller a template render reads data for: the authenticated user, or for a
+    `?token=` link (already validated), the user and org that minted the token."""
+    if request.user.is_authenticated:
+        return request
+
+    claims = ResourceAccessToken.decode(request.GET.get("token"))
+    user = get_user_model().objects.filter(id=claims.get("user_id")).first()
+
+    # An absent user would widen access_by to every row without an owner.
+    if user is None:
+        raise PermissionDenied()
+
+    return Context(
+        user=user,
+        org=get_request_org(request, user, org_id=claims.get("org_id")),
+        test_mode=claims.get("test_mode"),
+    )
 
 
 class TemplateDocsPrinter(AccessMixin, VirtualDownloadView):
@@ -25,11 +52,20 @@ class TemplateDocsPrinter(AccessMixin, VirtualDownloadView):
             return error
 
         try:
-            template = models.DocumentTemplate.objects.get(pk=pk, slug=slug)
+            # The template and every id in the query resolve only within the caller's
+            # scope: the signed-in user, or for a token link the user who minted it.
+            context = _access_context(request)
+            template = models.DocumentTemplate.access_by(context).get(pk=pk, slug=slug)
+        except models.DocumentTemplate.DoesNotExist:
+            return JsonResponse(dict(error="Not found."), status=status.HTTP_404_NOT_FOUND)
+        except (AuthenticationFailed, PermissionDenied) as e:
+            return JsonResponse(dict(error=str(e.detail)), status=e.status_code)
+
+        try:
             query_params = request.GET.dict()
 
             self.document = generator.Documents.generate_template(
-                template, query_params, context=request
+                template, query_params, context=context
             )
             self.name = f"{slug}.pdf"
             self.attachment = "download" in query_params
@@ -84,7 +120,8 @@ class ShipmentDocsPrinter(AccessMixin, VirtualDownloadView):
         self.format = (format or "").lower()
         self.name = f"{doc}s - {timezone.now()}.{self.format}"
 
-        _queryset = Shipment.objects.filter(id__in=resource_ids)
+        # Scoped to the caller: the token check above lets every signed-in user through.
+        _queryset = entitled_documents(Shipment, request).filter(id__in=resource_ids)
         if doc == "label":
             _queryset = _queryset.filter(
                 label__isnull=False,
@@ -132,7 +169,8 @@ class OrderDocsPrinter(AccessMixin, VirtualDownloadView):
         self.format = (format or "").lower()
         self.name = f"{doc}s - {timezone.now()}.{self.format}"
 
-        _queryset = Order.objects.filter(
+        # Scoped to the caller: the token check above lets every signed-in user through.
+        _queryset = entitled_documents(Order, request).filter(
             id__in=resource_ids, shipments__id__isnull=False
         ).distinct()
 
@@ -184,7 +222,8 @@ class ManifestDocsPrinter(AccessMixin, VirtualDownloadView):
         self.format = (format or "").lower()
         self.name = f"{doc}s - {timezone.now()}.{self.format}"
 
-        queryset = Manifest.objects.filter(id__in=resource_ids, manifest__isnull=False)
+        # Scoped to the caller: the token check above lets every signed-in user through.
+        queryset = entitled_documents(Manifest, request).filter(id__in=resource_ids, manifest__isnull=False)
         self.documents = queryset.values_list(doc, "reference")
 
         response = super().get(request, doc, self.format, **kwargs)

@@ -5,6 +5,7 @@ import django.contrib.auth.tokens as tokens
 import django_email_verification.confirm as confirm
 
 import karrio.server.conf as conf
+import karrio.server.core.links as links
 import karrio.server.user.forms as user_forms
 from karrio.server.core.logging import logger
 
@@ -34,8 +35,16 @@ class ConfirmPasswordResetForm(auth.SetPasswordForm):
 
 
 class ResetPasswordRequestForm(auth.PasswordResetForm):
-    redirect_url = forms.URLField()
+    # The reset page the email links to. Optional, and only accepted on an
+    # allowed frontend (see karrio.server.core.links); the link carries the
+    # reset token, so it must never point anywhere else.
+    redirect_url = forms.CharField(required=False, strip=False)
     from_email = confirm._get_validated_field("EMAIL_FROM_ADDRESS")
+
+    def clean_redirect_url(self):
+        return links.email_link(
+            links.RESET_PASSWORD_ROUTE, self.cleaned_data.get("redirect_url")
+        )
 
     def save(self, **kwargs):
         try:

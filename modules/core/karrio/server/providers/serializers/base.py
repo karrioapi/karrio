@@ -1,5 +1,6 @@
 import typing
 import django.db.transaction as transaction
+from django.http.request import RawPostDataException
 from rest_framework import status as http_status
 
 import karrio.lib as lib
@@ -146,9 +147,10 @@ class CarrierConnection(serializers.Serializer):
         help_text="""The carrier enabled capabilities.""",
     )
     config = serializers.PlainDictField(
+        source="get_public_config",
         required=False,
         default={},
-        help_text="Carrier connection custom config.",
+        help_text="Carrier connection custom config. Settings only: config secrets are write-only.",
     )
     metadata = serializers.PlainDictField(
         required=False,
@@ -176,6 +178,21 @@ class CarrierConnection(serializers.Serializer):
     def get_is_system(self, obj) -> bool:
         """Return True for BrokeredConnection (system connections), False for Carrier (user-owned)."""
         return isinstance(obj, providers.BrokeredConnection)
+
+
+def keep_withheld_config(config: typing.Optional[dict]) -> typing.Optional[dict]:
+    """Config secrets are never returned, so a client editing a connection
+    sends them blank: a blank ("") secret keeps the stored value. null still
+    removes a key (it is how a secret is deliberately cleared, e.g. by the
+    webhook deregister and disconnect endpoints)."""
+    if config is None:
+        return None
+
+    return {
+        key: value
+        for key, value in config.items()
+        if key in providers.PUBLIC_CONFIG_FIELDS or value != ""
+    }
 
 
 @serializers.owned_model_serializer
@@ -248,6 +265,14 @@ class CarrierConnectionModelSerializer(serializers.ModelSerializer):
             ]
 
         if "credentials" in validated_data:
+            # Secrets are never returned, so a client editing a connection sends
+            # them blank: a blank or null secret keeps the stored value.
+            public = providers.PUBLIC_CREDENTIAL_FIELDS - instance.get_sensitive_fields()
+            validated_data["credentials"] = {
+                key: value
+                for key, value in (validated_data["credentials"] or {}).items()
+                if key in public or value not in (None, "")
+            }
             data = serializers.process_dictionaries_mutations(
                 ["credentials"],
                 validated_data,
@@ -263,7 +288,7 @@ class CarrierConnectionModelSerializer(serializers.ModelSerializer):
             # Config is stored directly on Carrier model
             data = serializers.process_dictionaries_mutations(
                 ["config"],
-                dict(config=validated_data.pop("config")),
+                dict(config=keep_withheld_config(validated_data.pop("config"))),
                 instance,
             )
             validated_data["config"] = data["config"]
@@ -516,7 +541,11 @@ class BrokeredConnectionModelSerializer(serializers.ModelSerializer):
         if "config_overrides" in validated_data:
             data = serializers.process_dictionaries_mutations(
                 ["config_overrides"],
-                dict(config_overrides=validated_data.pop("config_overrides")),
+                dict(
+                    config_overrides=keep_withheld_config(
+                        validated_data.pop("config_overrides")
+                    )
+                ),
                 instance,
             )
             validated_data["config_overrides"] = data["config_overrides"]
@@ -724,8 +753,32 @@ class OAuthCallbackSerializer(serializers.Serializer):
 # =============================================================================
 
 
+# Message codes a connector answers with when it could not authenticate the
+# sender of an inbound event (no secret stored, no signature header, wrong
+# signature). The event is then refused with HTTP 401 and nothing is applied.
+WEBHOOK_AUTHENTICATION_ERROR_CODES = frozenset(
+    ["webhook_secret_not_configured", "webhook_signature_missing", "invalid_signature"]
+)
+
+# The one answer to every such rejection: it must not tell the caller whether a
+# secret is configured. The specific reason is in the server log.
+WEBHOOK_REJECTION_MESSAGE = "webhook signature verification failed"
+
+
 class WebhookEventSerializer(serializers.Serializer):
     """Handles webhook event processing logic."""
+
+    @staticmethod
+    def read_raw_body(request) -> typing.Optional[bytes]:
+        """The request body exactly as received, read BEFORE the request is parsed.
+
+        Reading it first leaves the stream available to DRF's parsers (the
+        bytes are cached on the request). None if it can no longer be read.
+        """
+        try:
+            return bytes(request.body)
+        except (AttributeError, RawPostDataException):
+            return None
 
     @staticmethod
     def process_event(request, pk: str) -> tuple:
@@ -735,9 +788,9 @@ class WebhookEventSerializer(serializers.Serializer):
         Returns:
             tuple: (response_data, http_status_code)
         """
-        import django.db.models as django
         import karrio.lib as lib
         import karrio.server.core.gateway as gateway
+        from karrio.server.core.logging import logger
 
         try:
             connection = providers.CarrierConnection.objects.get(pk=pk)
@@ -751,28 +804,71 @@ class WebhookEventSerializer(serializers.Serializer):
                 http_status.HTTP_404_NOT_FOUND,
             )
 
+        raw_body = WebhookEventSerializer.read_raw_body(request)  # before request.data
         event, messages = gateway.Hooks.on_webhook_event(
             payload=dict(
                 url=request.build_absolute_uri(),
                 body=request.data,
                 query=dict(request.query_params),
                 headers=dict(request.headers),
+                raw_body=raw_body,
             ),
             carrier=connection,
         )
+
+        rejections = [
+            _.code for _ in messages if _.code in WEBHOOK_AUTHENTICATION_ERROR_CODES
+        ]
+        if event is None and rejections:
+            # Connection id and reason only: never the header value or the body.
+            logger.warning(
+                "Webhook signature verification failed",
+                connection_id=str(connection.id),
+                reason=rejections[0],
+            )
+            return (
+                dict(
+                    operation="Webhook event",
+                    success=False,
+                    messages=[
+                        dict(
+                            code="webhook_signature_verification_failed",
+                            message=WEBHOOK_REJECTION_MESSAGE,
+                        )
+                    ],
+                ),
+                http_status.HTTP_401_UNAUTHORIZED,
+            )
 
         if event and event.tracking:
             import karrio.server.manager.models as manager_models
             import karrio.server.manager.serializers.tracking as tracking_serializers
 
-            tracker = manager_models.Tracking.objects.filter(
-                django.Q(tracking_number=event.tracking.tracking_number)
-                | django.Q(carrier__connection_id=str(connection.id))
-            ).first()
+            tracking_number = event.tracking_number or event.tracking.tracking_number
 
-            if tracker:
+            # A carrier event only applies to a tracker of its own connection
+            # that carries the event's tracking number (both must match).
+            # Tracking numbers are not unique, so an ambiguous match is a no-op.
+            matches = (
+                list(
+                    manager_models.Tracking.objects.filter(
+                        tracking_number=tracking_number,
+                        carrier__connection_id=str(connection.id),
+                    )[:2]
+                )
+                if tracking_number
+                else []
+            )
+
+            if len(matches) == 1:
                 tracking_serializers.update_tracker(
-                    tracker, lib.to_dict(event.tracking)
+                    matches[0], lib.to_dict(event.tracking)
+                )
+            elif len(matches) > 1:
+                logger.warning(
+                    "Ambiguous webhook tracker match; skipping update",
+                    tracking_number=tracking_number,
+                    connection_id=str(connection.id),
                 )
 
         return (

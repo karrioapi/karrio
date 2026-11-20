@@ -11,6 +11,9 @@ from karrio.server.providers.models.carrier import (
     WEIGHT_UNITS,
     DIMENSION_UNITS,
     CAPABILITIES_CHOICES,
+    PUBLIC_CREDENTIAL_FIELDS,
+    PUBLIC_CONFIG_FIELDS,
+    SECRET_CONFIG_FIELDS,
     create_carrier_proxy,
 )
 from karrio.server.providers.models.connection import (

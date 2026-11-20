@@ -177,6 +177,16 @@ ALLOW_ADMIN_APPROVED_SIGNUP = config(
 ALLOW_SIGNUP = (
     config("ALLOW_SIGNUP", default=False, cast=bool) or ALLOW_ADMIN_APPROVED_SIGNUP
 )
+# Frontends that password-reset, sign-up and email-change links may point to.
+# A client-supplied redirect_url is used only when its origin is listed here;
+# without one, the link is built from DASHBOARD_URL. With neither set, those
+# emails are refused (see karrio.server.core.links).
+DASHBOARD_URL = config("DASHBOARD_URL", default=None)
+EMAIL_LINK_ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in config("EMAIL_LINK_ALLOWED_ORIGINS", default="").split(",")
+    if origin.strip()
+]
 MULTI_ORGANIZATIONS = (
     importlib.util.find_spec("karrio.server.orgs") is not None  # type:ignore
 )
@@ -195,6 +205,14 @@ APPS_MANAGEMENT = (
 DOCUMENTS_MANAGEMENT = (
     importlib.util.find_spec("karrio.server.documents") is not None  # type:ignore
 )
+# Extra https origins (scheme://host[:port], comma-separated) that generated
+# documents may load stylesheets and images from. Everything else a document
+# references is refused, except data: URIs and the built-in stylesheet.
+DOCUMENT_ASSET_ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in config("DOCUMENT_ASSET_ALLOWED_ORIGINS", default="").split(",")
+    if origin.strip()
+]
 DATA_IMPORT_EXPORT = (
     importlib.util.find_spec("karrio.server.data") is not None  # type:ignore
 )
@@ -728,3 +746,8 @@ if USE_LOGURU:
         print(f"Warning: Failed to initialize Loguru: {e}")
         print("Falling back to standard Django logging")
         USE_LOGURU = False
+
+# Operator-only exceptions for webhook hostnames or CIDRs (comma separated).
+WEBHOOK_ALLOWED_DESTINATIONS = config(
+    "WEBHOOK_ALLOWED_DESTINATIONS", default="", cast=decouple.Csv()
+)

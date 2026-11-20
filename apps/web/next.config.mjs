@@ -3,6 +3,11 @@ import path from "path";
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
+// The project is archived: every page of this site, the docs included, now
+// redirects to the JTL Shipping page. Temporary (307) so it can be undone.
+const SITE_REDIRECT_URL =
+  process.env.SITE_REDIRECT_URL || "https://www.jtl-software.com/en/shipping-software/";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   basePath: BASE_PATH,
@@ -16,6 +21,12 @@ const nextConfig = {
   },
   sassOptions: {
     includePaths: [path.join("src", "styles")],
+  },
+  async redirects() {
+    return [
+      { source: "/", destination: SITE_REDIRECT_URL, permanent: false },
+      { source: "/:path*", destination: SITE_REDIRECT_URL, permanent: false },
+    ];
   },
   async headers() {
     return [

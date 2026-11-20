@@ -4,8 +4,8 @@ import { useAuthenticatedMutation, useKarrio } from "./karrio";
 import { useAPIMetadata } from "./api-metadata";
 import { url$ } from "@karrio/lib";
 
-export type ResourceType = "shipment" | "manifest" | "order" | "template" | "document";
-export type AccessType = "label" | "invoice" | "manifest" | "render" | "batch_labels" | "batch_invoices" | "batch_manifests";
+export type ResourceType = "shipment" | "manifest" | "order" | "template" | "document" | "carrier";
+export type AccessType = "label" | "invoice" | "manifest" | "render" | "batch_labels" | "batch_invoices" | "batch_manifests" | "label_preview";
 export type FormatType = "pdf" | "png" | "zpl" | "gif";
 
 export interface ResourceTokenRequest {
@@ -146,6 +146,23 @@ export function useDocumentPrinter() {
     window.open(url, "_blank");
   };
 
+  const openCarrierLabelPreview = async (
+    connectionId: string,
+    opts: { format?: FormatType } = {},
+  ) => {
+    const { format = "pdf" } = opts;
+
+    const result = await tokenMutation.mutateAsync({
+      resource_type: "carrier",
+      resource_ids: [connectionId],
+      access: ["label_preview"],
+      format,
+    });
+
+    const url = buildUrl(result.resource_urls[connectionId]);
+    window.open(url, "_blank");
+  };
+
   return {
     openShipmentLabel,
     openBatchLabels,
@@ -153,6 +170,7 @@ export function useDocumentPrinter() {
     openBatchManifests,
     openOrderLabels,
     openTemplate,
+    openCarrierLabelPreview,
     isLoading: tokenMutation.isPending,
     error: tokenMutation.error,
   };

@@ -147,24 +147,28 @@ class ShipmentSerializer(ShipmentData):
             json_fields.update(shipper=process_json_object_mutation(
                 "shipper", validated_data, None,
                 model_class=models.Address, object_type="address", id_prefix="adr",
+                context=context,
             ))
 
         if "recipient" in validated_data:
             json_fields.update(recipient=process_json_object_mutation(
                 "recipient", validated_data, None,
                 model_class=models.Address, object_type="address", id_prefix="adr",
+                context=context,
             ))
 
         if "return_address" in validated_data:
             json_fields.update(return_address=process_json_object_mutation(
                 "return_address", validated_data, None,
                 model_class=models.Address, object_type="address", id_prefix="adr",
+                context=context,
             ))
 
         if "billing_address" in validated_data:
             json_fields.update(billing_address=process_json_object_mutation(
                 "billing_address", validated_data, None,
                 model_class=models.Address, object_type="address", id_prefix="adr",
+                context=context,
             ))
 
         json_fields.update(parcels=process_json_array_mutation(
@@ -172,12 +176,14 @@ class ShipmentSerializer(ShipmentData):
             id_prefix="pcl", model_class=models.Parcel,
             nested_arrays={"items": ("itm", models.Commodity)},
             object_type="parcel", data_field_name="parcels",
+            context=context,
         ))
 
         if "customs" in validated_data:
             json_fields.update(customs=process_customs_mutation(
                 validated_data, None,
                 address_model=models.Address, product_model=models.Commodity,
+                context=context,
             ))
 
         # Merge request_id into meta for request correlation
@@ -243,6 +249,7 @@ class ShipmentSerializer(ShipmentData):
                 model_class=models.Address,
                 object_type="address",
                 id_prefix="adr",
+                context=context,
             )
             changes.append("shipper")
 
@@ -254,6 +261,7 @@ class ShipmentSerializer(ShipmentData):
                 model_class=models.Address,
                 object_type="address",
                 id_prefix="adr",
+                context=context,
             )
             changes.append("recipient")
 
@@ -265,6 +273,7 @@ class ShipmentSerializer(ShipmentData):
                 model_class=models.Address,
                 object_type="address",
                 id_prefix="adr",
+                context=context,
             )
             changes.append("return_address")
 
@@ -276,6 +285,7 @@ class ShipmentSerializer(ShipmentData):
                 model_class=models.Address,
                 object_type="address",
                 id_prefix="adr",
+                context=context,
             )
             changes.append("billing_address")
 
@@ -289,6 +299,7 @@ class ShipmentSerializer(ShipmentData):
                 nested_arrays={"items": ("itm", models.Commodity)},
                 object_type="parcel",
                 data_field_name="parcels",
+                context=context,
             )
             changes.append("parcels")
 
@@ -298,6 +309,7 @@ class ShipmentSerializer(ShipmentData):
                 instance,
                 address_model=models.Address,
                 product_model=models.Commodity,
+                context=context,
             )
             changes.append("customs")
 
