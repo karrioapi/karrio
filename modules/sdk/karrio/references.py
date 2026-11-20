@@ -37,6 +37,9 @@ REFERENCES: typing.Dict[str, typing.Any] = {}
 SYSTEM_CONFIGS: typing.Dict[str, typing.Tuple[typing.Any, str, type]] = (
     {}
 )  # Plugin system configs
+ADVISORS: typing.List[typing.Tuple[str, typing.Callable]] = (
+    []
+)  # (plugin_id, advisor) pairs
 
 
 def import_extensions() -> None:
@@ -56,7 +59,7 @@ def import_extensions() -> None:
     Plugins already loaded from a higher-priority source are skipped in
     lower-priority sources to avoid duplication and conflicts.
     """
-    global PROVIDERS, LSP_PLUGINS, MAPPERS, HOOKS, SCHEMAS, FAILED_IMPORTS, PLUGIN_METADATA, REFERENCES, SYSTEM_CONFIGS
+    global PROVIDERS, LSP_PLUGINS, MAPPERS, HOOKS, SCHEMAS, FAILED_IMPORTS, PLUGIN_METADATA, REFERENCES, SYSTEM_CONFIGS, ADVISORS
     # Reset collections
     PROVIDERS = {}
     LSP_PLUGINS = {}
@@ -67,6 +70,7 @@ def import_extensions() -> None:
     PLUGIN_METADATA = {}
     REFERENCES = {}
     SYSTEM_CONFIGS = {}
+    ADVISORS = []
 
     # Load local plugins to extend karrio namespaces (but don't process metadata yet)
     plugins.load_local_plugins()
@@ -192,6 +196,13 @@ def import_extensions() -> None:
         system_config = metadata_obj.get("system_config")
         if system_config and isinstance(system_config, dict):
             SYSTEM_CONFIGS.update(system_config)
+
+    # Collect shipment advisors from all plugins
+    ADVISORS = [
+        (metadata_obj.id, advisor)
+        for metadata_obj in PLUGIN_METADATA.values()
+        for advisor in metadata_obj.shipment_advisors
+    ]
 
     logger.info("Plugins loaded", count=len(PLUGIN_METADATA))
 
@@ -330,6 +341,18 @@ def get_failed_imports() -> typing.Dict[str, typing.Any]:
         Dictionary containing error information for failed imports
     """
     return FAILED_IMPORTS
+
+
+def get_advisors() -> typing.List[typing.Tuple[str, typing.Callable]]:
+    """
+    Get the shipment advisors collected from all plugins.
+
+    Not cached: import_extensions() rebinds ADVISORS on every call.
+
+    Returns:
+        List of (plugin ID, advisor callable) pairs
+    """
+    return ADVISORS
 
 
 def get_plugin_metadata() -> typing.Dict[str, metadata.PluginMetadata]:
