@@ -1102,36 +1102,54 @@ export default function Page() {
                                 </label>
                                 <hr className="my-1" style={{ height: "1px" }} />
 
-                                {Object.entries(options).map(
-                                  ([name, option]) => (
-                                    <CheckBoxField
-                                      key={`${carrier}.${name}`}
-                                      name={`options.${carrier}.${name}`}
-                                      fieldClass="mb-0 px-1"
-                                      labelClass="px-2"
-                                      checked={
-                                        (shipment.options as any)?.[
-                                        carrier
-                                        ]?.[name] || false
-                                      }
-                                      onChange={(e: any) =>
-                                        onChange({
-                                          options: {
-                                            ...(shipment.options || {}),
-                                            [carrier]: {
-                                              ...(shipment.options as any)?.[
-                                              carrier
-                                              ],
-                                              [name]: e.target.checked,
+                                {options.map((option) => (
+                                  <React.Fragment
+                                    key={`${carrier}.${option}`}
+                                  >
+                                    {references.options?.[carrier]?.[option]
+                                      ?.type === "boolean" ? (
+                                      <CheckBoxField
+                                        name={`options.${option}`}
+                                        fieldClass="mb-0 px-1"
+                                        labelClass="px-2"
+                                        checked={Boolean(
+                                          (shipment.options as any)?.[option],
+                                        )}
+                                        onChange={(e: any) =>
+                                          onChange({
+                                            options: {
+                                              ...(shipment.options || {}),
+                                              [option]:
+                                                e.target.checked || null,
                                             },
-                                          },
-                                        })
-                                      }
-                                    >
-                                      <span>{option}</span>
-                                    </CheckBoxField>
-                                  ),
-                                )}
+                                          })
+                                        }
+                                      >
+                                        <span>{formatRef(option)}</span>
+                                      </CheckBoxField>
+                                    ) : (
+                                      <InputField
+                                        name={`options.${option}`}
+                                        label={formatRef(option)}
+                                        placeholder={formatRef(option)}
+                                        className="is-small"
+                                        wrapperClass="pl-0 pr-2 py-1"
+                                        fieldClass="column mb-0 is-6 p-0"
+                                        defaultValue={
+                                          (shipment.options as any)?.[option]
+                                        }
+                                        onChange={(e: any) =>
+                                          onChange({
+                                            options: {
+                                              ...(shipment.options || {}),
+                                              [option]: e.target.value,
+                                            },
+                                          })
+                                        }
+                                      />
+                                    )}
+                                  </React.Fragment>
+                                ))}
                               </React.Fragment>
                             ),
                           )}
