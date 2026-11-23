@@ -6,6 +6,7 @@ and other plugin-related functionality in the Karrio system.
 
 import os
 import attr
+import enum
 import pydoc
 import typing
 import pkgutil
@@ -562,6 +563,54 @@ def extract_list_item_type(_type: type) -> typing.Optional[str]:
     return None
 
 
+def is_list_type(_type: typing.Any) -> bool:
+    """Return True for bare `list` and for `typing.List[X]` / `list[X]`."""
+    return _type is list or typing.get_origin(_type) is list
+
+
+def extract_list_item_enum(_type: typing.Any) -> typing.Optional[typing.List[str]]:
+    """
+    Extract the member names of the item type of a List.
+
+    Args:
+        _type: A type that may be a List[X] where X is an Enum subclass
+
+    Returns:
+        List of member names or None if not a list with Enum items
+    """
+    if not is_list_type(_type):
+        return None
+
+    item_type = next(iter(typing.get_args(_type)), None)
+
+    if isinstance(item_type, type) and issubclass(item_type, enum.Enum):
+        return [e.name for e in item_type]
+
+    return None
+
+
+def extract_enum_names(_type: typing.Any) -> typing.Optional[typing.List[str]]:
+    """
+    Extract the enum member names an option or config accepts.
+
+    Lists publish the names of their Enum item type; typing generics are never
+    iterated themselves.
+
+    Args:
+        _type: An Enum type, a List[Enum] type, or any other option type
+
+    Returns:
+        List of member names or None if the type carries no enum
+    """
+    if is_list_type(_type):
+        return extract_list_item_enum(_type)
+
+    if "enum" not in str(_type).lower():
+        return None
+
+    return [e.name for e in _type]
+
+
 def extract_list_item_fields(_type: type) -> typing.Optional[typing.Dict[str, typing.Any]]:
     """
     Extract nested field definitions from the item type of a List.
@@ -652,11 +701,7 @@ def collect_references(
                     default=c.value.default,
                     help=c.value.help,
                     meta=_normalize_option_meta(c.value.meta),
-                    enum=lib.identity(
-                        None
-                        if "enum" not in str(c.value.type).lower()
-                        else [e.name for e in c.value.type]
-                    ),
+                    enum=extract_enum_names(c.value.type),
                     fields=extract_nested_fields(c.value.type),
                 )
             )
@@ -674,11 +719,7 @@ def collect_references(
                     required=False,
                     type=parse_type(c.value.type),
                     default=c.value.default,
-                    enum=lib.identity(
-                        None
-                        if "enum" not in str(c.value.type).lower()
-                        else [c.name for c in c.value.type]
-                    ),
+                    enum=extract_enum_names(c.value.type),
                     # Extract item schema for list types (e.g., List[ServiceBillingNumberType])
                     item_type=extract_list_item_type(c.value.type),
                     fields=extract_list_item_fields(c.value.type),
@@ -893,6 +934,8 @@ def parse_type(_type: type) -> str:
     """
     _name = getattr(_type, "__name__", None)
 
+    if is_list_type(_type):
+        return "list"
     if _name is not None and _name == "bool":
         return "boolean"
     if _name is not None and _name == "str":

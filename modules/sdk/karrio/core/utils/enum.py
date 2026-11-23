@@ -108,6 +108,21 @@ class EnumWrapper:
         self.enum
 
 
+def _is_list_type(_type: typing.Any) -> bool:
+    return _type is list or typing.get_origin(_type) is list
+
+
+def _coerce_list(value: typing.Any) -> typing.Optional[list]:
+    """Coerce a list option value: None stays None, a list or tuple is copied,
+    and any other value (a string included) becomes a one-item list."""
+    if value is None:
+        return None
+    if isinstance(value, (list, tuple)):
+        return list(value)
+
+    return [value]
+
+
 @attr.s(auto_attribs=True)
 class OptionEnum:
     """An option enumeration class for handling typed options.
@@ -149,6 +164,9 @@ class OptionEnum:
         if self.type is bool:
             state = value is not False
 
+        elif _is_list_type(self.type):
+            state = _coerce_list(value)
+
         elif "enum" in str(self.type):
             state = (
                 (
@@ -162,9 +180,8 @@ class OptionEnum:
                 else None
             )
 
-        # Handle typing generics (e.g., typing.List[X], typing.Dict[X, Y])
+        # Handle other typing generics (e.g., typing.Dict[X, Y])
         elif hasattr(self.type, "__origin__"):
-            # For List types, just use the value as-is (it's already a list from JSON)
             state = value if value is not None else None
 
         else:
