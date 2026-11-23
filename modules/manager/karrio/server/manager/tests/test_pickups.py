@@ -1,5 +1,5 @@
 import json
-from unittest.mock import patch, ANY
+from unittest.mock import patch, ANY, PropertyMock
 from django.urls import reverse
 from rest_framework import status
 from karrio.core.models import PickupDetails, ConfirmationDetails, ChargeDetails
@@ -203,6 +203,44 @@ class TestPickupDetails(TestFixture):
             response = self.client.post(url, {})
             response_data = json.loads(response.content)
 
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertDictEqual(response_data, PICKUP_CANCEL_RESPONSE)
+
+    def test_cancel_pickup_without_carrier_cancel_pickup_support(self):
+        url = reverse(
+            "karrio.server.manager:shipment-pickup-cancel",
+            kwargs=dict(pk=self.pickup.pk),
+        )
+
+        with patch(
+            "karrio.api.gateway.Gateway.proxy_methods",
+            new_callable=PropertyMock,
+            return_value=["schedule_pickup", "cancel_shipment"],
+        ), patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = CANCEL_RETURNED_VALUE
+            response = self.client.post(url, {})
+            response_data = json.loads(response.content)
+
+            mock.assert_not_called()
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(response_data["status"], "cancelled")
+
+    def test_cancel_pickup_with_carrier_cancel_pickup_support(self):
+        url = reverse(
+            "karrio.server.manager:shipment-pickup-cancel",
+            kwargs=dict(pk=self.pickup.pk),
+        )
+
+        with patch(
+            "karrio.api.gateway.Gateway.proxy_methods",
+            new_callable=PropertyMock,
+            return_value=["schedule_pickup", "cancel_pickup"],
+        ), patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = CANCEL_RETURNED_VALUE
+            response = self.client.post(url, {})
+            response_data = json.loads(response.content)
+
+            mock.assert_called_once()
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertDictEqual(response_data, PICKUP_CANCEL_RESPONSE)
 

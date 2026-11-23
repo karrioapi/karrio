@@ -690,7 +690,7 @@ class Pickups:
         # The request call is wrapped in utils.identity to simplify mocking in tests
         confirmation, messages = lib.identity(
             utils.identity(lambda: request.from_(carrier.gateway).parse())
-            if "cancel_shipment" in carrier.gateway.proxy_methods
+            if "cancel_pickup" in carrier.gateway.proxy_methods
             else (
                 datatypes.Confirmation(
                     carrier_name=carrier.gateway.settings.carrier_name,
