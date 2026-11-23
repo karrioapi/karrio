@@ -33,7 +33,6 @@ The open-source shipping platform for modern logistics
 [![Karrio OSS](https://img.shields.io/badge/License-LGPL_3.0-blue.svg)](./LICENSE)
 [![karrio-tests](https://github.com/karrioapi/karrio/actions/workflows/tests.yml/badge.svg)](https://github.com/karrioapi/karrio/actions/workflows/tests.yml)
 [![karrio-build](https://github.com/karrioapi/karrio/actions/workflows/build.yml/badge.svg)](https://github.com/karrioapi/karrio/actions/workflows/build.yml)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/cc2ac4fcb6004bca84e42a90d8acfe41)](https://www.codacy.com/gh/karrioapi/karrio/dashboard?utm_source=github.com&utm_medium=referral&utm_content=karrioapi/karrio&utm_campaign=Badge_Grade)
 [![Discord](https://img.shields.io/static/v1?label=Discord&message=chat&color=738adb&logo=discord)](https://discord.gg/gS88uE7sEx)
 [![Docker pulls](https://img.shields.io/docker/pulls/karrio/server)](https://hub.docker.com/r/karrio/server)
 
