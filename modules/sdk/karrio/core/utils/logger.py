@@ -39,6 +39,15 @@ def get_log_format() -> str:
     )
 
 
+def get_log_colorize() -> bool:
+    """Check if console log colorization is enabled."""
+    return os.getenv("KARRIO_LOG_COLORIZE", os.getenv("LOG_COLORIZE", "True")).lower() in (
+        "true",
+        "1",
+        "yes",
+    )
+
+
 def should_log_to_file() -> bool:
     """Check if logging to file is enabled."""
     return os.getenv("KARRIO_LOG_FILE", "").strip() != ""
@@ -55,6 +64,7 @@ def configure_logger(
     log_file: Optional[str] = None,
     diagnose: Optional[bool] = None,
     backtrace: Optional[bool] = None,
+    colorize: Optional[bool] = None,
     serialize: bool = False,
     enqueue: bool = False,
 ):
@@ -66,6 +76,7 @@ def configure_logger(
         log_file: Path to log file (if None, will check KARRIO_LOG_FILE env var)
         diagnose: Whether to enable diagnostic mode with variable values
         backtrace: Whether to enable backtrace on exceptions
+        colorize: Whether to colorize console logs
         serialize: Whether to serialize logs as JSON
         enqueue: Whether to use async logging (thread-safe)
 
@@ -73,6 +84,7 @@ def configure_logger(
         KARRIO_LOG_LEVEL: Set the logging level (default: INFO)
         KARRIO_LOG_FORMAT: Custom log format string
         KARRIO_LOG_FILE: Path to log file for file output
+        KARRIO_LOG_COLORIZE: Enable console log colorization (default: True)
         KARRIO_LOG_ROTATION: Log rotation setting (default: "500 MB")
         KARRIO_LOG_RETENTION: Log retention setting (default: "10 days")
         KARRIO_LOG_DIAGNOSE: Enable diagnostic mode (default: False)
@@ -84,6 +96,7 @@ def configure_logger(
     # Determine configuration from environment or parameters
     log_level = level or get_log_level()
     log_format = get_log_format()
+    colorize = get_log_colorize() if colorize is None else colorize
 
     if diagnose is None:
         diagnose = os.getenv("KARRIO_LOG_DIAGNOSE", "False").lower() in (
@@ -104,7 +117,7 @@ def configure_logger(
         sys.stderr,
         format=log_format,
         level=log_level,
-        colorize=True,
+        colorize=colorize,
         diagnose=diagnose,
         backtrace=backtrace,
         enqueue=enqueue,
