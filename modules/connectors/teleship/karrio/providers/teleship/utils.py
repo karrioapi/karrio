@@ -41,17 +41,17 @@ class Settings(core.Settings):
     @property
     def oauth_client_id(self):
         return (
-            self.connection_system_config.get("TELESHIP_OAUTH_CLIENT_ID")
+            self.connection_system_config.get("TELESHIP_SANDBOX_OAUTH_CLIENT_ID")
             if self.test_mode
-            else self.connection_system_config.get("TELESHIP_SANDBOX_OAUTH_CLIENT_ID")
+            else self.connection_system_config.get("TELESHIP_OAUTH_CLIENT_ID")
         )
 
     @property
     def oauth_client_secret(self):
         return (
-            self.connection_system_config.get("TELESHIP_OAUTH_CLIENT_SECRET")
+            self.connection_system_config.get("TELESHIP_SANDBOX_OAUTH_CLIENT_SECRET")
             if self.test_mode
             else self.connection_system_config.get(
-                "TELESHIP_SANDBOX_OAUTH_CLIENT_SECRET"
+                "TELESHIP_OAUTH_CLIENT_SECRET"
             )
         )
