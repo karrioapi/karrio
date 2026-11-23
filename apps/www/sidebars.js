@@ -179,6 +179,7 @@ const sidebars = {
         'carriers/sdk/pickup',
         'carriers/sdk/debugging',
         'carriers/sdk/extension',
+        'carriers/sdk/advisors',
       ],
     },
   ]

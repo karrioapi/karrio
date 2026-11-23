@@ -1,0 +1,123 @@
+---
+id: advisors
+title: Shipment Advisors
+---
+
+Shipment advisors let a plugin add advisory messages to rate and shipment responses.
+They are meant for regional or organisational shipping conventions, such as a reminder to email a commercial invoice for a given lane, that do not belong in a carrier connector or in the SDK core.
+An advisor never blocks an operation and never changes the request sent to the carrier or the carrier response.
+
+## Declaring advisors
+
+A plugin declares advisors through the optional `shipment_advisors` field of its `PluginMetadata`.
+The SDK collects the advisors of every discovered plugin, including plugins that register neither a carrier nor an address validator.
+
+```python title="karrio/plugins/lane_conventions/__init__.py"
+import karrio.core.metadata as metadata
+import karrio.core.models as models
+
+
+def invoice_email_advisor(request, context):
+    if context.operation != "shipping":
+        return []
+
+    if (request.shipper.country_code, request.recipient.country_code) != ("SE", "NO"):
+        return []
+
+    return [
+        models.Message(
+            carrier_name=None,
+            carrier_id=None,
+            code="commercial_invoice_email",
+            level="warning",
+            message="Email the commercial invoice to the recipient",
+        )
+    ]
+
+
+METADATA = metadata.PluginMetadata(
+    id="lane_conventions",
+    label="Lane Conventions",
+    shipment_advisors=[invoice_email_advisor],
+)
+```
+
+The plugin is registered like any other plugin, for example through the `karrio.plugins` entry point group:
+
+```toml title="pyproject.toml"
+[project.entry-points."karrio.plugins"]
+lane_conventions = "karrio.plugins.lane_conventions:METADATA"
+```
+
+A plugin that only declares advisors reports the plugin type `advisor`.
+A carrier or LSP plugin that also declares advisors keeps its type and lists `advisor` among its `plugin_types`.
+Plugins without advisors are unaffected.
+
+## Advisor signature
+
+An advisor is a callable with the signature `(request, context) -> Iterable[Message]`.
+
+| Argument | Type | Description |
+|----------|------|-------------|
+| `request` | `RateRequest` or `ShipmentRequest` | The unified request as sent to the carrier. |
+| `context` | `karrio.core.advisors.AdvisorContext` | The non-secret context of the carrier connection in use. |
+
+`AdvisorContext` is an immutable object built from an allowlist of connection settings fields:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `carrier_name` | `str` | The carrier name of the connection, e.g. `postnord`. |
+| `carrier_id` | `str` | The carrier id of the connection. |
+| `account_country_code` | `str` | The connection's account country code, if set. |
+| `test_mode` | `bool` | Whether the connection is in test mode. |
+| `operation` | `str` | `rating` when rates are fetched, `shipping` when a shipment is created. |
+| `config` | `dict` | A deep copy of the connection's `config` dictionary. |
+
+:::info
+Connection credentials such as API keys, secrets, passwords, tokens, and account numbers used for authentication are never part of the context.
+Shipper identity and addresses are available only through the unified request.
+:::
+
+The same signature serves both operations, so an advisor can branch on `context.operation` or on the request type.
+
+## Messages
+
+An advisor returns an iterable of `karrio.core.models.Message`, or an empty list when it has nothing to say.
+`Message` requires the `carrier_name` and `carrier_id` arguments.
+An advisor may pass `None` for both, and the SDK fills them from the context.
+
+| Returned level | Reported level |
+|----------------|----------------|
+| `info` | `info` |
+| `warning` | `warning` |
+| anything else, including `error` or no level | `warning` |
+
+Avoid codes containing `SHIPPING_SDK_`, which the server interprets as SDK processing errors.
+
+## When advisors run
+
+The SDK runs every collected advisor once per carrier gateway that produced a result:
+
+| Operation | Advisors run | Advisors do not run |
+|-----------|--------------|---------------------|
+| Rating (`karrio.Rating.fetch`) | For each gateway with rates left after the connection's rate filtering. | For a gateway that returned no rates, or whose request was aborted. |
+| Shipping (`karrio.Shipment.create`) | After a shipment was created and shipment details were returned. | When the carrier rejected the shipment or the request was aborted. |
+
+For return shipments the request passed to advisors is the one with shipper and recipient swapped, as sent to the carrier.
+Advisor messages are appended after the carrier's own messages for that gateway.
+
+Advisors run synchronously in the rating and shipping calls, so they should be fast, side-effect free functions of the request and context.
+
+## Non-blocking guarantees
+
+Advisors are advisory only:
+
+-   Each advisor receives its own deep copy of the request, so mutating it has no effect on the request sent to the carrier or on other advisors.
+-   Advisors never see the carrier response and cannot alter it.
+-   An advisor that raises, or returns something other than messages, does not fail the operation.
+    The failure is reported as a warning with code `shipment_advisor_failed`, whose `details` hold the `plugin` id and the `error`, and the remaining advisors still run.
+
+## Server persistence
+
+When the server purchases a label, the messages returned by shipment creation, including advisor messages and non-blocking carrier warnings, are stored in the shipment's `messages` together with the messages stored at rating.
+Messages with the same `carrier_id`, `code`, and `message` are kept once.

@@ -7,6 +7,7 @@ from karrio.core.models import (
     ChargeDetails,
     ShipmentDetails,
     ConfirmationDetails,
+    Message,
     ReturnShipment,
     Documents,
     ShippingDocument,
@@ -250,6 +251,45 @@ class TestShipmentPurchase(TestShipmentFixture):
         self.assertDictEqual(
             dict(status=response_data["status"], service=response_data["service"]),
             dict(status="created", service="canadapost_expedited_parcel"),
+        )
+
+
+class TestShipmentPurchaseMessages(APITestCase):
+    def test_purchase_persists_shipment_creation_messages(self):
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = RETURNED_RATES_WITH_MESSAGES_VALUE
+            response = self.client.post(
+                reverse("karrio.server.manager:shipment-list"), SHIPMENT_DATA
+            )
+            shipment = json.loads(response.content)
+
+        self.assertResponseNoErrors(response)  # type: ignore
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock:
+            mock.return_value = CREATED_SHIPMENT_WITH_MESSAGES_RESPONSE
+            response = self.client.post(
+                reverse(
+                    "karrio.server.manager:shipment-purchase",
+                    kwargs=dict(pk=shipment["id"]),
+                ),
+                {"selected_rate_id": shipment["rates"][0]["id"]},
+            )
+            response_data = json.loads(response.content)
+
+        self.assertResponseNoErrors(response)  # type: ignore
+        self.assertDictEqual(
+            dict(
+                status=response_data["status"],
+                messages=response_data["messages"],
+                persisted_messages=models.Shipment.objects.get(
+                    pk=shipment["id"]
+                ).messages,
+            ),
+            dict(
+                status="created",
+                messages=PURCHASED_SHIPMENT_MESSAGES,
+                persisted_messages=PURCHASED_SHIPMENT_MESSAGES,
+            ),
         )
 
 
@@ -611,6 +651,46 @@ CREATED_SHIPMENT_RESPONSE = (
     ),
     [],
 )
+
+RATE_WARNING = Message(
+    carrier_name="canadapost",
+    carrier_id="canadapost",
+    code="rate_warning",
+    level="warning",
+    message="Rated with default dimensions",
+)
+
+PURCHASE_WARNING = Message(
+    carrier_name="canadapost",
+    carrier_id="canadapost",
+    code="shipment_advice",
+    level="warning",
+    message="Email the commercial invoice to the recipient",
+)
+
+RETURNED_RATES_WITH_MESSAGES_VALUE = [RETURNED_RATES_VALUE[0], [RATE_WARNING]]
+
+CREATED_SHIPMENT_WITH_MESSAGES_RESPONSE = (
+    CREATED_SHIPMENT_RESPONSE[0],
+    [RATE_WARNING, PURCHASE_WARNING],
+)
+
+PURCHASED_SHIPMENT_MESSAGES = [
+    {
+        "carrier_name": "canadapost",
+        "carrier_id": "canadapost",
+        "code": "rate_warning",
+        "level": "warning",
+        "message": "Rated with default dimensions",
+    },
+    {
+        "carrier_name": "canadapost",
+        "carrier_id": "canadapost",
+        "code": "shipment_advice",
+        "level": "warning",
+        "message": "Email the commercial invoice to the recipient",
+    },
+]
 
 RETURNED_CANCEL_VALUE = (
     ConfirmationDetails(

@@ -6,7 +6,7 @@ for defining and working with Karrio plugin metadata.
 """
 
 import attr
-from typing import Optional, List, Dict, Any, Literal
+from typing import Optional, List, Dict, Any, Callable, Literal
 
 
 # Service type constants
@@ -65,6 +65,10 @@ class PluginMetadata:
     # Example: {"CARRIER_OAUTH_CLIENT_ID": ("", "OAuth client ID", str)}
     system_config: Optional[Dict[str, Any]] = None
 
+    # Shipment advisors: callables (request, context) -> Iterable[Message]
+    # run during rating and shipment creation (see karrio.core.advisors)
+    shipment_advisors: List[Callable] = attr.Factory(list)
+
     def is_carrier(self) -> bool:
         """Check if this plugin is a shipping carrier."""
         return self.service_type == SERVICE_TYPE_CARRIER and self.is_integration()
@@ -76,6 +80,10 @@ class PluginMetadata:
     def is_integration(self) -> bool:
         """Check if this plugin has valid integration components (Mapper + Proxy + Settings)."""
         return bool(self.Mapper) and bool(self.Proxy) and bool(self.Settings)
+
+    def has_advisors(self) -> bool:
+        """Check if this plugin declares shipment advisors."""
+        return bool(self.shipment_advisors)
 
     def has_hooks(self) -> bool:
         """Check if this plugin has hooks/webhook processing capability."""
@@ -110,6 +118,8 @@ class PluginMetadata:
             types.append("carrier")
         if self.is_lsp():
             types.append("LSP")
+        if self.has_advisors():
+            types.append("advisor")
         if not types:
             types.append("unknown")
         return types
@@ -120,12 +130,14 @@ class PluginMetadata:
         Determine the primary type of plugin based on service_type.
 
         Returns:
-            str: "carrier", "LSP", or "unknown"
+            str: "carrier", "LSP", "advisor", or "unknown"
         """
         if self.is_carrier():
             return "carrier"
         elif self.is_lsp():
             return "LSP"
+        elif self.has_advisors():
+            return "advisor"
         else:
             return "unknown"
 
