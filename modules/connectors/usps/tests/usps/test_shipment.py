@@ -253,7 +253,7 @@ ShipmentRequest = [
             "mailClass": "LIBRARY_MAIL",
             "mailingDate": "2024-07-28",
             "processingCategory": "NON_MACHINABLE",
-            "rateIndicator": "DR",
+            "rateIndicator": "SP",
             "weight": 44.1,
             "weightUOM": "lb",
             "width": 4.72,

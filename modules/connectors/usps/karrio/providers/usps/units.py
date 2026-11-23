@@ -247,6 +247,7 @@ class ShippingOption(lib.Enum):
     usps_carrier_release = lib.OptionEnum("carrierRelease", bool, meta=dict(category="DELIVERY_OPTIONS"))
     usps_physical_signature_required = lib.OptionEnum("physicalSignatureRequired", bool, meta=dict(category="SIGNATURE"))
     usps_price_type = lib.OptionEnum("priceType", lib.units.create_enum("priceType", ["RETAIL", "COMMERCIAL", "CONTRACT"]))
+    usps_rate_indicator = lib.OptionEnum("rateIndicator")
     usps_destination_entry_facility_type = lib.OptionEnum("destinationEntryFacilityType", lib.units.create_enum("destinationEntryFacilityType", ["NONE", "DESTINATION_NETWORK_DISTRIBUTION_CENTER", "DESTINATION_SECTIONAL_CENTER_FACILITY", "DESTINATION_DELIVERY_UNIT", "DESTINATION_SERVICE_HUB"]))
     usps_extra_services = lib.OptionEnum("extraServices", list)
     usps_shipping_filter = lib.OptionEnum("shippingFilter", lib.units.create_enum("shippingFilter", ["PRICE", "SERVICE_STANDARDS"]))
