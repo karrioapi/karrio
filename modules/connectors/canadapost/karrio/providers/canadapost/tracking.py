@@ -12,7 +12,16 @@ def parse_tracking_response(
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
     response = _response.deserialize()
-    details = lib.find_element("tracking-detail", response)
+    responses = lib.to_list(response)
+    details: typing.List[lib.Element] = []
+    for node in responses:
+        tag = getattr(node, "tag", "")
+        local_name = tag.split("}")[-1] if isinstance(tag, str) else ""
+        # Canada Post may return <tracking-detail> as the response root.
+        if local_name == "tracking-detail":
+            details.append(node)
+            continue
+        details.extend(lib.find_element("tracking-detail", node))
     tracking_details: typing.List[models.TrackingDetails] = [
         _extract_tracking(node, settings)
         for node in details
@@ -33,13 +42,9 @@ def _extract_tracking(
         details.changed_expected_date or details.expected_delivery_date,
         "%Y-%m-%d",
     )
-    status = next(
-        (
-            status.name
-            for status in list(provider_units.TrackingStatus)
-            if last_event.event_identifier in status.value
-        ),
-        provider_units.TrackingStatus.in_transit.name,
+    status = provider_units.map_tracking_status(
+        last_event.event_identifier,
+        last_event.event_description,
     )
 
     return models.TrackingDetails(
@@ -62,21 +67,12 @@ def _extract_tracking(
                     lib.fdate(event.event_date, "%Y-%m-%d"),
                     lib.ftime(event.event_time, "%H:%M:%S"),
                 ),
-                status=next(
-                    (
-                        s.name
-                        for s in list(provider_units.TrackingStatus)
-                        if event.event_identifier in s.value
-                    ),
-                    None,
+                status=provider_units.map_tracking_status(
+                    event.event_identifier,
+                    event.event_description,
                 ),
-                reason=next(
-                    (
-                        r.name
-                        for r in list(provider_units.TrackingIncidentReason)
-                        if event.event_identifier in r.value
-                    ),
-                    None,
+                reason=provider_units.map_tracking_incident_reason(
+                    event.event_identifier,
                 ),
             )
             for event in events
