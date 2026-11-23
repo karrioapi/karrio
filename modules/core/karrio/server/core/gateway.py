@@ -616,7 +616,7 @@ class Pickups:
         return datatypes.PickupResponse(
             pickup=datatypes.Pickup(
                 **{
-                    **payload,
+                    **{k: v for k, v in payload.items() if k != "shipment_identifiers"},
                     **lib.to_dict(pickup),
                     "id": f"pck_{uuid.uuid4().hex}",
                     "test_mode": carrier.test_mode,
@@ -660,7 +660,7 @@ class Pickups:
         return datatypes.PickupResponse(
             pickup=datatypes.Pickup(
                 **{
-                    **payload,
+                    **{k: v for k, v in payload.items() if k != "shipment_identifiers"},
                     **lib.to_dict(pickup),
                     "test_mode": carrier.test_mode,
                 }

@@ -5,6 +5,7 @@ from rest_framework import status
 from karrio.core.models import PickupDetails, ConfirmationDetails, ChargeDetails
 from karrio.server.manager.tests.test_shipments import TestShipmentFixture
 from karrio.server.core.utils import create_carrier_snapshot
+import karrio.sdk as karrio
 import karrio.server.manager.models as models
 
 class TestFixture(TestShipmentFixture):
@@ -160,6 +161,36 @@ class TestPickupSchedule(TestFixture):
             self.assertEqual(response_data["recurrence"]["frequency"], "weekly")
             self.assertIn("monday", response_data["recurrence"]["days_of_week"])
 
+    def test_schedule_pickup_forwards_linked_shipment_references(self):
+        self.shipment.shipment_identifier = "SHIP-1"
+        self.shipment.meta = {
+            **(self.shipment.meta or {}),
+            "shipment_identifiers": ["SHIP-2", "SHIP-1"],
+            "tracking_numbers": ["123456789012", "PKG-2", ""],
+        }
+        self.shipment.save()
+        url = reverse(
+            "karrio.server.manager:shipment-pickup-request",
+            kwargs=dict(carrier_name="canadapost"),
+        )
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock, patch(
+            "karrio.server.core.gateway.karrio.Pickup.schedule",
+            wraps=karrio.Pickup.schedule,
+        ) as schedule:
+            mock.return_value = SCHEDULE_RETURNED_VALUE
+            response = self.client.post(f"{url}", PICKUP_DATA)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        request = schedule.call_args.args[0]
+        self.assertListEqual(request.shipment_identifiers, ["SHIP-2", "SHIP-1"])
+        self.assertListEqual(
+            request.options["shipment_identifiers"], ["SHIP-2", "SHIP-1"]
+        )
+        self.assertListEqual(
+            request.options["tracking_numbers"], ["123456789012", "PKG-2"]
+        )
+
 class TestPickupDetails(TestFixture):
     def setUp(self) -> None:
         super().setUp()
@@ -191,6 +222,59 @@ class TestPickupDetails(TestFixture):
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertDictEqual(response_data, PICKUP_UPDATE_RESPONSE)
+
+    def test_update_pickup_forwards_linked_shipment_references(self):
+        self.shipment.shipment_identifier = "SHIP-1"
+        self.shipment.meta = {
+            **(self.shipment.meta or {}),
+            "shipment_identifiers": ["SHIP-1"],
+            "tracking_numbers": ["123456789012", "PKG-2"],
+        }
+        self.shipment.save()
+        self.pickup.meta = {
+            "pickup_type": "one_time",
+            "shipment_identifiers": ["STALE"],
+            "tracking_numbers": ["STALE"],
+        }
+        self.pickup.save()
+        url = reverse(
+            "karrio.server.manager:shipment-pickup-details",
+            kwargs=dict(pk=self.pickup.pk),
+        )
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock, patch(
+            "karrio.server.core.gateway.karrio.Pickup.update",
+            wraps=karrio.Pickup.update,
+        ) as update:
+            mock.return_value = UPDATE_RETURNED_VALUE
+            response = self.client.post(url, PICKUP_UPDATE_DATA)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        request = update.call_args.args[0]
+        self.assertListEqual(request.shipment_identifiers, ["SHIP-1"])
+        self.assertListEqual(request.options["shipment_identifiers"], ["SHIP-1"])
+        self.assertListEqual(
+            request.options["tracking_numbers"], ["123456789012", "PKG-2"]
+        )
+
+    def test_update_pickup_forwards_linked_shipment_billing_number(self):
+        self.shipment.meta = {**(self.shipment.meta or {}), "billing_number": "BILL-1"}
+        self.shipment.save()
+        url = reverse(
+            "karrio.server.manager:shipment-pickup-details",
+            kwargs=dict(pk=self.pickup.pk),
+        )
+
+        with patch("karrio.server.core.gateway.utils.identity") as mock, patch(
+            "karrio.server.core.gateway.karrio.Pickup.update",
+            wraps=karrio.Pickup.update,
+        ) as update:
+            mock.return_value = UPDATE_RETURNED_VALUE
+            response = self.client.post(url, PICKUP_UPDATE_DATA)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        request = update.call_args.args[0]
+        self.assertEqual(request.options["billing_number"], "BILL-1")
 
     def test_cancel_pickup(self):
         url = reverse(
