@@ -96,6 +96,66 @@ class TestFedExShipping(unittest.TestCase):
 
         self.assertEqual(request.serialize(), ShipmentContactFedexPickupRequest)
 
+    def test_create_shipment_request_with_state_code_countries(self):
+        request = gateway.mapper.create_shipment_request(
+            models.ShipmentRequest(
+                **{
+                    **ShipmentPayload,
+                    "shipper": {
+                        **ShipmentPayload["shipper"],
+                        "city": "Stockholm",
+                        "postal_code": "11122",
+                        "country_code": "SE",
+                        "state_code": "O",
+                    },
+                }
+            )
+        )
+        requested = request.serialize()["requestedShipment"]
+
+        self.assertEqual(
+            requested["shipper"]["address"], ShipmentStateCodeCountriesShipperAddress
+        )
+        self.assertEqual(
+            requested["customsClearanceDetail"]["dutiesPayment"]["payor"][
+                "responsibleParty"
+            ]["address"],
+            ShipmentStateCodeCountriesShipperAddress,
+        )
+        self.assertEqual(
+            requested["recipients"][0]["address"],
+            ShipmentRequest["requestedShipment"]["recipients"][0]["address"],
+        )
+
+    def test_create_shipment_request_with_state_names(self):
+        request = gateway.mapper.create_shipment_request(
+            models.ShipmentRequest(
+                **{
+                    **ShipmentPayload,
+                    "shipper": {
+                        **ShipmentPayload["shipper"],
+                        "city": "New York",
+                        "postal_code": "10001",
+                        "state_code": "New York",
+                    },
+                    "recipient": {
+                        **ShipmentPayload["recipient"],
+                        "city": "Montreal",
+                        "postal_code": "H3N1S4",
+                        "state_code": "Québec",
+                    },
+                }
+            )
+        )
+        requested = request.serialize()["requestedShipment"]
+
+        self.assertEqual(
+            requested["shipper"]["address"], ShipmentStateNamesShipperAddress
+        )
+        self.assertEqual(
+            requested["recipients"][0]["address"], ShipmentStateNamesRecipientAddress
+        )
+
     def test_create_shipment_request_paid_by_recipient(self):
         request = gateway.mapper.create_shipment_request(
             self.ShipmentPaidByRecipientRequest
@@ -552,6 +612,32 @@ ShipmentRequest = {
         "totalWeight": 20.0,
     },
     "shipAction": "CONFIRM",
+}
+
+ShipmentStateCodeCountriesShipperAddress = {
+    "city": "Stockholm",
+    "countryCode": "SE",
+    "postalCode": "11122",
+    "residential": False,
+    "streetLines": ["Input Your Information", "Input Your Information"],
+}
+
+ShipmentStateNamesShipperAddress = {
+    "city": "New York",
+    "countryCode": "US",
+    "postalCode": "10001",
+    "residential": False,
+    "stateOrProvinceCode": "NY",
+    "streetLines": ["Input Your Information", "Input Your Information"],
+}
+
+ShipmentStateNamesRecipientAddress = {
+    "city": "Montreal",
+    "countryCode": "CA",
+    "postalCode": "H3N1S4",
+    "residential": False,
+    "stateOrProvinceCode": "PQ",
+    "streetLines": ["Input Your Information", "Input Your Information"],
 }
 
 ShipmentUseScheduledPickupRequest = {
