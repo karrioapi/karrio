@@ -225,6 +225,38 @@ class TestRateSheets(GraphTestCase):
         self.assertResponseNoErrors(response)
         self.assertDictEqual(response_data, CREATE_RATE_SHEET_RESPONSE)
 
+    def test_create_rate_sheet_with_service_features(self):
+        """Test creating a rate sheet whose service declares labelless and transit_label features."""
+        response = self.query(
+            """
+            mutation create_rate_sheet($data: CreateRateSheetMutationInput!) {
+              create_rate_sheet(input: $data) {
+                rate_sheet {
+                  id
+                  name
+                  carrier_name
+                  services {
+                    id
+                    service_name
+                    features {
+                      first_mile
+                      tracked
+                      labelless
+                      transit_label
+                    }
+                  }
+                }
+              }
+            }
+            """,
+            operation_name="create_rate_sheet",
+            variables=CREATE_RATE_SHEET_WITH_FEATURES_DATA,
+        )
+        response_data = response.data
+
+        self.assertResponseNoErrors(response)
+        self.assertDictEqual(response_data, CREATE_RATE_SHEET_WITH_FEATURES_RESPONSE)
+
     def test_create_rate_sheet_minimal(self):
         """Test creating a rate sheet with only required fields."""
         response = self.query(
@@ -2075,6 +2107,53 @@ CREATE_RATE_SHEET_RESPONSE = {
                         "currency": "USD",
                         "zone_ids": [],
                         "surcharge_ids": [],
+                    }
+                ],
+            }
+        }
+    }
+}
+
+CREATE_RATE_SHEET_WITH_FEATURES_DATA = {
+    "data": {
+        "name": "Features Rate Sheet",
+        "carrier_name": "fedex",
+        "services": [
+            {
+                "service_name": "FedEx Labelless",
+                "service_code": "fedex_labelless",
+                "carrier_service_code": "FEDEX_LABELLESS",
+                "currency": "USD",
+                "zone_ids": [],
+                "surcharge_ids": [],
+                "features": {
+                    "first_mile": "drop_off",
+                    "tracked": True,
+                    "labelless": True,
+                    "transit_label": "next_day",
+                },
+            }
+        ],
+    }
+}
+
+CREATE_RATE_SHEET_WITH_FEATURES_RESPONSE = {
+    "data": {
+        "create_rate_sheet": {
+            "rate_sheet": {
+                "id": ANY,
+                "name": "Features Rate Sheet",
+                "carrier_name": "fedex",
+                "services": [
+                    {
+                        "id": ANY,
+                        "service_name": "FedEx Labelless",
+                        "features": {
+                            "first_mile": "drop_off",
+                            "tracked": True,
+                            "labelless": True,
+                            "transit_label": "next_day",
+                        },
                     }
                 ],
             }

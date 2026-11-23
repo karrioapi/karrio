@@ -625,6 +625,12 @@ class ServiceLevelFeaturesInput(utils.BaseInput):
     # Neighbor delivery allowed
     neighbor_delivery: typing.Optional[bool] = strawberry.UNSET
 
+    # Labelless delivery: no physical label, e.g. QR code
+    labelless: typing.Optional[bool] = strawberry.UNSET
+
+    # Transit label: "best_effort" | "next_day" | "within_24h" | "within_48h"
+    transit_label: typing.Optional[str] = strawberry.UNSET
+
 
 @strawberry.input
 class CreateServiceLevelInput(utils.BaseInput):
