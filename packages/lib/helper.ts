@@ -6,6 +6,7 @@ import {
   DEFAULT_CUSTOMS_CONTENT,
   DEFAULT_PARCEL_CONTENT,
   ErrorType,
+  INCOTERMS,
   LabelTypeEnum,
   OrderType,
   PaidByEnum,
@@ -564,6 +565,10 @@ export function createShipmentFromOrders(
   } as any;
   const isIntl = shipper && shipper.country_code !== recipient.country_code;
   const isDocument = parcels.every((p) => p.is_document);
+  const order_incoterm = `${order_options.incoterm || ""}`.toUpperCase();
+  const incoterm =
+    (INCOTERMS.includes(order_incoterm) ? order_incoterm : null) ||
+    (payment?.paid_by == "sender" ? "DDP" : "DDU");
   const customs = isDocument
     ? null
     : {
@@ -572,7 +577,7 @@ export function createShipmentFromOrders(
       invoice: orderList[0].order_id,
       invoice_date:
         order_options.invoice_date || moment().format("YYYY-MM-DD"),
-      incoterm: payment?.paid_by == "sender" ? "DDP" : "DDU",
+      incoterm,
       commodities: getShipmentCommodities({ parcels } as any),
       duty: {
         ...DEFAULT_CUSTOMS_CONTENT.duty,
