@@ -861,6 +861,15 @@ class TrackingData(serializers.Serializer):
         required=True,
         help_text="The tracking carrier",
     )
+    carrier_id = serializers.CharField(
+        required=False,
+        allow_blank=False,
+        allow_null=True,
+        help_text=(
+            "Optional carrier connection identifier (connection id or carrier_id). "
+            "Useful when multiple connections exist for the same carrier."
+        ),
+    )
     account_number = serializers.CharField(
         required=False,
         allow_blank=True,
