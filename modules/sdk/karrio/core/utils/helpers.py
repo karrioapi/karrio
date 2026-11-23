@@ -5,7 +5,7 @@ import uuid
 import string
 import base64
 import json
-import PyPDF2
+import pypdf
 import asyncio
 import datetime
 import urllib.parse
@@ -74,8 +74,8 @@ def image_to_pdf(image_str: str, rotate: int = None, resize: dict = None) -> str
     return base64.b64encode(new_buffer.getvalue()).decode("utf-8")
 
 
-def bundle_pdfs(base64_strings: List[str]) -> PyPDF2.PdfMerger:
-    merger = PyPDF2.PdfMerger(strict=False)
+def bundle_pdfs(base64_strings: List[str]) -> pypdf.PdfWriter:
+    merger = pypdf.PdfWriter()
 
     for b64_str in base64_strings:
         buffer = to_buffer(b64_str)
