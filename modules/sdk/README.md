@@ -2,7 +2,6 @@
 
 [![puprlship-tests](https://github.com/karrioapi/karrio/actions/workflows/tests.yml/badge.svg)](https://github.com/karrioapi/karrio/actions/workflows/tests.yml)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/cc2ac4fcb6004bca84e42a90d8acfe41)](https://www.codacy.com/gh/karrio/karrio/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=karrio/karrio&amp;utm_campaign=Badge_Grade)
 
 karrio is a multi-carrier shipping SDK.
 
