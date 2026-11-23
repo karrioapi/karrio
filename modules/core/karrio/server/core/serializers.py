@@ -144,6 +144,16 @@ class APIError(serializers.Serializer):
     level = serializers.CharField(required=False, help_text="The message level")
     details = serializers.DictField(required=False, help_text="any additional details")
 
+    def to_internal_value(self, data):
+        # The SDK Message defaults these fields to None and rate messages are
+        # echoed back as input, so null is treated as omitted. allow_null would
+        # instead render omitted fields as null in every response.
+        return super().to_internal_value(
+            {key: value for key, value in data.items() if value is not None}
+            if isinstance(data, dict)
+            else data
+        )
+
 
 class Message(APIError):
     carrier_name = serializers.CharField(

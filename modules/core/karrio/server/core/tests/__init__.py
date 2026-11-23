@@ -25,6 +25,7 @@ from karrio.server.core.tests.test_request_id import (
     TestRequestIDMiddleware,
     TestRequestIDInAPI,
 )
+from karrio.server.core.tests.test_serializers import TestMessageSerializer
 
 # Import our custom APITestCase (must be last to avoid being overridden)
 from karrio.server.core.tests.base import APITestCase
