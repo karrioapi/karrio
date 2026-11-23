@@ -76,7 +76,7 @@ ParsedTrackingResponse = [
                     "description": "DELIVERED",
                     "location": "NL",
                     "status": "delivered",
-                    "time": "13:31 PM",
+                    "time": "01:31 PM",
                     "timestamp": "2024-12-24T13:31:47.000Z",
                 },
                 {
@@ -103,7 +103,7 @@ ParsedTrackingResponse = [
                     "description": "The parcel has reached the parcel center.",
                     "location": "Essen, DE",
                     "status": "in_transit",
-                    "time": "15:29 PM",
+                    "time": "03:29 PM",
                     "timestamp": "2024-12-23T15:29:00.000Z",
                 },
                 {
@@ -112,7 +112,7 @@ ParsedTrackingResponse = [
                     "description": "The parcel has left the parcel center.",
                     "location": "Essen, DE",
                     "status": "in_transit",
-                    "time": "15:29 PM",
+                    "time": "03:29 PM",
                     "timestamp": "2024-12-23T15:29:00.000Z",
                 },
                 {
@@ -121,7 +121,7 @@ ParsedTrackingResponse = [
                     "description": "The parcel was handed over to GLS.",
                     "location": "Essen, DE",
                     "status": "in_transit",
-                    "time": "15:29 PM",
+                    "time": "03:29 PM",
                     "timestamp": "2024-12-23T15:29:00.000Z",
                 },
                 {

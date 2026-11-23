@@ -67,7 +67,7 @@ ParsedTrackingResponse = [
                     "description": "Delivered, Parcel Locker",
                     "location": "HERNANDO, 34442, FL",
                     "status": "delivered",
-                    "time": "13:58 PM",
+                    "time": "01:58 PM",
                     "timestamp": "2024-11-22T13:58:00.000Z",
                 },
                 {
@@ -108,7 +108,7 @@ ParsedTrackingResponse = [
                     "date": "2024-11-19",
                     "description": "In Transit to Next Facility",
                     "status": "in_transit",
-                    "time": "18:07 PM",
+                    "time": "06:07 PM",
                     "timestamp": "2024-11-19T18:07:00.000Z",
                 },
                 {
@@ -132,7 +132,7 @@ ParsedTrackingResponse = [
                     "date": "2024-11-18",
                     "description": "Arrived at USPS Regional Origin Facility",
                     "location": "QUEENS NY DISTRIBUTION CENTER",
-                    "time": "18:02 PM",
+                    "time": "06:02 PM",
                     "timestamp": "2024-11-18T18:02:00.000Z",
                 },
                 {
@@ -140,7 +140,7 @@ ParsedTrackingResponse = [
                     "date": "2024-11-18",
                     "description": "Departed Post Office",
                     "location": "JAMAICA, 11430, NY",
-                    "time": "17:01 PM",
+                    "time": "05:01 PM",
                     "timestamp": "2024-11-18T17:01:00.000Z",
                 },
                 {

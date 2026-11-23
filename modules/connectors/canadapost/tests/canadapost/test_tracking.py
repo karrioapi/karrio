@@ -105,7 +105,7 @@ ParsedTrackingResponse = [
                     "date": "2011-02-02",
                     "description": "Item processed at postal facility",
                     "location": "QUEBEC, QC",
-                    "time": "14:45 PM",
+                    "time": "02:45 PM",
                     "timestamp": "2011-02-02T14:45:00.000Z",
                 },
                 {

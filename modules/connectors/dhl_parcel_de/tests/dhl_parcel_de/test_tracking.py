@@ -107,7 +107,7 @@ ParsedTrackingResponse = [
                     "description": "The shipment has been processed in the parcel center of origin",
                     "location": "Bremen, Germany",
                     "status": "in_transit",
-                    "time": "15:51 PM",
+                    "time": "03:51 PM",
                     "timestamp": "2016-03-17T15:51:00.000Z",
                 },
                 {
@@ -116,7 +116,7 @@ ParsedTrackingResponse = [
                     "description": "The shipment has been picked up",
                     "location": "Germany",
                     "status": "in_transit",
-                    "time": "13:55 PM",
+                    "time": "01:55 PM",
                     "timestamp": "2016-03-17T13:55:00.000Z",
                 },
                 {
@@ -125,7 +125,7 @@ ParsedTrackingResponse = [
                     "description": "The shipment has been taken from the PACKSTATION for onward transportation",
                     "location": "Bremen, Germany",
                     "status": "in_transit",
-                    "time": "13:54 PM",
+                    "time": "01:54 PM",
                     "timestamp": "2016-03-17T13:54:00.000Z",
                 },
                 {

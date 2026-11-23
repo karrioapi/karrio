@@ -129,7 +129,7 @@ ParsedTrackingResponse = [
                     "description": "Package picked up",
                     "location": "Bern, CH",
                     "status": "picked_up",
-                    "time": "14:30 PM",
+                    "time": "02:30 PM",
                     "timestamp": "2024-04-12T14:30:00.000Z",
                 },
             ],

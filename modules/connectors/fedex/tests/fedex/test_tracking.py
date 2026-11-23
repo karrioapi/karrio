@@ -179,7 +179,7 @@ ParsedDuplicateTrackingResponse = [
                     "date": "2024-04-25",
                     "description": "Shipment arriving On-Time",
                     "location": "CLOVIS, CA, 93612, US",
-                    "time": "14:29 PM",
+                    "time": "02:29 PM",
                     "timestamp": "2024-04-25T14:29:00.000Z",
                 },
                 {
@@ -188,7 +188,7 @@ ParsedDuplicateTrackingResponse = [
                     "description": "Picked up",
                     "location": "CLOVIS, CA, 93612, US",
                     "status": "picked_up",
-                    "time": "14:25 PM",
+                    "time": "02:25 PM",
                     "timestamp": "2024-04-25T14:25:00.000Z",
                 },
                 {
@@ -197,7 +197,7 @@ ParsedDuplicateTrackingResponse = [
                     "description": "Tendered at FedEx Facility",
                     "location": "CLOVIS, CA, 93612, US",
                     "status": "in_transit",
-                    "time": "13:26 PM",
+                    "time": "01:26 PM",
                     "timestamp": "2024-04-25T13:26:00.000Z",
                 },
                 {
@@ -292,7 +292,7 @@ ParsedInconsistentDateTimeResponse = [
                     "description": "Arrived at FedEx location",
                     "location": "KEASBEY, NJ, 08832, US",
                     "status": "in_transit",
-                    "time": "14:31 PM",
+                    "time": "02:31 PM",
                     "timestamp": "2024-08-19T14:31:00.000Z",
                 },
                 {
@@ -310,7 +310,7 @@ ParsedInconsistentDateTimeResponse = [
                     "description": "On the way",
                     "location": "WOODBRIDGE TWP, NJ, 08832, US",
                     "status": "in_transit",
-                    "time": "16:03 PM",
+                    "time": "04:03 PM",
                     "timestamp": "2024-08-18T16:03:54.000Z",
                 },
                 {
@@ -337,7 +337,7 @@ ParsedInconsistentDateTimeResponse = [
                     "description": "Arrived at FedEx location",
                     "location": "GROVE CITY, OH, 43123, US",
                     "status": "in_transit",
-                    "time": "19:39 PM",
+                    "time": "07:39 PM",
                     "timestamp": "2024-08-16T19:39:00.000Z",
                 },
                 {
@@ -364,7 +364,7 @@ ParsedInconsistentDateTimeResponse = [
                     "description": "Left FedEx origin facility",
                     "location": "MANKATO, MN, 56001, US",
                     "status": "in_transit",
-                    "time": "19:29 PM",
+                    "time": "07:29 PM",
                     "timestamp": "2024-08-15T19:29:25.000Z",
                 },
                 {
@@ -372,7 +372,7 @@ ParsedInconsistentDateTimeResponse = [
                     "date": "2024-08-15",
                     "description": "Shipment arriving early",
                     "location": "MANKATO, MN, 56001, US",
-                    "time": "18:40 PM",
+                    "time": "06:40 PM",
                     "timestamp": "2024-08-15T18:40:27.000Z",
                 },
                 {
@@ -381,7 +381,7 @@ ParsedInconsistentDateTimeResponse = [
                     "description": "Arrived at FedEx location",
                     "location": "MANKATO, MN, 56001, US",
                     "status": "in_transit",
-                    "time": "18:35 PM",
+                    "time": "06:35 PM",
                     "timestamp": "2024-08-15T18:35:00.000Z",
                 },
                 {
@@ -399,7 +399,7 @@ ParsedInconsistentDateTimeResponse = [
                     "description": "Picked up",
                     "location": "MANKATO, MN, 56001, US",
                     "status": "picked_up",
-                    "time": "00:00 AM",
+                    "time": "12:00 AM",
                     "timestamp": "2024-08-15T00:00:00.000Z",
                 },
             ],

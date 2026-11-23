@@ -67,7 +67,7 @@ ParsedTrackingResponse = [
                     "date": "2012-11-22",
                     "description": "Sorted - sorted_out",
                     "status": "in_transit",
-                    "time": "23:19 PM",
+                    "time": "11:19 PM",
                     "timestamp": "2012-11-22T23:19:29.000Z",
                 },
                 {

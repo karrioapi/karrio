@@ -53,7 +53,7 @@ PARSED_TRACKING_RESPONSE = [
                     "date": "2004-01-13",
                     "description": "New Tracking Number Assigned -",
                     "location": "MONTREAL SORT CTR/CTR TRIE, PQ",
-                    "time": "17:23 PM",
+                    "time": "05:23 PM",
                     "timestamp": "2004-01-13T17:23:00.000Z",
                 },
                 {
@@ -61,7 +61,7 @@ PARSED_TRACKING_RESPONSE = [
                     "date": "2004-01-13",
                     "description": "New Tracking Number Assigned -",
                     "location": "MONTREAL SORT CTR/CTR TRIE, PQ",
-                    "time": "17:23 PM",
+                    "time": "05:23 PM",
                     "timestamp": "2004-01-13T17:23:00.000Z",
                 },
             ],
