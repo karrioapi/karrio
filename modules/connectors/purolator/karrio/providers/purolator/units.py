@@ -1,6 +1,8 @@
 import csv
 import pathlib
+import re
 import typing
+import unicodedata
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
@@ -227,10 +229,207 @@ def shipping_services_initializer(
 
 
 class TrackingStatus(lib.Enum):
-    in_transit = [""]
-    delivered = ["Delivery"]
-    delivery_failed = ["Undeliverable"]
+    # Keep explicit status names we emit from `map_tracking_status`.
+    pending = ["__pending__"]
+    picked_up = ["ProofOfPickUp"]
+    in_transit = ["Other"]
     out_for_delivery = ["OnDelivery"]
+    delivered = ["Delivery"]
+    on_hold = ["Undeliverable"]
+    ready_for_pickup = ["__ready_for_pickup__"]
+    return_to_sender = ["__return_to_sender__"]
+    delivery_delayed = ["__delivery_delayed__"]
+    delivery_failed = ["__delivery_failed__"]
+    unknown = [""]
+
+
+# Purolator ScanType values are too coarse by themselves, especially
+# `Undeliverable`. Real tracking payloads encode the useful status in
+# Description, so exact audited descriptions are mapped first and keyword
+# fallback covers wording drift.
+PUROLATOR_TRACKING_STATUS_MAPPING: dict[str, dict[str, str]] = {
+    "Other": {
+        "__default__": TrackingStatus.in_transit.name,
+        "Shipper created a label": TrackingStatus.pending.name,
+        "Shipment created - interim manifest received": TrackingStatus.pending.name,
+        "Shipment created - final manifest received": TrackingStatus.pending.name,
+        "New tracking number assigned": TrackingStatus.pending.name,
+        "Label information electronically submitted": TrackingStatus.pending.name,
+    },
+    "OnDelivery": {
+        "__default__": TrackingStatus.out_for_delivery.name,
+        "On vehicle for delivery": TrackingStatus.out_for_delivery.name,
+    },
+    "Delivery": {
+        "__default__": TrackingStatus.delivered.name,
+        "Shipment delivered": TrackingStatus.delivered.name,
+        "Delivered to Customer by Locker": TrackingStatus.delivered.name,
+        "Package removed from Locker": TrackingStatus.delivered.name,
+        # Seen in production under ScanType=Delivery and not a final delivery.
+        "Transferring to Shipping Centre - please wait for further instructions": TrackingStatus.in_transit.name,
+    },
+    "ProofOfPickUp": {
+        "__default__": TrackingStatus.picked_up.name,
+        "Picked up by Purolator at": TrackingStatus.picked_up.name,
+        "Received by Purolator for processing at": TrackingStatus.picked_up.name,
+    },
+    "Undeliverable": {
+        "__default__": TrackingStatus.on_hold.name,
+        "Shipment created - interim manifest received": TrackingStatus.pending.name,
+        "Shipment created - final manifest received": TrackingStatus.pending.name,
+        "Shipment created": TrackingStatus.pending.name,
+        "Shipper created a label": TrackingStatus.pending.name,
+        "Arrived at sort facility": TrackingStatus.in_transit.name,
+        "Departed sort facility": TrackingStatus.in_transit.name,
+        "Shipment in transit": TrackingStatus.in_transit.name,
+        "Shipment redirected": TrackingStatus.in_transit.name,
+        "Resolution complete - shipment redirected": TrackingStatus.in_transit.name,
+        "Available for pickup for 5 business days from arrival date at the counter": TrackingStatus.ready_for_pickup.name,
+        "Item Held for Pickup at Locker": TrackingStatus.ready_for_pickup.name,
+        "Item available for receiver to pick up at post office": TrackingStatus.ready_for_pickup.name,
+        "Receiver advised they will pick up shipment": TrackingStatus.ready_for_pickup.name,
+        "Shipment available for pickup. Unable to contact customer": TrackingStatus.ready_for_pickup.name,
+        "Shipment available for pickup. Unable to contact customer.": TrackingStatus.ready_for_pickup.name,
+        "Receiver contacted.  Shipment available for pickup": TrackingStatus.ready_for_pickup.name,
+        "Receiver contacted, no answer.  Shipment available for pickup": TrackingStatus.ready_for_pickup.name,
+        "Shipper contacted.  Shipment available for pickup": TrackingStatus.ready_for_pickup.name,
+        "Shipment unclaimed - to be returned to sender": TrackingStatus.return_to_sender.name,
+        "Shipment undeliverable - Returned to sender": TrackingStatus.return_to_sender.name,
+        "Unable to deliver - item returned to sender": TrackingStatus.return_to_sender.name,
+        "Unable to deliver - item returned to shipper": TrackingStatus.return_to_sender.name,
+        "Returned to sender.  Shipment no longer available for pickup": TrackingStatus.return_to_sender.name,
+    },
+}
+
+
+UNDELIVERABLE_KEYWORD_RULES: list[tuple[tuple[str, ...], str]] = [
+    (
+        (
+            "returned to sender",
+            "returned to shipper",
+            "to be returned to sender",
+            "returned to the shipper",
+            "retourne a l'expediteur",
+            "retour a l'expediteur",
+            "renvoye a l'expediteur",
+            "retourne a l expediteur",
+            "retour a l expediteur",
+            "renvoye a l expediteur",
+        ),
+        TrackingStatus.return_to_sender.name,
+    ),
+    (
+        (
+            "available for pickup",
+            "held for pickup",
+            "pickup location",
+            "disponible pour le ramassage",
+            "disponible pour ramassage",
+            "point de ramassage",
+            "point de cueillette",
+            "ramassage",
+            "ramasser",
+        ),
+        TrackingStatus.ready_for_pickup.name,
+    ),
+    (
+        (
+            "delayed",
+            "delay",
+            "rescheduled",
+            "redelivery",
+            "new delivery date",
+            "missed connection",
+            "mechanical",
+            "weather",
+            "road closure",
+            "natural disaster",
+            "sorting error",
+            "late tender",
+            "special handling",
+            "hold period extended",
+            "re-attempt",
+            "rail delay",
+            "ferry delay",
+            "service disruption",
+            "retard",
+            "retarde",
+            "retardee",
+            "retardes",
+            "retardees",
+            "reporte",
+            "reportee",
+            "reportes",
+            "reportees",
+            "replanifie",
+            "replanifiee",
+            "replanifies",
+            "replanifiees",
+            "meteo",
+            "intemperies",
+            "fermeture de route",
+            "catastrophe naturelle",
+            "perturbation de service",
+        ),
+        TrackingStatus.delivery_delayed.name,
+    ),
+]
+
+
+def normalize_tracking_description(description: typing.Optional[str]) -> str:
+    normalized = re.sub(r"\s+", " ", str(description or "").strip().lower())
+    normalized = normalized.replace("’", "'")
+    normalized = "".join(
+        c
+        for c in unicodedata.normalize("NFKD", normalized)
+        if not unicodedata.combining(c)
+    )
+    return normalized.rstrip(".")
+
+
+def _normalize_tracking_status_mapping(
+    raw_mapping: dict[str, dict[str, str]],
+) -> dict[str, dict[str, str]]:
+    normalized_mapping: dict[str, dict[str, str]] = {}
+    for event_code, description_mapping in raw_mapping.items():
+        normalized_mapping[event_code] = {}
+        for description, mapped_status in description_mapping.items():
+            if description == "__default__":
+                normalized_mapping[event_code]["__default__"] = mapped_status
+                continue
+
+            normalized_mapping[event_code][
+                normalize_tracking_description(description)
+            ] = mapped_status
+
+    return normalized_mapping
+
+
+NORMALIZED_PUROLATOR_TRACKING_STATUS_MAPPING = _normalize_tracking_status_mapping(
+    PUROLATOR_TRACKING_STATUS_MAPPING
+)
+
+
+def map_tracking_status(
+    event_code: typing.Optional[str],
+    event_description: typing.Optional[str],
+) -> str:
+    code = str(event_code or "").strip()
+    normalized_description = normalize_tracking_description(event_description)
+    mapped_descriptions = NORMALIZED_PUROLATOR_TRACKING_STATUS_MAPPING.get(code)
+
+    if mapped_descriptions is None:
+        return TrackingStatus.unknown.name
+
+    if normalized_description in mapped_descriptions:
+        return mapped_descriptions[normalized_description]
+
+    if code == "Undeliverable":
+        for needles, status_id in UNDELIVERABLE_KEYWORD_RULES:
+            if any(needle in normalized_description for needle in needles):
+                return status_id
+
+    return mapped_descriptions.get("__default__", TrackingStatus.unknown.name)
 
 
 class TrackingIncidentReason(lib.Enum):
