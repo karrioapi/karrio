@@ -39,7 +39,7 @@ class Settings(BaseSettings):
 
     @property
     def tracking_url(self):
-        return "https://tools.usps.com/go/TrackConfirmAction?tLabels={}"
+        return "https://www.purolator.com/en/shipping/tracker?pin={}"
 
 
 def standard_request_serializer(envelope: Envelope, version: str = "v2") -> str:

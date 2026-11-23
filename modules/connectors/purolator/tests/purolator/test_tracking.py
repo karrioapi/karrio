@@ -66,7 +66,7 @@ PARSED_TRACKING_RESPONSE = [
                 },
             ],
             "info": {
-                "carrier_tracking_link": "https://tools.usps.com/go/TrackConfirmAction?tLabels=M123"
+                "carrier_tracking_link": "https://www.purolator.com/en/shipping/tracker?pin=M123"
             },
             "status": "in_transit",
             "tracking_number": "M123",
